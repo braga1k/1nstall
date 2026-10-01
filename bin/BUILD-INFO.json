@@ -1,0 +1,47 @@
+{
+  "Product": "1nstall",
+  "Version": "3.1.4.0",
+  "CatalogApps": 325,
+  "Profiles": 20,
+  "CategoryGroups": 4,
+  "Categories": 24,
+  "BenchmarkRows": 911,
+  "BuiltOn": "2026-10-01T23:37:48.121200+00:00",
+  "Target": "Windows x64, native .NET Framework launcher",
+  "Compiler": "csc.exe 4.8.9221.0, warnings as errors",
+  "WindowsBuild": "26200.9457",
+  "WindowsDisplayVersion": "25H2",
+  "SHA256": "f6bd1d9e1cd4d226ab443d3e58063418f44db1cb9c4d3cbc976e8919511a1d3b",
+  "Validation": [
+    "325 apps, 24 categories, 20 profiles, 911 coverage rows; all profile keys resolve and each contains 8-11 apps",
+    "Final executable self-test and WPF smoke-test passed",
+    "Native DWM frame rendering verified disabled at startup, after transparency changes and maximize/restore",
+    "Live compositor test: own white/black backing windows change Acrylic pixels (32,34,46) to (21,23,35); frame disabled after focus and resize",
+    "Checkbox center InputHitTest routes to its CheckBox; model and removal-review enablement checked",
+    "Install and Uninstall hint visibility checked with focus/blur and preserved typed query",
+    "Profile dropdown opens without owned windows, applies selection without installation; save/load menu retained",
+    "Four widths, visible runtime/title glyphs, eight rendered accent palettes, source filtering, disabled-list flash regression, fresh leftover consent and Select all still pass",
+    "Native disposable integration repeated: 49 desktop, 25 Store, no warnings; key/value backup/delete preserving siblings and Recycle Bin restore passed"
+  ],
+  "NotValidated": [
+    "Exact intermittent top blue bar in the user live desktop: Computer Use native pipe unavailable",
+    "Actual third-party install/uninstall, UAC and restart-required removal",
+    "Actual Windows 10 fallback, high-contrast theme or large text scaling",
+    "User acceptance of revised typography and profile contents"
+  ],
+  "SourceSHA256": {
+    "vexan_installers.ps1": "df6df956d79a11016d7f5ceb84b20d3ee358b14a307842044bc89c368dc83e6c",
+    "interface.xaml": "89e6307ca46ae31ae0754a757086090e4d45e4f25c3738e76d433f28068cfff5",
+    "catalog.json": "2d56507cec1494c06e6287d506db8f2e37ccc59f07f65a4d8274a78954f1c6be",
+    "profiles.json": "fffbdd52c777b7842a64861f0a2b118e0f8db9566c35b925ff2db8a2ea47d269",
+    "src/uninstall-helper.cs": "be37e6ae5c75e72843f114e36f14800850ef0a85965e8451f59a0c52f704dedb",
+    "src/launcher.cs": "d77ddee7e715ac81f8da0951a986e8e5f5a3645fa0db3b2cf982445e284471e7",
+    "src/1nstall.ico": "16007296edfa230c51a2d7da0b9e5701ccfe77b2b9f12d08bcf59bf90e593dd7",
+    "src/window-helper.cs": "6c46d632e92a337780c652635e7cfa3139a429ba3395a93549b5330a399c4364",
+    "licenses/THIRD-PARTY-NOTICES.txt": "f467f44674ffc4807634e98de5ca4e7d8accdf2ff4e082fe2cf81396064b141a",
+    "src/app.manifest": "b3960f52a89a3cad7db53d1be7ba104346ddc2822ca83fe42a7cb80cd45aadda",
+    "src/app.rc": "6ffb38150a262be286e504d90e6ced0080d5eb085eb752c5587b755c3940c315"
+  },
+  "Repository": "https://github.com/braga1k/1nstall",
+  "ReleaseTag": "v3.1.4"
+}

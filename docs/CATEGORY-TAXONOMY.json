@@ -1,0 +1,235 @@
+{
+  "ReviewedOn": "2026-10-01",
+  "Principle": "Organize by user task; one primary category and only meaningful secondary workflows. Groups limit sidebar complexity.",
+  "Groups": {
+    "Everyday": [
+      "Browsers",
+      "Chat & Email",
+      "Office & PDFs",
+      "Notes & Tasks",
+      "AI Tools",
+      "Media Players",
+      "Photo Viewers",
+      "Gaming"
+    ],
+    "Create": [
+      "Video Editing",
+      "Audio Production",
+      "Capture & Streaming",
+      "Design & Photography",
+      "3D & CAD"
+    ],
+    "Files & Storage": [
+      "Files & Downloads",
+      "Cloud & Backup",
+      "Media Servers",
+      "Security & Privacy"
+    ],
+    "PC & Tools": [
+      "Remote Access",
+      "Network Tools",
+      "Development",
+      "Windows Utilities",
+      "Hardware & Drivers",
+      "Audio Controls",
+      "Runtimes"
+    ]
+  },
+  "Categories": [
+    {
+      "Name": "Browsers",
+      "Group": "Everyday",
+      "Scope": "Browse websites.",
+      "Excludes": "Email clients, VPNs and download managers.",
+      "PrimaryApps": 16,
+      "VisibleApps": 16
+    },
+    {
+      "Name": "Chat & Email",
+      "Group": "Everyday",
+      "Scope": "Email, messaging, voice chat and meetings.",
+      "Excludes": "Web browsers and remote-desktop control.",
+      "PrimaryApps": 23,
+      "VisibleApps": 23
+    },
+    {
+      "Name": "Office & PDFs",
+      "Group": "Everyday",
+      "Scope": "Documents, spreadsheets, presentations, PDFs, ebooks and research citations.",
+      "Excludes": "Personal task managers and notebooks.",
+      "PrimaryApps": 17,
+      "VisibleApps": 17
+    },
+    {
+      "Name": "Notes & Tasks",
+      "Group": "Everyday",
+      "Scope": "Notes, knowledge bases, reminders, tasks and personal planning.",
+      "Excludes": "PDF readers, office suites and email.",
+      "PrimaryApps": 11,
+      "VisibleApps": 11
+    },
+    {
+      "Name": "AI Tools",
+      "Group": "Everyday",
+      "Scope": "General AI assistants and local model/workflow tools.",
+      "Excludes": "Code editors stay in Development; creative AI also appears in Design.",
+      "PrimaryApps": 3,
+      "VisibleApps": 3
+    },
+    {
+      "Name": "Media Players",
+      "Group": "Everyday",
+      "Scope": "Listen to music and watch videos, including streaming clients.",
+      "Excludes": "Video editors, DAWs, image viewers and server software.",
+      "PrimaryApps": 15,
+      "VisibleApps": 16
+    },
+    {
+      "Name": "Photo Viewers",
+      "Group": "Everyday",
+      "Scope": "Browse, view and organize images.",
+      "Excludes": "Primary photo processing, drawing and design tools.",
+      "PrimaryApps": 6,
+      "VisibleApps": 6
+    },
+    {
+      "Name": "Gaming",
+      "Group": "Everyday",
+      "Scope": "Play games, launchers, emulators, mods and game streaming.",
+      "Excludes": "Game creation engines and chat clients.",
+      "PrimaryApps": 22,
+      "VisibleApps": 23
+    },
+    {
+      "Name": "Video Editing",
+      "Group": "Create",
+      "Scope": "Edit, cut, grade, composite, convert and encode video.",
+      "Excludes": "Playback clients and screen-capture tools.",
+      "PrimaryApps": 7,
+      "VisibleApps": 11
+    },
+    {
+      "Name": "Audio Production",
+      "Group": "Create",
+      "Scope": "Record, edit, compose, mix, master and process music/audio.",
+      "Excludes": "Music players and Windows output-volume/EQ controls.",
+      "PrimaryApps": 4,
+      "VisibleApps": 6
+    },
+    {
+      "Name": "Capture & Streaming",
+      "Group": "Create",
+      "Scope": "Screenshots, screen recording and live broadcasting.",
+      "Excludes": "Video post-production and game-streaming clients.",
+      "PrimaryApps": 4,
+      "VisibleApps": 4
+    },
+    {
+      "Name": "Design & Photography",
+      "Group": "Create",
+      "Scope": "Draw, design layouts/vectors/interfaces and process photographs.",
+      "Excludes": "Photo browsing and 3D modeling.",
+      "PrimaryApps": 10,
+      "VisibleApps": 11
+    },
+    {
+      "Name": "3D & CAD",
+      "Group": "Create",
+      "Scope": "3D modeling, engineering CAD and 3D-print preparation.",
+      "Excludes": "Game launchers and code-first game development.",
+      "PrimaryApps": 6,
+      "VisibleApps": 6
+    },
+    {
+      "Name": "Files & Downloads",
+      "Group": "Files & Storage",
+      "Scope": "File management, archives, transfers, downloads and comparison.",
+      "Excludes": "Cloud-sync/backup services and disk hardware diagnostics.",
+      "PrimaryApps": 23,
+      "VisibleApps": 23
+    },
+    {
+      "Name": "Cloud & Backup",
+      "Group": "Files & Storage",
+      "Scope": "Synchronize devices/cloud folders and back up data.",
+      "Excludes": "One-off file transfers and encryption utilities.",
+      "PrimaryApps": 9,
+      "VisibleApps": 9
+    },
+    {
+      "Name": "Media Servers",
+      "Group": "Files & Storage",
+      "Scope": "Host and distribute personal music/video libraries.",
+      "Excludes": "Client players and recording/broadcast software.",
+      "PrimaryApps": 2,
+      "VisibleApps": 2
+    },
+    {
+      "Name": "Security & Privacy",
+      "Group": "Files & Storage",
+      "Scope": "Passwords, authentication, encryption, antivirus, firewalls and privacy VPNs.",
+      "Excludes": "Remote-desktop clients and general network diagnostics.",
+      "PrimaryApps": 14,
+      "VisibleApps": 16
+    },
+    {
+      "Name": "Remote Access",
+      "Group": "PC & Tools",
+      "Scope": "Remote desktops, remote support and shared input across computers.",
+      "Excludes": "Network analyzers and VPN infrastructure without desktop control.",
+      "PrimaryApps": 7,
+      "VisibleApps": 9
+    },
+    {
+      "Name": "Network Tools",
+      "Group": "PC & Tools",
+      "Scope": "Network diagnostics, SSH/serial tools and private-network/VPN infrastructure.",
+      "Excludes": "Browsers and commercial privacy VPN services.",
+      "PrimaryApps": 11,
+      "VisibleApps": 11
+    },
+    {
+      "Name": "Development",
+      "Group": "PC & Tools",
+      "Scope": "Code editors, IDEs, languages/SDKs, version control, API/database tools and game engines.",
+      "Excludes": "Dependencies needed only to run other apps.",
+      "PrimaryApps": 55,
+      "VisibleApps": 55
+    },
+    {
+      "Name": "Windows Utilities",
+      "Group": "PC & Tools",
+      "Scope": "Desktop customization, automation, accessibility and Windows/app maintenance.",
+      "Excludes": "Drivers, hardware monitoring, archives, networking and runtime dependencies.",
+      "PrimaryApps": 29,
+      "VisibleApps": 29
+    },
+    {
+      "Name": "Hardware & Drivers",
+      "Group": "PC & Tools",
+      "Scope": "Drivers, peripherals, RGB, sensors, benchmarks, tuning and hardware diagnostics.",
+      "Excludes": "General Windows utilities and audio mixing/production.",
+      "PrimaryApps": 21,
+      "VisibleApps": 21
+    },
+    {
+      "Name": "Audio Controls",
+      "Group": "PC & Tools",
+      "Scope": "Windows volume, equalization, output devices and audio routing.",
+      "Excludes": "Music/video players and full audio-production workstations.",
+      "PrimaryApps": 3,
+      "VisibleApps": 3
+    },
+    {
+      "Name": "Runtimes",
+      "Group": "PC & Tools",
+      "Scope": "Shared runtime/codec components required to run applications.",
+      "Excludes": "Language SDKs used to develop programs.",
+      "PrimaryApps": 7,
+      "VisibleApps": 7
+    }
+  ],
+  "AppsReviewed": 325,
+  "PrimaryCategoryChanges": 214,
+  "SecondaryMemberships": 13
+}

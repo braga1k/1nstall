@@ -1,0 +1,277 @@
+{
+  "ReviewedOn": "2026-10-01",
+  "Method": "Editorial benchmark of up to 50 Windows-relevant products per category, combining existing catalog, a 570-row Patch My PC snapshot and selected publisher checks. Position is review order, not a measured usage rank. Specialist/compatibility entries and unverified leads are explicit. This is not a definitive top-50 ranking.",
+  "SourceSnapshotApps": 570,
+  "Rows": 911,
+  "DistinctApplications": 894,
+  "DistinctMissingApplications": 564,
+  "UnverifiedMissingApplications": 362,
+  "Categories": [
+    {
+      "Category": "Browsers",
+      "Reviewed": 24,
+      "Present": 16,
+      "SuiteCovered": 0,
+      "WindowsProvided": 0,
+      "Missing": 8,
+      "VerificationPending": 0
+    },
+    {
+      "Category": "Chat & Email",
+      "Reviewed": 37,
+      "Present": 23,
+      "SuiteCovered": 0,
+      "WindowsProvided": 0,
+      "Missing": 14,
+      "VerificationPending": 10
+    },
+    {
+      "Category": "Office & PDFs",
+      "Reviewed": 45,
+      "Present": 17,
+      "SuiteCovered": 0,
+      "WindowsProvided": 0,
+      "Missing": 28,
+      "VerificationPending": 18
+    },
+    {
+      "Category": "Notes & Tasks",
+      "Reviewed": 37,
+      "Present": 11,
+      "SuiteCovered": 0,
+      "WindowsProvided": 0,
+      "Missing": 26,
+      "VerificationPending": 20
+    },
+    {
+      "Category": "AI Tools",
+      "Reviewed": 19,
+      "Present": 3,
+      "SuiteCovered": 0,
+      "WindowsProvided": 0,
+      "Missing": 16,
+      "VerificationPending": 12
+    },
+    {
+      "Category": "Media Players",
+      "Reviewed": 41,
+      "Present": 16,
+      "SuiteCovered": 0,
+      "WindowsProvided": 0,
+      "Missing": 25,
+      "VerificationPending": 19
+    },
+    {
+      "Category": "Photo Viewers",
+      "Reviewed": 19,
+      "Present": 6,
+      "SuiteCovered": 0,
+      "WindowsProvided": 0,
+      "Missing": 13,
+      "VerificationPending": 11
+    },
+    {
+      "Category": "Gaming",
+      "Reviewed": 41,
+      "Present": 23,
+      "SuiteCovered": 0,
+      "WindowsProvided": 0,
+      "Missing": 18,
+      "VerificationPending": 13
+    },
+    {
+      "Category": "Video Editing",
+      "Reviewed": 48,
+      "Present": 11,
+      "SuiteCovered": 2,
+      "WindowsProvided": 1,
+      "Missing": 34,
+      "VerificationPending": 14
+    },
+    {
+      "Category": "Audio Production",
+      "Reviewed": 50,
+      "Present": 6,
+      "SuiteCovered": 1,
+      "WindowsProvided": 0,
+      "Missing": 43,
+      "VerificationPending": 29
+    },
+    {
+      "Category": "Capture & Streaming",
+      "Reviewed": 32,
+      "Present": 4,
+      "SuiteCovered": 0,
+      "WindowsProvided": 0,
+      "Missing": 28,
+      "VerificationPending": 21
+    },
+    {
+      "Category": "Design & Photography",
+      "Reviewed": 48,
+      "Present": 11,
+      "SuiteCovered": 4,
+      "WindowsProvided": 0,
+      "Missing": 33,
+      "VerificationPending": 26
+    },
+    {
+      "Category": "3D & CAD",
+      "Reviewed": 50,
+      "Present": 6,
+      "SuiteCovered": 0,
+      "WindowsProvided": 0,
+      "Missing": 44,
+      "VerificationPending": 40
+    },
+    {
+      "Category": "Files & Downloads",
+      "Reviewed": 50,
+      "Present": 23,
+      "SuiteCovered": 0,
+      "WindowsProvided": 0,
+      "Missing": 27,
+      "VerificationPending": 5
+    },
+    {
+      "Category": "Cloud & Backup",
+      "Reviewed": 42,
+      "Present": 9,
+      "SuiteCovered": 0,
+      "WindowsProvided": 0,
+      "Missing": 33,
+      "VerificationPending": 26
+    },
+    {
+      "Category": "Media Servers",
+      "Reviewed": 12,
+      "Present": 2,
+      "SuiteCovered": 0,
+      "WindowsProvided": 0,
+      "Missing": 10,
+      "VerificationPending": 8
+    },
+    {
+      "Category": "Security & Privacy",
+      "Reviewed": 50,
+      "Present": 16,
+      "SuiteCovered": 0,
+      "WindowsProvided": 1,
+      "Missing": 33,
+      "VerificationPending": 14
+    },
+    {
+      "Category": "Remote Access",
+      "Reviewed": 34,
+      "Present": 9,
+      "SuiteCovered": 0,
+      "WindowsProvided": 1,
+      "Missing": 24,
+      "VerificationPending": 17
+    },
+    {
+      "Category": "Network Tools",
+      "Reviewed": 47,
+      "Present": 11,
+      "SuiteCovered": 0,
+      "WindowsProvided": 1,
+      "Missing": 35,
+      "VerificationPending": 30
+    },
+    {
+      "Category": "Development",
+      "Reviewed": 50,
+      "Present": 46,
+      "SuiteCovered": 0,
+      "WindowsProvided": 0,
+      "Missing": 4,
+      "VerificationPending": 0
+    },
+    {
+      "Category": "Windows Utilities",
+      "Reviewed": 50,
+      "Present": 29,
+      "SuiteCovered": 0,
+      "WindowsProvided": 1,
+      "Missing": 20,
+      "VerificationPending": 1
+    },
+    {
+      "Category": "Hardware & Drivers",
+      "Reviewed": 50,
+      "Present": 21,
+      "SuiteCovered": 0,
+      "WindowsProvided": 0,
+      "Missing": 29,
+      "VerificationPending": 15
+    },
+    {
+      "Category": "Audio Controls",
+      "Reviewed": 19,
+      "Present": 3,
+      "SuiteCovered": 0,
+      "WindowsProvided": 1,
+      "Missing": 15,
+      "VerificationPending": 10
+    },
+    {
+      "Category": "Runtimes",
+      "Reviewed": 16,
+      "Present": 7,
+      "SuiteCovered": 1,
+      "WindowsProvided": 1,
+      "Missing": 7,
+      "VerificationPending": 5
+    }
+  ],
+  "Limits": [
+    "No comparable public adoption ranking exists across all these categories.",
+    "Small categories intentionally stop below 50; no platform-incompatible or duplicate edition padding.",
+    "Presence in a patch catalog does not prove current publisher maintenance or a successful install.",
+    "Candidate rows are not recommendations and are not automatically added.",
+    "Commercial apps, specialist hardware, native components and account-based installers require individual review.",
+    "24 category limits mean the benchmark is not an exhaustive comparison of the entire Windows software market."
+  ],
+  "Sources": [
+    "https://patchmypc.com/product/home-updater/",
+    "https://ninite.com/",
+    "https://github.com/microsoft/winget-pkgs",
+    "https://www.capcut.com/resource/capcut-for-windows",
+    "https://clipchamp.com/en/windows-video-editor/",
+    "https://help.ableton.com/hc/en-us/articles/209775965-Windows-Compatibility-with-Live",
+    "https://www.bitwig.com/download/",
+    "https://www.fender.com/pages/fender-studio-pro",
+    "https://www.cakewalk.com/sonar",
+    "https://help.cakewalk.com/hc/en-us/articles/37259908610201-Cakewalk-Product-Center",
+    "https://ollama.com/download/windows",
+    "https://lmstudio.ai/download",
+    "https://getfancontrol.com/",
+    "https://www.prusa3d.com/p/prusaslicer/",
+    "https://www.cyberlink.com/products/powerdirector-video-editing-software/overview_en_US.html",
+    "https://www.vegascreativesoftware.com/",
+    "https://www.shutterencoder.com/",
+    "https://standardnotes.com/download",
+    "https://github.com/logseq/logseq/releases",
+    "https://github.com/OrcaSlicer/OrcaSlicer",
+    "https://www.kicad.org/download/windows/",
+    "https://emby.media/download.html",
+    "https://www.universalmediaserver.com/",
+    "https://vb-audio.com/Voicemeeter/",
+    "https://www.fxsound.com/download",
+    "https://github.com/Belphemur/SoundSwitch",
+    "https://www.nvidia.com/en-us/geforce/broadcasting/broadcast-app/",
+    "https://www.veeam.com/products/free/microsoft-windows.html",
+    "https://duplicati.com/download",
+    "https://dolphin-emu.org/download/",
+    "https://www.ppsspp.org/download/",
+    "https://www.retroarch.com/?page=platforms",
+    "https://www.adobe.com/products/bridge.html",
+    "https://www.adobe.com/products/media-encoder.html",
+    "https://www.ocenaudio.com/download",
+    "https://www.bleachbit.org/download/windows",
+    "https://www.jetbrains.com/rider/download/",
+    "https://www.jetbrains.com/datagrip/download/",
+    "https://insomnia.rest/download",
+    "https://docs.posit.co/ide/user/"
+  ]
+}

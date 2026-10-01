@@ -3,3 +3,10 @@
 *.log
 __pycache__/
 *.pyc
+/HANDOFF.md
+/handoff/
+/bin/1nstall-*.exe
+/bin/FirstInstall.exe
+/src/firstinstall.ico
+/docs/images/first-install.png
+/docs/images/profiles-create.png

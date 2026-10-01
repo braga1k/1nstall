@@ -1,10 +1,341 @@
 [
-  {"Key":"essentials","Name":"Everyday essentials","Description":"Browsing, files, media and passwords.","Apps":["app8","app1","extra_vlc","app17","extra_powertoys","extra_bitwarden"]},
-  {"Key":"creator","Name":"Creator","Description":"Video editing, recording, conversion and sharing.","Apps":["resolve","app11","app25","extra_handbrake","extra_sharex","extra_gimp","blip"]},
-  {"Key":"gaming","Name":"Gaming","Description":"Games, voice chat, a unified library and runtimes.","Apps":["app14","app3","ts3","extra_playnite","app4","app15"]},
-  {"Key":"development","Name":"Development","Description":"Code, Git, Python, Node.js and API testing.","Apps":["vscode","extra_git","extra_githubdesktop","python","extra_nodejslts","extra_terminal","extra_uv","winutil_bruno"]},
-  {"Key":"office","Name":"Office & study","Description":"Documents, email, notes, research and PDFs.","Apps":["extra_libreoffice","extra_thunderbird","extra_sumatra","extra_joplin","extra_zotero"]},
-  {"Key":"audio","Name":"Audio production","Description":"Recording, mixing, audio editing and system EQ.","Apps":["app25","flstudio","extra_audacity","peace"]},
-  {"Key":"3d","Name":"3D & printing","Description":"3D modeling, CAD and print preparation.","Apps":["extra_blender","fusion","bambu"]},
-  {"Key":"opensource","Name":"Open-source essentials","Description":"An everyday setup built from open-source options.","Apps":["extra_firefox","extra_libreoffice","extra_vlc","extra_7zip","extra_keepassxc","extra_signal","extra_localsend"]}
+  {
+    "Key": "essentials",
+    "Name": "Everyday essentials",
+    "Group": "Everyday & Work",
+    "Description": "Browse, chat, watch videos, open PDFs, protect passwords and find or share your files.",
+    "Apps": [
+      "app8",
+      "app1",
+      "extra_vlc",
+      "extra_bitwarden",
+      "extra_localsend",
+      "extra_sumatra",
+      "extra_powertoys",
+      "app17",
+      "winutil_whatsapp"
+    ]
+  },
+  {
+    "Key": "office",
+    "Name": "Work & documents",
+    "Group": "Everyday & Work",
+    "Description": "Documents, email, PDFs and scanning, diagrams, tasks, clipboard history and cloud files for a complete working day.",
+    "Apps": [
+      "extra_libreoffice",
+      "extra_thunderbird",
+      "extra_sumatra",
+      "extra_naps2",
+      "winutil_onedrive",
+      "daily_microsoft_to_do",
+      "daily_ditto",
+      "daily_draw_io",
+      "extra_bitwarden",
+      "app1"
+    ]
+  },
+  {
+    "Key": "study",
+    "Name": "Study & research",
+    "Group": "Everyday & Work",
+    "Description": "Notes, references and citations, PDF reading, handwritten annotations, ebooks, assignments and file sync.",
+    "Apps": [
+      "extra_joplin",
+      "extra_zotero",
+      "winutil_okular",
+      "winutil_xournal",
+      "extra_calibre",
+      "extra_libreoffice",
+      "daily_microsoft_to_do",
+      "extra_firefox",
+      "app1",
+      "winutil_onedrive"
+    ]
+  },
+  {
+    "Key": "opensource",
+    "Name": "Open-source essentials",
+    "Group": "Everyday & Work",
+    "Description": "A complete open-source desktop for browsing, documents, notes, media, passwords, messaging, screenshots and file sync.",
+    "Apps": [
+      "extra_firefox",
+      "extra_libreoffice",
+      "extra_vlc",
+      "extra_7zip",
+      "extra_keepassxc",
+      "extra_signal",
+      "extra_localsend",
+      "extra_joplin",
+      "extra_sumatra",
+      "extra_sharex",
+      "extra_nextclouddesktop"
+    ]
+  },
+  {
+    "Key": "creator",
+    "Name": "Video editing",
+    "Group": "Create",
+    "Description": "Edit and colour video, trim without re-encoding, convert exports, record screens, clean audio and prepare graphics. Configure project backup after installation.",
+    "Apps": [
+      "resolve",
+      "daily_losslesscut",
+      "extra_handbrake",
+      "app11",
+      "extra_audacity",
+      "extra_gimp",
+      "extra_vlc",
+      "app1",
+      "daily_freefilesync"
+    ]
+  },
+  {
+    "Key": "design",
+    "Name": "Design & interfaces",
+    "Group": "Create",
+    "Description": "Raster and vector graphics, interface prototypes, image previews, screenshots, asset transfer and project backup. Figma needs an account.",
+    "Apps": [
+      "extra_gimp",
+      "daily_inkscape",
+      "daily_figma",
+      "extra_imageglass",
+      "extra_sharex",
+      "app1",
+      "extra_localsend",
+      "daily_freefilesync"
+    ]
+  },
+  {
+    "Key": "audio",
+    "Name": "Audio production",
+    "Group": "Create",
+    "Description": "Record and mix in REAPER, edit waveforms in Audacity, write scores, capture sessions and organize notes and project files. REAPER requires a license after evaluation.",
+    "Apps": [
+      "app25",
+      "extra_audacity",
+      "daily_musescore_studio",
+      "app11",
+      "app10",
+      "app1",
+      "daily_syncthing",
+      "extra_joplin"
+    ]
+  },
+  {
+    "Key": "3d",
+    "Name": "3D & printing",
+    "Group": "Create",
+    "Description": "3D modelling, CAD, print slicing, vector references, image previews and project files. Check slicer compatibility with your printer.",
+    "Apps": [
+      "extra_blender",
+      "daily_freecad",
+      "daily_ultimaker_cura",
+      "daily_inkscape",
+      "extra_imageglass",
+      "app1",
+      "daily_syncthing",
+      "extra_joplin"
+    ]
+  },
+  {
+    "Key": "streaming",
+    "Name": "Streaming & capture",
+    "Group": "Create",
+    "Description": "Broadcast with OBS, manage Twitch chat, talk with your community, capture images, edit audio and prepare video clips.",
+    "Apps": [
+      "app11",
+      "extra_sharex",
+      "app3",
+      "winutil_chatterino",
+      "extra_handbrake",
+      "extra_vlc",
+      "extra_audacity",
+      "app1"
+    ]
+  },
+  {
+    "Key": "storage",
+    "Name": "Files & backup",
+    "Group": "Files & Privacy",
+    "Description": "Find files and disk space, compare folders, copy reliably, synchronize backups and share between devices. Configure a backup destination and schedule.",
+    "Apps": [
+      "app17",
+      "winutil_wiztree",
+      "daily_freefilesync",
+      "extra_localsend",
+      "app1",
+      "extra_crystaldiskinfo",
+      "daily_teracopy",
+      "daily_winmerge"
+    ]
+  },
+  {
+    "Key": "privacy",
+    "Name": "Privacy & security",
+    "Group": "Files & Privacy",
+    "Description": "Passwords and two-factor codes, encrypted messaging, encrypted folders and drives, plus device-to-device file sync. Configure accounts and recovery keys.",
+    "Apps": [
+      "extra_firefox",
+      "extra_bitwarden",
+      "extra_enteauth",
+      "daily_cryptomator",
+      "daily_veracrypt",
+      "extra_signal",
+      "daily_syncthing",
+      "app1"
+    ]
+  },
+  {
+    "Key": "gaming",
+    "Name": "Gaming",
+    "Group": "PC & Tools",
+    "Description": "Steam and Epic libraries together in Playnite, voice chat, screenshots and recording, archive tools, hardware monitoring and account protection.",
+    "Apps": [
+      "app14",
+      "winutil_epicgames",
+      "extra_playnite",
+      "app3",
+      "app11",
+      "extra_sharex",
+      "app1",
+      "winutil_hwinfo",
+      "extra_bitwarden"
+    ]
+  },
+  {
+    "Key": "development",
+    "Name": "Software development",
+    "Group": "PC & Tools",
+    "Description": "Editor, Git and its desktop client, Python and Node.js, terminal, API testing, containers and database tools. Docker licensing depends on your organization.",
+    "Apps": [
+      "vscode",
+      "extra_git",
+      "extra_githubdesktop",
+      "python",
+      "extra_nodejslts",
+      "extra_terminal",
+      "extra_uv",
+      "winutil_bruno",
+      "winutil_dockerdesktop",
+      "daily_dbeaver",
+      "app1"
+    ]
+  },
+  {
+    "Key": "maintenance",
+    "Name": "PC essentials",
+    "Group": "PC & Tools",
+    "Description": "File search, disk space and health, hardware information, startup and process inspection, useful Windows controls and screenshots.",
+    "Apps": [
+      "extra_powertoys",
+      "app17",
+      "extra_crystaldiskinfo",
+      "winutil_wiztree",
+      "winutil_hwinfo",
+      "winutil_autoruns",
+      "winutil_processexplorer",
+      "extra_eartrumpet",
+      "extra_sharex"
+    ]
+  },
+  {
+    "Key": "remote_work",
+    "Name": "Remote work",
+    "Group": "Everyday & Work",
+    "Description": "Documents, team calls, email, tasks, cloud files, screenshots and secure accounts. Teams and OneDrive need your organization or personal account.",
+    "Apps": [
+      "app8",
+      "extra_onlyoffice",
+      "winutil_teams",
+      "extra_thunderbird",
+      "winutil_onedrive",
+      "daily_microsoft_to_do",
+      "extra_bitwarden",
+      "extra_sharex",
+      "extra_localsend"
+    ]
+  },
+  {
+    "Key": "illustration",
+    "Name": "Illustration & digital art",
+    "Group": "Create",
+    "Description": "Paint in Krita, build vectors, prepare raster assets, preview references and keep project files organized across devices.",
+    "Apps": [
+      "daily_krita",
+      "daily_inkscape",
+      "extra_gimp",
+      "extra_imageglass",
+      "app1",
+      "extra_sharex",
+      "extra_localsend",
+      "daily_syncthing"
+    ]
+  },
+  {
+    "Key": "photography",
+    "Name": "Photography & RAW",
+    "Group": "Create",
+    "Description": "Develop RAW photos, browse and retouch images, rename batches, convert files and synchronize a photo backup.",
+    "Apps": [
+      "daily_darktable",
+      "daily_xnview_mp",
+      "extra_gimp",
+      "daily_bulk_rename_utility",
+      "extra_fileconverter",
+      "daily_freefilesync",
+      "extra_localsend",
+      "app1"
+    ]
+  },
+  {
+    "Key": "home_media",
+    "Name": "Home media & reading",
+    "Group": "Everyday & Work",
+    "Description": "Organize films, music and ebooks, convert video for your devices, view pictures and transfer or synchronize your media files.",
+    "Apps": [
+      "extra_kodi",
+      "daily_musicbee",
+      "extra_calibre",
+      "extra_handbrake",
+      "extra_imageglass",
+      "extra_localsend",
+      "daily_syncthing",
+      "app1"
+    ]
+  },
+  {
+    "Key": "web_development",
+    "Name": "Web development",
+    "Group": "PC & Tools",
+    "Description": "Build websites with Node.js and pnpm, test APIs and browsers, work with containers and databases, and version your code.",
+    "Apps": [
+      "vscode",
+      "extra_git",
+      "extra_nodejslts",
+      "winutil_pnpm",
+      "winutil_bruno",
+      "winutil_dockerdesktop",
+      "daily_dbeaver",
+      "extra_firefox",
+      "extra_terminal",
+      "app1"
+    ]
+  },
+  {
+    "Key": "game_development",
+    "Name": "Game development",
+    "Group": "PC & Tools",
+    "Description": "Create games in Godot with 3D assets, painted textures and edited audio, then version, record and share your work.",
+    "Apps": [
+      "daily_godot",
+      "extra_blender",
+      "daily_krita",
+      "extra_audacity",
+      "extra_git",
+      "extra_githubdesktop",
+      "vscode",
+      "app11",
+      "app1",
+      "app3"
+    ]
+  }
 ]

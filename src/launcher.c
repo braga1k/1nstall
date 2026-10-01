@@ -28,6 +28,6 @@ cleanup:
     DeleteFileW(script);
     if (code == 0) return 0;
 fail:
-    MessageBoxW(NULL, L"Could not start or complete First Install. See the README and logs.", L"First Install", MB_OK | MB_ICONERROR);
+    MessageBoxW(NULL, L"Could not start or complete 1nstall. See the README and logs.", L"1nstall", MB_OK | MB_ICONERROR);
     return (int)code;
 }

@@ -1,267 +1,342 @@
-# Supported apps — First Install 2.8
+# Supported applications
 
-253 apps. 233 WinUtil entries are represented; some entries share the retained Visual C++ runtime bundle. IDs for existing profiles are unchanged.
+325 apps in 1nstall 3.1: 277 automatic and 48 guided. Existing profile keys and installation methods are unchanged.
 
-| Application | Category | Method | Package ID / download |
-|---|---|---|---|
-| .NET Desktop Runtime 10 | System | Automatic | `Microsoft.DotNet.DesktopRuntime.10` |
-| .NET Desktop Runtime 6 | System | Automatic | `Microsoft.DotNet.DesktopRuntime.6` |
-| .NET Desktop Runtime 8 | System | Automatic | `Microsoft.DotNet.DesktopRuntime.8` |
-| .NET Desktop Runtime 9 | System | Automatic | `Microsoft.DotNet.DesktopRuntime.9` |
-| 1Password | System | Automatic | `AgileBits.1Password` |
-| 7-Zip | Files | Automatic | `7zip.7zip` |
-| Adobe Acrobat Reader | Productivity | Automatic | `Adobe.Acrobat.Reader.64-bit` |
-| Advanced IP Scanner | System | Automatic | `Famatech.AdvancedIPScanner` |
-| AIMP (Music Player) | Audio & Video | Automatic | `AIMP.AIMP` |
-| Amazon Corretto 21 (LTS) | Development | Automatic | `Amazon.Corretto.21.JDK` |
-| Amazon Corretto 25 (LTS) | Development | Automatic | `Amazon.Corretto.25.JDK` |
-| Amazon Corretto 8 (LTS) | Development | Automatic | `Amazon.Corretto.8.JDK` |
-| AMD Driver | Drivers | Guided | [Official page](https://www.amd.com/en/support/download/drivers.html) |
-| Angry IP Scanner | System | Automatic | `angryziber.AngryIPScanner` |
-| AnyDesk | System | Automatic | `AnyDesk.AnyDesk` |
-| Audacity | Audio & Video | Automatic | `Audacity.Audacity` |
-| Autodesk Fusion | 3D & CAD | Guided | [Official page](https://www.autodesk.com/products/fusion-360/overview) |
-| AutoHotkey | System | Automatic | `AutoHotkey.AutoHotkey` |
-| Autoruns | System | Automatic | `Microsoft.Sysinternals.Autoruns` |
-| Bambu Studio | 3D & CAD | Automatic | `Bambulab.Bambustudio` |
-| Battle.net | Gaming | Automatic | `Blizzard.BattleNet` |
-| BCUninstaller | System | Automatic | `Klocman.BulkCrapUninstaller` |
-| Beeper | Communication | Automatic | `Beeper.Beeper` |
-| Betterbird | Communication | Automatic | `Betterbird.Betterbird` |
-| Bitwarden | Security | Automatic | `Bitwarden.Bitwarden` |
-| Blender | 3D & CAD | Automatic | `BlenderFoundation.Blender` |
-| Blip | Files | Guided | [Official page](https://blip.net/) |
-| BlurAutoClicker | System | Automatic | `Blur009.BlurAutoClicker` |
-| Brave | Browsers | Automatic | `Brave.Brave` |
-| Bruno | Development | Automatic | `Bruno.Bruno` |
-| Calibre | Productivity | Automatic | `calibre.calibre` |
-| Cemu | Gaming | Automatic | `Cemu.Cemu` |
-| ChatGPT Desktop | Development | Guided | [Official page](https://apps.microsoft.com/detail/9NT1R1C2HH7J) |
-| Chatterino | Communication | Automatic | `ChatterinoTeam.Chatterino` |
-| Chrome | Browsers | Automatic | `Google.Chrome` |
-| Chromium | Browsers | Automatic | `Hibbiki.Chromium` |
-| Cinebench R23 | System | Automatic | `Maxon.CinebenchR23` |
-| Claude Code | Development | Automatic | `Anthropic.ClaudeCode` |
-| Claude Desktop | Development | Automatic | `Anthropic.Claude` |
-| Cloudflare WARP | System | Automatic | `Cloudflare.Warp` |
-| CMake | Development | Automatic | `Kitware.CMake` |
-| Codex | Development | Automatic | `OpenAI.Codex` |
-| ComfyUI Desktop | AI & Creation | Automatic | `Comfy.ComfyUI-Desktop` |
-| CPU-Z | System | Automatic | `CPUID.CPU-Z` |
-| CrystalDiskInfo | System | Automatic | `CrystalDewWorld.CrystalDiskInfo` |
-| CrystalDiskMark | System | Automatic | `CrystalDewWorld.CrystalDiskMark` |
-| Cursor | Development | Automatic | `Anysphere.Cursor` |
-| DaVinci Resolve | Audio & Video | Guided | [Official page](https://www.blackmagicdesign.com/products/davinciresolve) |
-| Deluge | Files | Automatic | `DelugeTeam.Deluge` |
-| Deskflow | System | Automatic | `Deskflow.Deskflow` |
-| DirectX | System | Automatic | `Microsoft.DirectX` |
-| Discord | Communication | Automatic | `Discord.Discord` |
-| DISMTools | System | Automatic | `CodingWondersSoftware.DISMTools.Stable` |
-| Display Driver Uninstaller | System | Automatic | `Wagnardsoft.DisplayDriverUninstaller` |
-| Docker Desktop | Development | Automatic | `Docker.DockerDesktop` |
-| Dorion | Communication | Automatic | `SpikeHD.Dorion` |
-| Dropbox | System | Automatic | `Dropbox.Dropbox` |
-| EA App | Gaming | Automatic | `ElectronicArts.EADesktop` |
-| EarTrumpet | Audio & Video | Automatic | `File-New-Project.EarTrumpet` |
-| Edge | Browsers | Automatic | `Microsoft.Edge` |
-| Element | Communication | Automatic | `Element.Element` |
-| EmulationStation Desktop Edition | Gaming | Automatic | `ES-DE.EmulationStation-DE` |
-| Ente Auth | Security | Automatic | `ente-io.auth-desktop` |
-| Epic Games Launcher | Gaming | Automatic | `EpicGames.EpicGamesLauncher` |
-| Equalizer APO | Audio & Video | Guided | [Official page](https://sourceforge.net/projects/equalizerapo/) |
-| Everything | Files | Automatic | `voidtools.Everything` |
-| F.lux | System | Automatic | `flux.flux` |
-| Fast Node Manager | Development | Automatic | `Schniz.fnm` |
-| File Converter | Files | Automatic | `AdrienAllard.FileConverter` |
-| Files | System | Automatic | `FilesCommunity.Files` |
-| Firefox | Browsers | Automatic | `Mozilla.Firefox` |
-| Firefox ESR | Browsers | Automatic | `Mozilla.Firefox.ESR` |
-| FL Studio | Audio & Video | Guided | [Official page](https://www.image-line.com/fl-studio/download) |
-| Floorp | Browsers | Automatic | `Ablaze.Floorp` |
-| foobar2000 | Audio & Video | Automatic | `PeterPawlowski.foobar2000` |
-| Foxit PDF Reader | Productivity | Automatic | `Foxit.FoxitReader` |
-| GeForce NOW | Gaming | Automatic | `Nvidia.GeForceNow` |
-| GIMP | Design & Photography | Automatic | `GIMP.GIMP.3` |
-| Git | Development | Automatic | `Git.Git` |
-| Git Extensions | Development | Automatic | `GitExtensionsTeam.GitExtensions` |
-| GitHub CLI | Development | Automatic | `GitHub.cli` |
-| GitHub Desktop | Development | Automatic | `GitHub.GitHubDesktop` |
-| GlazeWM | System | Automatic | `glzr-io.glazewm` |
-| Go | Development | Automatic | `GoLang.Go` |
-| GOG Galaxy | Gaming | Automatic | `GOG.Galaxy` |
-| Google Drive | System | Automatic | `Google.GoogleDrive` |
-| GPU-Z | System | Automatic | `TechPowerUp.GPU-Z` |
-| gsudo | System | Automatic | `gerardog.gsudo` |
-| HandBrake | Audio & Video | Automatic | `HandBrake.HandBrake` |
-| Helium | Browsers | Automatic | `ImputNet.Helium` |
-| Heroic Games Launcher | Gaming | Automatic | `HeroicGamesLauncher.HeroicGamesLauncher` |
-| Hugo | System | Automatic | `Hugo.Hugo.Extended` |
-| HWiNFO | System | Automatic | `REALiX.HWiNFO` |
-| HWMonitor | System | Automatic | `CPUID.HWMonitor` |
-| HxD Hex Editor | System | Automatic | `MHNexus.HxD` |
-| ImageGlass | Design & Photography | Automatic | `DuongDieuPhap.ImageGlass` |
-| Internet Download Manager | System | Automatic | `Tonec.InternetDownloadManager` |
-| IrfanView | Audio & Video | Automatic | `IrfanSkiljan.IrfanView` |
-| Itch.io | Gaming | Automatic | `ItchIo.Itch` |
-| iTunes | Audio & Video | Automatic | `Apple.iTunes` |
-| Jellyfin Media Player | Self-hosted | Automatic | `Jellyfin.JellyfinMediaPlayer` |
-| Jellyfin Server | Self-hosted | Automatic | `Jellyfin.Server` |
-| Jetbrains Toolbox | Development | Automatic | `JetBrains.Toolbox` |
-| Joplin | Productivity | Automatic | `Joplin.Joplin` |
-| JPEG View | System | Automatic | `sylikc.JPEGView` |
-| K-Lite Codec Pack | Audio & Video | Automatic | `CodecGuide.K-LiteCodecPack.Standard` |
-| KeePassXC | Security | Automatic | `KeePassXCTeam.KeePassXC` |
-| Kodi | Audio & Video | Automatic | `XBMCFoundation.Kodi` |
-| Lazygit | Development | Automatic | `JesseDuffield.lazygit` |
-| League of Legends | Gaming | Guided | [Official page](https://www.leagueoflegends.com/en-gb/download/) |
-| LibreOffice | Productivity | Automatic | `TheDocumentFoundation.LibreOffice` |
-| LibreWolf | Browsers | Automatic | `LibreWolf.LibreWolf` |
-| LocalSend | Files | Automatic | `LocalSend.LocalSend` |
-| Lua | Development | Automatic | `rjpcomputing.luaforwindows` |
-| MiniTool Partition Wizard | System | Automatic | `MiniTool.PartitionWizard.Free` |
-| Modrinth App | Gaming | Automatic | `Modrinth.ModrinthApp` |
-| Moonlight | Gaming | Automatic | `MoonlightGameStreamingProject.Moonlight` |
-| MPC-HC | Audio & Video | Automatic | `clsid2.mpc-hc` |
-| mpc-qt | Audio & Video | Automatic | `mpc-qt.mpc-qt` |
-| mpv | Audio & Video | Automatic | `shinchiro.mpv` |
-| MSEdgeRedirect | System | Automatic | `rcmaehl.MSEdgeRedirect` |
-| MSI Afterburner | System | Automatic | `Guru3D.Afterburner` |
-| Mullvad Browser | Browsers | Automatic | `MullvadVPN.MullvadBrowser` |
-| Mullvad VPN | System | Automatic | `MullvadVPN.MullvadVPN` |
-| NanaZip | System | Automatic | `M2Team.NanaZip` |
-| NAPS2 | Productivity | Automatic | `Cyanfish.NAPS2` |
-| Neovim | Development | Automatic | `Neovim.Neovim` |
-| NetBird | Self-hosted | Automatic | `Netbird.Netbird` |
-| Nextcloud Desktop | Files | Automatic | `Nextcloud.NextcloudDesktop` |
-| Nilesoft Shell | System | Automatic | `Nilesoft.Shell` |
-| Nmap | System | Automatic | `Insecure.Nmap` |
-| Node.js LTS | Development | Automatic | `OpenJS.NodeJS.LTS` |
-| NodeJS | Development | Automatic | `OpenJS.NodeJS` |
-| nomacs | Audio & Video | Automatic | `nomacs.nomacs` |
-| Notepad++ | Development | Automatic | `Notepad++.Notepad++` |
-| NTLite | System | Automatic | `Nlitesoft.NTLite` |
-| NuGet | System | Automatic | `Microsoft.NuGet` |
-| NVCleanstall | Drivers | Automatic | `TechPowerUp.NVCleanstall` |
-| NVIDIA Drivers | Drivers | Guided | [Official page](https://www.nvidia.com/en-us/drivers/) |
-| OBS Studio | Audio & Video | Automatic | `OBSProject.OBSStudio` |
-| Obsidian | Productivity | Automatic | `Obsidian.Obsidian` |
-| OFGB (Oh Frick Go Back) | System | Automatic | `xM4ddy.OFGB` |
-| Oh My Posh (Prompt) | Development | Automatic | `JanDeDobbeleer.OhMyPosh` |
-| Okular | Productivity | Automatic | `KDE.Okular` |
-| OneDrive | System | Automatic | `Microsoft.OneDrive` |
-| ONLYOFFICE Desktop | Productivity | Automatic | `ONLYOFFICE.DesktopEditors` |
-| OPAutoClicker | System | Automatic | `OPAutoClicker.OPAutoClicker` |
-| OpenRGB | System | Automatic | `OpenRGB.OpenRGB` |
-| OpenVPN Connect | System | Automatic | `OpenVPNTechnologies.OpenVPNConnect` |
-| Oracle VirtualBox | System | Automatic | `Oracle.VirtualBox` |
-| Overwolf | Gaming | Automatic | `Overwolf.CurseForge` |
-| Paint.NET | Audio & Video | Automatic | `dotPDN.PaintDotNet` |
-| Parsec | Internet | Automatic | `Parsec.Parsec` |
-| PDF-XChange Editor | Productivity | Automatic | `TrackerSoftware.PDF-XChangeEditor` |
-| PDF24 Creator | Productivity | Automatic | `geeksoftwareGmbH.PDF24Creator` |
-| PDFgear | Productivity | Automatic | `PDFgear.PDFgear` |
-| PDFsam Basic | Productivity | Automatic | `PDFsam.PDFsam` |
-| Peace GUI | Audio & Video | Guided | [Official page](https://sourceforge.net/projects/peace-equalizer-apo-extension/) |
-| PeaZip | Files | Automatic | `Giorgiotani.Peazip` |
-| Playnite | Gaming | Automatic | `Playnite.Playnite` |
-| Plex Desktop | Self-hosted | Automatic | `Plex.Plex` |
-| Plex Media Server | Self-hosted | Automatic | `Plex.PlexMediaServer` |
-| pnpm | Development | Automatic | `pnpm.pnpm` |
-| Policy Plus | System | Automatic | `Fleex255.PolicyPlus` |
-| Postman | Development | Automatic | `Postman.Postman` |
-| PotPlayer | Audio & Video | Automatic | `Daum.PotPlayer` |
-| PowerShell | Development | Automatic | `Microsoft.PowerShell` |
-| PowerToys | System | Automatic | `Microsoft.PowerToys` |
-| Prism Launcher | Gaming | Automatic | `PrismLauncher.PrismLauncher` |
-| Process Explorer | System | Automatic | `Microsoft.Sysinternals.ProcessExplorer` |
-| Process Lasso | System | Automatic | `BitSum.ProcessLasso` |
-| Process Monitor | System | Automatic | `Microsoft.Sysinternals.ProcessMonitor` |
-| Proton Authenticator | System | Automatic | `Proton.ProtonAuthenticator` |
-| Proton Drive | Files | Automatic | `Proton.ProtonDrive` |
-| Proton Mail | Communication | Automatic | `Proton.ProtonMail` |
-| Proton Pass | System | Automatic | `Proton.ProtonPass` |
-| Proton VPN | Internet | Automatic | `Proton.ProtonVPN` |
-| PuTTY | Internet | Automatic | `PuTTY.PuTTY` |
-| Python 3.14 | Development | Automatic | `Python.Python.3.14` |
-| qBittorrent | Files | Automatic | `qBittorrent.qBittorrent` |
-| QOwnNotes | Productivity | Automatic | `pbek.QOwnNotes` |
-| QTox | Communication | Automatic | `Tox.qTox` |
-| RDCMan | System | Automatic | `Microsoft.Sysinternals.RDCMan` |
-| REAPER | Audio & Video | Automatic | `Cockos.REAPER` |
-| Revo Uninstaller | System | Automatic | `RevoUninstaller.RevoUninstaller` |
-| Roblox | Gaming | Automatic | `Roblox.Roblox` |
-| Ruby | Development | Automatic | `RubyInstallerTeam.Ruby.4.0` |
-| Rufus | System | Automatic | `Rufus.Rufus` |
-| Rust | Development | Automatic | `Rustlang.Rust.MSVC` |
-| RustDesk | Internet | Guided | [Official page](https://rustdesk.com/) |
-| ShareX | Design & Photography | Automatic | `ShareX.ShareX` |
-| Signal | Communication | Automatic | `OpenWhisperSystems.Signal` |
-| SignalRGB | System | Automatic | `WhirlwindFX.SignalRgb` |
-| Simplenote | Productivity | Automatic | `Automattic.Simplenote` |
-| Simplewall | System | Automatic | `Henry++.simplewall` |
-| Slack | Communication | Automatic | `SlackTechnologies.Slack` |
-| Snappy Driver Installer Origin | System | Automatic | `GlennDelahoy.SnappyDriverInstallerOrigin` |
-| SSL Driver | Drivers | Guided | [Official page](https://solidstatelogic.com/support-page/downloads) |
-| Starship (Shell Prompt) | Development | Automatic | `Starship.Starship` |
-| StartAllBack | System | Automatic | `StartIsBack.StartAllBack` |
-| Steam | Gaming | Automatic | `Valve.Steam` |
-| Sublime Text | Development | Automatic | `SublimeHQ.SublimeText.4` |
-| Sumatra PDF | Productivity | Automatic | `SumatraPDF.SumatraPDF` |
-| Sunshine | Gaming | Automatic | `LizardByte.Sunshine` |
-| System Informer | Development | Automatic | `WinsiderSS.SystemInformer` |
-| Tailscale | System | Automatic | `Tailscale.Tailscale` |
-| TCPView | System | Automatic | `Microsoft.Sysinternals.TCPView` |
-| Teams | Communication | Automatic | `Microsoft.Teams` |
-| TeamSpeak 3 | Communication | Automatic | `TeamSpeakSystems.TeamSpeakClient` |
-| TeamSpeak 6 | Communication | Automatic | `TeamSpeakSystems.TeamSpeakClient.Beta.6` |
-| TeamViewer | System | Automatic | `TeamViewer.TeamViewer` |
-| Telegram Desktop | Communication | Automatic | `Telegram.TelegramDesktop` |
-| Thunderbird | Communication | Automatic | `Mozilla.Thunderbird` |
-| TightVNC | System | Automatic | `GlavSoft.TightVNC` |
-| Tor Browser | Browsers | Automatic | `TorProject.TorBrowser` |
-| Total Commander | System | Automatic | `Ghisler.TotalCommander` |
-| TranslucentTB | System | Automatic | `CharlesMilette.TranslucentTB` |
-| TreeSize Free | System | Automatic | `JAMSoftware.TreeSize.Free` |
-| UAD / UA Connect | Drivers | Guided | [Official page](https://www.uaudio.com/downloads.html) |
-| Ubisoft Connect | Gaming | Automatic | `Ubisoft.Connect` |
-| Ungoogled Chromium | Browsers | Automatic | `eloston.ungoogled-chromium` |
-| UniGetUI | System | Automatic | `Devolutions.UniGetUI` |
-| Unity Game Engine | Development | Guided | [Official page](https://unity.com/) |
-| uv | Development | Automatic | `astral-sh.uv` |
-| Vagrant | Development | Automatic | `Hashicorp.Vagrant` |
-| Valorant | Gaming | Guided | [Official page](https://playvalorant.com/en-gb/download/) |
-| Ventoy | System | Automatic | `Ventoy.Ventoy` |
-| Vesktop | Communication | Automatic | `Vencord.Vesktop` |
-| Viber | Communication | Automatic | `Rakuten.Viber` |
-| Virtual Desktop Streamer | Gaming | Automatic | `VirtualDesktop.Streamer` |
-| Visual C++ (2005-2022, x86 + x64) | System | Automatic | `Microsoft.VCRedist.2005.x86`, `Microsoft.VCRedist.2005.x64`, `Microsoft.VCRedist.2008.x86`, `Microsoft.VCRedist.2008.x64`, `Microsoft.VCRedist.2010.x86`, `Microsoft.VCRedist.2010.x64`, `Microsoft.VCRedist.2012.x86`, `Microsoft.VCRedist.2012.x64`, `Microsoft.VCRedist.2013.x86`, `Microsoft.VCRedist.2013.x64`, `Microsoft.VCRedist.2015+.x86`, `Microsoft.VCRedist.2015+.x64` |
-| Visual Studio 2022 | Development | Automatic | `Microsoft.VisualStudio.2022.Community` |
-| Visual Studio 2026 | Development | Automatic | `Microsoft.VisualStudio.Community` |
-| Visual Studio Code | Development | Automatic | `Microsoft.VisualStudioCode` |
-| Vivaldi | Browsers | Automatic | `Vivaldi.Vivaldi` |
-| VLC | Audio & Video | Automatic | `VideoLAN.VLC` |
-| VSCodium | Development | Automatic | `VSCodium.VSCodium` |
-| Waterfox | Browsers | Automatic | `Waterfox.Waterfox` |
-| WhatsApp Desktop | Communication | Guided | [Official page](https://apps.microsoft.com/detail/9NKSQGP7F2NH) |
-| Windows Terminal | Development | Automatic | `Microsoft.WindowsTerminal` |
-| WinRAR | System | Automatic | `RARLab.WinRAR` |
-| WinSCP | Files | Automatic | `WinSCP.WinSCP` |
-| WireGuard | Internet | Automatic | `WireGuard.WireGuard` |
-| Wireshark | Internet | Automatic | `WiresharkFoundation.Wireshark` |
-| Wise Program Uninstaller (WiseCleaner) | System | Automatic | `WiseCleaner.WiseProgramUninstaller` |
-| WizTree | System | Automatic | `AntibodySoftware.WizTree` |
-| Xournal++ | Productivity | Automatic | `Xournal++.Xournal++` |
-| Yarn | Development | Guided | [Official page](https://yarnpkg.com/) |
-| Zed | Development | Guided | [Official page](https://zed.dev/) |
-| Zen Browser | Browsers | Automatic | `Zen-Team.Zen-Browser` |
-| Zoom | Communication | Guided | [Official page](https://zoom.us/) |
-| Zotero | Productivity | Automatic | `DigitalScholar.Zotero` |
+Four expandable groups organize 24 task categories. Multi-purpose apps appear in meaningful secondary categories using the same selection and installer. [Review and boundaries](CATEGORY-REVIEW.md) · [Coverage comparison](CATEGORY-COVERAGE.csv).
+
+| Application | Group / primary category | Also appears in | Method | Package ID / download |
+|---|---|---|---|---|
+| .NET Desktop Runtime 10 | PC & Tools / Runtimes | — | Automatic | `Microsoft.DotNet.DesktopRuntime.10` |
+| .NET Desktop Runtime 6 | PC & Tools / Runtimes | — | Automatic | `Microsoft.DotNet.DesktopRuntime.6` |
+| .NET Desktop Runtime 8 | PC & Tools / Runtimes | — | Automatic | `Microsoft.DotNet.DesktopRuntime.8` |
+| .NET Desktop Runtime 9 | PC & Tools / Runtimes | — | Automatic | `Microsoft.DotNet.DesktopRuntime.9` |
+| 1Password | Files & Storage / Security & Privacy | — | Automatic | `AgileBits.1Password` |
+| 7-Zip | Files & Storage / Files & Downloads | — | Automatic | `7zip.7zip` |
+| Adobe Acrobat Reader | Everyday / Office & PDFs | — | Automatic | `Adobe.Acrobat.Reader.64-bit` |
+| Adobe Creative Cloud | Create / Design & Photography | Video Editing, Audio Production | Guided | [Official page](https://creativecloud.adobe.com/apps/download/creative-cloud) |
+| Advanced IP Scanner | PC & Tools / Network Tools | — | Automatic | `Famatech.AdvancedIPScanner` |
+| Affinity | Create / Design & Photography | — | Guided | [Official page](https://www.affinity.studio/get-affinity) |
+| AIMP (Music Player) | Everyday / Media Players | — | Automatic | `AIMP.AIMP` |
+| Amazon Corretto 21 (LTS) | PC & Tools / Development | — | Automatic | `Amazon.Corretto.21.JDK` |
+| Amazon Corretto 25 (LTS) | PC & Tools / Development | — | Automatic | `Amazon.Corretto.25.JDK` |
+| Amazon Corretto 8 (LTS) | PC & Tools / Development | — | Automatic | `Amazon.Corretto.8.JDK` |
+| AMD Driver | PC & Tools / Hardware & Drivers | — | Guided | [Official page](https://www.amd.com/en/support/download/drivers.html) |
+| Android Studio | PC & Tools / Development | — | Automatic | `Google.AndroidStudio` |
+| Angry IP Scanner | PC & Tools / Network Tools | — | Automatic | `angryziber.AngryIPScanner` |
+| AnyDesk | PC & Tools / Remote Access | — | Automatic | `AnyDesk.AnyDesk` |
+| Apple Music | Everyday / Media Players | — | Guided | [Official page](https://apps.microsoft.com/detail/9pfhdd62mxs1) |
+| Arduino IDE | PC & Tools / Development | — | Guided | [Official page](https://www.arduino.cc/en/software) |
+| Audacity | Create / Audio Production | — | Automatic | `Audacity.Audacity` |
+| Autodesk Fusion | Create / 3D & CAD | — | Guided | [Official page](https://www.autodesk.com/products/fusion-360/overview) |
+| AutoHotkey | PC & Tools / Windows Utilities | — | Automatic | `AutoHotkey.AutoHotkey` |
+| Autoruns | PC & Tools / Windows Utilities | — | Automatic | `Microsoft.Sysinternals.Autoruns` |
+| Bambu Studio | Create / 3D & CAD | — | Automatic | `Bambulab.Bambustudio` |
+| Battle.net | Everyday / Gaming | — | Automatic | `Blizzard.BattleNet` |
+| BCUninstaller | PC & Tools / Windows Utilities | — | Automatic | `Klocman.BulkCrapUninstaller` |
+| Beeper | Everyday / Chat & Email | — | Automatic | `Beeper.Beeper` |
+| Betterbird | Everyday / Chat & Email | — | Automatic | `Betterbird.Betterbird` |
+| Bitwarden | Files & Storage / Security & Privacy | — | Automatic | `Bitwarden.Bitwarden` |
+| Blender | Create / 3D & CAD | Video Editing | Automatic | `BlenderFoundation.Blender` |
+| Blip | Files & Storage / Files & Downloads | — | Guided | [Official page](https://blip.net/) |
+| BlurAutoClicker | PC & Tools / Windows Utilities | — | Automatic | `Blur009.BlurAutoClicker` |
+| Brave | Everyday / Browsers | — | Automatic | `Brave.Brave` |
+| Bruno | PC & Tools / Development | — | Automatic | `Bruno.Bruno` |
+| Bulk Rename Utility | Files & Storage / Files & Downloads | — | Automatic | `TGRMNSoftware.BulkRenameUtility` |
+| Calibre | Everyday / Office & PDFs | — | Automatic | `calibre.calibre` |
+| Canva | Create / Design & Photography | Video Editing | Automatic | `Canva.Canva` |
+| Cemu | Everyday / Gaming | — | Automatic | `Cemu.Cemu` |
+| ChatGPT Desktop | Everyday / AI Tools | — | Guided | [Official page](https://apps.microsoft.com/detail/9NT1R1C2HH7J) |
+| Chatterino | Everyday / Chat & Email | — | Automatic | `ChatterinoTeam.Chatterino` |
+| Chrome | Everyday / Browsers | — | Automatic | `Google.Chrome` |
+| Chromium | Everyday / Browsers | — | Automatic | `Hibbiki.Chromium` |
+| Cinebench R23 | PC & Tools / Hardware & Drivers | — | Automatic | `Maxon.CinebenchR23` |
+| Claude Code | PC & Tools / Development | — | Automatic | `Anthropic.ClaudeCode` |
+| Claude Desktop | Everyday / AI Tools | — | Automatic | `Anthropic.Claude` |
+| Cloudflare WARP | Files & Storage / Security & Privacy | — | Automatic | `Cloudflare.Warp` |
+| CMake | PC & Tools / Development | — | Automatic | `Kitware.CMake` |
+| Codex | PC & Tools / Development | — | Automatic | `OpenAI.Codex` |
+| ComfyUI Desktop | Everyday / AI Tools | Design & Photography | Automatic | `Comfy.ComfyUI-Desktop` |
+| Corsair iCUE | PC & Tools / Hardware & Drivers | — | Guided | [Official page](https://www.corsair.com/us/en/s/downloads) |
+| CPU-Z | PC & Tools / Hardware & Drivers | — | Automatic | `CPUID.CPU-Z` |
+| Cryptomator | Files & Storage / Security & Privacy | — | Automatic | `Cryptomator.Cryptomator` |
+| CrystalDiskInfo | PC & Tools / Hardware & Drivers | — | Automatic | `CrystalDewWorld.CrystalDiskInfo` |
+| CrystalDiskMark | PC & Tools / Hardware & Drivers | — | Automatic | `CrystalDewWorld.CrystalDiskMark` |
+| Cursor | PC & Tools / Development | — | Automatic | `Anysphere.Cursor` |
+| Cyberduck | Files & Storage / Files & Downloads | — | Guided | [Official page](https://cyberduck.io/download/) |
+| darktable | Create / Design & Photography | — | Automatic | `darktable.darktable` |
+| DaVinci Resolve | Create / Video Editing | — | Guided | [Official page](https://www.blackmagicdesign.com/products/davinciresolve) |
+| DBeaver | PC & Tools / Development | — | Automatic | `DBeaver.DBeaver.Community` |
+| Deluge | Files & Storage / Files & Downloads | — | Automatic | `DelugeTeam.Deluge` |
+| Deskflow | PC & Tools / Remote Access | — | Automatic | `Deskflow.Deskflow` |
+| DirectX | PC & Tools / Runtimes | — | Automatic | `Microsoft.DirectX` |
+| Discord | Everyday / Chat & Email | — | Automatic | `Discord.Discord` |
+| DISMTools | PC & Tools / Windows Utilities | — | Automatic | `CodingWondersSoftware.DISMTools.Stable` |
+| Display Driver Uninstaller | PC & Tools / Hardware & Drivers | — | Automatic | `Wagnardsoft.DisplayDriverUninstaller` |
+| Ditto | PC & Tools / Windows Utilities | — | Automatic | `Ditto.Ditto` |
+| Docker Desktop | PC & Tools / Development | — | Automatic | `Docker.DockerDesktop` |
+| Dorion | Everyday / Chat & Email | — | Automatic | `SpikeHD.Dorion` |
+| Double Commander | Files & Storage / Files & Downloads | — | Automatic | `alexx2000.DoubleCommander` |
+| draw.io | Everyday / Office & PDFs | — | Automatic | `JGraph.Draw` |
+| Dropbox | Files & Storage / Cloud & Backup | — | Automatic | `Dropbox.Dropbox` |
+| EA App | Everyday / Gaming | — | Automatic | `ElectronicArts.EADesktop` |
+| EarTrumpet | PC & Tools / Audio Controls | — | Automatic | `File-New-Project.EarTrumpet` |
+| Eclipse | PC & Tools / Development | — | Guided | [Official page](https://www.eclipse.org/downloads/) |
+| Edge | Everyday / Browsers | — | Automatic | `Microsoft.Edge` |
+| Element | Everyday / Chat & Email | — | Automatic | `Element.Element` |
+| eM Client | Everyday / Chat & Email | — | Automatic | `eMClient.eMClient` |
+| EmulationStation Desktop Edition | Everyday / Gaming | — | Automatic | `ES-DE.EmulationStation-DE` |
+| Ente Auth | Files & Storage / Security & Privacy | — | Automatic | `ente-io.auth-desktop` |
+| Epic Games Launcher | Everyday / Gaming | — | Automatic | `EpicGames.EpicGamesLauncher` |
+| Equalizer APO | PC & Tools / Audio Controls | — | Guided | [Official page](https://sourceforge.net/projects/equalizerapo/) |
+| Evernote | Everyday / Notes & Tasks | — | Automatic | `Evernote.Evernote` |
+| Everything | Files & Storage / Files & Downloads | — | Automatic | `voidtools.Everything` |
+| F.lux | PC & Tools / Windows Utilities | — | Automatic | `flux.flux` |
+| Fast Node Manager | PC & Tools / Development | — | Automatic | `Schniz.fnm` |
+| FastStone Image Viewer | Everyday / Photo Viewers | — | Automatic | `FastStone.Viewer` |
+| FFmpeg | Create / Video Editing | Audio Production | Automatic | `Gyan.FFmpeg` |
+| Figma | Create / Design & Photography | — | Automatic | `Figma.Figma` |
+| File Converter | Files & Storage / Files & Downloads | Video Editing | Automatic | `AdrienAllard.FileConverter` |
+| Files | Files & Storage / Files & Downloads | — | Automatic | `FilesCommunity.Files` |
+| FileZilla | Files & Storage / Files & Downloads | — | Guided | [Official page](https://filezilla-project.org/download.php?type=client) |
+| Firefox | Everyday / Browsers | — | Automatic | `Mozilla.Firefox` |
+| Firefox ESR | Everyday / Browsers | — | Automatic | `Mozilla.Firefox.ESR` |
+| FL Studio | Create / Audio Production | — | Guided | [Official page](https://www.image-line.com/fl-studio/download) |
+| Floorp | Everyday / Browsers | — | Automatic | `Ablaze.Floorp` |
+| foobar2000 | Everyday / Media Players | — | Automatic | `PeterPawlowski.foobar2000` |
+| Foxit PDF Reader | Everyday / Office & PDFs | — | Automatic | `Foxit.FoxitReader` |
+| Free Download Manager | Files & Storage / Files & Downloads | — | Automatic | `SoftDeluxe.FreeDownloadManager` |
+| FreeCAD | Create / 3D & CAD | — | Automatic | `FreeCAD.FreeCAD` |
+| FreeFileSync | Files & Storage / Cloud & Backup | — | Guided | [Official page](https://freefilesync.org/download.php) |
+| GeForce NOW | Everyday / Gaming | — | Automatic | `Nvidia.GeForceNow` |
+| GIMP | Create / Design & Photography | — | Automatic | `GIMP.GIMP.3` |
+| Git | PC & Tools / Development | — | Automatic | `Git.Git` |
+| Git Extensions | PC & Tools / Development | — | Automatic | `GitExtensionsTeam.GitExtensions` |
+| GitHub CLI | PC & Tools / Development | — | Automatic | `GitHub.cli` |
+| GitHub Desktop | PC & Tools / Development | — | Automatic | `GitHub.GitHubDesktop` |
+| GlazeWM | PC & Tools / Windows Utilities | — | Automatic | `glzr-io.glazewm` |
+| Go | PC & Tools / Development | — | Automatic | `GoLang.Go` |
+| Godot | PC & Tools / Development | — | Automatic | `GodotEngine.GodotEngine` |
+| GOG Galaxy | Everyday / Gaming | — | Automatic | `GOG.Galaxy` |
+| Google Drive | Files & Storage / Cloud & Backup | — | Automatic | `Google.GoogleDrive` |
+| GPU-Z | PC & Tools / Hardware & Drivers | — | Automatic | `TechPowerUp.GPU-Z` |
+| Grammarly | Everyday / Office & PDFs | — | Automatic | `Grammarly.Grammarly` |
+| Greenshot | Create / Capture & Streaming | — | Automatic | `Greenshot.Greenshot` |
+| gsudo | PC & Tools / Windows Utilities | — | Automatic | `gerardog.gsudo` |
+| HandBrake | Create / Video Editing | — | Automatic | `HandBrake.HandBrake` |
+| HeidiSQL | PC & Tools / Development | — | Guided | [Official page](https://www.heidisql.com/download.php) |
+| Helium | Everyday / Browsers | — | Automatic | `ImputNet.Helium` |
+| Heroic Games Launcher | Everyday / Gaming | — | Automatic | `HeroicGamesLauncher.HeroicGamesLauncher` |
+| Hugo | PC & Tools / Development | — | Automatic | `Hugo.Hugo.Extended` |
+| HWiNFO | PC & Tools / Hardware & Drivers | — | Automatic | `REALiX.HWiNFO` |
+| HWMonitor | PC & Tools / Hardware & Drivers | — | Automatic | `CPUID.HWMonitor` |
+| HxD Hex Editor | PC & Tools / Development | — | Automatic | `MHNexus.HxD` |
+| ImageGlass | Everyday / Photo Viewers | — | Automatic | `DuongDieuPhap.ImageGlass` |
+| Inkscape | Create / Design & Photography | — | Automatic | `Inkscape.Inkscape` |
+| IntelliJ IDEA | PC & Tools / Development | — | Automatic | `JetBrains.IntelliJIDEA` |
+| Internet Download Manager | Files & Storage / Files & Downloads | — | Automatic | `Tonec.InternetDownloadManager` |
+| IrfanView | Everyday / Photo Viewers | — | Automatic | `IrfanSkiljan.IrfanView` |
+| Itch.io | Everyday / Gaming | — | Automatic | `ItchIo.Itch` |
+| iTunes | Everyday / Media Players | — | Automatic | `Apple.iTunes` |
+| Jellyfin Media Player | Everyday / Media Players | — | Automatic | `Jellyfin.JellyfinMediaPlayer` |
+| Jellyfin Server | Files & Storage / Media Servers | — | Automatic | `Jellyfin.Server` |
+| Jetbrains Toolbox | PC & Tools / Development | — | Automatic | `JetBrains.Toolbox` |
+| Joplin | Everyday / Notes & Tasks | — | Automatic | `Joplin.Joplin` |
+| JPEG View | Everyday / Photo Viewers | — | Automatic | `sylikc.JPEGView` |
+| K-Lite Codec Pack | PC & Tools / Runtimes | Media Players | Automatic | `CodecGuide.K-LiteCodecPack.Standard` |
+| Kdenlive | Create / Video Editing | — | Automatic | `KDE.Kdenlive` |
+| KeePass | Files & Storage / Security & Privacy | — | Automatic | `DominikReichl.KeePass` |
+| KeePassXC | Files & Storage / Security & Privacy | — | Automatic | `KeePassXCTeam.KeePassXC` |
+| Kodi | Everyday / Media Players | — | Automatic | `XBMCFoundation.Kodi` |
+| Krita | Create / Design & Photography | — | Automatic | `KDE.Krita` |
+| Lazygit | PC & Tools / Development | — | Automatic | `JesseDuffield.lazygit` |
+| League of Legends | Everyday / Gaming | — | Guided | [Official page](https://www.leagueoflegends.com/en-gb/download/) |
+| LibreOffice | Everyday / Office & PDFs | — | Automatic | `TheDocumentFoundation.LibreOffice` |
+| LibreWolf | Everyday / Browsers | — | Automatic | `LibreWolf.LibreWolf` |
+| Lightshot | Create / Capture & Streaming | — | Guided | [Official page](https://app.prntscr.com/en/download.html) |
+| LocalSend | Files & Storage / Files & Downloads | — | Automatic | `LocalSend.LocalSend` |
+| Logi Options+ | PC & Tools / Hardware & Drivers | — | Guided | [Official page](https://www.logitech.com/en-us/software/logi-options-plus.html) |
+| Logitech G HUB | PC & Tools / Hardware & Drivers | — | Guided | [Official page](https://www.logitechg.com/en-us/innovation/g-hub.html) |
+| LosslessCut | Create / Video Editing | — | Guided | [Official page](https://github.com/mifi/lossless-cut/releases) |
+| Lua | PC & Tools / Development | — | Automatic | `rjpcomputing.luaforwindows` |
+| Malwarebytes | Files & Storage / Security & Privacy | — | Automatic | `Malwarebytes.Malwarebytes` |
+| MediaMonkey | Everyday / Media Players | — | Guided | [Official page](https://www.mediamonkey.com/download) |
+| MEGAsync | Files & Storage / Cloud & Backup | — | Automatic | `Mega.MEGASync` |
+| Mendeley Reference Manager | Everyday / Office & PDFs | — | Guided | [Official page](https://www.mendeley.com/download-reference-manager/windows) |
+| Microsoft 365 | Everyday / Office & PDFs | — | Guided | [Official page](https://support.microsoft.com/en-us/office/lifecycle/officeinstall/download-install-or-reinstall-microsoft-365-or-office-2024-on-a-pc-or-mac) |
+| Microsoft To Do | Everyday / Notes & Tasks | — | Guided | [Official page](https://to-do.microsoft.com/tasks/) |
+| MiniTool Partition Wizard | PC & Tools / Windows Utilities | — | Automatic | `MiniTool.PartitionWizard.Free` |
+| MobaXterm | PC & Tools / Network Tools | — | Automatic | `Mobatek.MobaXterm` |
+| Modrinth App | Everyday / Gaming | — | Automatic | `Modrinth.ModrinthApp` |
+| Moonlight | Everyday / Gaming | Remote Access | Automatic | `MoonlightGameStreamingProject.Moonlight` |
+| MPC-HC | Everyday / Media Players | — | Automatic | `clsid2.mpc-hc` |
+| mpc-qt | Everyday / Media Players | — | Automatic | `mpc-qt.mpc-qt` |
+| mpv | Everyday / Media Players | — | Automatic | `shinchiro.mpv` |
+| MSEdgeRedirect | PC & Tools / Windows Utilities | — | Automatic | `rcmaehl.MSEdgeRedirect` |
+| MSI Afterburner | PC & Tools / Hardware & Drivers | — | Automatic | `Guru3D.Afterburner` |
+| Mullvad Browser | Everyday / Browsers | — | Automatic | `MullvadVPN.MullvadBrowser` |
+| Mullvad VPN | Files & Storage / Security & Privacy | — | Automatic | `MullvadVPN.MullvadVPN` |
+| Mumble | Everyday / Chat & Email | — | Guided | [Official page](https://www.mumble.info/downloads/) |
+| MuseScore Studio | Create / Audio Production | — | Guided | [Official page](https://musescore.org/en/download) |
+| MusicBee | Everyday / Media Players | — | Guided | [Official page](https://getmusicbee.com/downloads/) |
+| MySQL Workbench | PC & Tools / Development | — | Guided | [Official page](https://dev.mysql.com/downloads/workbench/) |
+| NanaZip | Files & Storage / Files & Downloads | — | Automatic | `M2Team.NanaZip` |
+| NAPS2 | Everyday / Office & PDFs | — | Automatic | `Cyanfish.NAPS2` |
+| Neovim | PC & Tools / Development | — | Automatic | `Neovim.Neovim` |
+| NetBird | PC & Tools / Network Tools | — | Automatic | `Netbird.Netbird` |
+| Nextcloud Desktop | Files & Storage / Cloud & Backup | — | Automatic | `Nextcloud.NextcloudDesktop` |
+| Nilesoft Shell | PC & Tools / Windows Utilities | — | Automatic | `Nilesoft.Shell` |
+| Nmap | PC & Tools / Network Tools | — | Automatic | `Insecure.Nmap` |
+| Node.js LTS | PC & Tools / Development | — | Automatic | `OpenJS.NodeJS.LTS` |
+| NodeJS | PC & Tools / Development | — | Automatic | `OpenJS.NodeJS` |
+| nomacs | Everyday / Photo Viewers | — | Automatic | `nomacs.nomacs` |
+| Notepad++ | PC & Tools / Development | — | Automatic | `Notepad++.Notepad++` |
+| Notion | Everyday / Notes & Tasks | — | Automatic | `Notion.Notion` |
+| NTLite | PC & Tools / Windows Utilities | — | Automatic | `Nlitesoft.NTLite` |
+| NuGet | PC & Tools / Development | — | Automatic | `Microsoft.NuGet` |
+| NVCleanstall | PC & Tools / Hardware & Drivers | — | Automatic | `TechPowerUp.NVCleanstall` |
+| NVIDIA Drivers | PC & Tools / Hardware & Drivers | — | Guided | [Official page](https://www.nvidia.com/en-us/drivers/) |
+| OBS Studio | Create / Capture & Streaming | — | Automatic | `OBSProject.OBSStudio` |
+| Obsidian | Everyday / Notes & Tasks | — | Automatic | `Obsidian.Obsidian` |
+| OFGB (Oh Frick Go Back) | PC & Tools / Windows Utilities | — | Automatic | `xM4ddy.OFGB` |
+| Oh My Posh (Prompt) | PC & Tools / Development | — | Automatic | `JanDeDobbeleer.OhMyPosh` |
+| Okular | Everyday / Office & PDFs | — | Automatic | `KDE.Okular` |
+| OneDrive | Files & Storage / Cloud & Backup | — | Automatic | `Microsoft.OneDrive` |
+| OneNote | Everyday / Notes & Tasks | — | Guided | [Official page](https://www.onenote.com/download) |
+| ONLYOFFICE Desktop | Everyday / Office & PDFs | — | Automatic | `ONLYOFFICE.DesktopEditors` |
+| OPAutoClicker | PC & Tools / Windows Utilities | — | Automatic | `OPAutoClicker.OPAutoClicker` |
+| OpenRGB | PC & Tools / Hardware & Drivers | — | Automatic | `OpenRGB.OpenRGB` |
+| OpenShot | Create / Video Editing | — | Automatic | `OpenShot.OpenShot` |
+| OpenVPN Connect | PC & Tools / Network Tools | Security & Privacy | Automatic | `OpenVPNTechnologies.OpenVPNConnect` |
+| Opera | Everyday / Browsers | — | Automatic | `Opera.Opera` |
+| Oracle VirtualBox | PC & Tools / Windows Utilities | — | Automatic | `Oracle.VirtualBox` |
+| Outlook for Windows | Everyday / Chat & Email | — | Guided | [Official page](https://www.microsoft.com/en-us/microsoft-365/outlook/outlook-for-windows) |
+| Overwolf | Everyday / Gaming | — | Automatic | `Overwolf.CurseForge` |
+| Paint.NET | Create / Design & Photography | — | Automatic | `dotPDN.PaintDotNet` |
+| Parsec | PC & Tools / Remote Access | Gaming | Automatic | `Parsec.Parsec` |
+| PDF-XChange Editor | Everyday / Office & PDFs | — | Automatic | `TrackerSoftware.PDF-XChangeEditor` |
+| PDF24 Creator | Everyday / Office & PDFs | — | Automatic | `geeksoftwareGmbH.PDF24Creator` |
+| PDFgear | Everyday / Office & PDFs | — | Automatic | `PDFgear.PDFgear` |
+| PDFsam Basic | Everyday / Office & PDFs | — | Automatic | `PDFsam.PDFsam` |
+| Peace GUI | PC & Tools / Audio Controls | — | Guided | [Official page](https://sourceforge.net/projects/peace-equalizer-apo-extension/) |
+| PeaZip | Files & Storage / Files & Downloads | — | Automatic | `Giorgiotani.Peazip` |
+| Playnite | Everyday / Gaming | — | Automatic | `Playnite.Playnite` |
+| Plex Desktop | Everyday / Media Players | — | Automatic | `Plex.Plex` |
+| Plex Media Server | Files & Storage / Media Servers | — | Automatic | `Plex.PlexMediaServer` |
+| pnpm | PC & Tools / Development | — | Automatic | `pnpm.pnpm` |
+| Policy Plus | PC & Tools / Windows Utilities | — | Automatic | `Fleex255.PolicyPlus` |
+| Postman | PC & Tools / Development | — | Automatic | `Postman.Postman` |
+| PotPlayer | Everyday / Media Players | — | Automatic | `Daum.PotPlayer` |
+| PowerShell | PC & Tools / Development | — | Automatic | `Microsoft.PowerShell` |
+| PowerToys | PC & Tools / Windows Utilities | — | Automatic | `Microsoft.PowerToys` |
+| Prism Launcher | Everyday / Gaming | — | Automatic | `PrismLauncher.PrismLauncher` |
+| Process Explorer | PC & Tools / Windows Utilities | — | Automatic | `Microsoft.Sysinternals.ProcessExplorer` |
+| Process Lasso | PC & Tools / Windows Utilities | — | Automatic | `BitSum.ProcessLasso` |
+| Process Monitor | PC & Tools / Windows Utilities | — | Automatic | `Microsoft.Sysinternals.ProcessMonitor` |
+| Proton Authenticator | Files & Storage / Security & Privacy | — | Automatic | `Proton.ProtonAuthenticator` |
+| Proton Drive | Files & Storage / Cloud & Backup | — | Automatic | `Proton.ProtonDrive` |
+| Proton Mail | Everyday / Chat & Email | — | Automatic | `Proton.ProtonMail` |
+| Proton Pass | Files & Storage / Security & Privacy | — | Automatic | `Proton.ProtonPass` |
+| Proton VPN | Files & Storage / Security & Privacy | — | Automatic | `Proton.ProtonVPN` |
+| PuTTY | PC & Tools / Network Tools | — | Automatic | `PuTTY.PuTTY` |
+| PyCharm | PC & Tools / Development | — | Automatic | `JetBrains.PyCharm` |
+| Python 3.14 | PC & Tools / Development | — | Automatic | `Python.Python.3.14` |
+| qBittorrent | Files & Storage / Files & Downloads | — | Automatic | `qBittorrent.qBittorrent` |
+| QOwnNotes | Everyday / Notes & Tasks | — | Automatic | `pbek.QOwnNotes` |
+| QTox | Everyday / Chat & Email | — | Automatic | `Tox.qTox` |
+| RawTherapee | Create / Design & Photography | — | Automatic | `RawTherapee.RawTherapee` |
+| Razer Synapse | PC & Tools / Hardware & Drivers | — | Guided | [Official page](https://www.razer.com/synapse-4) |
+| RDCMan | PC & Tools / Remote Access | — | Automatic | `Microsoft.Sysinternals.RDCMan` |
+| REAPER | Create / Audio Production | — | Automatic | `Cockos.REAPER` |
+| Revo Uninstaller | PC & Tools / Windows Utilities | — | Automatic | `RevoUninstaller.RevoUninstaller` |
+| Roblox | Everyday / Gaming | — | Automatic | `Roblox.Roblox` |
+| Ruby | PC & Tools / Development | — | Automatic | `RubyInstallerTeam.Ruby.4.0` |
+| Rufus | PC & Tools / Windows Utilities | — | Automatic | `Rufus.Rufus` |
+| Rust | PC & Tools / Development | — | Automatic | `Rustlang.Rust.MSVC` |
+| RustDesk | PC & Tools / Remote Access | — | Guided | [Official page](https://rustdesk.com/) |
+| ShareX | Create / Capture & Streaming | — | Automatic | `ShareX.ShareX` |
+| Shotcut | Create / Video Editing | — | Automatic | `Meltytech.Shotcut` |
+| Signal | Everyday / Chat & Email | — | Automatic | `OpenWhisperSystems.Signal` |
+| SignalRGB | PC & Tools / Hardware & Drivers | — | Automatic | `WhirlwindFX.SignalRgb` |
+| Simplenote | Everyday / Notes & Tasks | — | Automatic | `Automattic.Simplenote` |
+| Simplewall | Files & Storage / Security & Privacy | — | Automatic | `Henry++.simplewall` |
+| SketchUp | Create / 3D & CAD | — | Guided | [Official page](https://www.sketchup.com/en/download/all) |
+| Slack | Everyday / Chat & Email | — | Automatic | `SlackTechnologies.Slack` |
+| Snappy Driver Installer Origin | PC & Tools / Hardware & Drivers | — | Automatic | `GlennDelahoy.SnappyDriverInstallerOrigin` |
+| Spotify | Everyday / Media Players | — | Automatic | `Spotify.Spotify` |
+| SQL Server Management Studio | PC & Tools / Development | — | Guided | [Official page](https://learn.microsoft.com/en-us/ssms/install/install) |
+| SSL Driver | PC & Tools / Hardware & Drivers | — | Guided | [Official page](https://solidstatelogic.com/support-page/downloads) |
+| Starship (Shell Prompt) | PC & Tools / Development | — | Automatic | `Starship.Starship` |
+| StartAllBack | PC & Tools / Windows Utilities | — | Automatic | `StartIsBack.StartAllBack` |
+| Steam | Everyday / Gaming | — | Automatic | `Valve.Steam` |
+| Sublime Text | PC & Tools / Development | — | Automatic | `SublimeHQ.SublimeText.4` |
+| Sumatra PDF | Everyday / Office & PDFs | — | Automatic | `SumatraPDF.SumatraPDF` |
+| Sunshine | Everyday / Gaming | Remote Access | Automatic | `LizardByte.Sunshine` |
+| SyncBackFree | Files & Storage / Cloud & Backup | — | Guided | [Official page](https://www.2brightsparks.com/freeware/freeware-hub.html) |
+| Syncthing | Files & Storage / Cloud & Backup | — | Automatic | `Syncthing.Syncthing` |
+| System Informer | PC & Tools / Windows Utilities | — | Automatic | `WinsiderSS.SystemInformer` |
+| Tailscale | PC & Tools / Network Tools | — | Automatic | `Tailscale.Tailscale` |
+| TCPView | PC & Tools / Network Tools | — | Automatic | `Microsoft.Sysinternals.TCPView` |
+| Teams | Everyday / Chat & Email | — | Automatic | `Microsoft.Teams` |
+| TeamSpeak 3 | Everyday / Chat & Email | — | Automatic | `TeamSpeakSystems.TeamSpeakClient` |
+| TeamSpeak 6 | Everyday / Chat & Email | — | Automatic | `TeamSpeakSystems.TeamSpeakClient.Beta.6` |
+| TeamViewer | PC & Tools / Remote Access | — | Automatic | `TeamViewer.TeamViewer` |
+| Telegram Desktop | Everyday / Chat & Email | — | Automatic | `Telegram.TelegramDesktop` |
+| TeraCopy | Files & Storage / Files & Downloads | — | Automatic | `CodeSector.TeraCopy` |
+| Thunderbird | Everyday / Chat & Email | — | Automatic | `Mozilla.Thunderbird` |
+| TickTick | Everyday / Notes & Tasks | — | Automatic | `Appest.TickTick` |
+| TightVNC | PC & Tools / Remote Access | — | Automatic | `GlavSoft.TightVNC` |
+| Todoist | Everyday / Notes & Tasks | — | Automatic | `Doist.Todoist` |
+| Tor Browser | Everyday / Browsers | — | Automatic | `TorProject.TorBrowser` |
+| Total Commander | Files & Storage / Files & Downloads | — | Automatic | `Ghisler.TotalCommander` |
+| TranslucentTB | PC & Tools / Windows Utilities | — | Automatic | `CharlesMilette.TranslucentTB` |
+| TreeSize Free | Files & Storage / Files & Downloads | — | Automatic | `JAMSoftware.TreeSize.Free` |
+| UAD / UA Connect | PC & Tools / Hardware & Drivers | — | Guided | [Official page](https://www.uaudio.com/downloads.html) |
+| Ubisoft Connect | Everyday / Gaming | — | Automatic | `Ubisoft.Connect` |
+| UltiMaker Cura | Create / 3D & CAD | — | Automatic | `Ultimaker.Cura` |
+| Ungoogled Chromium | Everyday / Browsers | — | Automatic | `eloston.ungoogled-chromium` |
+| UniGetUI | PC & Tools / Windows Utilities | — | Automatic | `Devolutions.UniGetUI` |
+| Unity Game Engine | PC & Tools / Development | — | Guided | [Official page](https://unity.com/) |
+| uv | PC & Tools / Development | — | Automatic | `astral-sh.uv` |
+| Vagrant | PC & Tools / Development | — | Automatic | `Hashicorp.Vagrant` |
+| Valorant | Everyday / Gaming | — | Guided | [Official page](https://playvalorant.com/en-gb/download/) |
+| Ventoy | PC & Tools / Windows Utilities | — | Automatic | `Ventoy.Ventoy` |
+| VeraCrypt | Files & Storage / Security & Privacy | — | Automatic | `IDRIX.VeraCrypt` |
+| Vesktop | Everyday / Chat & Email | — | Automatic | `Vencord.Vesktop` |
+| Viber | Everyday / Chat & Email | — | Automatic | `Rakuten.Viber` |
+| Virtual Desktop Streamer | Everyday / Gaming | — | Automatic | `VirtualDesktop.Streamer` |
+| Visual C++ (2005-2022, x86 + x64) | PC & Tools / Runtimes | — | Automatic | `Microsoft.VCRedist.2005.x86`, `Microsoft.VCRedist.2005.x64`, `Microsoft.VCRedist.2008.x86`, `Microsoft.VCRedist.2008.x64`, `Microsoft.VCRedist.2010.x86`, `Microsoft.VCRedist.2010.x64`, `Microsoft.VCRedist.2012.x86`, `Microsoft.VCRedist.2012.x64`, `Microsoft.VCRedist.2013.x86`, `Microsoft.VCRedist.2013.x64`, `Microsoft.VCRedist.2015+.x86`, `Microsoft.VCRedist.2015+.x64` |
+| Visual Studio 2022 | PC & Tools / Development | — | Automatic | `Microsoft.VisualStudio.2022.Community` |
+| Visual Studio 2026 | PC & Tools / Development | — | Automatic | `Microsoft.VisualStudio.Community` |
+| Visual Studio Code | PC & Tools / Development | — | Automatic | `Microsoft.VisualStudioCode` |
+| Vivaldi | Everyday / Browsers | — | Automatic | `Vivaldi.Vivaldi` |
+| VLC | Everyday / Media Players | — | Automatic | `VideoLAN.VLC` |
+| VSCodium | PC & Tools / Development | — | Automatic | `VSCodium.VSCodium` |
+| Waterfox | Everyday / Browsers | — | Automatic | `Waterfox.Waterfox` |
+| Webex | Everyday / Chat & Email | — | Automatic | `Cisco.Webex` |
+| WebStorm | PC & Tools / Development | — | Automatic | `JetBrains.WebStorm` |
+| WhatsApp Desktop | Everyday / Chat & Email | — | Guided | [Official page](https://apps.microsoft.com/detail/9NKSQGP7F2NH) |
+| Windows Terminal | PC & Tools / Development | — | Automatic | `Microsoft.WindowsTerminal` |
+| WinMerge | Files & Storage / Files & Downloads | — | Automatic | `WinMerge.WinMerge` |
+| WinRAR | Files & Storage / Files & Downloads | — | Automatic | `RARLab.WinRAR` |
+| WinSCP | Files & Storage / Files & Downloads | — | Automatic | `WinSCP.WinSCP` |
+| WireGuard | PC & Tools / Network Tools | Security & Privacy | Automatic | `WireGuard.WireGuard` |
+| Wireshark | PC & Tools / Network Tools | — | Automatic | `WiresharkFoundation.Wireshark` |
+| Wise Program Uninstaller (WiseCleaner) | PC & Tools / Windows Utilities | — | Automatic | `WiseCleaner.WiseProgramUninstaller` |
+| WizTree | Files & Storage / Files & Downloads | — | Automatic | `AntibodySoftware.WizTree` |
+| Xbox | Everyday / Gaming | — | Guided | [Official page](https://www.xbox.com/en-US/apps/xbox-app-for-pc) |
+| XnView MP | Everyday / Photo Viewers | — | Automatic | `XnSoft.XnViewMP` |
+| Xournal++ | Everyday / Notes & Tasks | — | Automatic | `Xournal++.Xournal++` |
+| Yarn | PC & Tools / Development | — | Guided | [Official page](https://yarnpkg.com/) |
+| Zed | PC & Tools / Development | — | Guided | [Official page](https://zed.dev/) |
+| Zen Browser | Everyday / Browsers | — | Automatic | `Zen-Team.Zen-Browser` |
+| Zoom | Everyday / Chat & Email | — | Guided | [Official page](https://zoom.us/) |
+| Zotero | Everyday / Office & PDFs | — | Automatic | `DigitalScholar.Zotero` |
 
 ## WinUtil coverage
 
 Snapshot checked: 2026-09-15. Missing entries: 0. Snapshot SHA-256: `ca8c6eb4156e8159b6c2cbea23a5208b1382b6989fdf5923e9aff4580813a0e1`.
 
-| WinUtil entry | First Install entry |
+| WinUtil entry | 1nstall entry |
 |---|---|
 | 1Password | 1Password |
 | 7-Zip | 7-Zip |

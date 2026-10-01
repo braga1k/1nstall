@@ -2,7 +2,7 @@
   {
     "Key": "winutil_dotnet10",
     "Name": ".NET Desktop Runtime 10",
-    "Category": "System",
+    "Category": "Runtimes",
     "Description": ".NET 10 desktop runtime for compatible Windows apps.",
     "Ids": [
       "Microsoft.DotNet.DesktopRuntime.10"
@@ -22,12 +22,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/m/Microsoft/DotNet/DesktopRuntime/10/10.0.12/Microsoft.DotNet.DesktopRuntime.10.locale.en-US.yaml",
     "License": "MIT",
     "VerifiedVersion": "10.0.12",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_dotnet6",
     "Name": ".NET Desktop Runtime 6",
-    "Category": "System",
+    "Category": "Runtimes",
     "Description": "Legacy .NET 6 runtime for applications that require it.",
     "Ids": [
       "Microsoft.DotNet.DesktopRuntime.6"
@@ -47,12 +49,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/m/Microsoft/DotNet/DesktopRuntime/6/6.0.36/Microsoft.DotNet.DesktopRuntime.6.locale.en-US.yaml",
     "License": "MIT",
     "VerifiedVersion": "6.0.36",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_dotnet8",
     "Name": ".NET Desktop Runtime 8",
-    "Category": "System",
+    "Category": "Runtimes",
     "Description": ".NET 8 desktop runtime for compatible Windows apps.",
     "Ids": [
       "Microsoft.DotNet.DesktopRuntime.8"
@@ -72,12 +76,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/m/Microsoft/DotNet/DesktopRuntime/8/8.0.31/Microsoft.DotNet.DesktopRuntime.8.locale.en-US.yaml",
     "License": "MIT",
     "VerifiedVersion": "8.0.31",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_dotnet9",
     "Name": ".NET Desktop Runtime 9",
-    "Category": "System",
+    "Category": "Runtimes",
     "Description": ".NET 9 desktop runtime for applications that require it.",
     "Ids": [
       "Microsoft.DotNet.DesktopRuntime.9"
@@ -97,12 +103,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/m/Microsoft/DotNet/DesktopRuntime/9/9.0.20/Microsoft.DotNet.DesktopRuntime.9.locale.en-US.yaml",
     "License": "MIT",
     "VerifiedVersion": "9.0.20",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_1password",
     "Name": "1Password",
-    "Category": "System",
+    "Category": "Security & Privacy",
     "Description": "Manage passwords, passkeys and secure notes.",
     "Ids": [
       "AgileBits.1Password"
@@ -122,12 +130,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/a/AgileBits/1Password/8.12.36.40/AgileBits.1Password.locale.en-US.yaml",
     "License": "Proprietary",
     "VerifiedVersion": "8.12.36.40",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Files & Storage",
+    "AlsoIn": []
   },
   {
     "Key": "extra_7zip",
     "Name": "7-Zip",
-    "Category": "Files",
+    "Category": "Files & Downloads",
     "Description": "Compress files and open common archive formats.",
     "Ids": [
       "7zip.7zip"
@@ -148,12 +158,14 @@
     "LicenseLabel": "Open source",
     "WinUtilKeys": [
       "7zip"
-    ]
+    ],
+    "CategoryGroup": "Files & Storage",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_adobe",
     "Name": "Adobe Acrobat Reader",
-    "Category": "Productivity",
+    "Category": "Office & PDFs",
     "Description": "Read, print and annotate PDF documents.",
     "Ids": [
       "Adobe.Acrobat.Reader.64-bit"
@@ -173,12 +185,40 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/a/Adobe/Acrobat/Reader/64-bit/26.002.21901/Adobe.Acrobat.Reader.64-bit.locale.en-US.yaml",
     "License": "Proprietary",
     "VerifiedVersion": "26.002.21901",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_adobe_creative_cloud",
+    "Name": "Adobe Creative Cloud",
+    "Category": "Design & Photography",
+    "Description": "Install Photoshop, Illustrator, Lightroom, Premiere Pro, After Effects, InDesign and Audition through your Adobe account.",
+    "Ids": [],
+    "Url": "https://creativecloud.adobe.com/apps/download/creative-cloud",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": false,
+    "LicenseLabel": "Check license",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://creativecloud.adobe.com/apps/download/creative-cloud",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "",
+    "License": "Proprietary",
+    "VerifiedVersion": "",
+    "Verification": "Official page identified; automated fetch blocked: The read operation timed out",
+    "CategoryGroup": "Create",
+    "AlsoIn": [
+      "Video Editing",
+      "Audio Production"
+    ]
   },
   {
     "Key": "winutil_advancedip",
     "Name": "Advanced IP Scanner",
-    "Category": "System",
+    "Category": "Network Tools",
     "Description": "Discover devices on your local network.",
     "Ids": [
       "Famatech.AdvancedIPScanner"
@@ -198,7 +238,9 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/f/Famatech/AdvancedIPScanner/2.5.4594.1/Famatech.AdvancedIPScanner.locale.en-US.yaml",
     "License": "Freeware",
     "VerifiedVersion": "2.5.4594.1",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "affinity",
@@ -216,12 +258,14 @@
     "Website": "https://www.affinity.studio/",
     "CatalogSource": "Official website",
     "VerifiedOn": "2026-09-15",
-    "Verification": "Official website"
+    "Verification": "Official website",
+    "CategoryGroup": "Create",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_aimp",
     "Name": "AIMP (Music Player)",
-    "Category": "Audio & Video",
+    "Category": "Media Players",
     "Description": "Play music and manage playlists.",
     "Ids": [
       "AIMP.AIMP"
@@ -241,7 +285,9 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/a/AIMP/AIMP/5.10.2418/AIMP.AIMP.locale.en-US.yaml",
     "License": "Proprietary",
     "VerifiedVersion": "5.10.2418",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_java21",
@@ -266,7 +312,9 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/a/Amazon/Corretto/21/JDK/21.0.12.9/Amazon.Corretto.21.JDK.locale.en-US.yaml",
     "License": "GPL-2.0 with Classpath Exception",
     "VerifiedVersion": "21.0.12.9",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_java25",
@@ -291,7 +339,9 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/a/Amazon/Corretto/25/JDK/25.0.4.8/Amazon.Corretto.25.JDK.locale.en-US.yaml",
     "License": "GPL-2.0 with Classpath Exception",
     "VerifiedVersion": "25.0.4.8",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_java8",
@@ -316,26 +366,55 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/a/Amazon/Corretto/8/JDK/1.8.0.504/Amazon.Corretto.8.JDK.locale.en-US.yaml",
     "License": "GPL-2.0 with Classpath Exception",
     "VerifiedVersion": "1.8.0.504",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Name": "AMD Driver",
     "Ids": [],
     "Url": "https://www.amd.com/en/support/download/drivers.html",
     "Key": "app6",
-    "Category": "Drivers",
+    "Category": "Hardware & Drivers",
     "Icon": "AM",
     "Description": "Find the right driver for your AMD graphics card.",
     "Requires": [],
     "OpenSource": null,
     "LicenseLabel": "",
     "GitHubStars": null,
-    "StarsCheckedOn": null
+    "StarsCheckedOn": null,
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_android_studio",
+    "Name": "Android Studio",
+    "Category": "Development",
+    "Description": "Develop and debug Android apps with the official IDE.",
+    "Ids": [
+      "Google.AndroidStudio"
+    ],
+    "Url": "",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": false,
+    "LicenseLabel": "Check license",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://developer.android.com/studio",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/g/Google/AndroidStudio/2026.1.4.7/Google.AndroidStudio.installer.yaml",
+    "License": "Android Software Development Kit License Agreement",
+    "VerifiedVersion": "2026.1.4.7",
+    "Verification": "WinGet manifest; installation untested",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_angryipscanner",
     "Name": "Angry IP Scanner",
-    "Category": "System",
+    "Category": "Network Tools",
     "Description": "Scan IP addresses and ports on networks you manage.",
     "Ids": [
       "angryziber.AngryIPScanner"
@@ -355,12 +434,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/a/angryziber/AngryIPScanner/3.10.0/angryziber.AngryIPScanner.locale.en-US.yaml",
     "License": "GPL-2.0",
     "VerifiedVersion": "3.10.0",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_anydesk",
     "Name": "AnyDesk",
-    "Category": "System",
+    "Category": "Remote Access",
     "Description": "Connect to remote desktops.",
     "Ids": [
       "AnyDesk.AnyDesk"
@@ -380,12 +461,60 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/a/AnyDesk/AnyDesk/9.7.15/AnyDesk.AnyDesk.locale.en-US.yaml",
     "License": "Proprietary",
     "VerifiedVersion": "9.7.15",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_apple_music",
+    "Name": "Apple Music",
+    "Category": "Media Players",
+    "Description": "Apple music library and subscription streaming on Windows.",
+    "Ids": [],
+    "Url": "https://apps.microsoft.com/detail/9pfhdd62mxs1",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": false,
+    "LicenseLabel": "Check license",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://apps.microsoft.com/detail/9pfhdd62mxs1",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "",
+    "License": "See publisher terms",
+    "VerifiedVersion": "",
+    "Verification": "Official page reachable",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_arduino_ide",
+    "Name": "Arduino IDE",
+    "Category": "Development",
+    "Description": "Write and upload programs to supported Arduino boards.",
+    "Ids": [],
+    "Url": "https://www.arduino.cc/en/software",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": false,
+    "LicenseLabel": "Check license",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://www.arduino.cc/en/software",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "",
+    "License": "See publisher terms",
+    "VerifiedVersion": "",
+    "Verification": "Official page reachable",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "extra_audacity",
     "Name": "Audacity",
-    "Category": "Audio & Video",
+    "Category": "Audio Production",
     "Description": "Record, edit and clean up audio tracks.",
     "Ids": [
       "Audacity.Audacity"
@@ -406,7 +535,9 @@
     "LicenseLabel": "Open source",
     "WinUtilKeys": [
       "audacity"
-    ]
+    ],
+    "CategoryGroup": "Create",
+    "AlsoIn": []
   },
   {
     "Key": "fusion",
@@ -420,12 +551,14 @@
     "OpenSource": null,
     "LicenseLabel": "",
     "GitHubStars": null,
-    "StarsCheckedOn": null
+    "StarsCheckedOn": null,
+    "CategoryGroup": "Create",
+    "AlsoIn": []
   },
   {
     "Key": "extra_autohotkey",
     "Name": "AutoHotkey",
-    "Category": "System",
+    "Category": "Windows Utilities",
     "Description": "Create keyboard shortcuts and desktop automations.",
     "Ids": [
       "AutoHotkey.AutoHotkey"
@@ -446,12 +579,14 @@
     "LicenseLabel": "Open source",
     "WinUtilKeys": [
       "autohotkey"
-    ]
+    ],
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_autoruns",
     "Name": "Autoruns",
-    "Category": "System",
+    "Category": "Windows Utilities",
     "Description": "Review programs configured to start with Windows.",
     "Ids": [
       "Microsoft.Sysinternals.Autoruns"
@@ -471,7 +606,9 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/m/Microsoft/Sysinternals/Autoruns/14.3/Microsoft.Sysinternals.Autoruns.locale.en-US.yaml",
     "License": "Proprietary",
     "VerifiedVersion": "14.3",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "bambu",
@@ -487,7 +624,9 @@
     "OpenSource": null,
     "LicenseLabel": "",
     "GitHubStars": null,
-    "StarsCheckedOn": null
+    "StarsCheckedOn": null,
+    "CategoryGroup": "Create",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_battlenet",
@@ -512,7 +651,9 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/b/Blizzard/BattleNet/1.19.3.3219/Blizzard.BattleNet.locale.en-US.yaml",
     "License": "Proprietary",
     "VerifiedVersion": "1.19.3.3219",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Name": "BCUninstaller",
@@ -521,7 +662,7 @@
     ],
     "Url": "",
     "Key": "app13",
-    "Category": "System",
+    "Category": "Windows Utilities",
     "Icon": "BC",
     "Description": "Uninstall programs and review leftover files.",
     "Requires": [],
@@ -531,7 +672,9 @@
     "StarsCheckedOn": null,
     "WinUtilKeys": [
       "bulkcrapuninstaller"
-    ]
+    ],
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Name": "Beeper",
@@ -540,19 +683,21 @@
     ],
     "Url": "",
     "Key": "app2",
-    "Category": "Communication",
+    "Category": "Chat & Email",
     "Icon": "BE",
     "Description": "Bring your messaging accounts together in one app.",
     "Requires": [],
     "OpenSource": null,
     "LicenseLabel": "",
     "GitHubStars": null,
-    "StarsCheckedOn": null
+    "StarsCheckedOn": null,
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_betterbird",
     "Name": "Betterbird",
-    "Category": "Communication",
+    "Category": "Chat & Email",
     "Description": "Manage email with a Thunderbird-based client.",
     "Ids": [
       "Betterbird.Betterbird"
@@ -572,12 +717,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/b/Betterbird/Betterbird/153.2.0/Betterbird.Betterbird.locale.en-US.yaml",
     "License": "MPL-2.0",
     "VerifiedVersion": "153.2.0",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "extra_bitwarden",
     "Name": "Bitwarden",
-    "Category": "Security",
+    "Category": "Security & Privacy",
     "Description": "Store passwords and sync them across your devices.",
     "Ids": [
       "Bitwarden.Bitwarden"
@@ -598,7 +745,9 @@
     "LicenseLabel": "Open core",
     "WinUtilKeys": [
       "bitwarden"
-    ]
+    ],
+    "CategoryGroup": "Files & Storage",
+    "AlsoIn": []
   },
   {
     "Key": "extra_blender",
@@ -624,12 +773,16 @@
     "LicenseLabel": "Open source",
     "WinUtilKeys": [
       "blender"
+    ],
+    "CategoryGroup": "Create",
+    "AlsoIn": [
+      "Video Editing"
     ]
   },
   {
     "Key": "blip",
     "Name": "Blip",
-    "Category": "Files",
+    "Category": "Files & Downloads",
     "Icon": "BL",
     "Description": "Send files between devices without compression.",
     "Ids": [],
@@ -638,12 +791,14 @@
     "OpenSource": null,
     "LicenseLabel": "",
     "GitHubStars": null,
-    "StarsCheckedOn": null
+    "StarsCheckedOn": null,
+    "CategoryGroup": "Files & Storage",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_blurautoclicker",
     "Name": "BlurAutoClicker",
-    "Category": "System",
+    "Category": "Windows Utilities",
     "Description": "Automate repeated mouse clicks.",
     "Ids": [
       "Blur009.BlurAutoClicker"
@@ -663,7 +818,9 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/b/Blur009/BlurAutoClicker/3.9.6/Blur009.BlurAutoClicker.locale.en-US.yaml",
     "License": "GPL-3.0",
     "VerifiedVersion": "3.9.6",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Name": "Brave",
@@ -682,7 +839,9 @@
     "StarsCheckedOn": null,
     "WinUtilKeys": [
       "brave"
-    ]
+    ],
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_bruno",
@@ -707,12 +866,39 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/b/Bruno/Bruno/4.1.0/Bruno.Bruno.locale.en-US.yaml",
     "License": "MIT",
     "VerifiedVersion": "4.1.0",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_bulk_rename_utility",
+    "Name": "Bulk Rename Utility",
+    "Category": "Files & Downloads",
+    "Description": "Rename groups of files with configurable rules.",
+    "Ids": [
+      "TGRMNSoftware.BulkRenameUtility"
+    ],
+    "Url": "",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": false,
+    "LicenseLabel": "Check license",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://www.bulkrenameutility.co.uk/",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/t/TGRMNSoftware/BulkRenameUtility/4.1.0.1/TGRMNSoftware.BulkRenameUtility.installer.yaml",
+    "License": "Proprietary",
+    "VerifiedVersion": "4.1.0.1",
+    "Verification": "WinGet manifest; installation untested",
+    "CategoryGroup": "Files & Storage",
+    "AlsoIn": []
   },
   {
     "Key": "extra_calibre",
     "Name": "Calibre",
-    "Category": "Productivity",
+    "Category": "Office & PDFs",
     "Description": "Organize, convert and read your ebook library.",
     "Ids": [
       "calibre.calibre"
@@ -733,6 +919,35 @@
     "LicenseLabel": "Open source",
     "WinUtilKeys": [
       "calibre"
+    ],
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_canva",
+    "Name": "Canva",
+    "Category": "Design & Photography",
+    "Description": "Create presentations, social graphics and other visual designs.",
+    "Ids": [
+      "Canva.Canva"
+    ],
+    "Url": "",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": false,
+    "LicenseLabel": "Check license",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://github.com/microsoft/winget-pkgs/tree/master/manifests/c/Canva/Canva",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/c/Canva/Canva/1.126.0/Canva.Canva.installer.yaml",
+    "License": "Proprietary",
+    "VerifiedVersion": "1.126.0",
+    "Verification": "WinGet manifest; installation untested",
+    "CategoryGroup": "Create",
+    "AlsoIn": [
+      "Video Editing"
     ]
   },
   {
@@ -758,12 +973,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/c/Cemu/Cemu/2.6/Cemu.Cemu.locale.en-US.yaml",
     "License": "MPL-2.0",
     "VerifiedVersion": "2.6",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_chatgpt",
     "Name": "ChatGPT Desktop",
-    "Category": "Development",
+    "Category": "AI Tools",
     "Description": "Use ChatGPT in the official Windows app.",
     "Ids": [],
     "Url": "https://apps.microsoft.com/detail/9NT1R1C2HH7J",
@@ -781,12 +998,14 @@
     "Verification": "Official Microsoft Store listing",
     "ManifestUrl": "https://apps.microsoft.com/detail/9NT1R1C2HH7J",
     "License": "See publisher terms",
-    "VerifiedVersion": "Store"
+    "VerifiedVersion": "Store",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_chatterino",
     "Name": "Chatterino",
-    "Category": "Communication",
+    "Category": "Chat & Email",
     "Description": "Follow Twitch chats in a desktop client.",
     "Ids": [
       "ChatterinoTeam.Chatterino"
@@ -806,7 +1025,9 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/c/ChatterinoTeam/Chatterino/2.5.5/ChatterinoTeam.Chatterino.locale.en-US.yaml",
     "License": "MIT",
     "VerifiedVersion": "2.5.5",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_chrome",
@@ -831,7 +1052,9 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/g/Google/Chrome/153.0.8010.37/Google.Chrome.locale.en-US.yaml",
     "License": "Freeware",
     "VerifiedVersion": "153.0.8010.37",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_chromium",
@@ -856,12 +1079,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/h/Hibbiki/Chromium/153.0.8010.37/Hibbiki.Chromium.locale.en-US.yaml",
     "License": "BSD 3-Clause License",
     "VerifiedVersion": "153.0.8010.37",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_cinebenchr23",
     "Name": "Cinebench R23",
-    "Category": "System",
+    "Category": "Hardware & Drivers",
     "Description": "Benchmark CPU rendering performance.",
     "Ids": [
       "Maxon.CinebenchR23"
@@ -881,7 +1106,9 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/m/Maxon/CinebenchR23/23.200/Maxon.CinebenchR23.locale.en-US.yaml",
     "License": "Proprietary",
     "VerifiedVersion": "23.200",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_claude-code",
@@ -906,12 +1133,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/a/Anthropic/ClaudeCode/2.1.268/Anthropic.ClaudeCode.locale.en-US.yaml",
     "License": "Proprietary",
     "VerifiedVersion": "2.1.268",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_claude",
     "Name": "Claude Desktop",
-    "Category": "Development",
+    "Category": "AI Tools",
     "Description": "Use Claude in the official desktop app.",
     "Ids": [
       "Anthropic.Claude"
@@ -931,12 +1160,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/a/Anthropic/Claude/1.44121.2/Anthropic.Claude.locale.en-US.yaml",
     "License": "Proprietary",
     "VerifiedVersion": "1.44121.2",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_cloudflarewarp",
     "Name": "Cloudflare WARP",
-    "Category": "System",
+    "Category": "Security & Privacy",
     "Description": "Connect through the Cloudflare WARP client.",
     "Ids": [
       "Cloudflare.Warp"
@@ -956,7 +1187,9 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/c/Cloudflare/Warp/26.7.1376.0/Cloudflare.Warp.locale.en-US.yaml",
     "License": "Proprietary",
     "VerifiedVersion": "26.7.1376.0",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Files & Storage",
+    "AlsoIn": []
   },
   {
     "Key": "extra_cmake",
@@ -982,7 +1215,9 @@
     "LicenseLabel": "Open source",
     "WinUtilKeys": [
       "cmake"
-    ]
+    ],
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_codex",
@@ -1007,12 +1242,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/o/OpenAI/Codex/0.152.0/OpenAI.Codex.locale.en-US.yaml",
     "License": "Apache-2.0",
     "VerifiedVersion": "0.152.0",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "comfy",
     "Name": "ComfyUI Desktop",
-    "Category": "AI & Creation",
+    "Category": "AI Tools",
     "Icon": "CO",
     "Description": "Create with AI workflows. Initial setup depends on your GPU.",
     "Ids": [
@@ -1023,12 +1260,39 @@
     "OpenSource": null,
     "LicenseLabel": "",
     "GitHubStars": null,
-    "StarsCheckedOn": null
+    "StarsCheckedOn": null,
+    "CategoryGroup": "Everyday",
+    "AlsoIn": [
+      "Design & Photography"
+    ]
+  },
+  {
+    "Key": "daily_corsair_icue",
+    "Name": "Corsair iCUE",
+    "Category": "Hardware & Drivers",
+    "Description": "Configure supported Corsair devices, lighting and performance.",
+    "Ids": [],
+    "Url": "https://www.corsair.com/us/en/s/downloads",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": false,
+    "LicenseLabel": "Check license",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://www.corsair.com/us/en/s/downloads",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "",
+    "License": "See publisher terms",
+    "VerifiedVersion": "",
+    "Verification": "Official page reachable",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_cpuz",
     "Name": "CPU-Z",
-    "Category": "System",
+    "Category": "Hardware & Drivers",
     "Description": "Inspect processor, memory and motherboard details.",
     "Ids": [
       "CPUID.CPU-Z"
@@ -1048,12 +1312,39 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/c/CPUID/CPU-Z/3.01/CPUID.CPU-Z.locale.en-US.yaml",
     "License": "Freeware",
     "VerifiedVersion": "3.01",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_cryptomator",
+    "Name": "Cryptomator",
+    "Category": "Security & Privacy",
+    "Description": "Encrypt files before syncing them to cloud storage.",
+    "Ids": [
+      "Cryptomator.Cryptomator"
+    ],
+    "Url": "",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": true,
+    "LicenseLabel": "Open source",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://cryptomator.org/",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/c/Cryptomator/Cryptomator/1.19.3/Cryptomator.Cryptomator.installer.yaml",
+    "License": "GPL-3.0",
+    "VerifiedVersion": "1.19.3",
+    "Verification": "WinGet manifest; installation untested",
+    "CategoryGroup": "Files & Storage",
+    "AlsoIn": []
   },
   {
     "Key": "extra_crystaldiskinfo",
     "Name": "CrystalDiskInfo",
-    "Category": "System",
+    "Category": "Hardware & Drivers",
     "Description": "Check storage health and drive information.",
     "Ids": [
       "CrystalDewWorld.CrystalDiskInfo"
@@ -1074,12 +1365,14 @@
     "LicenseLabel": "Open source",
     "WinUtilKeys": [
       "crystaldiskinfo"
-    ]
+    ],
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "extra_crystaldiskmark",
     "Name": "CrystalDiskMark",
-    "Category": "System",
+    "Category": "Hardware & Drivers",
     "Description": "Measure the read and write speed of your drives.",
     "Ids": [
       "CrystalDewWorld.CrystalDiskMark"
@@ -1100,7 +1393,9 @@
     "LicenseLabel": "Open source",
     "WinUtilKeys": [
       "crystaldiskmark"
-    ]
+    ],
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_cursor",
@@ -1125,12 +1420,62 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/a/Anysphere/Cursor/3.19.7/Anysphere.Cursor.locale.en-US.yaml",
     "License": "Proprietary",
     "VerifiedVersion": "3.19.7",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_cyberduck",
+    "Name": "Cyberduck",
+    "Category": "Files & Downloads",
+    "Description": "Browse and transfer files through SFTP and supported cloud storage.",
+    "Ids": [],
+    "Url": "https://cyberduck.io/download/",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": false,
+    "LicenseLabel": "Check license",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://cyberduck.io/download/",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "",
+    "License": "See publisher terms",
+    "VerifiedVersion": "",
+    "Verification": "Official page reachable",
+    "CategoryGroup": "Files & Storage",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_darktable",
+    "Name": "darktable",
+    "Category": "Design & Photography",
+    "Description": "Open-source photography workflow and raw image editing.",
+    "Ids": [
+      "darktable.darktable"
+    ],
+    "Url": "",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": true,
+    "LicenseLabel": "Open source",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://www.darktable.org/",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/d/darktable/darktable/5.6.1/darktable.darktable.installer.yaml",
+    "License": "GPL-3.0",
+    "VerifiedVersion": "5.6.1",
+    "Verification": "WinGet manifest; installation untested",
+    "CategoryGroup": "Create",
+    "AlsoIn": []
   },
   {
     "Key": "resolve",
     "Name": "DaVinci Resolve",
-    "Category": "Audio & Video",
+    "Category": "Video Editing",
     "Icon": "DR",
     "Description": "Edit video and grade color. Choose Free or Studio on the official site.",
     "Ids": [],
@@ -1139,7 +1484,34 @@
     "OpenSource": null,
     "LicenseLabel": "",
     "GitHubStars": null,
-    "StarsCheckedOn": null
+    "StarsCheckedOn": null,
+    "CategoryGroup": "Create",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_dbeaver",
+    "Name": "DBeaver",
+    "Category": "Development",
+    "Description": "Database client for SQL editing and administration.",
+    "Ids": [
+      "DBeaver.DBeaver.Community"
+    ],
+    "Url": "",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": true,
+    "LicenseLabel": "Open source",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://dbeaver.io/download/",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/d/DBeaver/DBeaver/Community/26.2.0/DBeaver.DBeaver.Community.installer.yaml",
+    "License": "Apache-2.0",
+    "VerifiedVersion": "26.2.0",
+    "Verification": "WinGet manifest; installation untested",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Name": "Deluge",
@@ -1148,19 +1520,21 @@
     ],
     "Url": "",
     "Key": "app5",
-    "Category": "Files",
+    "Category": "Files & Downloads",
     "Icon": "DE",
     "Description": "Manage BitTorrent transfers with a lightweight client.",
     "Requires": [],
     "OpenSource": null,
     "LicenseLabel": "",
     "GitHubStars": null,
-    "StarsCheckedOn": null
+    "StarsCheckedOn": null,
+    "CategoryGroup": "Files & Storage",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_deskflow",
     "Name": "Deskflow",
-    "Category": "System",
+    "Category": "Remote Access",
     "Description": "Share a keyboard and mouse between computers.",
     "Ids": [
       "Deskflow.Deskflow"
@@ -1180,7 +1554,9 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/d/Deskflow/Deskflow/1.26.0/Deskflow.Deskflow.locale.en-US.yaml",
     "License": "GPL-2.0",
     "VerifiedVersion": "1.26.0",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Name": "DirectX",
@@ -1189,14 +1565,16 @@
     ],
     "Url": "",
     "Key": "app4",
-    "Category": "System",
+    "Category": "Runtimes",
     "Icon": "DX",
     "Description": "Install runtime components needed by older games.",
     "Requires": [],
     "OpenSource": null,
     "LicenseLabel": "",
     "GitHubStars": null,
-    "StarsCheckedOn": null
+    "StarsCheckedOn": null,
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Name": "Discord",
@@ -1205,7 +1583,7 @@
     ],
     "Url": "",
     "Key": "app3",
-    "Category": "Communication",
+    "Category": "Chat & Email",
     "Icon": "DI",
     "Description": "Voice, video and chat for your communities.",
     "Requires": [],
@@ -1215,12 +1593,14 @@
     "StarsCheckedOn": null,
     "WinUtilKeys": [
       "discord"
-    ]
+    ],
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_dismtools",
     "Name": "DISMTools",
-    "Category": "System",
+    "Category": "Windows Utilities",
     "Description": "Manage and service Windows images.",
     "Ids": [
       "CodingWondersSoftware.DISMTools.Stable"
@@ -1240,12 +1620,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/c/CodingWondersSoftware/DISMTools/Stable/0.8.1.26083/CodingWondersSoftware.DISMTools.Stable.locale.en-US.yaml",
     "License": "GPLv3",
     "VerifiedVersion": "0.8.1.26083",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_ddu",
     "Name": "Display Driver Uninstaller",
-    "Category": "System",
+    "Category": "Hardware & Drivers",
     "Description": "Remove graphics drivers during troubleshooting.",
     "Ids": [
       "Wagnardsoft.DisplayDriverUninstaller"
@@ -1265,7 +1647,34 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/w/Wagnardsoft/DisplayDriverUninstaller/18.1.5.3/Wagnardsoft.DisplayDriverUninstaller.locale.en-US.yaml",
     "License": "MIT",
     "VerifiedVersion": "18.1.5.3",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_ditto",
+    "Name": "Ditto",
+    "Category": "Windows Utilities",
+    "Description": "Search and reuse clipboard history.",
+    "Ids": [
+      "Ditto.Ditto"
+    ],
+    "Url": "",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": true,
+    "LicenseLabel": "Open source",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://sabrogden.github.io/Ditto/",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/d/Ditto/Ditto/3.25.113.0/Ditto.Ditto.installer.yaml",
+    "License": "GPL-3.0",
+    "VerifiedVersion": "3.25.113.0",
+    "Verification": "WinGet manifest; installation untested",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_dockerdesktop",
@@ -1290,12 +1699,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/d/Docker/DockerDesktop/4.91.0/Docker.DockerDesktop.locale.en-US.yaml",
     "License": "Proprietary",
     "VerifiedVersion": "4.91.0",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_dorion",
     "Name": "Dorion",
-    "Category": "Communication",
+    "Category": "Chat & Email",
     "Description": "Use a lightweight third-party Discord client.",
     "Ids": [
       "SpikeHD.Dorion"
@@ -1315,12 +1726,64 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/s/SpikeHD/Dorion/6.13.1/SpikeHD.Dorion.locale.en-US.yaml",
     "License": "GPL-3.0",
     "VerifiedVersion": "6.13.1",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_double_commander",
+    "Name": "Double Commander",
+    "Category": "Files & Downloads",
+    "Description": "Open-source file manager with two panels.",
+    "Ids": [
+      "alexx2000.DoubleCommander"
+    ],
+    "Url": "",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": true,
+    "LicenseLabel": "Open source",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://doublecmd.sourceforge.io/",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/a/alexx2000/DoubleCommander/1.2.9/alexx2000.DoubleCommander.installer.yaml",
+    "License": "GPL-2.0",
+    "VerifiedVersion": "1.2.9",
+    "Verification": "WinGet manifest; installation untested",
+    "CategoryGroup": "Files & Storage",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_draw_io",
+    "Name": "draw.io",
+    "Category": "Office & PDFs",
+    "Description": "Create diagrams, flowcharts and technical drawings offline.",
+    "Ids": [
+      "JGraph.Draw"
+    ],
+    "Url": "",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": true,
+    "LicenseLabel": "Open source",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://github.com/jgraph/drawio-desktop",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/j/JGraph/Draw/31.5.3/JGraph.Draw.installer.yaml",
+    "License": "GPL-3.0",
+    "VerifiedVersion": "31.5.3",
+    "Verification": "WinGet manifest; installation untested",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_dropbox",
     "Name": "Dropbox",
-    "Category": "System",
+    "Category": "Cloud & Backup",
     "Description": "Sync files with your Dropbox account.",
     "Ids": [
       "Dropbox.Dropbox"
@@ -1340,7 +1803,9 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/d/Dropbox/Dropbox/262.4.3183/Dropbox.Dropbox.locale.en-US.yaml",
     "License": "Combined GPLv2 and proprietary software",
     "VerifiedVersion": "262.4.3183",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Files & Storage",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_eaapp",
@@ -1365,12 +1830,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/e/ElectronicArts/EADesktop/13.788.2.6298/ElectronicArts.EADesktop.locale.en-US.yaml",
     "License": "Proprietary",
     "VerifiedVersion": "13.788.2.6298",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "extra_eartrumpet",
     "Name": "EarTrumpet",
-    "Category": "Audio & Video",
+    "Category": "Audio Controls",
     "Description": "Adjust volume separately for each application.",
     "Ids": [
       "File-New-Project.EarTrumpet"
@@ -1391,7 +1858,32 @@
     "LicenseLabel": "Open source",
     "WinUtilKeys": [
       "eartrumpet"
-    ]
+    ],
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_eclipse",
+    "Name": "Eclipse",
+    "Category": "Development",
+    "Description": "Extensible IDE for Java and other development workflows.",
+    "Ids": [],
+    "Url": "https://www.eclipse.org/downloads/",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": false,
+    "LicenseLabel": "Check license",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://www.eclipse.org/downloads/",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "",
+    "License": "See publisher terms",
+    "VerifiedVersion": "",
+    "Verification": "Official page reachable",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_edge",
@@ -1416,12 +1908,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/m/Microsoft/Edge/153.0.4234.32/Microsoft.Edge.locale.en-US.yaml",
     "License": "Proprietary",
     "VerifiedVersion": "153.0.4234.32",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "extra_matrix",
     "Name": "Element",
-    "Category": "Communication",
+    "Category": "Chat & Email",
     "Description": "Chat and collaborate through the Matrix network.",
     "Ids": [
       "Element.Element"
@@ -1442,7 +1936,34 @@
     "LicenseLabel": "Open source",
     "WinUtilKeys": [
       "matrix"
-    ]
+    ],
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_em_client",
+    "Name": "eM Client",
+    "Category": "Chat & Email",
+    "Description": "Email, calendar and contacts in one desktop client.",
+    "Ids": [
+      "eMClient.eMClient"
+    ],
+    "Url": "",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": false,
+    "LicenseLabel": "Check license",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://www.emclient.com/",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/e/eMClient/eMClient/10.4.5674/eMClient.eMClient.installer.yaml",
+    "License": "Proprietary (Freemium)",
+    "VerifiedVersion": "10.4.5674",
+    "Verification": "WinGet manifest; installation untested",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_es-de",
@@ -1467,12 +1988,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/e/ES-DE/EmulationStation-DE/3.4.1/ES-DE.EmulationStation-DE.locale.en-US.yaml",
     "License": "MIT",
     "VerifiedVersion": "3.4.1",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "extra_enteauth",
     "Name": "Ente Auth",
-    "Category": "Security",
+    "Category": "Security & Privacy",
     "Description": "Manage two-factor authentication codes with optional sync.",
     "Ids": [
       "ente-io.auth-desktop"
@@ -1493,7 +2016,9 @@
     "LicenseLabel": "Open source",
     "WinUtilKeys": [
       "enteauth"
-    ]
+    ],
+    "CategoryGroup": "Files & Storage",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_epicgames",
@@ -1518,12 +2043,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/e/EpicGames/EpicGamesLauncher/1.3.193.0/EpicGames.EpicGamesLauncher.locale.en-US.yaml",
     "License": "Proprietary",
     "VerifiedVersion": "1.3.193.0",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "apo",
     "Name": "Equalizer APO",
-    "Category": "Audio & Video",
+    "Category": "Audio Controls",
     "Icon": "EQ",
     "Description": "Equalize system audio. Choose your audio device during setup.",
     "Ids": [],
@@ -1532,7 +2059,34 @@
     "OpenSource": null,
     "LicenseLabel": "",
     "GitHubStars": null,
-    "StarsCheckedOn": null
+    "StarsCheckedOn": null,
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_evernote",
+    "Name": "Evernote",
+    "Category": "Notes & Tasks",
+    "Description": "Notes, web clippings and searchable personal information.",
+    "Ids": [
+      "Evernote.Evernote"
+    ],
+    "Url": "",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": false,
+    "LicenseLabel": "Check license",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://evernote.com/download",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/e/Evernote/Evernote/11.36.3/Evernote.Evernote.installer.yaml",
+    "License": "Proprietary",
+    "VerifiedVersion": "11.36.3",
+    "Verification": "WinGet manifest; installation untested",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Name": "Everything",
@@ -1541,7 +2095,7 @@
     ],
     "Url": "",
     "Key": "app17",
-    "Category": "Files",
+    "Category": "Files & Downloads",
     "Icon": "EV",
     "Description": "Find files and folders quickly by name.",
     "Requires": [],
@@ -1551,12 +2105,14 @@
     "StarsCheckedOn": null,
     "WinUtilKeys": [
       "everything"
-    ]
+    ],
+    "CategoryGroup": "Files & Storage",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_flux",
     "Name": "F.lux",
-    "Category": "System",
+    "Category": "Windows Utilities",
     "Description": "Adjust display color temperature throughout the day.",
     "Ids": [
       "flux.flux"
@@ -1576,7 +2132,9 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/f/flux/flux/4.141/flux.flux.locale.en-US.yaml",
     "License": "Proprietary",
     "VerifiedVersion": "4.141",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_fnm",
@@ -1601,12 +2159,91 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/s/Schniz/fnm/1.39.0/Schniz.fnm.locale.en-US.yaml",
     "License": "GPL-3.0",
     "VerifiedVersion": "1.39.0",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_faststone_image_viewer",
+    "Name": "FastStone Image Viewer",
+    "Category": "Photo Viewers",
+    "Description": "View, organize and edit images. Check commercial-use licensing.",
+    "Ids": [
+      "FastStone.Viewer"
+    ],
+    "Url": "",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": false,
+    "LicenseLabel": "Check license",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://www.faststone.org/FSViewerDetail.htm",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/f/FastStone/Viewer/8.5/FastStone.Viewer.installer.yaml",
+    "License": "Proprietary",
+    "VerifiedVersion": "8.5",
+    "Verification": "WinGet manifest; installation untested",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_ffmpeg",
+    "Name": "FFmpeg",
+    "Category": "Video Editing",
+    "Description": "Command-line tools for converting and processing audio and video.",
+    "Ids": [
+      "Gyan.FFmpeg"
+    ],
+    "Url": "",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": true,
+    "LicenseLabel": "Open source",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://www.gyan.dev/ffmpeg/builds/",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/g/Gyan/FFmpeg/9.0.2/Gyan.FFmpeg.installer.yaml",
+    "License": "GPL-3.0",
+    "VerifiedVersion": "9.0.2",
+    "Verification": "WinGet manifest; installation untested",
+    "CategoryGroup": "Create",
+    "AlsoIn": [
+      "Audio Production"
+    ]
+  },
+  {
+    "Key": "daily_figma",
+    "Name": "Figma",
+    "Category": "Design & Photography",
+    "Description": "Collaborative interface design, prototypes and whiteboards.",
+    "Ids": [
+      "Figma.Figma"
+    ],
+    "Url": "",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": false,
+    "LicenseLabel": "Check license",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://www.figma.com/downloads/",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/f/Figma/Figma/126.9.10/Figma.Figma.installer.yaml",
+    "License": "Proprietary",
+    "VerifiedVersion": "126.9.10",
+    "Verification": "WinGet manifest; installation untested",
+    "CategoryGroup": "Create",
+    "AlsoIn": []
   },
   {
     "Key": "extra_fileconverter",
     "Name": "File Converter",
-    "Category": "Files",
+    "Category": "Files & Downloads",
     "Description": "Convert common files from the Explorer context menu.",
     "Ids": [
       "AdrienAllard.FileConverter"
@@ -1627,12 +2264,16 @@
     "LicenseLabel": "Open source",
     "WinUtilKeys": [
       "fileconverter"
+    ],
+    "CategoryGroup": "Files & Storage",
+    "AlsoIn": [
+      "Video Editing"
     ]
   },
   {
     "Key": "winutil_files",
     "Name": "Files",
-    "Category": "System",
+    "Category": "Files & Downloads",
     "Description": "Manage files in a tabbed Windows interface.",
     "Ids": [
       "FilesCommunity.Files"
@@ -1652,7 +2293,32 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/f/FilesCommunity/Files/4.2.9.0/FilesCommunity.Files.locale.en-US.yaml",
     "License": "MPL",
     "VerifiedVersion": "4.2.9.0",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Files & Storage",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_filezilla",
+    "Name": "FileZilla",
+    "Category": "Files & Downloads",
+    "Description": "Transfer files with FTP, FTPS and SFTP. Choose the publisher download you prefer.",
+    "Ids": [],
+    "Url": "https://filezilla-project.org/download.php?type=client",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": false,
+    "LicenseLabel": "Check license",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://filezilla-project.org/download.php?type=client",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "",
+    "License": "See publisher terms",
+    "VerifiedVersion": "",
+    "Verification": "Official page identified; automated fetch blocked: HTTP Error 403: Forbidden",
+    "CategoryGroup": "Files & Storage",
+    "AlsoIn": []
   },
   {
     "Key": "extra_firefox",
@@ -1678,7 +2344,9 @@
     "LicenseLabel": "Open source",
     "WinUtilKeys": [
       "firefox"
-    ]
+    ],
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_firefoxesr",
@@ -1703,12 +2371,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/m/Mozilla/Firefox/ESR/153.2.0/Mozilla.Firefox.ESR.locale.en-US.yaml",
     "License": "MPL-2.0",
     "VerifiedVersion": "153.2.0",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "flstudio",
     "Name": "FL Studio",
-    "Category": "Audio & Video",
+    "Category": "Audio Production",
     "Icon": "FL",
     "Description": "Produce music. Activate your license after installation.",
     "Ids": [],
@@ -1717,7 +2387,9 @@
     "OpenSource": null,
     "LicenseLabel": "",
     "GitHubStars": null,
-    "StarsCheckedOn": null
+    "StarsCheckedOn": null,
+    "CategoryGroup": "Create",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_floorp",
@@ -1742,7 +2414,9 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/a/Ablaze/Floorp/12.16.4@153.0/Ablaze.Floorp.locale.en-US.yaml",
     "License": "Mozilla Public License Version 2.0",
     "VerifiedVersion": "12.16.4@153.0",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Name": "foobar2000",
@@ -1751,7 +2425,7 @@
     ],
     "Url": "",
     "Key": "app10",
-    "Category": "Audio & Video",
+    "Category": "Media Players",
     "Icon": "FO",
     "Description": "Play and organize music with a customizable player.",
     "Requires": [],
@@ -1761,12 +2435,14 @@
     "StarsCheckedOn": null,
     "WinUtilKeys": [
       "foobar"
-    ]
+    ],
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_foxpdfreader",
     "Name": "Foxit PDF Reader",
-    "Category": "Productivity",
+    "Category": "Office & PDFs",
     "Description": "Read and annotate PDF files.",
     "Ids": [
       "Foxit.FoxitReader"
@@ -1786,7 +2462,82 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/f/Foxit/FoxitReader/2026.2.0.39747/Foxit.FoxitReader.locale.en-US.yaml",
     "License": "Proprietary",
     "VerifiedVersion": "2026.2.0.39747",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_free_download_manager",
+    "Name": "Free Download Manager",
+    "Category": "Files & Downloads",
+    "Description": "Manage file downloads, queues and supported transfer protocols.",
+    "Ids": [
+      "SoftDeluxe.FreeDownloadManager"
+    ],
+    "Url": "",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": false,
+    "LicenseLabel": "Check license",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://www.freedownloadmanager.org/download.htm",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/s/SoftDeluxe/FreeDownloadManager/6.35.1.7021/SoftDeluxe.FreeDownloadManager.installer.yaml",
+    "License": "Freeware",
+    "VerifiedVersion": "6.35.1.7021",
+    "Verification": "WinGet manifest; installation untested",
+    "CategoryGroup": "Files & Storage",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_freecad",
+    "Name": "FreeCAD",
+    "Category": "3D & CAD",
+    "Description": "Open-source parametric 3D CAD modeling.",
+    "Ids": [
+      "FreeCAD.FreeCAD"
+    ],
+    "Url": "",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": true,
+    "LicenseLabel": "Open source",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://www.freecad.org/downloads.php",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/f/FreeCAD/FreeCAD/1.1.4/FreeCAD.FreeCAD.installer.yaml",
+    "License": "LGPL-2.0-or-later",
+    "VerifiedVersion": "1.1.4",
+    "Verification": "WinGet manifest; installation untested",
+    "CategoryGroup": "Create",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_freefilesync",
+    "Name": "FreeFileSync",
+    "Category": "Cloud & Backup",
+    "Description": "Compare folders and synchronize files between locations.",
+    "Ids": [],
+    "Url": "https://freefilesync.org/download.php",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": false,
+    "LicenseLabel": "Check license",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://freefilesync.org/download.php",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "",
+    "License": "See publisher terms",
+    "VerifiedVersion": "",
+    "Verification": "Official page reachable",
+    "CategoryGroup": "Files & Storage",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_geforcenow",
@@ -1811,7 +2562,9 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/n/Nvidia/GeForceNow/2.0.88.129/Nvidia.GeForceNow.locale.en-US.yaml",
     "License": "Proprietary",
     "VerifiedVersion": "2.0.88.129",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "extra_gimp",
@@ -1837,7 +2590,9 @@
     "LicenseLabel": "Open source",
     "WinUtilKeys": [
       "gimp"
-    ]
+    ],
+    "CategoryGroup": "Create",
+    "AlsoIn": []
   },
   {
     "Key": "extra_git",
@@ -1863,7 +2618,9 @@
     "LicenseLabel": "Open source",
     "WinUtilKeys": [
       "git"
-    ]
+    ],
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_gitextensions",
@@ -1888,7 +2645,9 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/g/GitExtensionsTeam/GitExtensions/7.2.1.7/GitExtensionsTeam.GitExtensions.locale.en-US.yaml",
     "License": "GPL-3.0",
     "VerifiedVersion": "7.2.1.7",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "extra_githubcli",
@@ -1914,7 +2673,9 @@
     "LicenseLabel": "Open source",
     "WinUtilKeys": [
       "githubcli"
-    ]
+    ],
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "extra_githubdesktop",
@@ -1940,7 +2701,9 @@
     "LicenseLabel": "Open source",
     "WinUtilKeys": [
       "githubdesktop"
-    ]
+    ],
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Name": "GlazeWM",
@@ -1949,7 +2712,7 @@
     ],
     "Url": "",
     "Key": "app24",
-    "Category": "System",
+    "Category": "Windows Utilities",
     "Icon": "GW",
     "Description": "Arrange windows automatically in a tiled layout.",
     "Requires": [],
@@ -1959,7 +2722,9 @@
     "StarsCheckedOn": null,
     "WinUtilKeys": [
       "glazewm"
-    ]
+    ],
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_golang",
@@ -1984,7 +2749,34 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/g/GoLang/Go/1.27.0/GoLang.Go.locale.en-US.yaml",
     "License": "BSD-3-Clause",
     "VerifiedVersion": "1.27.0",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_godot",
+    "Name": "Godot",
+    "Category": "Development",
+    "Description": "Open-source engine for developing 2D and 3D games.",
+    "Ids": [
+      "GodotEngine.GodotEngine"
+    ],
+    "Url": "",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": true,
+    "LicenseLabel": "Open source",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://godotengine.org/download/windows",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/g/GodotEngine/GodotEngine/4.7.2/GodotEngine.GodotEngine.installer.yaml",
+    "License": "MIT",
+    "VerifiedVersion": "4.7.2",
+    "Verification": "WinGet manifest; installation untested",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_gog",
@@ -2009,12 +2801,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/g/GOG/Galaxy/2.1.8.30/GOG.Galaxy.locale.en-US.yaml",
     "License": "Proprietary",
     "VerifiedVersion": "2.1.8.30",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_googledrive",
     "Name": "Google Drive",
-    "Category": "System",
+    "Category": "Cloud & Backup",
     "Description": "Sync Google Drive files with your PC.",
     "Ids": [
       "Google.GoogleDrive"
@@ -2034,12 +2828,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/g/Google/GoogleDrive/130.0.2.0/Google.GoogleDrive.locale.en-US.yaml",
     "License": "Proprietary",
     "VerifiedVersion": "130.0.2.0",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Files & Storage",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_gpuz",
     "Name": "GPU-Z",
-    "Category": "System",
+    "Category": "Hardware & Drivers",
     "Description": "Inspect your graphics card and sensor readings.",
     "Ids": [
       "TechPowerUp.GPU-Z"
@@ -2059,12 +2855,64 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/t/TechPowerUp/GPU-Z/2.70.0/TechPowerUp.GPU-Z.locale.en-US.yaml",
     "License": "Freeware",
     "VerifiedVersion": "2.70.0",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_grammarly",
+    "Name": "Grammarly",
+    "Category": "Office & PDFs",
+    "Description": "Writing suggestions across supported Windows applications.",
+    "Ids": [
+      "Grammarly.Grammarly"
+    ],
+    "Url": "",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": false,
+    "LicenseLabel": "Check license",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://www.grammarly.com/desktop/windows",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/g/Grammarly/Grammarly/1.2.299.1961/Grammarly.Grammarly.installer.yaml",
+    "License": "Proprietary",
+    "VerifiedVersion": "1.2.299.1961",
+    "Verification": "WinGet manifest; installation untested",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_greenshot",
+    "Name": "Greenshot",
+    "Category": "Capture & Streaming",
+    "Description": "Capture screenshots and annotate them before sharing.",
+    "Ids": [
+      "Greenshot.Greenshot"
+    ],
+    "Url": "",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": true,
+    "LicenseLabel": "Open source",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://getgreenshot.org/",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/g/Greenshot/Greenshot/1.3.315/Greenshot.Greenshot.installer.yaml",
+    "License": "GPL-3.0",
+    "VerifiedVersion": "1.3.315",
+    "Verification": "WinGet manifest; installation untested",
+    "CategoryGroup": "Create",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_gsudo",
     "Name": "gsudo",
-    "Category": "System",
+    "Category": "Windows Utilities",
     "Description": "Run terminal commands with administrator privileges.",
     "Ids": [
       "gerardog.gsudo"
@@ -2084,12 +2932,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/g/gerardog/gsudo/2.6.1/gerardog.gsudo.locale.en-US.yaml",
     "License": "MIT",
     "VerifiedVersion": "2.6.1",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "extra_handbrake",
     "Name": "HandBrake",
-    "Category": "Audio & Video",
+    "Category": "Video Editing",
     "Description": "Convert videos for different devices and workflows.",
     "Ids": [
       "HandBrake.HandBrake"
@@ -2110,7 +2960,32 @@
     "LicenseLabel": "Open source",
     "WinUtilKeys": [
       "handbrake"
-    ]
+    ],
+    "CategoryGroup": "Create",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_heidisql",
+    "Name": "HeidiSQL",
+    "Category": "Development",
+    "Description": "Manage supported SQL databases with a desktop client.",
+    "Ids": [],
+    "Url": "https://www.heidisql.com/download.php",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": false,
+    "LicenseLabel": "Check license",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://www.heidisql.com/download.php",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "",
+    "License": "See publisher terms",
+    "VerifiedVersion": "",
+    "Verification": "Official page reachable",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "helium",
@@ -2129,7 +3004,9 @@
     "StarsCheckedOn": null,
     "WinUtilKeys": [
       "helium"
-    ]
+    ],
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "extra_heroiclauncher",
@@ -2155,12 +3032,14 @@
     "LicenseLabel": "Open source",
     "WinUtilKeys": [
       "heroiclauncher"
-    ]
+    ],
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_hugo",
     "Name": "Hugo",
-    "Category": "System",
+    "Category": "Development",
     "Description": "Generate static websites from content and templates.",
     "Ids": [
       "Hugo.Hugo.Extended"
@@ -2180,12 +3059,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/h/Hugo/Hugo/Extended/0.166.0/Hugo.Hugo.Extended.locale.en-US.yaml",
     "License": "Apache-2.0",
     "VerifiedVersion": "0.166.0",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_hwinfo",
     "Name": "HWiNFO",
-    "Category": "System",
+    "Category": "Hardware & Drivers",
     "Description": "Inspect hardware details and monitor sensors.",
     "Ids": [
       "REALiX.HWiNFO"
@@ -2205,12 +3086,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/r/REALiX/HWiNFO/8.50/REALiX.HWiNFO.locale.en-US.yaml",
     "License": "Proprietary",
     "VerifiedVersion": "8.50",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_hwmonitor",
     "Name": "HWMonitor",
-    "Category": "System",
+    "Category": "Hardware & Drivers",
     "Description": "Monitor hardware temperatures, voltages and fan speeds.",
     "Ids": [
       "CPUID.HWMonitor"
@@ -2230,12 +3113,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/c/CPUID/HWMonitor/1.68/CPUID.HWMonitor.locale.en-US.yaml",
     "License": "Freeware",
     "VerifiedVersion": "1.68",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_xeheditor",
     "Name": "HxD Hex Editor",
-    "Category": "System",
+    "Category": "Development",
     "Description": "Inspect and edit binary files in hexadecimal.",
     "Ids": [
       "MHNexus.HxD"
@@ -2255,12 +3140,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/m/MHNexus/HxD/2.5/MHNexus.HxD.locale.en-US.yaml",
     "License": "Freeware",
     "VerifiedVersion": "2.5",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "extra_imageglass",
     "Name": "ImageGlass",
-    "Category": "Design & Photography",
+    "Category": "Photo Viewers",
     "Description": "Browse images with a lightweight desktop viewer.",
     "Ids": [
       "DuongDieuPhap.ImageGlass"
@@ -2281,12 +3168,64 @@
     "LicenseLabel": "Open source",
     "WinUtilKeys": [
       "imageglass"
-    ]
+    ],
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_inkscape",
+    "Name": "Inkscape",
+    "Category": "Design & Photography",
+    "Description": "Open-source vector graphics and illustration.",
+    "Ids": [
+      "Inkscape.Inkscape"
+    ],
+    "Url": "",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": true,
+    "LicenseLabel": "Open source",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://inkscape.org/release/",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/i/Inkscape/Inkscape/1.4.4/Inkscape.Inkscape.installer.yaml",
+    "License": "GPL-2.0",
+    "VerifiedVersion": "1.4.4",
+    "Verification": "WinGet manifest; installation untested",
+    "CategoryGroup": "Create",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_intellij_idea",
+    "Name": "IntelliJ IDEA",
+    "Category": "Development",
+    "Description": "Java and Kotlin development environment from JetBrains.",
+    "Ids": [
+      "JetBrains.IntelliJIDEA"
+    ],
+    "Url": "",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": false,
+    "LicenseLabel": "Check license",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://www.jetbrains.com/idea/",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/j/JetBrains/IntelliJIDEA/2026.2.3/JetBrains.IntelliJIDEA.installer.yaml",
+    "License": "Proprietary",
+    "VerifiedVersion": "2026.2.3",
+    "Verification": "WinGet manifest; installation untested",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_internetdownloadmanager",
     "Name": "Internet Download Manager",
-    "Category": "System",
+    "Category": "Files & Downloads",
     "Description": "Organize downloads with a dedicated download manager.",
     "Ids": [
       "Tonec.InternetDownloadManager"
@@ -2306,12 +3245,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/t/Tonec/InternetDownloadManager/6.43.10/Tonec.InternetDownloadManager.locale.en-US.yaml",
     "License": "Proprietary",
     "VerifiedVersion": "6.43.10",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Files & Storage",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_irfanview",
     "Name": "IrfanView",
-    "Category": "Audio & Video",
+    "Category": "Photo Viewers",
     "Description": "View images and perform basic batch conversions.",
     "Ids": [
       "IrfanSkiljan.IrfanView"
@@ -2331,7 +3272,9 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/i/IrfanSkiljan/IrfanView/4.75/IrfanSkiljan.IrfanView.locale.en-US.yaml",
     "License": "Proprietary, free for private and non-commercial use",
     "VerifiedVersion": "4.75",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_itch",
@@ -2356,12 +3299,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/i/ItchIo/Itch/26.20.0/ItchIo.Itch.locale.en-US.yaml",
     "License": "MIT",
     "VerifiedVersion": "26.20.0",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_itunes",
     "Name": "iTunes",
-    "Category": "Audio & Video",
+    "Category": "Media Players",
     "Description": "Manage music and compatible Apple device content.",
     "Ids": [
       "Apple.iTunes"
@@ -2381,12 +3326,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/a/Apple/iTunes/12.13.11.1/Apple.iTunes.locale.en-US.yaml",
     "License": "Proprietary",
     "VerifiedVersion": "12.13.11.1",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_jellyfinmediaplayer",
     "Name": "Jellyfin Media Player",
-    "Category": "Self-hosted",
+    "Category": "Media Players",
     "Description": "Play media from your Jellyfin server.",
     "Ids": [
       "Jellyfin.JellyfinMediaPlayer"
@@ -2406,12 +3353,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/j/Jellyfin/JellyfinMediaPlayer/1.12.0/Jellyfin.JellyfinMediaPlayer.locale.en-US.yaml",
     "License": "GPL-2.0",
     "VerifiedVersion": "1.12.0",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_jellyfinserver",
     "Name": "Jellyfin Server",
-    "Category": "Self-hosted",
+    "Category": "Media Servers",
     "Description": "Host and organize your personal media library.",
     "Ids": [
       "Jellyfin.Server"
@@ -2431,7 +3380,9 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/j/Jellyfin/Server/10.11.11/Jellyfin.Server.locale.en-US.yaml",
     "License": "MIT",
     "VerifiedVersion": "10.11.11",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Files & Storage",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_jetbrains",
@@ -2456,12 +3407,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/j/JetBrains/Toolbox/3.8.0.0/JetBrains.Toolbox.locale.en-US.yaml",
     "License": "Freeware",
     "VerifiedVersion": "3.8.0.0",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "extra_joplin",
     "Name": "Joplin",
-    "Category": "Productivity",
+    "Category": "Notes & Tasks",
     "Description": "Organize notes and to-do lists with optional sync.",
     "Ids": [
       "Joplin.Joplin"
@@ -2482,12 +3435,14 @@
     "LicenseLabel": "Open source",
     "WinUtilKeys": [
       "joplin"
-    ]
+    ],
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_jpegview",
     "Name": "JPEG View",
-    "Category": "System",
+    "Category": "Photo Viewers",
     "Description": "View images and make quick display adjustments.",
     "Ids": [
       "sylikc.JPEGView"
@@ -2507,12 +3462,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/s/sylikc/JPEGView/1.3.46.0/sylikc.JPEGView.locale.en-US.yaml",
     "License": "GPL-2.0",
     "VerifiedVersion": "1.3.46.0",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "klite",
     "Name": "K-Lite Codec Pack",
-    "Category": "Audio & Video",
+    "Category": "Runtimes",
     "Icon": "KL",
     "Description": "Install the Standard edition with codecs and playback tools.",
     "Ids": [
@@ -2526,12 +3483,66 @@
     "StarsCheckedOn": null,
     "WinUtilKeys": [
       "klite"
+    ],
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": [
+      "Media Players"
     ]
+  },
+  {
+    "Key": "daily_kdenlive",
+    "Name": "Kdenlive",
+    "Category": "Video Editing",
+    "Description": "Open-source multitrack video editing.",
+    "Ids": [
+      "KDE.Kdenlive"
+    ],
+    "Url": "",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": true,
+    "LicenseLabel": "Open source",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://kdenlive.org/",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/k/KDE/Kdenlive/26.08.1/KDE.Kdenlive.installer.yaml",
+    "License": "GPL-3.0",
+    "VerifiedVersion": "26.08.1",
+    "Verification": "WinGet manifest; installation untested",
+    "CategoryGroup": "Create",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_keepass",
+    "Name": "KeePass",
+    "Category": "Security & Privacy",
+    "Description": "Store passwords in an encrypted local database.",
+    "Ids": [
+      "DominikReichl.KeePass"
+    ],
+    "Url": "",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": true,
+    "LicenseLabel": "Open source",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://keepass.info/",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/d/DominikReichl/KeePass/2.61.1/DominikReichl.KeePass.installer.yaml",
+    "License": "GPL-2.0",
+    "VerifiedVersion": "2.61.1",
+    "Verification": "WinGet manifest; installation untested",
+    "CategoryGroup": "Files & Storage",
+    "AlsoIn": []
   },
   {
     "Key": "extra_keepassxc",
     "Name": "KeePassXC",
-    "Category": "Security",
+    "Category": "Security & Privacy",
     "Description": "Keep passwords in an encrypted database you control.",
     "Ids": [
       "KeePassXCTeam.KeePassXC"
@@ -2552,12 +3563,14 @@
     "LicenseLabel": "Open source",
     "WinUtilKeys": [
       "keepassxc"
-    ]
+    ],
+    "CategoryGroup": "Files & Storage",
+    "AlsoIn": []
   },
   {
     "Key": "extra_kodi",
     "Name": "Kodi",
-    "Category": "Audio & Video",
+    "Category": "Media Players",
     "Description": "Browse your media library in a full-screen interface.",
     "Ids": [
       "XBMCFoundation.Kodi"
@@ -2578,7 +3591,34 @@
     "LicenseLabel": "Open source",
     "WinUtilKeys": [
       "kodi"
-    ]
+    ],
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_krita",
+    "Name": "Krita",
+    "Category": "Design & Photography",
+    "Description": "Digital painting and illustration with open-source tools.",
+    "Ids": [
+      "KDE.Krita"
+    ],
+    "Url": "",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": true,
+    "LicenseLabel": "Open source",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://krita.org/",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/k/KDE/Krita/5.3.4.0/KDE.Krita.installer.yaml",
+    "License": "GPL-3.0",
+    "VerifiedVersion": "5.3.4.0",
+    "Verification": "WinGet manifest; installation untested",
+    "CategoryGroup": "Create",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_lazygit",
@@ -2603,7 +3643,9 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/j/JesseDuffield/lazygit/0.65.0/JesseDuffield.lazygit.locale.en-US.yaml",
     "License": "MIT",
     "VerifiedVersion": "0.65.0",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Name": "League of Legends",
@@ -2617,12 +3659,14 @@
     "OpenSource": null,
     "LicenseLabel": "",
     "GitHubStars": null,
-    "StarsCheckedOn": null
+    "StarsCheckedOn": null,
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "extra_libreoffice",
     "Name": "LibreOffice",
-    "Category": "Productivity",
+    "Category": "Office & PDFs",
     "Description": "Create documents, spreadsheets and presentations.",
     "Ids": [
       "TheDocumentFoundation.LibreOffice"
@@ -2643,7 +3687,9 @@
     "LicenseLabel": "Open source",
     "WinUtilKeys": [
       "libreoffice"
-    ]
+    ],
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "extra_librewolf",
@@ -2669,12 +3715,37 @@
     "LicenseLabel": "Open source",
     "WinUtilKeys": [
       "librewolf"
-    ]
+    ],
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_lightshot",
+    "Name": "Lightshot",
+    "Category": "Capture & Streaming",
+    "Description": "Capture a screen region and annotate or share it.",
+    "Ids": [],
+    "Url": "https://app.prntscr.com/en/download.html",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": false,
+    "LicenseLabel": "Check license",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://app.prntscr.com/en/download.html",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "",
+    "License": "See publisher terms",
+    "VerifiedVersion": "",
+    "Verification": "Official page reachable",
+    "CategoryGroup": "Create",
+    "AlsoIn": []
   },
   {
     "Key": "extra_localsend",
     "Name": "LocalSend",
-    "Category": "Files",
+    "Category": "Files & Downloads",
     "Description": "Share files with nearby devices over your local network.",
     "Ids": [
       "LocalSend.LocalSend"
@@ -2695,7 +3766,78 @@
     "LicenseLabel": "Open source",
     "WinUtilKeys": [
       "localsend"
-    ]
+    ],
+    "CategoryGroup": "Files & Storage",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_logi_options",
+    "Name": "Logi Options+",
+    "Category": "Hardware & Drivers",
+    "Description": "Configure supported Logitech mice, keyboards and shortcuts.",
+    "Ids": [],
+    "Url": "https://www.logitech.com/en-us/software/logi-options-plus.html",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": false,
+    "LicenseLabel": "Check license",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://www.logitech.com/en-us/software/logi-options-plus.html",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "",
+    "License": "See publisher terms",
+    "VerifiedVersion": "",
+    "Verification": "Official page reachable",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_logitech_g_hub",
+    "Name": "Logitech G HUB",
+    "Category": "Hardware & Drivers",
+    "Description": "Configure supported Logitech gaming peripherals.",
+    "Ids": [],
+    "Url": "https://www.logitechg.com/en-us/innovation/g-hub.html",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": false,
+    "LicenseLabel": "Check license",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://www.logitechg.com/en-us/innovation/g-hub.html",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "",
+    "License": "See publisher terms",
+    "VerifiedVersion": "",
+    "Verification": "Official page reachable",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_losslesscut",
+    "Name": "LosslessCut",
+    "Category": "Video Editing",
+    "Description": "Trim and join compatible media without re-encoding.",
+    "Ids": [],
+    "Url": "https://github.com/mifi/lossless-cut/releases",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": false,
+    "LicenseLabel": "Check license",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://github.com/mifi/lossless-cut/releases",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "",
+    "License": "See publisher terms",
+    "VerifiedVersion": "",
+    "Verification": "Official page reachable",
+    "CategoryGroup": "Create",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_lua",
@@ -2720,12 +3862,156 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/r/rjpcomputing/luaforwindows/5.1.5.52/rjpcomputing.luaforwindows.locale.en-US.yaml",
     "License": "As Is License",
     "VerifiedVersion": "5.1.5.52",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_malwarebytes",
+    "Name": "Malwarebytes",
+    "Category": "Security & Privacy",
+    "Description": "Malware scanning and protection; some features require a subscription.",
+    "Ids": [
+      "Malwarebytes.Malwarebytes"
+    ],
+    "Url": "",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": false,
+    "LicenseLabel": "Check license",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://www.malwarebytes.com/mwb-download",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/m/Malwarebytes/Malwarebytes/5.7.1.346/Malwarebytes.Malwarebytes.installer.yaml",
+    "License": "Proprietary",
+    "VerifiedVersion": "5.7.1.346",
+    "Verification": "WinGet manifest; installation untested",
+    "CategoryGroup": "Files & Storage",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_mediamonkey",
+    "Name": "MediaMonkey",
+    "Category": "Media Players",
+    "Description": "Organize and play large audio and video libraries.",
+    "Ids": [],
+    "Url": "https://www.mediamonkey.com/download",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": false,
+    "LicenseLabel": "Check license",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://www.mediamonkey.com/download",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "",
+    "License": "See publisher terms",
+    "VerifiedVersion": "",
+    "Verification": "Official page reachable",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_megasync",
+    "Name": "MEGAsync",
+    "Category": "Cloud & Backup",
+    "Description": "Sync files with your MEGA cloud account.",
+    "Ids": [
+      "Mega.MEGASync"
+    ],
+    "Url": "",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": false,
+    "LicenseLabel": "Check license",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://mega.nz/sync",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/m/Mega/MEGASync/6.6.2.0/Mega.MEGASync.installer.yaml",
+    "License": "Proprietary",
+    "VerifiedVersion": "6.6.2.0",
+    "Verification": "WinGet manifest; installation untested",
+    "CategoryGroup": "Files & Storage",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_mendeley_reference_manager",
+    "Name": "Mendeley Reference Manager",
+    "Category": "Office & PDFs",
+    "Description": "Organize research papers and manage citations.",
+    "Ids": [],
+    "Url": "https://www.mendeley.com/download-reference-manager/windows",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": false,
+    "LicenseLabel": "Check license",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://www.mendeley.com/download-reference-manager/windows",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "",
+    "License": "See publisher terms",
+    "VerifiedVersion": "",
+    "Verification": "Official page identified; automated fetch blocked: HTTP Error 403: Forbidden",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_microsoft_365",
+    "Name": "Microsoft 365",
+    "Category": "Office & PDFs",
+    "Description": "Word, Excel, PowerPoint and other Office apps. Install through your licensed Microsoft account.",
+    "Ids": [],
+    "Url": "https://support.microsoft.com/en-us/office/lifecycle/officeinstall/download-install-or-reinstall-microsoft-365-or-office-2024-on-a-pc-or-mac",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": false,
+    "LicenseLabel": "Check license",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://support.microsoft.com/en-us/office/lifecycle/officeinstall/download-install-or-reinstall-microsoft-365-or-office-2024-on-a-pc-or-mac",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "",
+    "License": "See publisher terms",
+    "VerifiedVersion": "",
+    "Verification": "Official page reachable",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_microsoft_to_do",
+    "Name": "Microsoft To Do",
+    "Category": "Notes & Tasks",
+    "Description": "Personal task lists and reminders synced with your Microsoft account.",
+    "Ids": [],
+    "Url": "https://to-do.microsoft.com/tasks/",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": false,
+    "LicenseLabel": "Check license",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://to-do.microsoft.com/tasks/",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "",
+    "License": "See publisher terms",
+    "VerifiedVersion": "",
+    "Verification": "Official page identified; automated fetch blocked: HTTP Error 417: Expectation Failed",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_minitoolpartitionwizard",
     "Name": "MiniTool Partition Wizard",
-    "Category": "System",
+    "Category": "Windows Utilities",
     "Description": "Manage disk partitions with the Free edition.",
     "Ids": [
       "MiniTool.PartitionWizard.Free"
@@ -2745,7 +4031,34 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/m/MiniTool/PartitionWizard/Free/13.9/MiniTool.PartitionWizard.Free.locale.en-US.yaml",
     "License": "Proprietary",
     "VerifiedVersion": "13.9",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_mobaxterm",
+    "Name": "MobaXterm",
+    "Category": "Network Tools",
+    "Description": "Remote terminal, SSH and other network tools. Check edition licensing.",
+    "Ids": [
+      "Mobatek.MobaXterm"
+    ],
+    "Url": "",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": false,
+    "LicenseLabel": "Check license",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://mobaxterm.mobatek.net/",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/m/Mobatek/MobaXterm/26.5.0.5542/Mobatek.MobaXterm.installer.yaml",
+    "License": "Freeware",
+    "VerifiedVersion": "26.5.0.5542",
+    "Verification": "WinGet manifest; installation untested",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_modrinth",
@@ -2770,7 +4083,9 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/m/Modrinth/ModrinthApp/0.21.2/Modrinth.ModrinthApp.locale.en-US.yaml",
     "License": "GPL-3.0",
     "VerifiedVersion": "0.21.2",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "extra_moonlight",
@@ -2796,12 +4111,16 @@
     "LicenseLabel": "Open source",
     "WinUtilKeys": [
       "moonlight"
+    ],
+    "CategoryGroup": "Everyday",
+    "AlsoIn": [
+      "Remote Access"
     ]
   },
   {
     "Key": "extra_mpchc",
     "Name": "MPC-HC",
-    "Category": "Audio & Video",
+    "Category": "Media Players",
     "Description": "Play local video with a classic lightweight player.",
     "Ids": [
       "clsid2.mpc-hc"
@@ -2822,12 +4141,14 @@
     "LicenseLabel": "Open source",
     "WinUtilKeys": [
       "mpchc"
-    ]
+    ],
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_mpc-qt",
     "Name": "mpc-qt",
-    "Category": "Audio & Video",
+    "Category": "Media Players",
     "Description": "Play media in an mpv-based desktop interface.",
     "Ids": [
       "mpc-qt.mpc-qt"
@@ -2847,12 +4168,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/m/mpc-qt/mpc-qt/26.07/mpc-qt.mpc-qt.locale.en-US.yaml",
     "License": "GPL-2.0",
     "VerifiedVersion": "26.07",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_mpv",
     "Name": "mpv",
-    "Category": "Audio & Video",
+    "Category": "Media Players",
     "Description": "Play local and streamed media with mpv.",
     "Ids": [
       "shinchiro.mpv"
@@ -2872,12 +4195,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/s/shinchiro/mpv/0.41.0/shinchiro.mpv.locale.en-US.yaml",
     "License": "GPL-2.0-or-later",
     "VerifiedVersion": "0.41.0",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_msedgeredirect",
     "Name": "MSEdgeRedirect",
-    "Category": "System",
+    "Category": "Windows Utilities",
     "Description": "Choose how Windows-specific web links are redirected.",
     "Ids": [
       "rcmaehl.MSEdgeRedirect"
@@ -2897,12 +4222,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/r/rcmaehl/MSEdgeRedirect/0.8.0.0/rcmaehl.MSEdgeRedirect.locale.en-US.yaml",
     "License": "LGPL-3.0",
     "VerifiedVersion": "0.8.0.0",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_msiafterburner",
     "Name": "MSI Afterburner",
-    "Category": "System",
+    "Category": "Hardware & Drivers",
     "Description": "Monitor and tune supported graphics cards.",
     "Ids": [
       "Guru3D.Afterburner"
@@ -2922,7 +4249,9 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/g/Guru3D/Afterburner/4.6.6/Guru3D.Afterburner.locale.en-US.yaml",
     "License": "Freeware",
     "VerifiedVersion": "4.6.6",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_mullvadbrowser",
@@ -2947,12 +4276,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/m/MullvadVPN/MullvadBrowser/15.0.21/MullvadVPN.MullvadBrowser.locale.en-US.yaml",
     "License": "MPL-2.0",
     "VerifiedVersion": "15.0.21",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_mullvadvpn",
     "Name": "Mullvad VPN",
-    "Category": "System",
+    "Category": "Security & Privacy",
     "Description": "Connect using your Mullvad VPN account.",
     "Ids": [
       "MullvadVPN.MullvadVPN"
@@ -2972,7 +4303,101 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/m/MullvadVPN/MullvadVPN/2026.4/MullvadVPN.MullvadVPN.locale.en-US.yaml",
     "License": "GPL-3.0",
     "VerifiedVersion": "2026.4",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Files & Storage",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_mumble",
+    "Name": "Mumble",
+    "Category": "Chat & Email",
+    "Description": "Low-latency voice chat for groups and gaming.",
+    "Ids": [],
+    "Url": "https://www.mumble.info/downloads/",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": false,
+    "LicenseLabel": "Check license",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://www.mumble.info/downloads/",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "",
+    "License": "See publisher terms",
+    "VerifiedVersion": "",
+    "Verification": "Official page reachable",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_musescore_studio",
+    "Name": "MuseScore Studio",
+    "Category": "Audio Production",
+    "Description": "Write, edit and play back musical scores.",
+    "Ids": [],
+    "Url": "https://musescore.org/en/download",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": false,
+    "LicenseLabel": "Check license",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://musescore.org/en/download",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "",
+    "License": "See publisher terms",
+    "VerifiedVersion": "",
+    "Verification": "Official page reachable",
+    "CategoryGroup": "Create",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_musicbee",
+    "Name": "MusicBee",
+    "Category": "Media Players",
+    "Description": "Manage and play a local music library.",
+    "Ids": [],
+    "Url": "https://getmusicbee.com/downloads/",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": false,
+    "LicenseLabel": "Check license",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://getmusicbee.com/downloads/",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "",
+    "License": "See publisher terms",
+    "VerifiedVersion": "",
+    "Verification": "Official page reachable",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_mysql_workbench",
+    "Name": "MySQL Workbench",
+    "Category": "Development",
+    "Description": "MySQL database design, queries and administration.",
+    "Ids": [],
+    "Url": "https://dev.mysql.com/downloads/workbench/",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": false,
+    "LicenseLabel": "Check license",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://dev.mysql.com/downloads/workbench/",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "",
+    "License": "See publisher terms",
+    "VerifiedVersion": "",
+    "Verification": "Official page identified; automated fetch blocked: HTTP Error 403: Forbidden",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Name": "NanaZip",
@@ -2981,7 +4406,7 @@
     ],
     "Url": "",
     "Key": "app1",
-    "Category": "System",
+    "Category": "Files & Downloads",
     "Icon": "NZ",
     "Description": "Compress and extract files with a modern Windows interface.",
     "Requires": [],
@@ -2991,12 +4416,14 @@
     "StarsCheckedOn": null,
     "WinUtilKeys": [
       "nanazip"
-    ]
+    ],
+    "CategoryGroup": "Files & Storage",
+    "AlsoIn": []
   },
   {
     "Key": "extra_naps2",
     "Name": "NAPS2",
-    "Category": "Productivity",
+    "Category": "Office & PDFs",
     "Description": "Scan documents and save searchable PDFs.",
     "Ids": [
       "Cyanfish.NAPS2"
@@ -3017,7 +4444,9 @@
     "LicenseLabel": "Open source",
     "WinUtilKeys": [
       "naps2"
-    ]
+    ],
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "extra_neovim",
@@ -3043,12 +4472,14 @@
     "LicenseLabel": "Open source",
     "WinUtilKeys": [
       "neovim"
-    ]
+    ],
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_netbird",
     "Name": "NetBird",
-    "Category": "Self-hosted",
+    "Category": "Network Tools",
     "Description": "Connect devices through a managed private network.",
     "Ids": [
       "Netbird.Netbird"
@@ -3068,12 +4499,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/n/Netbird/Netbird/0.78.2/Netbird.Netbird.locale.en-US.yaml",
     "License": "BSD-3-Clause",
     "VerifiedVersion": "0.78.2",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "extra_nextclouddesktop",
     "Name": "Nextcloud Desktop",
-    "Category": "Files",
+    "Category": "Cloud & Backup",
     "Description": "Sync files with your own or a hosted Nextcloud server.",
     "Ids": [
       "Nextcloud.NextcloudDesktop"
@@ -3094,12 +4527,14 @@
     "LicenseLabel": "Open source",
     "WinUtilKeys": [
       "nextclouddesktop"
-    ]
+    ],
+    "CategoryGroup": "Files & Storage",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_nilesoftshell",
     "Name": "Nilesoft Shell",
-    "Category": "System",
+    "Category": "Windows Utilities",
     "Description": "Customize the Windows context menu.",
     "Ids": [
       "Nilesoft.Shell"
@@ -3119,12 +4554,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/n/Nilesoft/Shell/1.9/Nilesoft.Shell.locale.en-US.yaml",
     "License": "MIT",
     "VerifiedVersion": "1.9",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_nmap",
     "Name": "Nmap",
-    "Category": "System",
+    "Category": "Network Tools",
     "Description": "Inspect hosts and services on networks you manage.",
     "Ids": [
       "Insecure.Nmap"
@@ -3144,7 +4581,9 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/i/Insecure/Nmap/7.80/Insecure.Nmap.locale.en-US.yaml",
     "License": "Modified GNU GPLv2",
     "VerifiedVersion": "7.80",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "extra_nodejslts",
@@ -3170,7 +4609,9 @@
     "LicenseLabel": "Open source",
     "WinUtilKeys": [
       "nodejslts"
-    ]
+    ],
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_nodejs",
@@ -3195,12 +4636,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/o/OpenJS/NodeJS/26.7.0/OpenJS.NodeJS.locale.en-US.yaml",
     "License": "MIT",
     "VerifiedVersion": "26.7.0",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_nomacs",
     "Name": "nomacs",
-    "Category": "Audio & Video",
+    "Category": "Photo Viewers",
     "Description": "View and compare images on your desktop.",
     "Ids": [
       "nomacs.nomacs"
@@ -3220,7 +4663,9 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/n/nomacs/nomacs/3.22.3/nomacs.nomacs.locale.en-US.yaml",
     "License": "GPL-3.0",
     "VerifiedVersion": "3.22.3",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "extra_notepadplus",
@@ -3246,12 +4691,39 @@
     "LicenseLabel": "Open source",
     "WinUtilKeys": [
       "notepadplus"
-    ]
+    ],
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_notion",
+    "Name": "Notion",
+    "Category": "Notes & Tasks",
+    "Description": "Shared notes, documents, databases and project workspaces.",
+    "Ids": [
+      "Notion.Notion"
+    ],
+    "Url": "",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": false,
+    "LicenseLabel": "Check license",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://www.notion.com/",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/n/Notion/Notion/7.36.1/Notion.Notion.installer.yaml",
+    "License": "Proprietary",
+    "VerifiedVersion": "7.36.1",
+    "Verification": "WinGet manifest; installation untested",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_ntlite",
     "Name": "NTLite",
-    "Category": "System",
+    "Category": "Windows Utilities",
     "Description": "Customize Windows installation images.",
     "Ids": [
       "Nlitesoft.NTLite"
@@ -3271,12 +4743,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/n/Nlitesoft/NTLite/2026.08.11723/Nlitesoft.NTLite.locale.en-US.yaml",
     "License": "Proprietary",
     "VerifiedVersion": "2026.08.11723",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_nuget",
     "Name": "NuGet",
-    "Category": "System",
+    "Category": "Development",
     "Description": "Manage packages for .NET projects.",
     "Ids": [
       "Microsoft.NuGet"
@@ -3296,12 +4770,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/m/Microsoft/NuGet/7.9.0/Microsoft.NuGet.locale.en-US.yaml",
     "License": "Apache-2.0",
     "VerifiedVersion": "7.9.0",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "nvclean",
     "Name": "NVCleanstall",
-    "Category": "Drivers",
+    "Category": "Hardware & Drivers",
     "Icon": "NC",
     "Description": "Install the tool, then choose which NVIDIA driver components to use.",
     "Ids": [
@@ -3315,12 +4791,14 @@
     "StarsCheckedOn": null,
     "WinUtilKeys": [
       "nvclean"
-    ]
+    ],
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "nvidia",
     "Name": "NVIDIA Drivers",
-    "Category": "Drivers",
+    "Category": "Hardware & Drivers",
     "Icon": "NV",
     "Description": "Choose your GPU and a Studio or Game Ready driver.",
     "Ids": [],
@@ -3329,7 +4807,9 @@
     "OpenSource": null,
     "LicenseLabel": "",
     "GitHubStars": null,
-    "StarsCheckedOn": null
+    "StarsCheckedOn": null,
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Name": "OBS Studio",
@@ -3338,7 +4818,7 @@
     ],
     "Url": "",
     "Key": "app11",
-    "Category": "Audio & Video",
+    "Category": "Capture & Streaming",
     "Icon": "OB",
     "Description": "Record your screen and broadcast live streams.",
     "Requires": [],
@@ -3348,12 +4828,14 @@
     "StarsCheckedOn": null,
     "WinUtilKeys": [
       "obs"
-    ]
+    ],
+    "CategoryGroup": "Create",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_obsidian",
     "Name": "Obsidian",
-    "Category": "Productivity",
+    "Category": "Notes & Tasks",
     "Description": "Build a personal knowledge base with linked notes.",
     "Ids": [
       "Obsidian.Obsidian"
@@ -3373,12 +4855,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/o/Obsidian/Obsidian/1.13.7/Obsidian.Obsidian.locale.en-US.yaml",
     "License": "Proprietary",
     "VerifiedVersion": "1.13.7",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_ofgb",
     "Name": "OFGB (Oh Frick Go Back)",
-    "Category": "System",
+    "Category": "Windows Utilities",
     "Description": "Adjust supported Windows promotional-content settings.",
     "Ids": [
       "xM4ddy.OFGB"
@@ -3398,7 +4882,9 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/x/xM4ddy/OFGB/0.4/xM4ddy.OFGB.locale.en-US.yaml",
     "License": "Unlicense",
     "VerifiedVersion": "0.4",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_posh",
@@ -3423,12 +4909,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/j/JanDeDobbeleer/OhMyPosh/31.3.0/JanDeDobbeleer.OhMyPosh.locale.en-US.yaml",
     "License": "MIT",
     "VerifiedVersion": "31.3.0",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_okular",
     "Name": "Okular",
-    "Category": "Productivity",
+    "Category": "Office & PDFs",
     "Description": "Read and annotate documents in multiple formats.",
     "Ids": [
       "KDE.Okular"
@@ -3448,12 +4936,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/k/KDE/Okular/26.04.3/KDE.Okular.locale.en-US.yaml",
     "License": "GPL-2.0-or-later",
     "VerifiedVersion": "26.04.3",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_onedrive",
     "Name": "OneDrive",
-    "Category": "System",
+    "Category": "Cloud & Backup",
     "Description": "Sync files with your Microsoft OneDrive account.",
     "Ids": [
       "Microsoft.OneDrive"
@@ -3473,12 +4963,37 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/m/Microsoft/OneDrive/26.150.0804.0011/Microsoft.OneDrive.locale.en-US.yaml",
     "License": "Proprietary",
     "VerifiedVersion": "26.150.0804.0011",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Files & Storage",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_onenote",
+    "Name": "OneNote",
+    "Category": "Notes & Tasks",
+    "Description": "Digital notebooks for notes, handwriting and research.",
+    "Ids": [],
+    "Url": "https://www.onenote.com/download",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": false,
+    "LicenseLabel": "Check license",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://www.onenote.com/download",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "",
+    "License": "See publisher terms",
+    "VerifiedVersion": "",
+    "Verification": "Official page reachable",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "extra_onlyoffice",
     "Name": "ONLYOFFICE Desktop",
-    "Category": "Productivity",
+    "Category": "Office & PDFs",
     "Description": "Edit documents, spreadsheets and presentations.",
     "Ids": [
       "ONLYOFFICE.DesktopEditors"
@@ -3499,12 +5014,14 @@
     "LicenseLabel": "Open source",
     "WinUtilKeys": [
       "onlyoffice"
-    ]
+    ],
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_opautoclicker",
     "Name": "OPAutoClicker",
-    "Category": "System",
+    "Category": "Windows Utilities",
     "Description": "Automate repeated clicks for desktop tasks.",
     "Ids": [
       "OPAutoClicker.OPAutoClicker"
@@ -3524,12 +5041,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/o/OPAutoClicker/OPAutoClicker/4.1/OPAutoClicker.OPAutoClicker.locale.en-US.yaml",
     "License": "CC-BY-NC-2.0",
     "VerifiedVersion": "4.1",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "extra_openrgb",
     "Name": "OpenRGB",
-    "Category": "System",
+    "Category": "Hardware & Drivers",
     "Description": "Control lighting on supported RGB hardware.",
     "Ids": [
       "OpenRGB.OpenRGB"
@@ -3550,12 +5069,39 @@
     "LicenseLabel": "Open source",
     "WinUtilKeys": [
       "openrgb"
-    ]
+    ],
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_openshot",
+    "Name": "OpenShot",
+    "Category": "Video Editing",
+    "Description": "Open-source video editor with a straightforward timeline.",
+    "Ids": [
+      "OpenShot.OpenShot"
+    ],
+    "Url": "",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": true,
+    "LicenseLabel": "Open source",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://www.openshot.org/download/",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/o/OpenShot/OpenShot/4.0.1/OpenShot.OpenShot.installer.yaml",
+    "License": "GPL-3.0",
+    "VerifiedVersion": "4.0.1",
+    "Verification": "WinGet manifest; installation untested",
+    "CategoryGroup": "Create",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_openvpn",
     "Name": "OpenVPN Connect",
-    "Category": "System",
+    "Category": "Network Tools",
     "Description": "Connect using OpenVPN profiles.",
     "Ids": [
       "OpenVPNTechnologies.OpenVPNConnect"
@@ -3575,12 +5121,41 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/o/OpenVPNTechnologies/OpenVPNConnect/3.9.0/OpenVPNTechnologies.OpenVPNConnect.locale.en-US.yaml",
     "License": "Proprietary",
     "VerifiedVersion": "3.9.0",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": [
+      "Security & Privacy"
+    ]
+  },
+  {
+    "Key": "daily_opera",
+    "Name": "Opera",
+    "Category": "Browsers",
+    "Description": "Web browser with built-in messaging and workspace tools.",
+    "Ids": [
+      "Opera.Opera"
+    ],
+    "Url": "",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": false,
+    "LicenseLabel": "Check license",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://www.opera.com/browsers/opera",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/o/Opera/Opera/136.0.6008.80/Opera.Opera.installer.yaml",
+    "License": "Freeware",
+    "VerifiedVersion": "136.0.6008.80",
+    "Verification": "WinGet manifest; installation untested",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_ovirtualbox",
     "Name": "Oracle VirtualBox",
-    "Category": "System",
+    "Category": "Windows Utilities",
     "Description": "Create and run virtual machines.",
     "Ids": [
       "Oracle.VirtualBox"
@@ -3600,7 +5175,32 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/o/Oracle/VirtualBox/7.2.18/Oracle.VirtualBox.locale.en-US.yaml",
     "License": "GPL-3.0-only",
     "VerifiedVersion": "7.2.18",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_outlook_for_windows",
+    "Name": "Outlook for Windows",
+    "Category": "Chat & Email",
+    "Description": "Microsoft email and calendar app. Choose the version appropriate for your account.",
+    "Ids": [],
+    "Url": "https://www.microsoft.com/en-us/microsoft-365/outlook/outlook-for-windows",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": false,
+    "LicenseLabel": "Check license",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://www.microsoft.com/en-us/microsoft-365/outlook/outlook-for-windows",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "",
+    "License": "See publisher terms",
+    "VerifiedVersion": "",
+    "Verification": "Official page identified; automated fetch blocked: HTTP Error 403: Forbidden",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_overwolf",
@@ -3625,12 +5225,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/o/Overwolf/CurseForge/0.220.1-9343/Overwolf.CurseForge.locale.en-US.yaml",
     "License": "Proprietary",
     "VerifiedVersion": "0.220.1-9343",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_paintdotnet",
     "Name": "Paint.NET",
-    "Category": "Audio & Video",
+    "Category": "Design & Photography",
     "Description": "Edit images with layers and effects.",
     "Ids": [
       "dotPDN.PaintDotNet"
@@ -3650,7 +5252,9 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/d/dotPDN/PaintDotNet/5.1.12/dotPDN.PaintDotNet.locale.en-US.yaml",
     "License": "Proprietary (Freeware)",
     "VerifiedVersion": "5.1.12",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Create",
+    "AlsoIn": []
   },
   {
     "Name": "Parsec",
@@ -3659,7 +5263,7 @@
     ],
     "Url": "",
     "Key": "app22",
-    "Category": "Internet",
+    "Category": "Remote Access",
     "Icon": "PA",
     "Description": "Access another computer with low-latency streaming.",
     "Requires": [],
@@ -3669,12 +5273,16 @@
     "StarsCheckedOn": null,
     "WinUtilKeys": [
       "parsec"
+    ],
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": [
+      "Gaming"
     ]
   },
   {
     "Key": "winutil_pdf-xchange",
     "Name": "PDF-XChange Editor",
-    "Category": "Productivity",
+    "Category": "Office & PDFs",
     "Description": "Read, annotate and edit PDFs. Some features require a license.",
     "Ids": [
       "TrackerSoftware.PDF-XChangeEditor"
@@ -3694,12 +5302,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/t/TrackerSoftware/PDF-XChangeEditor/11.0.1.0/TrackerSoftware.PDF-XChangeEditor.locale.en-US.yaml",
     "License": "Proprietary",
     "VerifiedVersion": "11.0.1.0",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_pdf24creator",
     "Name": "PDF24 Creator",
-    "Category": "Productivity",
+    "Category": "Office & PDFs",
     "Description": "Create, combine and convert PDF files.",
     "Ids": [
       "geeksoftwareGmbH.PDF24Creator"
@@ -3719,12 +5329,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/g/geeksoftwareGmbH/PDF24Creator/11.30.1/geeksoftwareGmbH.PDF24Creator.locale.en-US.yaml",
     "License": "Proprietary",
     "VerifiedVersion": "11.30.1",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_pdfgear",
     "Name": "PDFgear",
-    "Category": "Productivity",
+    "Category": "Office & PDFs",
     "Description": "Read, annotate and edit PDF documents.",
     "Ids": [
       "PDFgear.PDFgear"
@@ -3744,12 +5356,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/p/PDFgear/PDFgear/2.1.20/PDFgear.PDFgear.locale.en-US.yaml",
     "License": "Proprietary",
     "VerifiedVersion": "2.1.20",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_pdfsam",
     "Name": "PDFsam Basic",
-    "Category": "Productivity",
+    "Category": "Office & PDFs",
     "Description": "Split, merge and rearrange PDF pages.",
     "Ids": [
       "PDFsam.PDFsam"
@@ -3769,12 +5383,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/p/PDFsam/PDFsam/6.0.5.0/PDFsam.PDFsam.locale.en-US.yaml",
     "License": "AGPL-3.0",
     "VerifiedVersion": "6.0.5.0",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "peace",
     "Name": "Peace GUI",
-    "Category": "Audio & Video",
+    "Category": "Audio Controls",
     "Icon": "PE",
     "Description": "Control Equalizer APO through a visual interface. Requires APO.",
     "Ids": [],
@@ -3785,12 +5401,14 @@
     "OpenSource": null,
     "LicenseLabel": "",
     "GitHubStars": null,
-    "StarsCheckedOn": null
+    "StarsCheckedOn": null,
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "extra_peazip",
     "Name": "PeaZip",
-    "Category": "Files",
+    "Category": "Files & Downloads",
     "Description": "Create, extract and protect file archives.",
     "Ids": [
       "Giorgiotani.Peazip"
@@ -3811,7 +5429,9 @@
     "LicenseLabel": "Open source",
     "WinUtilKeys": [
       "peazip"
-    ]
+    ],
+    "CategoryGroup": "Files & Storage",
+    "AlsoIn": []
   },
   {
     "Key": "extra_playnite",
@@ -3837,12 +5457,14 @@
     "LicenseLabel": "Open source",
     "WinUtilKeys": [
       "playnite"
-    ]
+    ],
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_plexdesktop",
     "Name": "Plex Desktop",
-    "Category": "Self-hosted",
+    "Category": "Media Players",
     "Description": "Play media through the Plex desktop client.",
     "Ids": [
       "Plex.Plex"
@@ -3862,12 +5484,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/p/Plex/Plex/1.115.0/Plex.Plex.locale.en-US.yaml",
     "License": "Freemium AND GPL-2.0",
     "VerifiedVersion": "1.115.0",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_plex",
     "Name": "Plex Media Server",
-    "Category": "Self-hosted",
+    "Category": "Media Servers",
     "Description": "Host a Plex media library.",
     "Ids": [
       "Plex.PlexMediaServer"
@@ -3887,7 +5511,9 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/p/Plex/PlexMediaServer/1.43.4.10903/Plex.PlexMediaServer.locale.en-US.yaml",
     "License": "Freemium",
     "VerifiedVersion": "1.43.4.10903",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Files & Storage",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_pnpm",
@@ -3912,12 +5538,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/p/pnpm/pnpm/12.4.1/pnpm.pnpm.locale.en-US.yaml",
     "License": "MIT",
     "VerifiedVersion": "12.4.1",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_policyplus",
     "Name": "Policy Plus",
-    "Category": "System",
+    "Category": "Windows Utilities",
     "Description": "Inspect and edit local policy settings.",
     "Ids": [
       "Fleex255.PolicyPlus"
@@ -3937,7 +5565,9 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/f/Fleex255/PolicyPlus/June2021/Fleex255.PolicyPlus.locale.en-US.yaml",
     "License": "CC-BY-4.0",
     "VerifiedVersion": "June2021",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_postman",
@@ -3962,7 +5592,9 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/p/Postman/Postman/12.28.1/Postman.Postman.locale.en-US.yaml",
     "License": "Proprietary",
     "VerifiedVersion": "12.28.1",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Name": "PotPlayer",
@@ -3971,14 +5603,16 @@
     ],
     "Url": "",
     "Key": "app23",
-    "Category": "Audio & Video",
+    "Category": "Media Players",
     "Icon": "PO",
     "Description": "Play video and audio on your desktop.",
     "Requires": [],
     "OpenSource": null,
     "LicenseLabel": "",
     "GitHubStars": null,
-    "StarsCheckedOn": null
+    "StarsCheckedOn": null,
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "extra_powershell",
@@ -4004,12 +5638,14 @@
     "LicenseLabel": "Open source",
     "WinUtilKeys": [
       "powershell"
-    ]
+    ],
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "extra_powertoys",
     "Name": "PowerToys",
-    "Category": "System",
+    "Category": "Windows Utilities",
     "Description": "Add window layouts, quick tools and keyboard utilities.",
     "Ids": [
       "Microsoft.PowerToys"
@@ -4030,7 +5666,9 @@
     "LicenseLabel": "Open source",
     "WinUtilKeys": [
       "powertoys"
-    ]
+    ],
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "extra_prismlauncher",
@@ -4056,12 +5694,14 @@
     "LicenseLabel": "Open source",
     "WinUtilKeys": [
       "prismlauncher"
-    ]
+    ],
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_processexplorer",
     "Name": "Process Explorer",
-    "Category": "System",
+    "Category": "Windows Utilities",
     "Description": "Inspect running processes and their resources.",
     "Ids": [
       "Microsoft.Sysinternals.ProcessExplorer"
@@ -4081,12 +5721,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/m/Microsoft/Sysinternals/ProcessExplorer/17.14/Microsoft.Sysinternals.ProcessExplorer.locale.en-US.yaml",
     "License": "Proprietary",
     "VerifiedVersion": "17.14",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_processlasso",
     "Name": "Process Lasso",
-    "Category": "System",
+    "Category": "Windows Utilities",
     "Description": "Manage process priorities and CPU scheduling rules.",
     "Ids": [
       "BitSum.ProcessLasso"
@@ -4106,12 +5748,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/b/BitSum/ProcessLasso/18.3.0.34/BitSum.ProcessLasso.locale.en-US.yaml",
     "License": "Proprietary",
     "VerifiedVersion": "18.3.0.34",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_processmonitor",
     "Name": "Process Monitor",
-    "Category": "System",
+    "Category": "Windows Utilities",
     "Description": "Inspect real-time file, registry and process activity.",
     "Ids": [
       "Microsoft.Sysinternals.ProcessMonitor"
@@ -4131,12 +5775,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/m/Microsoft/Sysinternals/ProcessMonitor/4.11/Microsoft.Sysinternals.ProcessMonitor.locale.en-US.yaml",
     "License": "Proprietary",
     "VerifiedVersion": "4.11",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_protonauth",
     "Name": "Proton Authenticator",
-    "Category": "System",
+    "Category": "Security & Privacy",
     "Description": "Manage two-factor authentication codes.",
     "Ids": [
       "Proton.ProtonAuthenticator"
@@ -4156,7 +5802,9 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/p/Proton/ProtonAuthenticator/1.1.6/Proton.ProtonAuthenticator.locale.en-US.yaml",
     "License": "GPL-3.0",
     "VerifiedVersion": "1.1.6",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Files & Storage",
+    "AlsoIn": []
   },
   {
     "Name": "Proton Drive",
@@ -4165,7 +5813,7 @@
     ],
     "Url": "",
     "Key": "app20",
-    "Category": "Files",
+    "Category": "Cloud & Backup",
     "Icon": "PD",
     "Description": "Store and sync files with Proton Drive.",
     "Requires": [],
@@ -4175,12 +5823,14 @@
     "StarsCheckedOn": null,
     "WinUtilKeys": [
       "protondrive"
-    ]
+    ],
+    "CategoryGroup": "Files & Storage",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_protonmail",
     "Name": "Proton Mail",
-    "Category": "Communication",
+    "Category": "Chat & Email",
     "Description": "Access your Proton Mail account on the desktop.",
     "Ids": [
       "Proton.ProtonMail"
@@ -4200,12 +5850,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/p/Proton/ProtonMail/1.14.0/Proton.ProtonMail.locale.en-US.yaml",
     "License": "Proprietary",
     "VerifiedVersion": "1.14.0",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_protonpass",
     "Name": "Proton Pass",
-    "Category": "System",
+    "Category": "Security & Privacy",
     "Description": "Store passwords and create email aliases.",
     "Ids": [
       "Proton.ProtonPass"
@@ -4225,7 +5877,9 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/p/Proton/ProtonPass/1.40.2/Proton.ProtonPass.locale.en-US.yaml",
     "License": "GPL-3.0",
     "VerifiedVersion": "1.40.2",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Files & Storage",
+    "AlsoIn": []
   },
   {
     "Name": "Proton VPN",
@@ -4234,7 +5888,7 @@
     ],
     "Url": "",
     "Key": "app21",
-    "Category": "Internet",
+    "Category": "Security & Privacy",
     "Icon": "PV",
     "Description": "Connect through Proton VPN.",
     "Requires": [],
@@ -4244,12 +5898,14 @@
     "StarsCheckedOn": null,
     "WinUtilKeys": [
       "protonvpn"
-    ]
+    ],
+    "CategoryGroup": "Files & Storage",
+    "AlsoIn": []
   },
   {
     "Key": "extra_putty",
     "Name": "PuTTY",
-    "Category": "Internet",
+    "Category": "Network Tools",
     "Description": "Connect to remote systems using SSH or serial sessions.",
     "Ids": [
       "PuTTY.PuTTY"
@@ -4270,7 +5926,34 @@
     "LicenseLabel": "Open source",
     "WinUtilKeys": [
       "putty"
-    ]
+    ],
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_pycharm",
+    "Name": "PyCharm",
+    "Category": "Development",
+    "Description": "Python development environment from JetBrains.",
+    "Ids": [
+      "JetBrains.PyCharm"
+    ],
+    "Url": "",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": false,
+    "LicenseLabel": "Check license",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://www.jetbrains.com/pycharm/",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/j/JetBrains/PyCharm/2026.2.3/JetBrains.PyCharm.installer.yaml",
+    "License": "Proprietary",
+    "VerifiedVersion": "2026.2.3",
+    "Verification": "WinGet manifest; installation untested",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "python",
@@ -4289,12 +5972,14 @@
     "StarsCheckedOn": null,
     "WinUtilKeys": [
       "python3"
-    ]
+    ],
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "extra_qbittorrent",
     "Name": "qBittorrent",
-    "Category": "Files",
+    "Category": "Files & Downloads",
     "Description": "Download and manage BitTorrent transfers.",
     "Ids": [
       "qBittorrent.qBittorrent"
@@ -4315,12 +6000,14 @@
     "LicenseLabel": "Open source",
     "WinUtilKeys": [
       "qbittorrent"
-    ]
+    ],
+    "CategoryGroup": "Files & Storage",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_qownnotes",
     "Name": "QOwnNotes",
-    "Category": "Productivity",
+    "Category": "Notes & Tasks",
     "Description": "Write Markdown notes with optional ownCloud integration.",
     "Ids": [
       "pbek.QOwnNotes"
@@ -4340,12 +6027,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/p/pbek/QOwnNotes/26.9.5/pbek.QOwnNotes.locale.en-US.yaml",
     "License": "GPL-2.0",
     "VerifiedVersion": "26.9.5",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_qtox",
     "Name": "QTox",
-    "Category": "Communication",
+    "Category": "Chat & Email",
     "Description": "Chat and call through the Tox network.",
     "Ids": [
       "Tox.qTox"
@@ -4365,12 +6054,62 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/t/Tox/qTox/1.18.5/Tox.qTox.locale.en-US.yaml",
     "License": "GPL-3.0",
     "VerifiedVersion": "1.18.5",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_rawtherapee",
+    "Name": "RawTherapee",
+    "Category": "Design & Photography",
+    "Description": "Open-source processing and editing of raw photographs.",
+    "Ids": [
+      "RawTherapee.RawTherapee"
+    ],
+    "Url": "",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": true,
+    "LicenseLabel": "Open source",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://www.rawtherapee.com/downloads/",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/r/RawTherapee/RawTherapee/5.13/RawTherapee.RawTherapee.installer.yaml",
+    "License": "GPL-3.0",
+    "VerifiedVersion": "5.13",
+    "Verification": "WinGet manifest; installation untested",
+    "CategoryGroup": "Create",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_razer_synapse",
+    "Name": "Razer Synapse",
+    "Category": "Hardware & Drivers",
+    "Description": "Configure supported Razer peripherals and profiles.",
+    "Ids": [],
+    "Url": "https://www.razer.com/synapse-4",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": false,
+    "LicenseLabel": "Check license",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://www.razer.com/synapse-4",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "",
+    "License": "See publisher terms",
+    "VerifiedVersion": "",
+    "Verification": "Official page reachable",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_rdcman",
     "Name": "RDCMan",
-    "Category": "System",
+    "Category": "Remote Access",
     "Description": "Organize Remote Desktop connections.",
     "Ids": [
       "Microsoft.Sysinternals.RDCMan"
@@ -4390,7 +6129,9 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/m/Microsoft/Sysinternals/RDCMan/3.12/Microsoft.Sysinternals.RDCMan.locale.en-US.yaml",
     "License": "Proprietary",
     "VerifiedVersion": "3.12",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Name": "REAPER",
@@ -4399,19 +6140,21 @@
     ],
     "Url": "",
     "Key": "app25",
-    "Category": "Audio & Video",
+    "Category": "Audio Production",
     "Icon": "RE",
     "Description": "Record, edit and mix audio in a full music production app.",
     "Requires": [],
     "OpenSource": null,
     "LicenseLabel": "",
     "GitHubStars": null,
-    "StarsCheckedOn": null
+    "StarsCheckedOn": null,
+    "CategoryGroup": "Create",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_revo",
     "Name": "Revo Uninstaller",
-    "Category": "System",
+    "Category": "Windows Utilities",
     "Description": "Uninstall applications and inspect leftover files.",
     "Ids": [
       "RevoUninstaller.RevoUninstaller"
@@ -4431,7 +6174,9 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/r/RevoUninstaller/RevoUninstaller/2.1.7/RevoUninstaller.RevoUninstaller.locale.en-US.yaml",
     "License": "Freeware",
     "VerifiedVersion": "2.1.7",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_roblox",
@@ -4456,7 +6201,9 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/r/Roblox/Roblox/0.726/Roblox.Roblox.locale.en-US.yaml",
     "License": "Proprietary (Roblox Terms of Use)",
     "VerifiedVersion": "0.726",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_ruby",
@@ -4481,12 +6228,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/r/RubyInstallerTeam/Ruby/4/0/4.0.6-1/RubyInstallerTeam.Ruby.4.0.locale.en-US.yaml",
     "License": "BSD-3-Clause",
     "VerifiedVersion": "4.0.6-1",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "extra_rufus",
     "Name": "Rufus",
-    "Category": "System",
+    "Category": "Windows Utilities",
     "Description": "Create bootable USB drives from disk images.",
     "Ids": [
       "Rufus.Rufus"
@@ -4507,7 +6256,9 @@
     "LicenseLabel": "Open source",
     "WinUtilKeys": [
       "rufus"
-    ]
+    ],
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_rustlang",
@@ -4532,12 +6283,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/r/Rustlang/Rust/MSVC/1.98.1/Rustlang.Rust.MSVC.locale.en-US.yaml",
     "License": "Apache-2.0 AND MIT",
     "VerifiedVersion": "1.98.1",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "rustdesk",
     "Name": "RustDesk",
-    "Category": "Internet",
+    "Category": "Remote Access",
     "Icon": "RD",
     "Description": "Access remote computers using the official RustDesk client.",
     "Ids": [],
@@ -4546,12 +6299,14 @@
     "OpenSource": null,
     "LicenseLabel": "",
     "GitHubStars": null,
-    "StarsCheckedOn": null
+    "StarsCheckedOn": null,
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "extra_sharex",
     "Name": "ShareX",
-    "Category": "Design & Photography",
+    "Category": "Capture & Streaming",
     "Description": "Capture screenshots, record your screen and share files.",
     "Ids": [
       "ShareX.ShareX"
@@ -4572,12 +6327,39 @@
     "LicenseLabel": "Open source",
     "WinUtilKeys": [
       "sharex"
-    ]
+    ],
+    "CategoryGroup": "Create",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_shotcut",
+    "Name": "Shotcut",
+    "Category": "Video Editing",
+    "Description": "Open-source video editor for common production workflows.",
+    "Ids": [
+      "Meltytech.Shotcut"
+    ],
+    "Url": "",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": true,
+    "LicenseLabel": "Open source",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://shotcut.org/",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/m/Meltytech/Shotcut/26.9.27/Meltytech.Shotcut.installer.yaml",
+    "License": "GPL-3.0",
+    "VerifiedVersion": "26.9.27",
+    "Verification": "WinGet manifest; installation untested",
+    "CategoryGroup": "Create",
+    "AlsoIn": []
   },
   {
     "Key": "extra_signal",
     "Name": "Signal",
-    "Category": "Communication",
+    "Category": "Chat & Email",
     "Description": "Send private messages and make encrypted calls.",
     "Ids": [
       "OpenWhisperSystems.Signal"
@@ -4598,12 +6380,14 @@
     "LicenseLabel": "Open source",
     "WinUtilKeys": [
       "signal"
-    ]
+    ],
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_signalrgb",
     "Name": "SignalRGB",
-    "Category": "System",
+    "Category": "Hardware & Drivers",
     "Description": "Control lighting on supported RGB devices.",
     "Ids": [
       "WhirlwindFX.SignalRgb"
@@ -4623,12 +6407,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/w/WhirlwindFX/SignalRgb/2.5.74/WhirlwindFX.SignalRgb.locale.en-US.yaml",
     "License": "Proprietary",
     "VerifiedVersion": "2.5.74",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_simplenote",
     "Name": "Simplenote",
-    "Category": "Productivity",
+    "Category": "Notes & Tasks",
     "Description": "Keep simple notes synced across devices.",
     "Ids": [
       "Automattic.Simplenote"
@@ -4648,12 +6434,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/a/Automattic/Simplenote/2.24.0/Automattic.Simplenote.locale.en-US.yaml",
     "License": "GPL-2.0",
     "VerifiedVersion": "2.24.0",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_simplewall",
     "Name": "Simplewall",
-    "Category": "System",
+    "Category": "Security & Privacy",
     "Description": "Manage application network-filtering rules.",
     "Ids": [
       "Henry++.simplewall"
@@ -4673,12 +6461,37 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/h/Henry++/simplewall/3.8/Henry++.simplewall.locale.en-US.yaml",
     "License": "GNU General Public License v3.0",
     "VerifiedVersion": "3.8",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Files & Storage",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_sketchup",
+    "Name": "SketchUp",
+    "Category": "3D & CAD",
+    "Description": "3D modeling for design and architecture. Requires an appropriate license.",
+    "Ids": [],
+    "Url": "https://www.sketchup.com/en/download/all",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": false,
+    "LicenseLabel": "Check license",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://www.sketchup.com/en/download/all",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "",
+    "License": "See publisher terms",
+    "VerifiedVersion": "",
+    "Verification": "Official page reachable",
+    "CategoryGroup": "Create",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_slack",
     "Name": "Slack",
-    "Category": "Communication",
+    "Category": "Chat & Email",
     "Description": "Communicate with your Slack workspaces.",
     "Ids": [
       "SlackTechnologies.Slack"
@@ -4698,12 +6511,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/s/SlackTechnologies/Slack/4.52.155/SlackTechnologies.Slack.locale.en-US.yaml",
     "License": "Proprietary",
     "VerifiedVersion": "4.52.155",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_sdio",
     "Name": "Snappy Driver Installer Origin",
-    "Category": "System",
+    "Category": "Hardware & Drivers",
     "Description": "Find and install compatible hardware drivers.",
     "Ids": [
       "GlennDelahoy.SnappyDriverInstallerOrigin"
@@ -4723,21 +6538,73 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/g/GlennDelahoy/SnappyDriverInstallerOrigin/2.0.4.887/GlennDelahoy.SnappyDriverInstallerOrigin.locale.en-US.yaml",
     "License": "GPLv3",
     "VerifiedVersion": "2.0.4.887",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_spotify",
+    "Name": "Spotify",
+    "Category": "Media Players",
+    "Description": "Stream music, podcasts and audiobooks with your Spotify account.",
+    "Ids": [
+      "Spotify.Spotify"
+    ],
+    "Url": "",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": false,
+    "LicenseLabel": "Check license",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://www.spotify.com/download/windows/",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/s/Spotify/Spotify/1.3.3.264.gdaf3b824/Spotify.Spotify.installer.yaml",
+    "License": "Proprietary",
+    "VerifiedVersion": "1.3.3.264.gdaf3b824",
+    "Verification": "WinGet manifest; installation untested",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_sql_server_management_studio",
+    "Name": "SQL Server Management Studio",
+    "Category": "Development",
+    "Description": "Microsoft tooling for SQL Server administration and queries.",
+    "Ids": [],
+    "Url": "https://learn.microsoft.com/en-us/ssms/install/install",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": false,
+    "LicenseLabel": "Check license",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://learn.microsoft.com/en-us/ssms/install/install",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "",
+    "License": "See publisher terms",
+    "VerifiedVersion": "",
+    "Verification": "Official page reachable",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Name": "SSL Driver",
     "Ids": [],
     "Url": "https://solidstatelogic.com/support-page/downloads",
     "Key": "app18",
-    "Category": "Drivers",
+    "Category": "Hardware & Drivers",
     "Icon": "SS",
     "Description": "Get official downloads for Solid State Logic interfaces.",
     "Requires": [],
     "OpenSource": null,
     "LicenseLabel": "",
     "GitHubStars": null,
-    "StarsCheckedOn": null
+    "StarsCheckedOn": null,
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_starship",
@@ -4762,12 +6629,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/s/Starship/Starship/1.26.0/Starship.Starship.locale.en-US.yaml",
     "License": "ISC",
     "VerifiedVersion": "1.26.0",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_startallback",
     "Name": "StartAllBack",
-    "Category": "System",
+    "Category": "Windows Utilities",
     "Description": "Customize the Windows Start menu and taskbar.",
     "Ids": [
       "StartIsBack.StartAllBack"
@@ -4787,7 +6656,9 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/s/StartIsBack/StartAllBack/3.9/StartIsBack.StartAllBack.locale.en-US.yaml",
     "License": "Proprietary",
     "VerifiedVersion": "3.9",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Name": "Steam",
@@ -4806,7 +6677,9 @@
     "StarsCheckedOn": null,
     "WinUtilKeys": [
       "steam"
-    ]
+    ],
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_sublimetext",
@@ -4831,12 +6704,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/s/SublimeHQ/SublimeText/4/4.0.0.420000/SublimeHQ.SublimeText.4.locale.en-US.yaml",
     "License": "Proprietary",
     "VerifiedVersion": "4.0.0.420000",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "extra_sumatra",
     "Name": "Sumatra PDF",
-    "Category": "Productivity",
+    "Category": "Office & PDFs",
     "Description": "Open PDFs, ebooks and comic archives in a light reader.",
     "Ids": [
       "SumatraPDF.SumatraPDF"
@@ -4857,7 +6732,9 @@
     "LicenseLabel": "Open source",
     "WinUtilKeys": [
       "sumatra"
-    ]
+    ],
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "extra_sunshine",
@@ -4883,12 +6760,64 @@
     "LicenseLabel": "Open source",
     "WinUtilKeys": [
       "sunshine"
+    ],
+    "CategoryGroup": "Everyday",
+    "AlsoIn": [
+      "Remote Access"
     ]
+  },
+  {
+    "Key": "daily_syncbackfree",
+    "Name": "SyncBackFree",
+    "Category": "Cloud & Backup",
+    "Description": "Back up and synchronize local files and folders.",
+    "Ids": [],
+    "Url": "https://www.2brightsparks.com/freeware/freeware-hub.html",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": false,
+    "LicenseLabel": "Check license",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://www.2brightsparks.com/freeware/freeware-hub.html",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "",
+    "License": "See publisher terms",
+    "VerifiedVersion": "",
+    "Verification": "Official page reachable",
+    "CategoryGroup": "Files & Storage",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_syncthing",
+    "Name": "Syncthing",
+    "Category": "Cloud & Backup",
+    "Description": "Synchronize folders directly between your own devices.",
+    "Ids": [
+      "Syncthing.Syncthing"
+    ],
+    "Url": "",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": true,
+    "LicenseLabel": "Open source",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://github.com/syncthing/syncthing",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/s/Syncthing/Syncthing/2.1.5/Syncthing.Syncthing.installer.yaml",
+    "License": "MPL-2.0",
+    "VerifiedVersion": "2.1.5",
+    "Verification": "WinGet manifest; installation untested",
+    "CategoryGroup": "Files & Storage",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_systeminformer",
     "Name": "System Informer",
-    "Category": "Development",
+    "Category": "Windows Utilities",
     "Description": "Inspect processes, services and system resources.",
     "Ids": [
       "WinsiderSS.SystemInformer"
@@ -4908,12 +6837,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/w/WinsiderSS/SystemInformer/4.0.26241.138/WinsiderSS.SystemInformer.locale.en-US.yaml",
     "License": "MIT License",
     "VerifiedVersion": "4.0.26241.138",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_tailscale",
     "Name": "Tailscale",
-    "Category": "System",
+    "Category": "Network Tools",
     "Description": "Connect your devices through a private network.",
     "Ids": [
       "Tailscale.Tailscale"
@@ -4933,12 +6864,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/t/Tailscale/Tailscale/1.102.4/Tailscale.Tailscale.locale.en-US.yaml",
     "License": "BSD-3-Clause",
     "VerifiedVersion": "1.102.4",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_tcpview",
     "Name": "TCPView",
-    "Category": "System",
+    "Category": "Network Tools",
     "Description": "Inspect active network connections by process.",
     "Ids": [
       "Microsoft.Sysinternals.TCPView"
@@ -4958,12 +6891,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/m/Microsoft/Sysinternals/TCPView/4.19/Microsoft.Sysinternals.TCPView.locale.en-US.yaml",
     "License": "Proprietary",
     "VerifiedVersion": "4.19",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_teams",
     "Name": "Teams",
-    "Category": "Communication",
+    "Category": "Chat & Email",
     "Description": "Join Microsoft Teams chats and meetings.",
     "Ids": [
       "Microsoft.Teams"
@@ -4983,12 +6918,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/m/Microsoft/Teams/26198.304.4946.9672/Microsoft.Teams.locale.en-US.yaml",
     "License": "Proprietary",
     "VerifiedVersion": "26198.304.4946.9672",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "ts3",
     "Name": "TeamSpeak 3",
-    "Category": "Communication",
+    "Category": "Chat & Email",
     "Icon": "TS",
     "Description": "Use the classic TeamSpeak voice client, version 3.",
     "Ids": [
@@ -5002,12 +6939,14 @@
     "StarsCheckedOn": null,
     "WinUtilKeys": [
       "teamspeak3"
-    ]
+    ],
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_teamspeak6",
     "Name": "TeamSpeak 6",
-    "Category": "Communication",
+    "Category": "Chat & Email",
     "Description": "Try the TeamSpeak 6 beta voice client.",
     "Ids": [
       "TeamSpeakSystems.TeamSpeakClient.Beta.6"
@@ -5027,12 +6966,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/t/TeamSpeakSystems/TeamSpeakClient/Beta/6/6.0.0-beta4.1/TeamSpeakSystems.TeamSpeakClient.Beta.6.locale.en-US.yaml",
     "License": "Proprietary",
     "VerifiedVersion": "6.0.0-beta4.1",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_teamviewer",
     "Name": "TeamViewer",
-    "Category": "System",
+    "Category": "Remote Access",
     "Description": "Connect to remote computers with TeamViewer.",
     "Ids": [
       "TeamViewer.TeamViewer"
@@ -5052,12 +6993,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/t/TeamViewer/TeamViewer/15.81.6/TeamViewer.TeamViewer.locale.en-US.yaml",
     "License": "Proprietary",
     "VerifiedVersion": "15.81.6",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "extra_telegram",
     "Name": "Telegram Desktop",
-    "Category": "Communication",
+    "Category": "Chat & Email",
     "Description": "Use Telegram chats, groups and channels on your PC.",
     "Ids": [
       "Telegram.TelegramDesktop"
@@ -5078,12 +7021,39 @@
     "LicenseLabel": "Open source",
     "WinUtilKeys": [
       "telegram"
-    ]
+    ],
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_teracopy",
+    "Name": "TeraCopy",
+    "Category": "Files & Downloads",
+    "Description": "Copy and move files with transfer verification options.",
+    "Ids": [
+      "CodeSector.TeraCopy"
+    ],
+    "Url": "",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": false,
+    "LicenseLabel": "Check license",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://codesector.com/teracopy",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/c/CodeSector/TeraCopy/4.0.3.2/CodeSector.TeraCopy.installer.yaml",
+    "License": "Proprietary",
+    "VerifiedVersion": "4.0.3.2",
+    "Verification": "WinGet manifest; installation untested",
+    "CategoryGroup": "Files & Storage",
+    "AlsoIn": []
   },
   {
     "Key": "extra_thunderbird",
     "Name": "Thunderbird",
-    "Category": "Communication",
+    "Category": "Chat & Email",
     "Description": "Manage email, calendars and contacts in one place.",
     "Ids": [
       "Mozilla.Thunderbird"
@@ -5104,12 +7074,39 @@
     "LicenseLabel": "Open source",
     "WinUtilKeys": [
       "thunderbird"
-    ]
+    ],
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_ticktick",
+    "Name": "TickTick",
+    "Category": "Notes & Tasks",
+    "Description": "Task lists, reminders, calendars and focus timers.",
+    "Ids": [
+      "Appest.TickTick"
+    ],
+    "Url": "",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": false,
+    "LicenseLabel": "Check license",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://www.ticktick.com/",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/a/Appest/TickTick/8.2.1.5/Appest.TickTick.installer.yaml",
+    "License": "Proprietary",
+    "VerifiedVersion": "8.2.1.5",
+    "Verification": "WinGet manifest; installation untested",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_tightvnc",
     "Name": "TightVNC",
-    "Category": "System",
+    "Category": "Remote Access",
     "Description": "Access remote desktops using VNC.",
     "Ids": [
       "GlavSoft.TightVNC"
@@ -5129,7 +7126,34 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/g/GlavSoft/TightVNC/2.8.88/GlavSoft.TightVNC.locale.en-US.yaml",
     "License": "GNU General Public License v2",
     "VerifiedVersion": "2.8.88",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_todoist",
+    "Name": "Todoist",
+    "Category": "Notes & Tasks",
+    "Description": "Tasks, projects and recurring reminders.",
+    "Ids": [
+      "Doist.Todoist"
+    ],
+    "Url": "",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": false,
+    "LicenseLabel": "Check license",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://todoist.com/",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/d/Doist/Todoist/9.30.0/Doist.Todoist.installer.yaml",
+    "License": "Proprietary",
+    "VerifiedVersion": "9.30.0",
+    "Verification": "WinGet manifest; installation untested",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "extra_tor",
@@ -5155,12 +7179,14 @@
     "LicenseLabel": "Open source",
     "WinUtilKeys": [
       "tor"
-    ]
+    ],
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_totalcommander",
     "Name": "Total Commander",
-    "Category": "System",
+    "Category": "Files & Downloads",
     "Description": "Manage files with a dual-pane file manager.",
     "Ids": [
       "Ghisler.TotalCommander"
@@ -5180,7 +7206,9 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/g/Ghisler/TotalCommander/11.58/Ghisler.TotalCommander.locale.en-US.yaml",
     "License": "Shareware",
     "VerifiedVersion": "11.58",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Files & Storage",
+    "AlsoIn": []
   },
   {
     "Name": "TranslucentTB",
@@ -5189,7 +7217,7 @@
     ],
     "Url": "",
     "Key": "app19",
-    "Category": "System",
+    "Category": "Windows Utilities",
     "Icon": "TB",
     "Description": "Customize the appearance of your Windows taskbar.",
     "Requires": [],
@@ -5199,12 +7227,14 @@
     "StarsCheckedOn": null,
     "WinUtilKeys": [
       "ttaskbar"
-    ]
+    ],
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_treesize",
     "Name": "TreeSize Free",
-    "Category": "System",
+    "Category": "Files & Downloads",
     "Description": "Find folders taking up disk space.",
     "Ids": [
       "JAMSoftware.TreeSize.Free"
@@ -5224,21 +7254,25 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/j/JAMSoftware/TreeSize/Free/4.8/JAMSoftware.TreeSize.Free.locale.en-US.yaml",
     "License": "Proprietary",
     "VerifiedVersion": "4.8",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Files & Storage",
+    "AlsoIn": []
   },
   {
     "Name": "UAD / UA Connect",
     "Ids": [],
     "Url": "https://www.uaudio.com/downloads.html",
     "Key": "app12",
-    "Category": "Drivers",
+    "Category": "Hardware & Drivers",
     "Icon": "UA",
     "Description": "Get official software for your Universal Audio equipment.",
     "Requires": [],
     "OpenSource": null,
     "LicenseLabel": "",
     "GitHubStars": null,
-    "StarsCheckedOn": null
+    "StarsCheckedOn": null,
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_ubisoft",
@@ -5263,7 +7297,34 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/u/Ubisoft/Connect/173.1.0.13333/Ubisoft.Connect.locale.en-US.yaml",
     "License": "Proprietary",
     "VerifiedVersion": "173.1.0.13333",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_ultimaker_cura",
+    "Name": "UltiMaker Cura",
+    "Category": "3D & CAD",
+    "Description": "Prepare 3D models for compatible printers.",
+    "Ids": [
+      "Ultimaker.Cura"
+    ],
+    "Url": "",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": true,
+    "LicenseLabel": "Open source",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://ultimaker.com/software/ultimaker-cura",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/u/Ultimaker/Cura/5.13.0/Ultimaker.Cura.installer.yaml",
+    "License": "LGPL-3.0",
+    "VerifiedVersion": "5.13.0",
+    "Verification": "WinGet manifest; installation untested",
+    "CategoryGroup": "Create",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_ungoogled",
@@ -5288,12 +7349,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/e/eloston/ungoogled-chromium/151.0.7922.173/eloston.ungoogled-chromium.locale.en-US.yaml",
     "License": "BSD-3-Clause",
     "VerifiedVersion": "151.0.7922.173",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_wingetui",
     "Name": "UniGetUI",
-    "Category": "System",
+    "Category": "Windows Utilities",
     "Description": "Manage software packages through a graphical interface.",
     "Ids": [
       "Devolutions.UniGetUI"
@@ -5313,7 +7376,9 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/d/Devolutions/UniGetUI/2026.2.7/Devolutions.UniGetUI.locale.en-US.yaml",
     "License": "MIT",
     "VerifiedVersion": "2026.2.7",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_unity",
@@ -5336,7 +7401,9 @@
     "Verification": "Guided fallback: HTTP Error 403: rate limit exceeded",
     "License": "See publisher terms",
     "VerifiedVersion": "",
-    "ManifestUrl": "https://unity.com/"
+    "ManifestUrl": "https://unity.com/",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "extra_uv",
@@ -5362,7 +7429,9 @@
     "LicenseLabel": "Open source",
     "WinUtilKeys": [
       "uv"
-    ]
+    ],
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_vagrant",
@@ -5387,7 +7456,9 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/h/Hashicorp/Vagrant/2.4.9/Hashicorp.Vagrant.locale.en-US.yaml",
     "License": "BUSL-1.1",
     "VerifiedVersion": "2.4.9",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Name": "Valorant",
@@ -5401,12 +7472,14 @@
     "OpenSource": null,
     "LicenseLabel": "",
     "GitHubStars": null,
-    "StarsCheckedOn": null
+    "StarsCheckedOn": null,
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_ventoy",
     "Name": "Ventoy",
-    "Category": "System",
+    "Category": "Windows Utilities",
     "Description": "Prepare a USB drive that boots multiple disk images.",
     "Ids": [
       "Ventoy.Ventoy"
@@ -5426,12 +7499,39 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/v/Ventoy/Ventoy/1.1.17/Ventoy.Ventoy.locale.en-US.yaml",
     "License": "GPL-3.0",
     "VerifiedVersion": "1.1.17",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_veracrypt",
+    "Name": "VeraCrypt",
+    "Category": "Security & Privacy",
+    "Description": "Encrypt volumes and file containers.",
+    "Ids": [
+      "IDRIX.VeraCrypt"
+    ],
+    "Url": "",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": true,
+    "LicenseLabel": "Open source",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://veracrypt.io/",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/i/IDRIX/VeraCrypt/1.26.29/IDRIX.VeraCrypt.installer.yaml",
+    "License": "Apache 2.0",
+    "VerifiedVersion": "1.26.29",
+    "Verification": "WinGet manifest; installation untested",
+    "CategoryGroup": "Files & Storage",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_vesktop",
     "Name": "Vesktop",
-    "Category": "Communication",
+    "Category": "Chat & Email",
     "Description": "Use Discord through a third-party desktop client.",
     "Ids": [
       "Vencord.Vesktop"
@@ -5451,12 +7551,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/v/Vencord/Vesktop/1.6.6/Vencord.Vesktop.locale.en-US.yaml",
     "License": "GPL-3.0",
     "VerifiedVersion": "1.6.6",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_viber",
     "Name": "Viber",
-    "Category": "Communication",
+    "Category": "Chat & Email",
     "Description": "Send messages and make calls using Viber.",
     "Ids": [
       "Rakuten.Viber"
@@ -5476,7 +7578,9 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/r/Rakuten/Viber/28.8.0.0/Rakuten.Viber.locale.en-US.yaml",
     "License": "Proprietary",
     "VerifiedVersion": "28.8.0.0",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_vrdesktopstreamer",
@@ -5501,7 +7605,9 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/v/VirtualDesktop/Streamer/1.34.22/VirtualDesktop.Streamer.locale.en-US.yaml",
     "License": "Proprietary",
     "VerifiedVersion": "1.34.22",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Name": "Visual C++ (2005-2022, x86 + x64)",
@@ -5521,7 +7627,7 @@
     ],
     "Url": "",
     "Key": "app15",
-    "Category": "System",
+    "Category": "Runtimes",
     "Icon": "C+",
     "Description": "Install Visual C++ runtimes for x86 and x64 applications.",
     "Requires": [],
@@ -5532,7 +7638,9 @@
     "WinUtilKeys": [
       "vc2015_32",
       "vc2015_64"
-    ]
+    ],
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_visualstudio2022",
@@ -5557,7 +7665,9 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/m/Microsoft/VisualStudio/2022/Community/17.14.40/Microsoft.VisualStudio.2022.Community.locale.en-US.yaml",
     "License": "Proprietary",
     "VerifiedVersion": "17.14.40",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_visualstudio2026",
@@ -5582,7 +7692,9 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/m/Microsoft/VisualStudio/Community/18.10.0/Microsoft.VisualStudio.Community.locale.en-US.yaml",
     "License": "Proprietary",
     "VerifiedVersion": "18.10.0",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "vscode",
@@ -5601,7 +7713,9 @@
     "StarsCheckedOn": null,
     "WinUtilKeys": [
       "vscode"
-    ]
+    ],
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_vivaldi",
@@ -5626,12 +7740,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/v/Vivaldi/Vivaldi/8.2.4133.52/Vivaldi.Vivaldi.locale.en-US.yaml",
     "License": "Freeware",
     "VerifiedVersion": "8.2.4133.52",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "extra_vlc",
     "Name": "VLC",
-    "Category": "Audio & Video",
+    "Category": "Media Players",
     "Description": "Play video and audio in a wide range of formats.",
     "Ids": [
       "VideoLAN.VLC"
@@ -5652,7 +7768,9 @@
     "LicenseLabel": "Open source",
     "WinUtilKeys": [
       "vlc"
-    ]
+    ],
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "extra_vscodium",
@@ -5678,7 +7796,9 @@
     "LicenseLabel": "Open source",
     "WinUtilKeys": [
       "vscodium"
-    ]
+    ],
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_waterfox",
@@ -5703,12 +7823,64 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/w/Waterfox/Waterfox/G6.0.20/Waterfox.Waterfox.locale.en-US.yaml",
     "License": "MPL-2.0",
     "VerifiedVersion": "G6.0.20",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_webex",
+    "Name": "Webex",
+    "Category": "Chat & Email",
+    "Description": "Meetings, messaging and calls for work.",
+    "Ids": [
+      "Cisco.Webex"
+    ],
+    "Url": "",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": false,
+    "LicenseLabel": "Check license",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://github.com/microsoft/winget-pkgs/tree/master/manifests/c/Cisco/Webex",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/c/Cisco/Webex/46.9.0.35800/Cisco.Webex.installer.yaml",
+    "License": "Proprietary",
+    "VerifiedVersion": "46.9.0.35800",
+    "Verification": "WinGet manifest; installation untested",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_webstorm",
+    "Name": "WebStorm",
+    "Category": "Development",
+    "Description": "JavaScript and TypeScript development environment from JetBrains.",
+    "Ids": [
+      "JetBrains.WebStorm"
+    ],
+    "Url": "",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": false,
+    "LicenseLabel": "Check license",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://www.jetbrains.com/webstorm/",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/j/JetBrains/WebStorm/2026.2.2/JetBrains.WebStorm.installer.yaml",
+    "License": "Proprietary",
+    "VerifiedVersion": "2026.2.2",
+    "Verification": "WinGet manifest; installation untested",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_whatsapp",
     "Name": "WhatsApp Desktop",
-    "Category": "Communication",
+    "Category": "Chat & Email",
     "Description": "Use WhatsApp chats and calls on Windows.",
     "Ids": [],
     "Url": "https://apps.microsoft.com/detail/9NKSQGP7F2NH",
@@ -5726,7 +7898,9 @@
     "Verification": "Official Microsoft Store listing",
     "ManifestUrl": "https://apps.microsoft.com/detail/9NKSQGP7F2NH",
     "License": "See publisher terms",
-    "VerifiedVersion": "Store"
+    "VerifiedVersion": "Store",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "extra_terminal",
@@ -5752,12 +7926,39 @@
     "LicenseLabel": "Open source",
     "WinUtilKeys": [
       "terminal"
-    ]
+    ],
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_winmerge",
+    "Name": "WinMerge",
+    "Category": "Files & Downloads",
+    "Description": "Compare and merge text files and folders.",
+    "Ids": [
+      "WinMerge.WinMerge"
+    ],
+    "Url": "",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": true,
+    "LicenseLabel": "Open source",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://winmerge.org/",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/w/WinMerge/WinMerge/2.16.58.2/WinMerge.WinMerge.installer.yaml",
+    "License": "GPL-2.0",
+    "VerifiedVersion": "2.16.58.2",
+    "Verification": "WinGet manifest; installation untested",
+    "CategoryGroup": "Files & Storage",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_winrar",
     "Name": "WinRAR",
-    "Category": "System",
+    "Category": "Files & Downloads",
     "Description": "Create and extract archives with the WinRAR trial.",
     "Ids": [
       "RARLab.WinRAR"
@@ -5777,12 +7978,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/r/RARLab/WinRAR/7.23.0/RARLab.WinRAR.locale.en-US.yaml",
     "License": "Proprietary",
     "VerifiedVersion": "7.23.0",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Files & Storage",
+    "AlsoIn": []
   },
   {
     "Key": "extra_winscp",
     "Name": "WinSCP",
-    "Category": "Files",
+    "Category": "Files & Downloads",
     "Description": "Transfer files with SFTP, SCP and FTP.",
     "Ids": [
       "WinSCP.WinSCP"
@@ -5803,12 +8006,14 @@
     "LicenseLabel": "Open source",
     "WinUtilKeys": [
       "winscp"
-    ]
+    ],
+    "CategoryGroup": "Files & Storage",
+    "AlsoIn": []
   },
   {
     "Key": "extra_wireguard",
     "Name": "WireGuard",
-    "Category": "Internet",
+    "Category": "Network Tools",
     "Description": "Connect to a VPN using your WireGuard configuration.",
     "Ids": [
       "WireGuard.WireGuard"
@@ -5829,12 +8034,16 @@
     "LicenseLabel": "Open source",
     "WinUtilKeys": [
       "wireguard"
+    ],
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": [
+      "Security & Privacy"
     ]
   },
   {
     "Key": "extra_wireshark",
     "Name": "Wireshark",
-    "Category": "Internet",
+    "Category": "Network Tools",
     "Description": "Inspect network traffic and troubleshoot connections.",
     "Ids": [
       "WiresharkFoundation.Wireshark"
@@ -5855,12 +8064,14 @@
     "LicenseLabel": "Open source",
     "WinUtilKeys": [
       "wireshark"
-    ]
+    ],
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_wiseprogramuninstaller",
     "Name": "Wise Program Uninstaller (WiseCleaner)",
-    "Category": "System",
+    "Category": "Windows Utilities",
     "Description": "Remove applications and review residual files.",
     "Ids": [
       "WiseCleaner.WiseProgramUninstaller"
@@ -5880,12 +8091,14 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/w/WiseCleaner/WiseProgramUninstaller/3.2.7/WiseCleaner.WiseProgramUninstaller.locale.en-US.yaml",
     "License": "Proprietary",
     "VerifiedVersion": "3.2.7",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_wiztree",
     "Name": "WizTree",
-    "Category": "System",
+    "Category": "Files & Downloads",
     "Description": "Find large files and folders on your drives.",
     "Ids": [
       "AntibodySoftware.WizTree"
@@ -5905,12 +8118,62 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/a/AntibodySoftware/WizTree/4.32/AntibodySoftware.WizTree.locale.en-US.yaml",
     "License": "Proprietary",
     "VerifiedVersion": "4.32",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Files & Storage",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_xbox",
+    "Name": "Xbox",
+    "Category": "Gaming",
+    "Description": "PC game library and Game Pass access through your Microsoft account.",
+    "Ids": [],
+    "Url": "https://www.xbox.com/en-US/apps/xbox-app-for-pc",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": false,
+    "LicenseLabel": "Check license",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://www.xbox.com/en-US/apps/xbox-app-for-pc",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "",
+    "License": "See publisher terms",
+    "VerifiedVersion": "",
+    "Verification": "Official page identified; automated fetch blocked: HTTP Error 301: Moved Permanently",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
+  },
+  {
+    "Key": "daily_xnview_mp",
+    "Name": "XnView MP",
+    "Category": "Photo Viewers",
+    "Description": "Browse, organize and convert images. Check commercial-use licensing.",
+    "Ids": [
+      "XnSoft.XnViewMP"
+    ],
+    "Url": "",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": false,
+    "LicenseLabel": "Check license",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://www.xnview.com/en/xnviewmp/",
+    "CatalogSource": "Daily-use review",
+    "VerifiedOn": "2026-10-01",
+    "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/x/XnSoft/XnViewMP/1.12.1.0/XnSoft.XnViewMP.installer.yaml",
+    "License": "Proprietary",
+    "VerifiedVersion": "1.12.1.0",
+    "Verification": "WinGet manifest; installation untested",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_xournal",
     "Name": "Xournal++",
-    "Category": "Productivity",
+    "Category": "Notes & Tasks",
     "Description": "Annotate documents and take handwritten notes.",
     "Ids": [
       "Xournal++.Xournal++"
@@ -5930,7 +8193,9 @@
     "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/x/Xournal++/Xournal++/1.3.7/Xournal++.Xournal++.locale.en-US.yaml",
     "License": "GPL-2.0",
     "VerifiedVersion": "1.3.7",
-    "Verification": "WinGet manifest"
+    "Verification": "WinGet manifest",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_yarn",
@@ -5953,7 +8218,9 @@
     "Verification": "Guided fallback: HTTP Error 403: rate limit exceeded",
     "License": "See publisher terms",
     "VerifiedVersion": "",
-    "ManifestUrl": "https://yarnpkg.com/"
+    "ManifestUrl": "https://yarnpkg.com/",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_zed",
@@ -5976,7 +8243,9 @@
     "Verification": "Guided fallback: HTTP Error 403: rate limit exceeded",
     "License": "See publisher terms",
     "VerifiedVersion": "",
-    "ManifestUrl": "https://zed.dev/"
+    "ManifestUrl": "https://zed.dev/",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
   },
   {
     "Name": "Zen Browser",
@@ -5995,12 +8264,14 @@
     "StarsCheckedOn": null,
     "WinUtilKeys": [
       "ZenBrowser"
-    ]
+    ],
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "winutil_zoom",
     "Name": "Zoom",
-    "Category": "Communication",
+    "Category": "Chat & Email",
     "Description": "Join video meetings and use Zoom collaboration tools.",
     "Ids": [],
     "Url": "https://zoom.us/",
@@ -6018,12 +8289,14 @@
     "Verification": "Guided fallback: HTTP Error 403: rate limit exceeded",
     "License": "See publisher terms",
     "VerifiedVersion": "",
-    "ManifestUrl": "https://zoom.us/"
+    "ManifestUrl": "https://zoom.us/",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   },
   {
     "Key": "extra_zotero",
     "Name": "Zotero",
-    "Category": "Productivity",
+    "Category": "Office & PDFs",
     "Description": "Collect research sources and manage citations.",
     "Ids": [
       "DigitalScholar.Zotero"
@@ -6044,6 +8317,8 @@
     "LicenseLabel": "Open source",
     "WinUtilKeys": [
       "zotero"
-    ]
+    ],
+    "CategoryGroup": "Everyday",
+    "AlsoIn": []
   }
 ]

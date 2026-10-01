@@ -4,11 +4,11 @@ using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 
-[assembly: AssemblyTitle("First Install")]
-[assembly: AssemblyDescription("First Install - Windows app installer")]
-[assembly: AssemblyProduct("First Install")]
-[assembly: AssemblyVersion("2.8.0.0")]
-[assembly: AssemblyFileVersion("2.8.0.0")]
+[assembly: AssemblyTitle("1nstall")]
+[assembly: AssemblyDescription("1nstall - Windows app manager")]
+[assembly: AssemblyProduct("1nstall")]
+[assembly: AssemblyVersion("3.1.4.0")]
+[assembly: AssemblyFileVersion("3.1.4.0")]
 
 internal static class Launcher
 {
@@ -16,14 +16,14 @@ internal static class Launcher
     private static int Main(string[] args)
     {
         bool test = args.Length == 1 && (args[0] == "--smoke-test" || args[0] == "--self-test");
-        string folder = Path.Combine(Path.GetTempPath(), "FirstInstall-" + Guid.NewGuid().ToString("N"));
+        string folder = Path.Combine(Path.GetTempPath(), "1nstall-" + Guid.NewGuid().ToString("N"));
         string output = "";
         try
         {
             if (args.Length > 0 && !test) throw new ArgumentException("Unknown argument.");
             Directory.CreateDirectory(folder);
-            string script = Path.Combine(folder, "FirstInstall.ps1");
-            using (Stream resource = Assembly.GetExecutingAssembly().GetManifestResourceStream("FirstInstall.Payload"))
+            string script = Path.Combine(folder, "1nstall.ps1");
+            using (Stream resource = Assembly.GetExecutingAssembly().GetManifestResourceStream("1nstall.Payload"))
             using (FileStream file = File.Create(script)) resource.CopyTo(file);
             string exe = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), @"WindowsPowerShell\v1.0\powershell.exe");
             ProcessStartInfo start = new ProcessStartInfo(exe,
@@ -53,9 +53,9 @@ internal static class Launcher
         }
         catch (Exception error)
         {
-            string log = Path.Combine(test ? AppDomain.CurrentDomain.BaseDirectory : Path.GetTempPath(), "FirstInstall-startup-error.log");
+            string log = Path.Combine(test ? AppDomain.CurrentDomain.BaseDirectory : Path.GetTempPath(), "1nstall-startup-error.log");
             try { File.WriteAllText(log, error.ToString()); } catch { }
-            if (!test) MessageBox.Show("Could not start First Install.\n\n" + error.Message + "\n\nLog: " + log, "First Install", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            if (!test) MessageBox.Show("Could not start 1nstall.\n\n" + error.Message + "\n\nLog: " + log, "1nstall", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return 1;
         }
         finally

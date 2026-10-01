@@ -1,4 +1,4 @@
-# Run on Windows: powershell.exe -NoProfile -STA -ExecutionPolicy Bypass -File tests\smoke.ps1
+﻿# Run on Windows: powershell.exe -NoProfile -STA -ExecutionPolicy Bypass -File tests\smoke.ps1
 $ErrorActionPreference = 'Stop'
 $scriptPath = Join-Path (Split-Path $PSScriptRoot) 'vexan_installers.ps1'
 $tokens=$null; $parseErrors=$null
