@@ -1,4 +1,4 @@
-name: Windows checks and review build
+name: Windows checks and release build
 on:
   push:
   pull_request:
@@ -6,7 +6,7 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: review-release-${{ github.ref }}
+  group: windows-release-${{ github.ref }}
   cancel-in-progress: false
 jobs:
   headless:
@@ -36,14 +36,14 @@ jobs:
           Get-Content .\dist\self-test.log
       - name: Verified portable and source archives
         shell: powershell
-        run: .\scripts\package-review.ps1
+        run: .\scripts\package-release.ps1
       - uses: actions/upload-artifact@v4
         with:
-          name: 1nstall-windows-review
+          name: 1nstall-windows
           path: |
             dist/release/*
-  publish-review:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/release/3.2.0-review'
+  publish-stable:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/release/3.2.0'
     needs: headless
     runs-on: ubuntu-24.04
     permissions:
@@ -55,9 +55,9 @@ jobs:
           fetch-depth: 0
       - uses: actions/download-artifact@v4
         with:
-          name: 1nstall-windows-review
+          name: 1nstall-windows
           path: release-assets
-      - name: Verify and publish the reviewed prerelease
+      - name: Verify and publish the stable release
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
@@ -72,41 +72,41 @@ jobs:
           import json, os, subprocess
           from pathlib import Path
           matches = [r for page in json.loads(Path('../releases.json').read_text()) for r in page
-                     if r['tag_name'] == 'v3.2.0-review']
+                     if r['tag_name'] == 'v3.2.0']
           assert len(matches) <= 1, 'Multiple draft releases require owner review'
           if matches:
               draft = matches[0]
-              assert draft['draft'] and draft['prerelease'], 'Never replace a published release'
+              assert draft['draft'] and not draft['prerelease'], 'Never replace a published release'
               assert draft['author']['login'] == 'github-actions[bot]'
-              assert draft['name'] == '1nstall 3.2.0-review'
+              assert draft['name'] == '1nstall 3.2.0'
               subprocess.run(['git', 'merge-base', '--is-ancestor', draft['target_commitish'],
                               os.environ['RELEASE_COMMIT']], cwd='..', check=True)
               Path('../resume-draft').write_text(str(draft['id']))
           PY
           if [ -f ../resume-draft ]; then
-            gh release edit v3.2.0-review --target "$RELEASE_COMMIT" --draft=true \
-              --prerelease --latest=false --notes-file ../docs/releases/3.2.0-review.md
-            gh release upload v3.2.0-review ./* --clobber
+            gh release edit v3.2.0 --target "$RELEASE_COMMIT" --draft=true \
+              --prerelease=false --latest=false --notes-file ../docs/releases/3.2.0.md
+            gh release upload v3.2.0 ./* --clobber
           else
-            gh release create v3.2.0-review ./* \
-              --target "$RELEASE_COMMIT" --draft --prerelease --latest=false \
-              --title '1nstall 3.2.0-review' \
-              --notes-file ../docs/releases/3.2.0-review.md
+            gh release create v3.2.0 ./* \
+              --target "$RELEASE_COMMIT" --draft --prerelease=false --latest=false \
+              --title '1nstall 3.2.0' \
+              --notes-file ../docs/releases/3.2.0.md
           fi
           gh api "repos/$GH_REPO/releases?per_page=100" --paginate --slurp > ../releases.json
           python3 - <<'PY'
           import hashlib, json, os
           from pathlib import Path
           matches = [r for page in json.loads(Path('../releases.json').read_text()) for r in page
-                     if r['tag_name'] == 'v3.2.0-review']
+                     if r['tag_name'] == 'v3.2.0']
           assert len(matches) == 1
           release = matches[0]
           expected = {p.name: 'sha256:' + hashlib.sha256(p.read_bytes()).hexdigest()
                       for p in Path('.').iterdir() if p.is_file()}
-          assert release['draft'] and release['prerelease']
+          assert release['draft'] and not release['prerelease']
           assert release['target_commitish'] == os.environ['RELEASE_COMMIT']
           actual = {a['name']: a['digest'] for a in release['assets'] if a['state'] == 'uploaded'}
           assert actual == expected, 'Uploaded release assets differ from verified build'
           print('PASS: uploaded asset names, SHA-256 digests and commit verified before publication.')
           PY
-          gh release edit v3.2.0-review --draft=false --prerelease --latest=false
+          gh release edit v3.2.0 --draft=false --prerelease=false --latest

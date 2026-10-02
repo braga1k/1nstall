@@ -3,6 +3,16 @@ using System.Runtime.InteropServices;
 
 public static class FirstInstallWindow
 {
+    public static double Luminance(byte red, byte green, byte blue)
+    {
+        return 0.2126 * Linear(red) + 0.7152 * Linear(green) + 0.0722 * Linear(blue);
+    }
+    static double Linear(byte component)
+    {
+        double value = component / 255.0;
+        return value <= 0.04045 ? value / 12.92 : Math.Pow((value + 0.055) / 1.055, 2.4);
+    }
+
     [DllImport("dwmapi.dll")]
     private static extern int DwmSetWindowAttribute(IntPtr window, int attribute, ref int value, int size);
     [DllImport("dwmapi.dll")]

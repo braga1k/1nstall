@@ -1,0 +1,1 @@
+PASS: manager UI fixtures, compact library toolbar, sorted names, exact installed/unknown states, app details, history, snapshot preview, keyboard focus traversal and rendered scaling.

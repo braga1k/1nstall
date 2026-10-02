@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -16,12 +15,7 @@ public sealed class PackageRecord
     public string Name { get; set; }
     public string Source { get; set; }
     public string InstalledVersion { get; set; }
-    public string AvailableVersion { get; set; }
-    public bool UpdateAvailable { get; set; }
-    public bool Selected { get; set; }
-    public bool Held { get; set; }
-    public string HoldReason { get; set; }
-    public string Detail { get { return Id + " · " + Source + " · " + InstalledVersion + " → " + AvailableVersion + " · " + (HoldReason ?? "Review before updating"); } }
+
 }
 public sealed class PackageInventory
 {
@@ -29,7 +23,6 @@ public sealed class PackageInventory
     public bool Partial { get; set; }
     public List<PackageRecord> Packages = new List<PackageRecord>();
     public string Message { get; set; }
-    public string ClientVersion { get; set; }
 }
 public sealed class ProcessResult
 {
@@ -81,10 +74,21 @@ public static class OneInstallPackages
 {
     static readonly object HistoryGate = new object();
     static JavaScriptSerializer Json() { return new JavaScriptSerializer { MaxJsonLength = 4194304, RecursionLimit = 20 }; }
-    public static readonly ConcurrentQueue<OperationRecord> Progress = new ConcurrentQueue<OperationRecord>();
-    public static volatile bool StopRequested;
     public static string DataRoot = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "1nstall");
     public static string WinGetPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Microsoft\WindowsApps\winget.exe");
+    public static string FindWinGet()
+    {
+        if (File.Exists(WinGetPath)) return WinGetPath;
+        foreach (string entry in (Environment.GetEnvironmentVariable("PATH") ?? "").Split(';'))
+        {
+            try {
+                if (string.IsNullOrWhiteSpace(entry)) continue;
+                string candidate = Path.Combine(entry.Trim().Trim('"'), "winget.exe");
+                if (File.Exists(candidate)) return candidate;
+            } catch (ArgumentException) { }
+        }
+        return "";
+    }
     public static string HistoryPath { get { return Path.Combine(DataRoot, "operations.json"); } }
     public static string HistoryError { get; private set; }
     public static bool ValidId(string id) { return id != null && id.Length <= 200 && Regex.IsMatch(id, @"^[A-Za-z0-9][A-Za-z0-9.+_-]*$"); }
@@ -103,13 +107,11 @@ public static class OneInstallPackages
         }
         result.Append('\\', slashes * 2); result.Append('"'); return result.ToString();
     }
-    public static string Arguments(string action, string id, string source, string version)
+    public static string Arguments(string id, string source)
     {
-        if ((action != "install" && action != "upgrade") || !ValidId(id) || !ValidSource(source)) throw new ArgumentException("Invalid package identity or operation.");
-        if (action == "upgrade" && (!KnownVersion(version) || version.Length > 100 || Regex.IsMatch(version, @"[\r\n\x00]"))) throw new ArgumentException("An update needs a reviewed version.");
-        return action + " --id " + Quote(id) + " --exact --source " + Quote(source) +
-            (action == "install" ? " --no-upgrade" : " --version " + Quote(version)) +
-            " --accept-source-agreements --accept-package-agreements --disable-interactivity";
+        if (!ValidId(id) || !ValidSource(source)) throw new ArgumentException("Invalid package identity.");
+        return "install --id " + Quote(id) + " --exact --source " + Quote(source) +
+            " --no-upgrade --accept-source-agreements --accept-package-agreements --disable-interactivity";
     }
     public static ProcessResult Run(string exe, string arguments, int timeout)
     {
@@ -129,7 +131,7 @@ public static class OneInstallPackages
         get
         {
             string candidate = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), @"PowerShell\7\pwsh.exe");
-            if (!File.Exists(candidate)) throw new InvalidOperationException("Installed status and updates require PowerShell 7 and Microsoft's Microsoft.WinGet.Client module. Install them yourself; 1nstall never installs prerequisites automatically. Automatic catalog installation remains available with WinGet.");
+            if (!File.Exists(candidate)) throw new InvalidOperationException("Installed status requires PowerShell 7 and Microsoft's Microsoft.WinGet.Client module. Install them yourself; 1nstall never installs prerequisites automatically. Automatic catalog installation remains available with WinGet.");
             return candidate;
         }
     }
@@ -140,13 +142,12 @@ public static class OneInstallPackages
         if (r.ExitCode != 0) throw new IOException("WinGet inventory unavailable. Check the Microsoft.WinGet.Client module and connectivity. " + r.Error.Trim());
         return r.Output.Trim().TrimStart('\uFEFF');
     }
-    public static PackageInventory Inventory() { return Inventory(true); }
-    static PackageInventory Inventory(bool allowExport)
+    public static PackageInventory Inventory()
     {
         var result = new PackageInventory();
         try
         {
-            string payload = Structured("$rows=@(Get-WinGetPackage -ErrorAction Stop | ForEach-Object { $v=@($_.AvailableVersions); $next=if($v.Count){[string]$v[0]}else{''}; [pscustomobject]@{Id=[string]$_.Id;Name=[string]$_.Name;Source=[string]$_.Source;InstalledVersion=[string]$_.InstalledVersion;AvailableVersion=$next;UpdateAvailable=([bool]$_.IsUpdateAvailable -and $next -ne '' -and [string]$_.CompareToVersion($next) -eq 'Lesser')} }); ConvertTo-Json -InputObject $rows -Depth 4 -Compress");
+            string payload = Structured("$rows=@(Get-WinGetPackage -ErrorAction Stop | ForEach-Object { [pscustomobject]@{Id=[string]$_.Id;Name=[string]$_.Name;Source=[string]$_.Source;InstalledVersion=[string]$_.InstalledVersion} }); ConvertTo-Json -InputObject $rows -Depth 4 -Compress");
             result.Packages = Json().Deserialize<List<PackageRecord>>(payload) ?? new List<PackageRecord>();
             if (result.Packages.Any(p => p.Id == null || p.Name == null)) throw new IOException("Unexpected structured inventory shape.");
             result.Complete = true;
@@ -155,20 +156,17 @@ public static class OneInstallPackages
         catch (Exception e)
         {
             result.Message = e.Message;
-            if (allowExport)
-            {
                 string temp = Path.Combine(Path.GetTempPath(), "1nstall-inventory-" + Guid.NewGuid().ToString("N") + ".json");
                 try
                 {
                     var export = Run(WinGetPath, "export --output " + Quote(temp) + " --include-versions --disable-interactivity", 90000);
                     if (export.ExitCode != 0 || !File.Exists(temp) || new FileInfo(temp).Length > 4194304) throw new IOException("WinGet export unavailable; check sources, source agreements and connectivity.");
                     var partial = ParseExport(File.ReadAllText(temp));
-                    partial.Message = "Partial identity inventory from WinGet export. Included apps can be confirmed; omitted apps remain Unknown. Updates need PowerShell 7 and Microsoft.WinGet.Client. " + e.Message;
+                    partial.Message = "Partial identity inventory from WinGet export. Included apps can be confirmed; omitted apps remain Unknown. " + e.Message;
                     return partial;
                 }
                 catch (Exception fallback) { result.Message += " " + fallback.Message; }
                 finally { try { if (File.Exists(temp)) File.Delete(temp); } catch { } }
-            }
         }
         return result;
     }
@@ -186,7 +184,7 @@ public static class OneInstallPackages
             foreach (var package in source.Packages)
             {
                 if (!ValidId(package.PackageIdentifier)) throw new IOException("Invalid exported identity.");
-                result.Packages.Add(new PackageRecord { Id = package.PackageIdentifier, Name = package.PackageIdentifier, Source = name, InstalledVersion = package.Version, UpdateAvailable = false });
+                result.Packages.Add(new PackageRecord { Id = package.PackageIdentifier, Name = package.PackageIdentifier, Source = name, InstalledVersion = package.Version });
             }
         }
         return result;
@@ -218,7 +216,7 @@ public static class OneInstallPackages
     {
         uint h = unchecked((uint)code);
         if (h == 0x8A150008 || h == 0x8A150107) return "Download/network failure. Check connectivity and retry after refreshing.";
-        if (h == 0x8A150068) return "WinGet pin prevents this update. Review the pin in WinGet; 1nstall will not override it.";
+        if (h == 0x8A150068) return "WinGet pin prevents this operation. Review the pin in WinGet; 1nstall will not override it.";
         if (h == 0x8A150104 || h == 0x8A150110) return "Dependency failed. Complete its installation before retrying.";
         return "Process returned " + code + " / 0x" + h.ToString("X8") + ". Review detailed logs and publisher instructions.";
     }
@@ -256,17 +254,13 @@ public static class OneInstallPackages
             catch (Exception e) { HistoryError = "Operation history unavailable: " + e.Message; return new List<OperationRecord>(); }
         }
     }
-    public static List<OperationRecord> FailedUpdates()
-    {
-        return History().Where(r => r.Action == "Update" && ValidId(r.Id) && ValidSource(r.Source)).GroupBy(r => r.Source + ":" + r.Id, StringComparer.OrdinalIgnoreCase).Select(g => g.Last()).Where(r => r.Outcome == "Failed").ToList();
-    }
     public static OperationRecord Install(string exe, string id, string source, string name, string logs)
     {
         string log = null;
         try
         {
             Directory.CreateDirectory(logs); log = Path.Combine(logs, Guid.NewGuid().ToString("N") + ".log");
-            var r = Run(exe, Arguments("install", id, source, null), 0);
+            var r = Run(exe, Arguments(id, source), 0);
             File.WriteAllText(log, r.Output + "\r\n" + r.Error, Encoding.UTF8);
             string outcome = Outcome(r.ExitCode), message = Explain(r.ExitCode);
             if (outcome == "Unknown")
@@ -278,117 +272,6 @@ public static class OneInstallPackages
             return Record("Install", id, source, name, outcome, message, r.ExitCode, log);
         }
         catch (Exception e) { return Record("Install", id, source, name, "Failed", e.Message, -1, log); }
-    }
-    public static List<string> Exclusions()
-    {
-        string file = Path.Combine(DataRoot, "update-holds.json");
-        if (!File.Exists(file)) return new List<string>();
-        if (new FileInfo(file).Length > 65536) throw new IOException("Update holds file exceeds its limit; updates are withheld.");
-        var ids = Json().Deserialize<List<string>>(File.ReadAllText(file));
-        if (ids == null || ids.Any(id => !ValidId(id))) throw new IOException("Update holds file is invalid; updates are withheld.");
-        return ids.Distinct(StringComparer.OrdinalIgnoreCase).ToList();
-    }
-    public static void SetHold(string id, bool value)
-    {
-        if (!ValidId(id)) throw new ArgumentException("Invalid identity.");
-        var ids = Exclusions(); ids.RemoveAll(x => String.Equals(id, x, StringComparison.OrdinalIgnoreCase)); if (value) ids.Add(id);
-        Directory.CreateDirectory(DataRoot);
-        string file = Path.Combine(DataRoot, "update-holds.json"), temp = file + "." + Guid.NewGuid().ToString("N") + ".tmp";
-        File.WriteAllText(temp, Json().Serialize(ids), Encoding.UTF8);
-        if (File.Exists(file)) File.Replace(temp, file, null); else File.Move(temp, file);
-    }
-    // Text fallback is confined to pins. No localized upgrade/list table is used as inventory.
-    // Fail closed for unrecognized/localized text, installed-product pins, truncated or ambiguous rows.
-    public static HashSet<string> ParsePins(string output, IEnumerable<PackageRecord> inventory)
-    {
-        string clean = Regex.Replace(output ?? "", @"\x1B\[[0-?]*[ -/]*[@-~]", "").Trim();
-        if (clean == "No pins exist.") return new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        var lines = clean.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-        int separator = Array.FindIndex(lines, l => Regex.IsMatch(l.Trim(), @"^-{8,}$"));
-        if (separator < 1 || separator >= lines.Length - 1) throw new IOException("WinGet pins could not be verified. This client language/output is unsupported; updates are withheld.");
-        var ids = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        foreach (string line in lines.Skip(separator + 1))
-        {
-            if (line.Contains("…") || line.Contains("...") || !Regex.IsMatch(line, @"\s(Pinning|Blocking|Gating)\s*")) throw new IOException("Ambiguous WinGet pin data; updates are withheld.");
-            var matches = inventory.Select(p => p.Id).Distinct(StringComparer.OrdinalIgnoreCase).Where(id => ValidId(id) && Regex.IsMatch(line, @"(?<!\S)" + Regex.Escape(id) + @"(?!\S)", RegexOptions.IgnoreCase)).ToArray();
-            if (matches.Length != 1) throw new IOException("A WinGet pin cannot be correlated safely (including installed-product pins); updates are withheld.");
-            ids.Add(matches[0]);
-        }
-        return ids;
-    }
-    public static HashSet<string> Pins(string exe, PackageInventory inventory)
-    {
-        var v = Run(exe, "--version", 10000); Version version;
-        if (v.ExitCode != 0 || !Version.TryParse(v.Output.Trim().TrimStart('v'), out version) || version < new Version(1, 7)) throw new IOException("Updates require WinGet 1.7 or later with verifiable pin output.");
-        inventory.ClientVersion = version.ToString();
-        var r = Run(exe, "pin list --disable-interactivity", 90000);
-        if (r.ExitCode != 0 || !String.IsNullOrWhiteSpace(r.Error)) throw new IOException("Could not verify WinGet pins. Updates are withheld; check sources and connectivity.");
-        return ParsePins(r.Output, inventory.Packages);
-    }
-    public static Task<PackageInventory> UpdatesAsync(string exe)
-    {
-        return Task.Run(() => {
-            var inv = Inventory(false); if (!inv.Complete) return inv;
-            try
-            {
-                var pins = Pins(exe, inv); var holds = Exclusions();
-                foreach (var p in inv.Packages)
-                {
-                    if (!ValidId(p.Id) || !ValidSource(p.Source) || !KnownVersion(p.InstalledVersion) || !KnownVersion(p.AvailableVersion) || !p.UpdateAvailable || inv.Packages.Count(q => String.Equals(q.Id, p.Id, StringComparison.OrdinalIgnoreCase) && String.Equals(q.Source, p.Source, StringComparison.OrdinalIgnoreCase)) != 1) p.HoldReason = "Unknown, unavailable or ambiguous version/identity";
-                    else if (pins.Contains(p.Id)) p.HoldReason = "WinGet pin · change in WinGet";
-                    else if (holds.Contains(p.Id, StringComparer.OrdinalIgnoreCase)) p.HoldReason = "Held in 1nstall only (all sources, until released)";
-                    p.Held = p.HoldReason != null; p.Selected = false;
-                }
-            }
-            catch (Exception e) { inv.Complete = false; inv.Message = e.Message; }
-            return inv;
-        });
-    }
-    public static Task<List<OperationRecord>> UpdateAsync(string exe, PackageRecord[] reviewed, string logs)
-    {
-        StopRequested = false;
-        return Task.Run(() => {
-            var results = new List<OperationRecord>();
-            foreach (var p in reviewed)
-            {
-                OperationRecord record;
-                if (StopRequested) record = Record("Update", p.Id, p.Source, p.Name, "Cancelled", "Not started: stop after current requested.", 0, null);
-                else
-                {
-                    string log = null;
-                    try
-                    {
-                        var current = UpdatesAsync(exe).GetAwaiter().GetResult();
-                        if (StopRequested)
-                            record = Record("Update", p.Id, p.Source, p.Name, "Cancelled", "Not started: stop requested during the state recheck.", 0, null);
-                        else if (!CanUpdateReviewed(current, p))
-                            record = Record("Update", p.Id, p.Source, p.Name, "Unknown", "State or hold changed. Refresh and review again. " + current.Message, 0, null);
-                        else
-                        {
-                            Directory.CreateDirectory(logs); log = Path.Combine(logs, Guid.NewGuid().ToString("N") + ".log");
-                            var r = Run(exe, Arguments("upgrade", p.Id, p.Source, p.AvailableVersion), 0);
-                            File.WriteAllText(log, r.Output + "\r\n" + r.Error, Encoding.UTF8);
-                            string outcome = Outcome(r.ExitCode), message = Explain(r.ExitCode);
-                            if (outcome == "Unknown")
-                            {
-                                var after = Inventory(); var found = after.Packages.Where(x => String.Equals(x.Id, p.Id, StringComparison.OrdinalIgnoreCase) && String.Equals(x.Source, p.Source, StringComparison.OrdinalIgnoreCase)).ToArray();
-                                if (after.Complete && found.Length == 1 && found[0].InstalledVersion == p.AvailableVersion) { outcome = "Success"; message = "Reviewed version verified: " + p.AvailableVersion; }
-                                else message = "Process finished; reviewed version could not be verified. Refresh before retrying.";
-                            }
-                            record = Record("Update", p.Id, p.Source, p.Name, outcome, message, r.ExitCode, log);
-                        }
-                    }
-                    catch (Exception e) { record = Record("Update", p.Id, p.Source, p.Name, "Failed", e.Message, -1, log); }
-                }
-                results.Add(record); Progress.Enqueue(record);
-            }
-            return results;
-        });
-    }
-    public static bool CanUpdateReviewed(PackageInventory current, PackageRecord reviewed)
-    {
-        var matches = current.Packages.Where(x => String.Equals(x.Id, reviewed.Id, StringComparison.OrdinalIgnoreCase) && x.Source == reviewed.Source).ToArray();
-        return current.Complete && ValidId(reviewed.Id) && ValidSource(reviewed.Source) && matches.Length == 1 && matches[0].UpdateAvailable && !matches[0].Held && KnownVersion(matches[0].InstalledVersion) && KnownVersion(matches[0].AvailableVersion) && matches[0].InstalledVersion == reviewed.InstalledVersion && matches[0].AvailableVersion == reviewed.AvailableVersion;
     }
     public static string Redact(string text)
     {

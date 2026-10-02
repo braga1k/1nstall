@@ -16,6 +16,15 @@ try {
     $fixture=Join-Path $fixtureRoot 'package fixture.exe'
     & $compiler /nologo /target:exe /reference:System.Web.Extensions.dll "/out:$fixture" (Join-Path $PSScriptRoot 'process-fixture.cs')
     Assert ($LASTEXITCODE -eq 0) 'Fixture compiler failed.'
+    $originalWinget=[OneInstallPackages]::WinGetPath; $originalPath=$env:PATH
+    try {
+        [OneInstallPackages]::WinGetPath=$fixture
+        Assert ([OneInstallPackages]::FindWinGet() -eq $fixture) 'Explicit WinGet path was not found.'
+        $wingetFixture=Join-Path $fixtureRoot 'winget.exe'; [IO.File]::WriteAllText($wingetFixture,'fixture')
+        [OneInstallPackages]::WinGetPath=Join-Path $fixtureRoot 'missing.exe'; $env:PATH=$fixtureRoot
+        Assert ([OneInstallPackages]::FindWinGet() -eq $wingetFixture) 'WinGet PATH fallback failed.'
+        $tests+=2
+    } finally { [OneInstallPackages]::WinGetPath=$originalWinget; $env:PATH=$originalPath }
     $args=@('', 'path with spaces\', 'quote" and trailing\', 'normal', 'a&b', 'C:\folder\')
     $r=[OneInstallPackages]::Run($fixture,(@($args | ForEach-Object { [OneInstallPackages]::Quote($_) }) -join ' '),10000)
     $parsed=@($r.Output | ConvertFrom-Json | ForEach-Object { $_ })
@@ -24,10 +33,10 @@ try {
     Assert ([OneInstallUninstall]::QuoteArgument('C:\folder\') -ceq [OneInstallPackages]::Quote('C:\folder\')) 'Registry trailing-backslash quoting mismatch.'; $tests++
     $r=[OneInstallPackages]::Run($fixture,'pipes',10000)
     Assert ($r.Output.Length -eq 200000 -and $r.Error.Length -eq 200000) 'Parallel pipe drain failed.'; $tests++
-    foreach ($bad in @('App;Remove-Item','--all','$(malicious)','App ID')) { Reject { [OneInstallPackages]::Arguments('upgrade',$bad,'winget','2.0') } 'Executable package input accepted.'; $tests++ }
-    Reject { [OneInstallPackages]::Arguments('upgrade','Fixture.App','winget','Unknown') } 'Unknown update version accepted.'; $tests++
-    $command=[OneInstallPackages]::Arguments('upgrade','Fixture.App','winget','2.0')
-    Assert ($command -match '--exact' -and $command -match '--version' -and $command -notmatch '--all|--force|--include-pinned|--allow-reboot') 'Update overrides scope/pins.'; $tests++
+    foreach ($bad in @('App;Remove-Item','--all','$(malicious)','App ID')) { Reject { [OneInstallPackages]::Arguments($bad,'winget') } 'Executable package input accepted.'; $tests++ }
+    $command=[OneInstallPackages]::Arguments('Fixture.App','winget')
+    Assert ($command -match '--exact' -and $command -match '--no-upgrade' -and $command -notmatch '--all|--force|--include-pinned|--allow-reboot') 'Install must not become an update or override scope.'; $tests++
+    Assert ($null -eq [OneInstallPackages].GetMethod('UpdateAsync')) 'Update service still exists.'; $tests++
     $inventory=New-Object PackageInventory
     Assert ([OneInstallPackages]::InstalledState($inventory,[string[]]@('Fixture.App'),'winget') -eq 'Unknown') 'Unavailable inventory claimed absence.'; $tests++
     $inventory.Complete=$true
@@ -44,24 +53,6 @@ try {
     Reject { [OneInstallPackages]::ParseExport('{"Sources":[{"SourceDetails":{"Name":"winget"},"Packages":[{"PackageIdentifier":"--all"}]}]}') } 'Invalid export identity accepted.'; $tests++
     Reject { [OneInstallPackages]::ParseExport('{}') } 'Malformed export shape accepted.'; $tests++
     $inventory.Packages.RemoveAt(1)
-    $p.AvailableVersion='2.0'; $p.UpdateAvailable=$true
-    Assert ([OneInstallPackages]::CanUpdateReviewed($inventory,$p)) 'Applicable reviewed update rejected.'; $tests++
-    $p.Held=$true; Assert (-not [OneInstallPackages]::CanUpdateReviewed($inventory,$p)) 'Held individual update accepted.'; $tests++; $p.Held=$false
-    $review=New-Object PackageRecord; $review.Id=$p.Id; $review.Source=$p.Source; $review.InstalledVersion='0.9'; $review.AvailableVersion='2.0'
-    Assert (-not [OneInstallPackages]::CanUpdateReviewed($inventory,$review)) 'Stale review accepted for retry.'; $tests++
-    $review.InstalledVersion='1.0'; $review.AvailableVersion='3.0'
-    Assert (-not [OneInstallPackages]::CanUpdateReviewed($inventory,$review)) 'Changed available version silently substituted.'; $tests++
-    $inventory.Complete=$false; Assert (-not [OneInstallPackages]::CanUpdateReviewed($inventory,$p)) 'Offline/unknown recheck accepted.'; $tests++; $inventory.Complete=$true
-    Assert ([OneInstallPackages]::ParsePins('No pins exist.',$inventory.Packages).Count -eq 0) 'Known empty pin output rejected.'; $tests++
-    $pins=[OneInstallPackages]::ParsePins("Nom   Identifiant  Version Source Type`n---------------------------------------------`nDifferent display name  Fixture.App  1.0 winget Pinning",$inventory.Packages)
-    Assert ($pins.Contains('Fixture.App')) 'Ordinary pin ignored in localized table.'; $tests++
-    foreach ($ambiguous in @('Aucun code PIN.', 'No pins exist. warning', "Name Id`n----------`nApp {PRODUCT-GUID} 1.0 Installed Blocking", "Name Id`n----------`nApp Fixture… 1.0 winget Pinning")) { Reject { [OneInstallPackages]::ParsePins($ambiguous,$inventory.Packages) } 'Ambiguous/localized pin output accepted.'; $tests++ }
-    [OneInstallPackages]::SetHold('Fixture.App',$true)
-    Assert ([OneInstallPackages]::Exclusions().Contains('Fixture.App')) 'Hold not persisted.'; $tests++
-    [OneInstallPackages]::SetHold('Fixture.App',$false)
-    Assert ([OneInstallPackages]::Exclusions().Count -eq 0) 'Release failed.'; $tests++
-    [IO.File]::WriteAllText((Join-Path ([OneInstallPackages]::DataRoot) 'update-holds.json'),'malformed')
-    Reject { [OneInstallPackages]::Exclusions() } 'Corrupt exclusions silently cleared.'; $tests++
     foreach ($case in @(@(0,'Unknown'),@(3010,'Restart required'),@(1641,'Restart required'),@(1602,'Cancelled'),@(1603,'Failed'))) { Assert ([OneInstallPackages]::Outcome($case[0]) -eq $case[1]) 'Outcome classification failed.'; $tests++ }
     foreach ($hex in @('8A150109','8A15010A','8A15010B')) { Assert ([OneInstallPackages]::Outcome([int]([Convert]::ToInt64($hex,16)-4294967296)) -eq 'Restart required') 'WinGet restart HRESULT failed.'; $tests++ }
     $r=[OneInstallPackages]::Install($fixture,'Fixture.Failure','winget','Fixture',(Join-Path $fixtureRoot 'logs')); Assert ($r.Outcome -eq 'Failed') 'Failed installer claimed success.'; $tests++

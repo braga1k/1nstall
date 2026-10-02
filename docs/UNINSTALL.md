@@ -1,4 +1,4 @@
-# Remove apps and review leftovers — 1nstall 3.2.0-review
+# Remove apps and review leftovers — 1nstall 3.2.0
 
 Uninstall lists registered desktop applications from the current-user and machine uninstall registries, in both 32-bit and 64-bit views. It also lists removable Microsoft Store apps installed for the current user. Windows updates, hidden system entries, Store frameworks, resource packages and non-removable packages are excluded.
 
@@ -34,7 +34,7 @@ Activity is written to `%LOCALAPPDATA%\1nstall\Logs`. Removal history is in `%LO
 
 The workflow and bounded discovery approach follow [Bulk Crap Uninstaller](https://github.com/BCUninstaller/Bulk-Crap-Uninstaller). AppCompat/UserAssist scanning and ROT13 decoding are adapted from its Apache-2.0 sources at commit `30da609384c98ba6e35c6530129541ea4ff3970a`, with stricter path boundaries and current shared-app checks. The BCU runtime/binaries are not bundled. Copyright, upstream NOTICE, license and modification notices are in `licenses/` and embedded in the executable, available through Licenses & credits. This is an independent modified product, not an upstream BCU release. It does not implement the full BCU feature set: fuzzy confidence ranking, force uninstall, portable/orphan discovery, arbitrary cleanup commands, broken-registration deletion, services/tasks/startup cleanup, specialized game-store providers or silent-uninstaller automation.
 
-The original release described native fixture checks. This review does not repeat or inherit those as current evidence. Final helper logic and WPF consent checks pass; the revised native fixture test requires `-DisposableEnvironment` and has not run here. It deliberately retains name-only AppData/product keys and tests cleanup only for verified install locations and executable-path values. No personal app or publisher installer was removed.
+The original release described native fixture checks. Those checks are not inherited as current 3.2.0 evidence. Current WPF selection and consent checks pass; the revised native fixture test requires `-DisposableEnvironment` and has not run here. It deliberately retains name-only AppData/product keys and tests cleanup only for verified install locations and executable-path values. No personal app or publisher installer was removed. See VALIDATION.md for the current headless checks and their environment limits.
 
 Publisher dialogs, MSI/Store removal, HKLM UAC, actual pending restarts and recycle/restore require the isolated tests in [VALIDATION](VALIDATION.md). Native compositor capture failed in this environment because the desktop handle was unavailable. Actual high contrast and OS scaling remain unverified.
 

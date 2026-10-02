@@ -1,5 +1,7 @@
 # WinGet integration decisions
 
+> 3.2.0 scope: the Update Center was removed from the app. Upgrade/pin details below document retained backend logic and the earlier review, not an available 3.2.0 user workflow. Installed awareness and automatic catalog installation remain available.
+
 Checked against current Microsoft documentation and public source on 2026-10-02. This is a supported-interface design review, not evidence of live package operations in this sandbox.
 
 ## Installed inventory

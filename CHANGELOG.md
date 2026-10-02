@@ -1,5 +1,18 @@
 # Changelog
 
+## 3.2.0 - 2026-10-02
+
+- New centered vector logo and violet-and-sage Windows icon.
+- Symmetrical glass sidebars, consistent search and filter controls, clearer categories and smoother text.
+- Compact cards with stable sizing; descriptions and installed-state details move into the integrated Details window. Numbers sort first and symbol-prefixed names last.
+- Both modes use a Selection panel listing chosen apps with individual remove controls. Clear selection in Uninstall now clears the list checkboxes correctly, including after filtering.
+- Matching interactive glass effects and a fixed scrollbar gutter keep selection controls aligned.
+- Compiled WPF interface and native helpers, in-process PowerShell, parallel preparation and cached startup profiles retain the existing animations.
+- Installed awareness, portable setup snapshots, operation history and reviewed diagnostic exports.
+- Essentials and the Update Center removed; Buy me a beer added for optional support.
+
+- Publish as the latest stable release with updated documentation, screenshots, source archives, checksums and build metadata.
+
 ## 3.2.0-review - 2026-10-02 (prerelease)
 
 - Add Essentials, remembered library views, descriptions/methods/statuses and keyboard-accessible app details.

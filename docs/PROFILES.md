@@ -1,4 +1,4 @@
-# Built-in profiles - 1nstall 3.1.4
+# Built-in profiles - 1nstall 3.2.0
 
 All profiles opens a dropdown in the main app. Choosing a profile selects its apps; it never starts an installation. Hover a profile to see its purpose and full app list, then adjust the selection before Review & install. User profiles keeps the existing Save current selection / Load saved profile menu.
 
