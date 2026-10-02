@@ -1,0 +1,82 @@
+name: Windows checks and review build
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  headless:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - name: Catalog and metadata
+        shell: powershell
+        run: |
+          New-Item -ItemType Directory -Path test-logs -Force | Out-Null
+          python tests/catalog.py | Tee-Object test-logs/catalog.txt
+          if ($LASTEXITCODE -ne 0) { throw 'Catalog check failed.' }
+      - name: Headless reliability regressions
+        shell: powershell
+        run: .\tests\reliability.ps1 | Tee-Object test-logs/reliability.txt
+      - name: Portable executable and build metadata
+        shell: powershell
+        run: .\build-windows.ps1
+      - name: Packaged self-test (no interactive desktop)
+        shell: powershell
+        run: |
+          $p = Start-Process -FilePath .\dist\1nstall.exe -ArgumentList '--self-test' -Wait -PassThru -WindowStyle Hidden
+          if ($p.ExitCode -ne 0) { throw 'Packaged self-test failed.' }
+          Get-Content .\dist\self-test.log
+      - name: Verified portable and source archives
+        shell: powershell
+        run: .\scripts\package-review.ps1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: 1nstall-windows-review
+          path: |
+            dist/release/*
+  publish-review:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/release/3.2.0-review'
+    needs: headless
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: 1nstall-windows-review
+          path: release-assets
+      - name: Verify and publish the reviewed prerelease
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_COMMIT: ${{ github.sha }}
+        shell: bash
+        run: |
+          cd release-assets
+          sha256sum --check SHA256SUMS.txt
+          gh release create v3.2.0-review ./* \
+            --target "$RELEASE_COMMIT" --draft --prerelease --latest=false \
+            --title '1nstall 3.2.0-review' \
+            --notes-file ../docs/releases/3.2.0-review.md
+          gh api "repos/$GH_REPO/releases/tags/v3.2.0-review" > ../release.json
+          python3 - <<'PY'
+          import hashlib, json, os
+          from pathlib import Path
+          release = json.loads(Path('../release.json').read_text())
+          expected = {p.name: 'sha256:' + hashlib.sha256(p.read_bytes()).hexdigest()
+                      for p in Path('.').iterdir() if p.is_file()}
+          assert release['draft'] and release['prerelease']
+          assert release['target_commitish'] == os.environ['RELEASE_COMMIT']
+          actual = {a['name']: a['digest'] for a in release['assets'] if a['state'] == 'uploaded'}
+          assert actual == expected, 'Uploaded release assets differ from verified build'
+          print('PASS: uploaded asset names, SHA-256 digests and commit verified before publication.')
+          PY
+          gh release edit v3.2.0-review --draft=false --prerelease --latest=false

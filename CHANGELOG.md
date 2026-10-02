@@ -1,5 +1,18 @@
 # Changelog
 
+## 3.2.0-review - 2026-10-02 (prerelease)
+
+- Add Essentials, remembered library views, descriptions/methods/statuses and keyboard-accessible app details.
+- Correlate installed apps only through exact WinGet identities; expose partial, ambiguous and guided results as Unknown. Refresh asynchronously after operations and on request.
+- Add explicitly reviewed, exact-version updates; respect all WinGet pins and local holds, stop after current and recheck before retry. Unknown update versions stay ineligible.
+- Extend existing selection profiles with validated installed-app snapshots and import previews. No commands or executable content are accepted.
+- Add timestamped per-app history, actionable outcomes, detailed logs and reviewed redacted diagnostic export.
+- Fix recursive dependencies, dependency failure blocking, Windows argument escaping, process output draining and state verification.
+- Restrict cleanup to verified removal and fresh ownership evidence; retain separate consent, backups, recycling and shared/protected-location checks.
+- Add 66 headless regression checks, rendered WPF workflow evidence, Windows CI, optional authorized signing, checksums and source-input build metadata.
+- Publisher-installer/Store/reboot/native desktop tests remain external release gates; no readiness or quality score is claimed.
+
+
 ## 3.1.4 - 2026-10-02
 
 First public release under the **1nstall** name. Includes work developed since First Install 2.8.

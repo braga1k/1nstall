@@ -32,6 +32,8 @@ public sealed class InstalledApp : INotifyPropertyChanged
     public bool Machine { get; set; }
     public bool View32 { get; set; }
     public bool Msi { get; set; }
+    public bool RemovalVerified { get; set; }
+    public bool OwnershipVerified { get; set; }
     public long RestartRequestedAt { get; set; }
     public bool CanRemove { get; set; }
     public long SizeKB { get; set; }
@@ -64,6 +66,15 @@ public sealed class RemovalResult
     public List<LeftoverItem> Leftovers = new List<LeftoverItem>();
     public List<string> Messages = new List<string>();
     public string BackupFolder;
+    public List<RemovalOutcome> Results = new List<RemovalOutcome>();
+}
+public sealed class RemovalOutcome
+{
+    public string Id;
+    public string Name;
+    public string Outcome;
+    public string Message;
+    public int ExitCode;
 }
 public static class OneInstallUninstall
 {
@@ -174,6 +185,16 @@ public static class OneInstallUninstall
     }
     [DllImport("shell32.dll", SetLastError = true)] static extern IntPtr CommandLineToArgvW([MarshalAs(UnmanagedType.LPWStr)] string command, out int count);
     [DllImport("kernel32.dll")] static extern IntPtr LocalFree(IntPtr memory);
+    public static string QuoteArgument(string value)
+    {
+        var b = new StringBuilder("\""); int slashes = 0;
+        foreach (char c in value)
+        {
+            if (c == '\\') { slashes++; continue; }
+            b.Append('\\', c == '"' ? slashes * 2 + 1 : slashes); b.Append(c); slashes = 0;
+        }
+        b.Append('\\', slashes * 2); return b.Append('"').ToString();
+    }
     public static ProcessStartInfo GetCommand(InstalledApp app)
     {
         if (app.Msi)
@@ -216,7 +237,9 @@ public static class OneInstallUninstall
             var result = new RemovalResult(); Remember(apps);
             foreach (var app in apps)
             {
-                if (StopRequested) { result.Messages.Add("Stopped before the next app."); break; }
+                var item = new RemovalOutcome { Id = app.Id, Name = app.Name, Outcome = "Unknown" }; result.Results.Add(item);
+                app.RemovalVerified = false;
+                if (StopRequested) { item.Outcome = "Cancelled"; item.Message = "Not started: stop after current requested."; result.Messages.Add(app.Name + ": " + item.Message); continue; }
                 Progress.Enqueue("Removing " + app.Name + "… Finish any publisher dialog that opens.");
                 try
                 {
@@ -229,19 +252,27 @@ public static class OneInstallUninstall
                     {
                         // Re-read the registration: a stale inventory must not launch an old command.
                         var current = Desktop(new AppInventory(), false).FirstOrDefault(a => a.Id == app.Id);
-                        if (current == null) { result.Messages.Add(app.Name + ": already absent."); continue; }
+                        if (current == null) { item.Outcome = "Success"; item.Message = "Exact registration already absent; ownership cannot be established for cleanup."; result.Messages.Add(app.Name + ": " + item.Message); continue; }
+                        // Capture ownership from the fresh registration, never from stale history/display names.
+                        app.Location = current.Location; app.Name = current.Name; app.Publisher = current.Publisher;
+                        app.OwnershipVerified = !String.IsNullOrWhiteSpace(current.Location) && Directory.Exists(current.Location);
                         var start = GetCommand(current); start.UseShellExecute = true;
                         if (app.Machine) start.Verb = "runas";
                         using (var process = Process.Start(start))
                         {
                             process.WaitForExit();
-                            if (process.ExitCode == 3010 || process.ExitCode == 1641) { app.RestartRequestedAt = BootTime; result.Messages.Add(app.Name + ": restart required. Leftovers are withheld until Windows restarts."); continue; }
-                            if (process.ExitCode != 0) { result.Messages.Add(app.Name + ": uninstaller returned " + process.ExitCode + ". No cleanup was started."); continue; }
+                            item.ExitCode = process.ExitCode;
+                            if (process.ExitCode == 3010 || process.ExitCode == 1641) { app.RestartRequestedAt = BootTime; item.Outcome = "Restart required"; item.Message = "Restart required. Cleanup withheld until Windows restarts and removal is verified."; result.Messages.Add(app.Name + ": " + item.Message); continue; }
+                            if (process.ExitCode != 0) { item.Outcome = process.ExitCode == 1602 || process.ExitCode == 1223 ? "Cancelled" : "Failed"; item.Message = "Uninstaller returned " + process.ExitCode + ". No cleanup was started."; result.Messages.Add(app.Name + ": " + item.Message); continue; }
                         }
                     }
-                    result.Messages.Add(app.Name + ": uninstaller finished. Registration will be checked before scanning.");
+                    var after = Inventory();
+                    if (app.Kind == "Microsoft Store" && after.Warnings.Count > 0) { item.Message = "Store inventory unavailable; removal cannot be verified. Cleanup withheld."; }
+                    else if (Registered(app, after)) { item.Outcome = "Manual action required"; item.Message = "Still registered after the uninstaller finished. Finish publisher steps or restart, then refresh. Cleanup withheld."; }
+                    else { item.Outcome = "Success"; app.RemovalVerified = true; item.Message = "Exact registration absence verified. Cleanup remains a separate review."; }
+                    result.Messages.Add(app.Name + ": " + item.Outcome + " · " + item.Message);
                 }
-                catch (Exception e) { result.Messages.Add(app.Name + ": " + e.Message); }
+                catch (Exception e) { item.Outcome = e is Win32Exception && ((Win32Exception)e).NativeErrorCode == 1223 ? "Cancelled" : e is TimeoutException ? "Unknown" : "Failed"; item.Message = e.Message; result.Messages.Add(app.Name + ": " + item.Outcome + " · " + e.Message); }
             }
             // Cleanup is always a separate user action, including for zero-exit uninstallers.
             Remember(apps);
@@ -449,21 +480,15 @@ public static class OneInstallUninstall
                 if (Registered(app, inventory)) { result.Messages.Add(app.Name + ": still registered. Finish removal or restart, then check again."); continue; }
                 // Store package data is intentionally managed by Windows; no manual WindowsApps/Packages cleanup.
                 if (app.Kind == "Microsoft Store") { result.Messages.Add(app.Name + ": removed; Windows manages its package data."); continue; }
-                int folderCount = 0;
-                foreach (var folder in new[] { Environment.SpecialFolder.LocalApplicationData, Environment.SpecialFolder.ApplicationData, Environment.SpecialFolder.CommonApplicationData, Environment.SpecialFolder.ProgramFiles, Environment.SpecialFolder.ProgramFilesX86 })
-                {
-                    if (folderCount > 20000) break;
-                    DiscoverFolders(Environment.GetFolderPath(folder), 0, app, active, result, seen, ref folderCount);
-                }
+                if (app.RestartRequestedAt > 0 && !WaitingForRestart(app)) app.RemovalVerified = true;
+                if (!app.RemovalVerified || !app.OwnershipVerified) { result.Messages.Add(app.Name + ": removal or ownership evidence is unavailable. Cleanup withheld; names alone are insufficient."); continue; }
+                // Display-name matches under AppData are not evidence of ownership. Only the
+                // freshly registered install directory and exact executable-path traces are offered.
+                result.Messages.Add(app.Name + ": name-only AppData folders and product settings keys withheld because ownership cannot be established.");
                 foreach (bool machine in new[] { false, true }) foreach (bool view32 in new[] { false, true })
                 {
                     using (var hive = RegistryKey.OpenBaseKey(machine ? RegistryHive.LocalMachine : RegistryHive.CurrentUser, view32 ? RegistryView.Registry32 : RegistryView.Registry64))
                     {
-                        using (var software = hive.OpenSubKey("Software"))
-                        {
-                            int count = 0;
-                            if (software != null) DiscoverKeys(software, "Software", 0, machine, view32, app, active, result, seen, ref count);
-                        }
                         foreach (string key in TraceKeys)
                         {
                             try
@@ -489,7 +514,7 @@ public static class OneInstallUninstall
                     }
                     catch (Exception e) { result.Messages.Add(app.Name + ": folder check skipped: " + e.Message); }
                 }
-                result.Messages.Add(app.Name + ": checked product folders, product keys and Windows app traces. Only verified candidates are shown; no matches does not prove every residue is absent.");
+                result.Messages.Add(app.Name + ": checked the verified installation directory and exact Windows executable-path traces. Only verified candidates are shown; no matches does not prove every residue is absent.");
             }
             return result;
         });
@@ -505,6 +530,7 @@ public static class OneInstallUninstall
             File.WriteAllText(System.IO.Path.Combine(result.BackupFolder, "items.json"), Json().Serialize(items));
             foreach (var item in items)
             {
+                var outcome = new RemovalOutcome { Id = item.Owner.Id, Name = item.AppName, Outcome = "Unknown" }; result.Results.Add(outcome);
                 Progress.Enqueue("Removing reviewed leftover: " + item.Path);
                 try
                 {
@@ -512,30 +538,35 @@ public static class OneInstallUninstall
                     var currentProtection = new AppInventory(); active = Desktop(currentProtection, true);
                     if (currentProtection.Warnings.Count > 0) throw new InvalidOperationException("Shared-app protection could not be refreshed.");
                     active.AddRange(inventory.Apps.Where(a => a.Kind == "Microsoft Store"));
-                    if (WaitingForRestart(item.Owner) || Registered(item.Owner, inventory)) throw new InvalidOperationException("The app is registered or waiting for a restart; cleanup was blocked.");
+                    if (!item.Owner.RemovalVerified || !item.Owner.OwnershipVerified || WaitingForRestart(item.Owner) || Registered(item.Owner, inventory)) throw new InvalidOperationException("Removal/ownership is unverified, the app is registered or waiting for a restart; cleanup was blocked.");
                     if (item.Kind == "Folder")
                     {
-                        if (!SafeDirectory(item.Path, item.Owner, active) || !NoLinks(item.Path)) throw new InvalidOperationException("Folder protection changed; cleanup was blocked.");
+                        if (!Full(item.Path).Equals(Full(item.Owner.Location), StringComparison.OrdinalIgnoreCase) || !SafeDirectory(item.Path, item.Owner, active) || !NoLinks(item.Path)) throw new InvalidOperationException("Folder ownership/protection changed; cleanup was blocked.");
                         RecycleFolder(item.Path);
+                        outcome.Outcome = "Success"; outcome.Message = "Reviewed folder recycled; original location absence verified.";
                         result.Messages.Add(item.Path + ": sent to Recycle Bin.");
                     }
                     else if (item.Kind == "Registry")
                     {
-                        if (item.ValueName == null ? !SafeRegistry(item.Path, item.Owner, active) : !SafeRegistryValue(item.Path, item.ValueName, item.Owner, active)) throw new InvalidOperationException("Registry protection changed; cleanup was blocked.");
+                        if (item.ValueName == null || !SafeRegistryValue(item.Path, item.ValueName, item.Owner, active)) throw new InvalidOperationException("Registry ownership/protection is uncertain; cleanup was blocked.");
                         string key = (item.Machine ? "HKLM\\" : "HKCU\\") + item.Path;
                         string backup = System.IO.Path.Combine(result.BackupFolder, Guid.NewGuid().ToString("N") + ".reg");
-                        var export = new ProcessStartInfo(RegExe, "export \"" + key + "\" \"" + backup + "\" /y /reg:" + (item.View32 ? "32" : "64"));
+                        var export = new ProcessStartInfo(RegExe, "export " + QuoteArgument(key) + " " + QuoteArgument(backup) + " /y /reg:" + (item.View32 ? "32" : "64"));
                         export.UseShellExecute = false; export.CreateNoWindow = true;
                         using (var process = Process.Start(export)) { process.WaitForExit(); if (process.ExitCode != 0 || !File.Exists(backup) || new FileInfo(backup).Length < 10) throw new IOException("Registry backup failed; key was kept."); }
                         File.AppendAllText(System.IO.Path.Combine(result.BackupFolder, "RESTORE.txt"), key + " (" + (item.View32 ? "32-bit" : "64-bit") + ")\r\nTo restore from Command Prompt" + (item.Machine ? " as administrator" : "") + ":\r\nreg.exe import \"" + backup + "\" /reg:" + (item.View32 ? "32" : "64") + "\r\n\r\n");
-                        var delete = new ProcessStartInfo(RegExe, "delete \"" + key + "\"" + (item.ValueName == null ? "" : " /v \"" + item.ValueName + "\"") + " /f /reg:" + (item.View32 ? "32" : "64"));
+                        var delete = new ProcessStartInfo(RegExe, "delete " + QuoteArgument(key) + " /v " + QuoteArgument(item.ValueName) + " /f /reg:" + (item.View32 ? "32" : "64"));
                         delete.UseShellExecute = true; delete.WindowStyle = ProcessWindowStyle.Hidden;
                         if (item.Machine) delete.Verb = "runas";
                         using (var process = Process.Start(delete)) { process.WaitForExit(); if (process.ExitCode != 0) throw new IOException("Registry removal was cancelled or failed; backup is available."); }
+                        using (var hive = RegistryKey.OpenBaseKey(item.Machine ? RegistryHive.LocalMachine : RegistryHive.CurrentUser, item.View32 ? RegistryView.Registry32 : RegistryView.Registry64))
+                        using (var remaining = hive.OpenSubKey(item.Path))
+                            if (remaining != null && remaining.GetValueNames().Contains(item.ValueName, StringComparer.OrdinalIgnoreCase)) throw new IOException("Registry value remains; cleanup was not verified. Backup is available.");
+                        outcome.Outcome = "Success"; outcome.Message = "Reviewed trace value absence verified; registry backup saved.";
                         result.Messages.Add(key + (item.ValueName == null ? "" : " :: " + item.ValueName) + ": removed; .reg backup saved.");
                     }
                 }
-                catch (Exception e) { result.Messages.Add(item.Path + ": not completed · " + e.Message); }
+                catch (Exception e) { outcome.Outcome = e is Win32Exception && ((Win32Exception)e).NativeErrorCode == 1223 ? "Cancelled" : "Failed"; outcome.Message = e.Message; result.Messages.Add(item.Path + ": not completed · " + e.Message); }
             }
             return result;
         });

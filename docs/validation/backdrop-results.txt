@@ -1,0 +1,12 @@
+powershell.exe : Exception calling "CopyFromScreen" with "5" argument(s): "The handle is invalid"
+At line:2 char:1
++ powershell.exe -NoProfile -STA -ExecutionPolicy Bypass -File tests/ba ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Exception calli...dle is invalid":String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+
+At <workspace>/tests/backdrop.ps1:40 char:5
++     $graphics.CopyFromScreen([int]$point.X,[int]$point.Y,0,0,[Drawing ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : Win32Exception

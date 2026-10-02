@@ -7,15 +7,15 @@ using System.Windows.Forms;
 [assembly: AssemblyTitle("1nstall")]
 [assembly: AssemblyDescription("1nstall - Windows app manager")]
 [assembly: AssemblyProduct("1nstall")]
-[assembly: AssemblyVersion("3.1.4.0")]
-[assembly: AssemblyFileVersion("3.1.4.0")]
+[assembly: AssemblyVersion("3.2.0.0")]
+[assembly: AssemblyFileVersion("3.2.0.0")]
 
 internal static class Launcher
 {
     [STAThread]
     private static int Main(string[] args)
     {
-        bool test = args.Length == 1 && (args[0] == "--smoke-test" || args[0] == "--self-test");
+        bool test = args.Length == 1 && (args[0] == "--smoke-test" || args[0] == "--self-test" || args[0] == "--manager-test");
         string folder = Path.Combine(Path.GetTempPath(), "1nstall-" + Guid.NewGuid().ToString("N"));
         string output = "";
         try
@@ -28,7 +28,7 @@ internal static class Launcher
             string exe = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), @"WindowsPowerShell\v1.0\powershell.exe");
             ProcessStartInfo start = new ProcessStartInfo(exe,
                 "-NoLogo -NoProfile -STA -ExecutionPolicy Bypass -File \"" + script + "\"" +
-                (test ? (args[0] == "--smoke-test" ? " -SmokeTest" : " -SelfTest") : ""));
+                (test ? (args[0] == "--smoke-test" ? " -SmokeTest" : args[0] == "--manager-test" ? " -ManagerTest" : " -SelfTest") : ""));
             start.UseShellExecute = false;
             start.CreateNoWindow = true;
             start.RedirectStandardOutput = true;

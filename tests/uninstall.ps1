@@ -1,4 +1,6 @@
-# Native integration check. Only the newly created GUID fixture is modified; no app is uninstalled.
+﻿# Native integration check. Only the newly created GUID fixture is modified; no app is uninstalled.
+param([switch]$DisposableEnvironment)
+if (-not $DisposableEnvironment) { throw 'Run this native registry/recycling check only in a disposable Windows VM or Sandbox, with -DisposableEnvironment. See docs/VALIDATION.md.' }
 $ErrorActionPreference='Stop'
 $root=Split-Path $PSScriptRoot
 Add-Type -TypeDefinition ([IO.File]::ReadAllText((Join-Path $root 'src\uninstall-helper.cs'))) -ReferencedAssemblies @('System.dll','System.Core.dll','System.Web.Extensions.dll')
@@ -38,11 +40,15 @@ if ($trace) { $trace.SetValue($traceValue,42); $trace.SetValue($sentinel,7) }
 try {
     $app=New-Object InstalledApp; $app.Name=$product+' v2.0'; $app.Publisher='A different recorded publisher'; $app.Kind='Desktop'; $app.Location=$folder
     $app.Id=$name; $app.RegistryPath='Software\Microsoft\Windows\CurrentVersion\Uninstall\'+$name
+    $unknown=Wait-Check ([OneInstallUninstall]::ScanAsync([InstalledApp[]]@($app)))
+    if ($unknown.Leftovers.Count -ne 0 -or ($unknown.Messages -join ' ') -notmatch 'withheld') { throw 'Unverified ownership was offered for cleanup.' }
+    # Explicit simulated ownership evidence for our newly created disposable fixture.
+    $app.RemovalVerified=$true; $app.OwnershipVerified=$true
     $scan=Wait-Check ([OneInstallUninstall]::ScanAsync([InstalledApp[]]@($app)))
     $items=[LeftoverItem[]]@($scan.Leftovers | Where-Object { $_.Path -eq $folder -or ($_.Path -eq $key -and -not $_.Machine) })
-    if ($items.Count -ne 2) { throw ('Fixture scan missed a disk/registry item: '+($scan.Messages -join ', ')) }
+    if ($items.Count -ne 1) { throw ('Fixture scan missed the owned folder or accepted a name-only key: '+($scan.Messages -join ', ')) }
     $nested=[LeftoverItem[]]@($scan.Leftovers | Where-Object { $_.Path -eq $dataFolder -or ($_.Path -eq $nestedKey -and -not $_.Machine) })
-    if ($nested.Count -ne 2) { throw 'Nested product discovery failed when publisher/path names differ.' }
+    if ($nested.Count -ne 0) { throw 'Name-only AppData/product-key ownership was accepted.' }
     if ($trace) {
         $traceItems=[LeftoverItem[]]@($scan.Leftovers | Where-Object { $_.Path -eq $traceKey -and $_.ValueName -eq $traceValue -and -not $_.Machine })
         if ($traceItems.Count -ne 1 -or [OneInstallUninstall]::SafeRegistryValue($traceKey,$sentinel,$app,[InstalledApp[]]@())) { throw 'Exact registry-value path boundary failed.' }
@@ -51,11 +57,11 @@ try {
     }
     $cleanup=Wait-Check ([OneInstallUninstall]::CleanAsync($items))
     $backupFolder=$cleanup.BackupFolder
-    if ((Test-Path -LiteralPath $folder) -or (Test-Path -LiteralPath $registryFixture)) { throw ('Fixture cleanup failed: '+($cleanup.Messages -join ', ')) }
+    if ((Test-Path -LiteralPath $folder) -or -not (Test-Path -LiteralPath $registryFixture) -or -not (Test-Path -LiteralPath $dataFolder)) { throw ('Fixture cleanup removed uncertain data or failed: '+($cleanup.Messages -join ', ')) }
     $exports=@(Get-ChildItem -LiteralPath $backupFolder -Filter *.reg)
-    if ($exports.Count -ne $(if ($trace) { 2 } else { 1 }) -or -not (($exports | ForEach-Object { [IO.File]::ReadAllText($_.FullName) }) -join '').Contains('backup-me')) { throw 'Registry export did not preserve the fixture value.' }
+    if ($exports.Count -ne $(if ($trace) { 1 } else { 0 })) { throw 'Registry trace export missing or name-only key touched.' }
     if ($trace -and ($trace.GetValue($traceValue) -ne $null -or $trace.GetValue($sentinel) -ne 7)) { throw 'Value cleanup did not preserve the shared key and sibling value.' }
-    if (-not (Test-Path -LiteralPath (Join-Path $backupFolder 'RESTORE.txt'))) { throw 'Registry restore/view instructions are missing.' }
+    if ($trace -and -not (Test-Path -LiteralPath (Join-Path $backupFolder 'RESTORE.txt'))) { throw 'Registry restore/view instructions are missing.' }
     # Recycle Bin must contain this exact fixture; no permanent deletion fallback.
     $shell=New-Object -ComObject Shell.Application
     $recycled=@($shell.Namespace(10).Items() | Where-Object { $_.Name -eq $name })
@@ -64,7 +70,7 @@ try {
     $shell.Namespace($fixtureRoot).MoveHere($recycled[0],20)
     for ($i=0;$i -lt 20 -and -not (Test-Path -LiteralPath $folder);$i++) { Start-Sleep -Milliseconds 100 }
     if (-not (Test-Path -LiteralPath (Join-Path $folder 'fixture.txt'))) { throw 'Recycle Bin restore failed.' }
-    Write-Output 'PASS: native inventory, protected/shared locations, versioned names, nested product discovery with different publisher names, value-only cleanup preserving siblings, registry backups and Recycle Bin round trip. No real app removed.'
+    Write-Output 'PASS: native inventory, protected/shared locations, withheld name-only ownership, exact path trace cleanup preserving siblings, registry backups and Recycle Bin round trip. Simulated removal evidence for disposable fixtures; no publisher app removed.'
 } finally {
     # Verify resolved targets are inside the explicitly created fixture and backup roots before removal.
     $resolved=[IO.Path]::GetFullPath($fixtureRoot)

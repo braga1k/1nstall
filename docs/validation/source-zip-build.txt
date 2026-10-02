@@ -1,0 +1,1 @@
+PASS: extracted source builds without Git; unknown provenance remains null.

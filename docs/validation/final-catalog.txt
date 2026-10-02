@@ -1,0 +1,1 @@
+PASS: 325 apps, 24 categories, unique safe package IDs, 20 profiles, all 200 shortlist mappings and 911 benchmark rows

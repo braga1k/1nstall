@@ -747,7 +747,10 @@
       "bitwarden"
     ],
     "CategoryGroup": "Files & Storage",
-    "AlsoIn": []
+    "AlsoIn": [],
+    "Publisher": "Bitwarden Inc.",
+    "PublisherEvidence": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/b/Bitwarden/Bitwarden/2026.8.0/Bitwarden.Bitwarden.locale.en-US.yaml",
+    "PublisherVerifiedOn": "2026-10-02"
   },
   {
     "Key": "extra_blender",
@@ -3768,7 +3771,10 @@
       "localsend"
     ],
     "CategoryGroup": "Files & Storage",
-    "AlsoIn": []
+    "AlsoIn": [],
+    "Publisher": "Tien Do Nam",
+    "PublisherEvidence": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/l/LocalSend/LocalSend/1.18.2/LocalSend.LocalSend.locale.en-US.yaml",
+    "PublisherVerifiedOn": "2026-10-02"
   },
   {
     "Key": "daily_logi_options",
@@ -5668,7 +5674,10 @@
       "powertoys"
     ],
     "CategoryGroup": "PC & Tools",
-    "AlsoIn": []
+    "AlsoIn": [],
+    "Publisher": "Microsoft Corporation",
+    "PublisherEvidence": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/m/Microsoft/PowerToys/0.101.2362.0/Microsoft.PowerToys.locale.en-US.yaml",
+    "PublisherVerifiedOn": "2026-10-02"
   },
   {
     "Key": "extra_prismlauncher",
@@ -6734,7 +6743,10 @@
       "sumatra"
     ],
     "CategoryGroup": "Everyday",
-    "AlsoIn": []
+    "AlsoIn": [],
+    "Publisher": "Krzysztof Kowalczyk",
+    "PublisherEvidence": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/s/SumatraPDF/SumatraPDF/3.6/SumatraPDF.SumatraPDF.locale.en-US.yaml",
+    "PublisherVerifiedOn": "2026-10-02"
   },
   {
     "Key": "extra_sunshine",
@@ -7770,7 +7782,10 @@
       "vlc"
     ],
     "CategoryGroup": "Everyday",
-    "AlsoIn": []
+    "AlsoIn": [],
+    "Publisher": "VideoLAN",
+    "PublisherEvidence": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/v/VideoLAN/VLC/3.0.23/VideoLAN.VLC.locale.en-US.yaml",
+    "PublisherVerifiedOn": "2026-10-02"
   },
   {
     "Key": "extra_vscodium",
