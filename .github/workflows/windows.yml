@@ -5,6 +5,9 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+concurrency:
+  group: review-release-${{ github.ref }}
+  cancel-in-progress: false
 jobs:
   headless:
     runs-on: windows-2022
@@ -49,6 +52,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+          fetch-depth: 0
       - uses: actions/download-artifact@v4
         with:
           name: 1nstall-windows-review
@@ -62,15 +66,41 @@ jobs:
         run: |
           cd release-assets
           sha256sum --check SHA256SUMS.txt
-          gh release create v3.2.0-review ./* \
-            --target "$RELEASE_COMMIT" --draft --prerelease --latest=false \
-            --title '1nstall 3.2.0-review' \
-            --notes-file ../docs/releases/3.2.0-review.md
-          gh api "repos/$GH_REPO/releases/tags/v3.2.0-review" > ../release.json
+          # Drafts with pending tags are available in the authenticated release list, not by tag.
+          gh api "repos/$GH_REPO/releases?per_page=100" --paginate --slurp > ../releases.json
+          python3 - <<'PY'
+          import json, os, subprocess
+          from pathlib import Path
+          matches = [r for page in json.loads(Path('../releases.json').read_text()) for r in page
+                     if r['tag_name'] == 'v3.2.0-review']
+          assert len(matches) <= 1, 'Multiple draft releases require owner review'
+          if matches:
+              draft = matches[0]
+              assert draft['draft'] and draft['prerelease'], 'Never replace a published release'
+              assert draft['author']['login'] == 'github-actions[bot]'
+              assert draft['name'] == '1nstall 3.2.0-review'
+              subprocess.run(['git', 'merge-base', '--is-ancestor', draft['target_commitish'],
+                              os.environ['RELEASE_COMMIT']], cwd='..', check=True)
+              Path('../resume-draft').write_text(str(draft['id']))
+          PY
+          if [ -f ../resume-draft ]; then
+            gh release edit v3.2.0-review --target "$RELEASE_COMMIT" --draft=true \
+              --prerelease --latest=false --notes-file ../docs/releases/3.2.0-review.md
+            gh release upload v3.2.0-review ./* --clobber
+          else
+            gh release create v3.2.0-review ./* \
+              --target "$RELEASE_COMMIT" --draft --prerelease --latest=false \
+              --title '1nstall 3.2.0-review' \
+              --notes-file ../docs/releases/3.2.0-review.md
+          fi
+          gh api "repos/$GH_REPO/releases?per_page=100" --paginate --slurp > ../releases.json
           python3 - <<'PY'
           import hashlib, json, os
           from pathlib import Path
-          release = json.loads(Path('../release.json').read_text())
+          matches = [r for page in json.loads(Path('../releases.json').read_text()) for r in page
+                     if r['tag_name'] == 'v3.2.0-review']
+          assert len(matches) == 1
+          release = matches[0]
           expected = {p.name: 'sha256:' + hashlib.sha256(p.read_bytes()).hexdigest()
                       for p in Path('.').iterdir() if p.is_file()}
           assert release['draft'] and release['prerelease']
