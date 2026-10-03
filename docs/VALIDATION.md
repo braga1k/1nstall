@@ -1,6 +1,6 @@
-# 3.2.0 validation — 2026-10-02
+# 3.3.0 validation — 2026-10-03
 
-This release keeps the application behavior approved after the 3.2 review. The project owner authorized stable publication as-is. Publication status does not extend the test coverage below.
+The project owner approved publishing Settings and the refined light/dark/monochrome appearances on 2026-10-03. Publication does not extend the test coverage below.
 
 ## Current evidence
 
@@ -12,13 +12,18 @@ This release keeps the application behavior approved after the 3.2 review. The p
 - Catalog checks cover 325 apps, 24 categories, 20 profiles and 911 research rows.
 - The publication workflow runs catalog checks, headless reliability and the packaged self-test on Windows Server 2022 before packaging. Actual CI logs are release assets, separate from local evidence.
 
-## Environment limitation
+## Settings and appearance validation
 
-The current local sandbox returns an empty SpecialFolder.UserProfile value. The headless/self-test registry boundary check fails there, also on the original review release. The protection and assertion remain unchanged. The publication workflow must pass these checks in its normal Windows environment; no skipped or forced-green check is used.
+- All ten locale choices and Arabic/Urdu right-to-left layouts preserve selections. Preferences are checked across atomic saves.
+- Light and dark retain gradient materials; foreground contrast is checked against the light material stops. Theme/accent changes also update already-moved hover reflections.
+- Settings cards and buttons share pointer-following light; reduced motion and opaque fallback are covered.
+- Ten local monochrome renders of Install, Uninstall and Settings had no RGB channel differences: no residual colour. Render checks are distinct from physical monitor/DPI testing.
+- A real official release download passed SHA-256 and assembly checks. The packaged update worker replaced only disposable files, including paths with spaces; invalid hashes were rejected and previous executables retained.
+- Catalog checks and all 54 headless reliability regressions passed locally in this session. The earlier 3.2 sandbox profile-path limitation did not recur.
 
 ## Startup
 
-The most recent same-session warm-profile comparison measured a median of 3.235 s for the final local build and 3.202 s for the prior build. Earlier 1.968 s measurements were not reproduced in that session. Measurement is process creation to first render followed by dispatcher idle, with normal asynchronous inventory startup. It uses a test cache beside the executable; production uses LocalAppData/1nstall/Runtime. Neither a cold Windows boot nor first launch without a JIT profile was measured in that comparison. No universal 1–2 second guarantee is made.
+During Settings development, three samples measured 2.578, 2.501 and 2.518 seconds (median 2.518 s), before the final appearance refinements. These are not a fresh timing of the release executable. The prior 3.2 release measured roughly 3.2 seconds in another session; the samples do not establish a guaranteed speedup. Measurement is process creation to first render followed by dispatcher idle, with normal asynchronous inventory startup. It uses a test cache beside the executable; production uses LocalAppData/1nstall/Runtime. Neither a cold Windows boot nor first launch without a JIT profile was measured in that comparison. No universal 1–2 second guarantee is made.
 
 ## Remaining coverage
 
@@ -28,6 +33,6 @@ The UI review also identified active-filter contrast, a long Tab sequence and li
 
 ## Evidence files
 
-Current local packaged logs are in validation/3.2/. CI logs and BUILD-INFO.json accompany the release. Current WPF previews are in images/3.2/; uninstall examples are fictional. Existing files under validation/ and images/review/ outside those folders belong to earlier releases and must not be read as current 3.2.0 results.
+Windows CI logs and BUILD-INFO.json accompany this release. Current appearance renders are in images/3.3/. Existing logs in validation/3.2/ and images/3.2/ document the previous release, not current 3.3.0 test results. Uninstall examples use fictional apps.
 
 For destructive fixture checks, use a disposable Windows VM and run tests/uninstall.ps1 -DisposableEnvironment. This switch declares isolation; it does not create a VM. Do not use personal apps as test fixtures.

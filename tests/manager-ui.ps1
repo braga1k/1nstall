@@ -79,13 +79,20 @@ $window.Add_ContentRendered({
             $installGap=$ui.Profiles.TranslatePoint([Windows.Point]::new(0,0),$window).X-$installPoint.X-$installWidth
             $group=$window.FindName('ProfilesTools'); $point=$group.TranslatePoint([Windows.Point]::new(0,0),$window)
             Assert-UI ($point.X+$group.ActualWidth -le $ui.InstallLibrary.TranslatePoint([Windows.Point]::new(0,0),$window).X+$ui.InstallLibrary.ActualWidth+1) 'Profiles must fit beside search or below it at narrow widths.'
-            $columns=[int][Math]::Floor($ui.LibraryScroll.ViewportWidth/$ui.Cards.ItemWidth)
+            $columns=$ui.Cards.Columns
             $lastCard=$ui.Cards.Children[$columns-1]
             $cardRight=$lastCard.TranslatePoint([Windows.Point]::new($lastCard.ActualWidth,0),$window).X
             if ([Windows.Controls.Grid]::GetRow($group) -eq 1) { $edge=$frame } else { $edge=$ui.ClearSelection }
             $toolsRight=$edge.TranslatePoint([Windows.Point]::new($edge.ActualWidth,0),$window).X
-            Assert-UI ([Math]::Abs($cardRight-$toolsRight) -lt 1) "Install toolbar alignment: width=$width card=$cardRight tools=$toolsRight slot=$($ui.Cards.ItemWidth) viewport=$($ui.LibraryScroll.ViewportWidth) header=$($window.FindName('InstallSearchRow').ActualWidth)"
+            Assert-UI ([Math]::Abs($cardRight-$toolsRight) -lt 1) "Install toolbar alignment: width=$width card=$cardRight tools=$toolsRight slot=$(($ui.Cards.Width/$ui.Cards.Columns)) viewport=$($ui.LibraryScroll.ViewportWidth) header=$($window.FindName('InstallSearchRow').ActualWidth)"
             Assert-UI ($window.FindName('NavigationGlass').ActualWidth -eq $window.FindName('SetupGlass').ActualWidth) 'Side panels must have equal widths.'
+            $nav=$window.FindName('NavigationGlass'); $side=$window.FindName('SetupGlass')
+            $firstCard=$ui.Cards.Children[0]
+            $leftGap=$firstCard.TranslatePoint([Windows.Point]::new(0,0),$window).X-$nav.TranslatePoint([Windows.Point]::new($nav.ActualWidth,0),$window).X
+            $rightGap=$side.TranslatePoint([Windows.Point]::new(0,0),$window).X-$cardRight
+            Assert-UI ([Math]::Abs($leftGap-18) -lt 1 -and [Math]::Abs($leftGap-$rightGap) -lt 1) "Install gutters differ at width ${width}: left=$leftGap right=$rightGap"
+            $activity=$window.FindName('InstallActivity')
+            Assert-UI ([Math]::Abs($activity.TranslatePoint([Windows.Point]::new($activity.ActualWidth,0),$window).X-$cardRight) -lt 1) 'Install activity must end at the card edge.'
             $brand=$window.FindName('BrandHeader')
             $logo=$window.FindName('BrandLogo')
             $logoCenter=$logo.TranslatePoint([Windows.Point]::new($logo.ActualWidth/2,0),$window).X
@@ -114,6 +121,12 @@ $window.Add_ContentRendered({
                 $cardRight=$surface.TranslatePoint([Windows.Point]::new($surface.ActualWidth,0),$window).X
                 $toolsRight=$ui.WindowsAppsSettings.TranslatePoint([Windows.Point]::new($ui.WindowsAppsSettings.ActualWidth,0),$window).X
                 Assert-UI ([Math]::Abs($cardRight-$toolsRight) -lt 1) "Uninstall toolbar must align with its cards: card=$cardRight tools=$toolsRight"
+                $side=$window.FindName('RemovalGlass')
+                $leftGap=$surface.TranslatePoint([Windows.Point]::new(0,0),$window).X-$nav.TranslatePoint([Windows.Point]::new($nav.ActualWidth,0),$window).X
+                $rightGap=$side.TranslatePoint([Windows.Point]::new(0,0),$window).X-$cardRight
+                Assert-UI ([Math]::Abs($leftGap-18) -lt 1 -and [Math]::Abs($leftGap-$rightGap) -lt 1) "Uninstall gutters differ: left=$leftGap right=$rightGap"
+                $activity=$window.FindName('UninstallActivity')
+                Assert-UI ([Math]::Abs($activity.TranslatePoint([Windows.Point]::new($activity.ActualWidth,0),$window).X-$cardRight) -lt 1) 'Removal activity must end at the card edge.'
             }
             $viewsCenter=$ui.InstalledAll.TranslatePoint([Windows.Point]::new(0,$ui.InstalledAll.ActualHeight/2),$window).Y
             Assert-UI ([Math]::Abs($brandCenter-$viewsCenter) -lt 1 -and [Math]::Abs($installCenter-$removalPoint.Y-$frame.ActualHeight/2) -lt 1) 'Uninstall header must align with the sidebar title and Install button.'
@@ -123,6 +136,28 @@ $window.Add_ContentRendered({
             Capture-UI ('toolbar-'+$width)
         }
         $window.Width=1240; Set-AppMode 'Uninstall'; Pump-UI
+        $box=Find-InstalledCheck ($ui.InstalledList.ItemContainerGenerator.ContainerFromIndex(0))
+        $light=Get-InstalledCardLight $box
+        Assert-UI ($light -and $light.ActualWidth -gt 0) 'Installed card is missing its hover light.'
+        $savedMotion=${function:Test-MotionEnabled}; $savedGlass=$script:lastGlass
+        try {
+            function Test-MotionEnabled { return $true }
+            $script:lastGlass=$true; $light.Tag=0
+            $move=[Windows.Input.MouseEventArgs]::new([Windows.Input.Mouse]::PrimaryDevice,0)
+            $move.RoutedEvent=[Windows.Input.Mouse]::MouseMoveEvent
+            $box.RaiseEvent($move)
+            Assert-UI ([long]$light.Tag -gt 0 -and $light.Background.Center -eq $light.Background.GradientOrigin) 'Uninstall pointer movement did not update the light.'
+            function Test-MotionEnabled { return $false }
+            $light.Tag=0; $box.RaiseEvent($move)
+            Assert-UI ([long]$light.Tag -eq 0) 'Uninstall light ignored reduced motion.'
+            function Test-MotionEnabled { return $true }
+            $script:lastGlass=$false; $box.RaiseEvent($move)
+            Assert-UI ([long]$light.Tag -eq 0) 'Uninstall light ignored disabled glass effects.'
+            $light.Opacity=1
+            Move-GlassLight $light ([Windows.Point]::new($light.ActualWidth*0.75,$light.ActualHeight*0.3))
+            Capture-UI 'uninstall-hover'
+            $light.ClearValue([Windows.UIElement]::OpacityProperty)
+        } finally { ${function:Test-MotionEnabled}=$savedMotion; $script:lastGlass=$savedGlass }
         $first=$script:installedApps[0]; $second=$script:installedApps[1]
         $second.Name=$first.Name # Same display name must not conflate registrations.
         foreach ($i in @(0,1)) {
@@ -168,7 +203,7 @@ $window.Add_ContentRendered({
         $window.Width=1240; Pump-UI; Update-CardLayout; Pump-UI
         # Swap equally sized category grids: returning cards must not keep widths
         # inherited from All apps while the scrollbar was present.
-        $categorySlot=$ui.Cards.ItemWidth
+        $categorySlot=($ui.Cards.Width/$ui.Cards.Columns)
         foreach ($target in @('All apps','Browsers','AI Tools','Audio Production','Design & Photography','Audio Production','All apps')) {
             $button=@($categoryButtons | Where-Object Tag -eq $target)[0]
             if ($target -ne 'All apps') {
@@ -177,12 +212,12 @@ $window.Add_ContentRendered({
             }
             $button.RaiseEvent([Windows.RoutedEventArgs]::new([Windows.Controls.Primitives.ButtonBase]::ClickEvent))
             Pump-UI; Pump-UI; Pump-UI; Pump-UI; Pump-UI
-            Assert-UI ($ui.Cards.ItemWidth -eq $categorySlot) 'Card size changed when a category did not need scrolling.'
+            Assert-UI (($ui.Cards.Width/$ui.Cards.Columns) -eq $categorySlot) 'Card size changed when a category did not need scrolling.'
             foreach ($card in $ui.Cards.Children) {
-                Assert-UI ([Math]::Abs($card.Width-($ui.Cards.ItemWidth-8)) -lt 1) 'Category transition left a card wider than its grid slot.'
+                Assert-UI ([Math]::Abs(${card}.ActualWidth-(($ui.Cards.Width/$ui.Cards.Columns)-8)) -lt 1) 'Category transition left a card wider than its grid slot.'
                 $surface=$card.Template.FindName('Card',$card)
                 if ($surface) {
-                    Assert-UI ($surface.ActualWidth -le $ui.Cards.ItemWidth-8+1 -and $surface.CornerRadius.TopRight -eq 18 -and $surface.CornerRadius.BottomRight -eq 18) 'Card right edge was clipped or lost its rounded shape.'
+                    Assert-UI ($surface.ActualWidth -le ($ui.Cards.Width/$ui.Cards.Columns)-8+1 -and $surface.CornerRadius.TopRight -eq 18 -and $surface.CornerRadius.BottomRight -eq 18) 'Card right edge was clipped or lost its rounded shape.'
                 }
             }
             foreach ($categoryButton in $categoryButtons) {
@@ -260,8 +295,95 @@ $window.Add_ContentRendered({
         Set-AppMode 'Install'; $script:managerPage.Visibility='Collapsed'
         $script:libraryView='All apps'; Update-Filter; Pump-UI
         $window.Width=830; $window.Height=600; Pump-UI; Capture-UI 'narrow'
-        Assert-UI ($ui.LibraryScroll.ViewportWidth -gt 240 -and $ui.Cards.ItemWidth -gt 100) 'Narrow library unusable.'
-        $window.Width=1240; Pump-UI
+        Assert-UI ($ui.LibraryScroll.ViewportWidth -gt 240 -and ($ui.Cards.Width/$ui.Cards.Columns) -gt 100) 'Narrow library unusable.'
+        $window.Width=1240; $window.Height=[Math]::Min(840,[Windows.SystemParameters]::WorkArea.Height-24); Pump-UI
+        Set-Selection @('extra_vlc')
+        $originalSettings=$script:settings.Clone()
+        foreach ($locale in $script:locales.PSObject.Properties) {
+            $script:settings.Language=$locale.Name
+            Apply-AppLanguage; Show-AppSettings; Pump-UI
+            Assert-UI ($ui.SettingsMode.Content -eq $locale.Value.Strings.Settings) ('Settings was not translated: '+$locale.Name)
+            Assert-UI ($ui.InstallMode.Content -eq $locale.Value.Strings.Install) ('Navigation was not translated: '+$locale.Name)
+            Assert-UI ($script:settingsPage.Visibility -eq 'Visible' -and $script:settingsContent.ActualWidth -gt 350) ('Settings layout failed: '+$locale.Name)
+            Assert-UI ($window.FindName('AppPanes').FlowDirection -eq $(if($locale.Value.Rtl){'RightToLeft'}else{'LeftToRight'})) 'Locale writing direction was not applied.'
+            Assert-UI ($selected.ContainsKey('extra_vlc')) 'Changing language lost the app selection.'
+            Capture-UI ('settings-'+$locale.Name)
+        }
+        $script:settings.Language='pt-PT'; Apply-AppLanguage; Show-AppSettings
+        $ui.ThemeChoice.SelectedIndex=1; Pump-UI
+        Assert-UI $script:lightMode 'Light theme selector did not apply immediately.'
+        $ui.ThemeChoice.Focus() | Out-Null; Pump-UI
+        Assert-UI ($ui.ThemeChoice.Template.FindName('ChoiceFocus',$ui.ThemeChoice).Visibility -eq 'Visible') 'Settings keyboard focus is invisible.'
+        Assert-UI ((Convert-UiText 'All apps · 325 apps') -notmatch 'All apps') 'A translated count retained the English category.'
+        foreach ($textKey in @('TextPrimaryBrush','TextSecondaryBrush')) {
+            $foreground=$window.Resources[$textKey].Color
+            foreach ($stop in $window.Resources['ContentFill'].GradientStops) {
+                Assert-UI (((Get-Luminance $stop.Color)+0.05)/((Get-Luminance $foreground)+0.05) -ge 4.5) 'Light material text contrast is too low.'
+            }
+        }
+        $surface=$script:settingsContent.Children[1]; $light=$surface.Child.Children[0]
+        $savedMotion=${function:Test-MotionEnabled}
+        try {
+            function Test-MotionEnabled { return $true }
+            $light.Tag=0
+            $move=[Windows.Input.MouseEventArgs]::new([Windows.Input.Mouse]::PrimaryDevice,0); $move.RoutedEvent=[Windows.Input.Mouse]::MouseMoveEvent
+            $ui.ThemeChoice.RaiseEvent($move)
+            Assert-UI ([long]$light.Tag -gt 0) 'Settings controls did not bubble pointer movement to the surface light.'
+            function Test-MotionEnabled { return $false }
+            $light.Tag=0; $ui.ThemeChoice.RaiseEvent($move)
+            Assert-UI ([long]$light.Tag -eq 0) 'Settings light ignored reduced motion.'
+            $light.Opacity=1; Move-GlassLight $light ([Windows.Point]::new($light.ActualWidth*0.72,$light.ActualHeight*0.6))
+        } finally { ${function:Test-MotionEnabled}=$savedMotion }
+        Capture-UI 'settings-light-pt-PT'
+        $ui.AccentChoice.IsChecked=$false; $ui.AccentChoice.RaiseEvent([Windows.RoutedEventArgs]::new([Windows.Controls.Primitives.ButtonBase]::ClickEvent)); Pump-UI
+        $color=Get-WindowsAccent
+        Assert-UI ($color.R -eq $color.G -and $color.G -eq $color.B) 'Disabling Windows accent must select a neutral colour.'
+        foreach ($appearance in @('Light','Dark')) {
+            $script:settings.Theme=$appearance; Update-WindowsAccent; Pump-UI
+            foreach ($key in @('ContentFill','GlassPanelFill','GlassControlFill','GlassEdge','CardEdge','AccentActionBrush')) {
+                $brush=$window.Resources[$key]
+                Assert-UI ($brush -is [Windows.Media.GradientBrush]) ('Material depth was flattened: '+$key)
+                foreach ($stop in $brush.GradientStops) { Assert-UI ($stop.Color.R -eq $stop.Color.G -and $stop.Color.G -eq $stop.Color.B) ('A monochrome material retains colour: '+$key) }
+            }
+            foreach ($stop in $light.Background.GradientStops) { Assert-UI ($stop.Color.R -eq $stop.Color.G -and $stop.Color.G -eq $stop.Color.B) 'An already moved hover light retained its old accent.' }
+            Capture-UI ('settings-mono-'+$appearance.ToLowerInvariant())
+            Set-AppMode 'Install'; foreach ($wait in 1..5) { Pump-UI }; Capture-UI ('install-mono-'+$appearance.ToLowerInvariant())
+            Set-AppMode 'Uninstall'; Pump-UI; Capture-UI ('uninstall-mono-'+$appearance.ToLowerInvariant())
+            Show-AppSettings; Pump-UI
+        }
+        $script:settings.Theme='Light'; Update-WindowsAccent
+        # Keep the system poll from restoring the real preference during this simulated case.
+        $accentTimer.Stop()
+        try {
+            Set-GlassAppearance $false; Pump-UI
+            Assert-UI ($window.Resources['GlassHighlightsOpacity'] -eq 0 -and $window.FindName('AmbientLight').Visibility -eq 'Collapsed') 'Opaque appearance retained light effects.'
+            foreach ($stop in $window.Resources['GlassPanelFill'].GradientStops) { Assert-UI ($stop.Color.A -eq 255) 'Disabled transparency retained translucent panels.' }
+        } finally { Set-GlassAppearance $true; $accentTimer.Start() }
+        $ui.AccentChoice.IsChecked=$true; $ui.AccentChoice.RaiseEvent([Windows.RoutedEventArgs]::new([Windows.Controls.Primitives.ButtonBase]::ClickEvent)); Pump-UI
+        Capture-UI 'settings-light-accent-restored'
+        Set-AppMode 'Install'; foreach ($wait in 1..5) { Pump-UI }; Capture-UI 'install-light-accent'
+        $script:settings.WindowsAccent=$false; $script:lastAccent=''; Update-WindowsAccent; Show-AppSettings; Pump-UI
+        $window.Width=830; Pump-UI; Capture-UI 'settings-narrow-pt-PT'
+        Set-AppMode 'Install'; Pump-UI; Capture-UI 'install-light-pt-PT'
+        Assert-UI ($script:settingsPage.Visibility -eq 'Collapsed' -and $selected.ContainsKey('extra_vlc')) 'Returning from Settings lost the selection.'
+        $savedSettingsPath=$script:settingsPath; $savedTest=$script:settingsTest
+        try {
+            $script:settingsPath=Join-Path $testData 'settings.json'; $script:settingsTest=$false
+            Assert-UI (Save-AppSettings) 'First preference save failed.'
+            $script:settings.Theme='Dark'; Assert-UI (Save-AppSettings) 'Atomic preference replacement failed.'
+            $saved=Get-Content -LiteralPath $script:settingsPath -Raw -Encoding UTF8 | ConvertFrom-Json
+            Assert-UI ($saved.Language -eq 'pt-PT' -and $saved.Theme -eq 'Dark' -and -not $saved.WindowsAccent) 'Preferences did not persist.'
+        } finally { $script:settingsPath=$savedSettingsPath; $script:settingsTest=$savedTest }
+        $script:settings=$originalSettings; Apply-AppLanguage; Update-WindowsAccent
+        Assert-UI ([OneInstallUpdate]::IsNewer('v3.3.0','3.2.0') -and -not [OneInstallUpdate]::IsNewer('v3.2.0','3.2.0.0') -and -not [OneInstallUpdate]::IsNewer('v3.3.0-beta','3.2.0') -and -not [OneInstallUpdate]::IsNewer('v3.1.0','3.2.0')) 'Update version comparison failed.'
+        $old=Join-Path $testData 'old.exe'; $new=Join-Path $testData 'new.exe'
+        [IO.File]::WriteAllText($old,'old version'); [IO.File]::WriteAllText($new,'new version')
+        $oldHash=[OneInstallUpdate]::HashFile($old); $newHash=[OneInstallUpdate]::HashFile($new)
+        $rejected=$false
+        try { [OneInstallUpdate]::ReplaceVerified($new,$old,('0'*64),$oldHash) } catch { $rejected=$true }
+        Assert-UI ($rejected -and [IO.File]::ReadAllText($old) -eq 'old version') 'A corrupt update modified the original executable.'
+        [OneInstallUpdate]::ReplaceVerified($new,$old,$newHash,$oldHash)
+        Assert-UI ([OneInstallUpdate]::HashFile($old) -eq $newHash -and [OneInstallUpdate]::HashFile($old+'.previous') -eq $oldHash) 'Atomic update did not preserve the previous version.'
         $window.Close()
     } finally {
         $resolved=[IO.Path]::GetFullPath($testData); $tempRoot=[IO.Path]::GetFullPath([IO.Path]::GetTempPath()).TrimEnd('\')+'\'

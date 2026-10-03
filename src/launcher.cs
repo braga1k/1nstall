@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -13,8 +13,8 @@ using System.Security.Cryptography;
 [assembly: AssemblyTitle("1nstall")]
 [assembly: AssemblyDescription("1nstall - Windows app manager")]
 [assembly: AssemblyProduct("1nstall")]
-[assembly: AssemblyVersion("3.2.0.0")]
-[assembly: AssemblyFileVersion("3.2.0.0")]
+[assembly: AssemblyVersion("3.3.0.0")]
+[assembly: AssemblyFileVersion("3.3.0.0")]
 
 internal static class Launcher
 {
@@ -63,6 +63,12 @@ internal static class Launcher
     [STAThread]
     private static int Main(string[] args)
     {
+        if(args.Length>0 && args[0]=="--apply-update") {
+            try {
+                var assembly=Assembly.LoadFrom(CacheAssembly("1nstall.Helpers","1nstall.Helpers.dll",false));
+                return (int)assembly.GetType("OneInstallUpdate").GetMethod("Apply").Invoke(null,new object[]{args});
+            } catch { return 1; }
+        }
         try {
             bool test=args.Length==1 && args[0].StartsWith("--",StringComparison.Ordinal);
             string root=test?Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"runtime-cache"):Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"1nstall","Runtime");
@@ -115,6 +121,7 @@ internal static class Launcher
             runspace=prepare.GetAwaiter().GetResult();
             if(window!=null) {
                 runspace.SessionStateProxy.SetVariable("NativeWindow",window);
+                runspace.SessionStateProxy.SetVariable("AppExecutable",Assembly.GetExecutingAssembly().Location);
                 runspace.SessionStateProxy.SetVariable("StartupClock",clock);
                 using(var ps=PowerShell.Create()) {
                     ps.Runspace=runspace; ps.AddScript(source.Substring(split),false); Invoke(ps,output);

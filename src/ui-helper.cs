@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Automation;
 using System.Windows.Media;
 using System.Collections.Generic;
@@ -33,7 +34,7 @@ namespace OneInstall {
             });
             var checks=new Dictionary<string,CheckBox>();
             var texts=new Dictionary<string,string>();
-            var panel=(WrapPanel)window.FindName("Cards");
+            var panel=(UniformGrid)window.FindName("Cards");
             foreach(var app in apps) {
                 bool automatic=app.Ids.Length>0;
                 string method=automatic?"Automatic · WinGet: "+string.Join(", ",app.Ids):"Guided · official website: "+app.Url;
@@ -59,7 +60,7 @@ namespace OneInstall {
         }
         public static CheckBox Card(Window window, string key, string title, string category, string help, bool automatic) {
             var card = new CheckBox { Style = (Style)window.Resources["CardCheck"], Tag = key,
-                Width = 184, Margin = new Thickness(0,0,8,8), Height = 140, MinHeight = 140, Template = EmptyCard };
+                Margin = new Thickness(4,0,4,8), Height = 140, MinHeight = 140, Template = EmptyCard };
             AutomationProperties.SetName(card,title);
             AutomationProperties.SetHelpText(card,help);
             var tip = new ToolTip { Padding = new Thickness(12), MaxWidth = 360, Content = Label(title+"\n\n"+help,12,false) };
@@ -85,28 +86,24 @@ namespace OneInstall {
         }
         // Keep lightweight card slots for scrolling and keyboard navigation; construct
         // their visual templates only around the viewport. Content and selection persist.
-        public static void Realize(WrapPanel panel, ScrollViewer scroll) {
+        public static void Realize(UniformGrid panel, ScrollViewer scroll) {
             Realize(panel,scroll.ViewportWidth,scroll.ViewportHeight,scroll.VerticalOffset);
         }
-        public static void Layout(WrapPanel panel, double width, double height, double offset) {
+        public static void Layout(UniformGrid panel, double width, double height, double offset) {
             int columns=Math.Max(1,Math.Min(6,(int)Math.Floor((width+8)/192)));
-            double slot=Math.Floor(width/columns)-1;
-            if (panel.ItemWidth!=slot) {
-                panel.ItemWidth=slot;
-            }
+            panel.Columns=columns;
+            // Half a gap on both sides of every cell, cancelled at the outer edges.
+            // UniformGrid distributes fractional widths without creating spare space.
+            panel.Width=Math.Max(0,width)+8;
             Realize(panel,width,height,offset);
         }
-        static void Realize(WrapPanel panel,double width,double height,double offset) {
-            double slot=panel.ItemWidth;
-            if (slot<=0 || double.IsNaN(slot) || width<=0) return;
-            int columns=Math.Max(1,(int)(width/slot));
+        static void Realize(UniformGrid panel,double width,double height,double offset) {
+            if (width<=0) return;
+            int columns=Math.Max(1,panel.Columns);
             int first=Math.Max(0,((int)(offset/148)-1)*columns);
             int last=((int)((offset+height)/148)+2)*columns;
             for(int i=0;i<panel.Children.Count;i++) {
                 var card=(CheckBox)panel.Children[i];
-                // Returning cards may retain a width from a different filtered viewport.
-                double cardWidth=Math.Max(100,slot-8);
-                if(card.Width!=cardWidth) card.Width=cardWidth;
                 bool visible=i>=first && i<last;
                 if(visible && card.ReadLocalValue(Control.TemplateProperty)==EmptyCard) card.ClearValue(Control.TemplateProperty);
                 else if(!visible && card.ReadLocalValue(Control.TemplateProperty)!=EmptyCard) card.Template=EmptyCard;

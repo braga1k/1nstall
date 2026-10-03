@@ -16,7 +16,7 @@ function Save-LibraryView {
 function Refresh-LibraryInventory {
     if ($script:libraryTask -or $SmokeTest) { return }
     $ui.RefreshLibrary.IsEnabled=$false
-    $ui.RefreshLibrary.ToolTip='Checking installed apps…'
+    Set-UiValue ($ui.RefreshLibrary) 'ToolTip' $('Checking installed apps…')
     $script:libraryTask=[OneInstallPackages]::InventoryAsync()
     $libraryTimer.Start()
 }
@@ -28,8 +28,8 @@ function Update-LibraryStates {
     Update-Filter
 }
 function New-InfoDialog([string]$Title,[string]$Text) {
-    $d=New-Object Windows.Window
-    $d.Title=$Title+' · 1nstall'; $d.Owner=$window; $d.Icon=$window.Icon
+    $d=New-Object Windows.Window; $d.FlowDirection=$window.FindName('AppPanes').FlowDirection; $d.Language=$window.Language
+    Set-UiValue ($d) 'Title' $($Title+' · 1nstall'); $d.Owner=$window; $d.Icon=$window.Icon
     $d.Width=640; $d.Height=[Math]::Min(680,[Windows.SystemParameters]::WorkArea.Height-40)
     $d.MinWidth=380; $d.MinHeight=360; $d.WindowStartupLocation='CenterOwner'
     $d.WindowStyle='None'; $d.ShowInTaskbar=$false
@@ -37,21 +37,21 @@ function New-InfoDialog([string]$Title,[string]$Text) {
     $d.SetResourceReference([Windows.Controls.Control]::BackgroundProperty,'OpaqueWindowFill'); $d.SetResourceReference([Windows.Controls.Control]::ForegroundProperty,'TextPrimaryBrush')
     $chrome=New-Object Windows.Shell.WindowChrome; $chrome.CaptionHeight=24; $chrome.ResizeBorderThickness='6'; $chrome.GlassFrameThickness='0'; $chrome.UseAeroCaptionButtons=$false
     [Windows.Shell.WindowChrome]::SetWindowChrome($d,$chrome)
-    $d.Add_SourceInitialized({ param($sender,$e) [FirstInstallWindow]::Apply([Windows.Interop.WindowInteropHelper]::new($sender).Handle) | Out-Null })
-    $dock=New-Object Windows.Controls.DockPanel; $dock.Margin='24'; $d.Content=$dock
+    $d.Add_SourceInitialized({ param($sender,$e) [FirstInstallWindow]::Apply([Windows.Interop.WindowInteropHelper]::new($sender).Handle,$script:lightMode) | Out-Null })
+    $dock=New-Object Windows.Controls.DockPanel; $dock.Margin='24'; Set-UiValue ($d) 'Content' $($dock)
     $header=New-Object Windows.Controls.Grid; $header.Margin='0,0,0,18'
     $heading=New-Label $Title '#F3F5F7' 27; $heading.FontWeight='SemiBold'; $heading.FontFamily=$window.Resources['HeadingFont']; $heading.Margin='0,0,44,0'
     $header.Children.Add($heading) | Out-Null
-    $dismiss=New-Object Windows.Controls.Button; $dismiss.Content='×'; $dismiss.Style=$window.Resources['CaptionButton']; $dismiss.Width=28; $dismiss.Height=28; $dismiss.MinHeight=28; $dismiss.HorizontalAlignment='Right'; $dismiss.VerticalAlignment='Top'; $dismiss.ToolTip='Close'
+    $dismiss=New-Object Windows.Controls.Button; Set-UiValue ($dismiss) 'Content' $('×'); $dismiss.Style=$window.Resources['CaptionButton']; $dismiss.Width=28; $dismiss.Height=28; $dismiss.MinHeight=28; $dismiss.HorizontalAlignment='Right'; $dismiss.VerticalAlignment='Top'; Set-UiValue ($dismiss) 'ToolTip' $('Close')
     [Windows.Automation.AutomationProperties]::SetName($dismiss,'Close details')
     [Windows.Shell.WindowChrome]::SetIsHitTestVisibleInChrome($dismiss,$true)
     $dismiss.Add_Click({ param($sender,$e) [Windows.Window]::GetWindow($sender).Close() })
     $header.Children.Add($dismiss) | Out-Null
     [Windows.Controls.DockPanel]::SetDock($header,'Top'); $dock.Children.Add($header) | Out-Null
-    $close=New-Object Windows.Controls.Button; $close.Content='Close'; $close.IsCancel=$true; $close.Margin='0,16,0,0'
+    $close=New-Object Windows.Controls.Button; Set-UiValue ($close) 'Content' $('Close'); $close.IsCancel=$true; $close.Margin='0,16,0,0'
     $close.Add_Click({ param($sender,$e) [Windows.Window]::GetWindow($sender).Close() })
     [Windows.Controls.DockPanel]::SetDock($close,'Bottom'); $dock.Children.Add($close) | Out-Null
-    $box=New-Object Windows.Controls.TextBox; $box.Text=$Text; $box.IsReadOnly=$true; $box.TextWrapping='Wrap'; $box.VerticalScrollBarVisibility='Auto'; $box.Padding='0'; $box.Background='Transparent'; $box.BorderThickness='0'; $box.FontSize=13
+    $box=New-Object Windows.Controls.TextBox; Set-UiValue ($box) 'Text' $($Text); $box.IsReadOnly=$true; $box.TextWrapping='Wrap'; $box.VerticalScrollBarVisibility='Auto'; $box.Padding='0'; $box.Background='Transparent'; $box.BorderThickness='0'; $box.FontSize=13
     $dock.Children.Add($box) | Out-Null
     return @{Window=$d;Dock=$dock;Text=$box;Close=$close}
 }
@@ -63,7 +63,7 @@ function Show-AppDetails([string]$Key) {
     $info=New-InfoDialog $app.Name ''
     $info.Dock.Children.Remove($info.Text)
     $scroll=New-Object Windows.Controls.ScrollViewer; $scroll.VerticalScrollBarVisibility='Auto'; $scroll.HorizontalScrollBarVisibility='Disabled'
-    $content=New-Object Windows.Controls.StackPanel; $content.Margin='0,0,8,0'; $scroll.Content=$content
+    $content=New-Object Windows.Controls.StackPanel; $content.Margin='0,0,8,0'; Set-UiValue ($scroll) 'Content' $($content)
     $description=New-Label $app.Description '#C2CADE' 14; $description.Margin='0,0,0,18'; $content.Children.Add($description) | Out-Null
     $state=[OneInstallPackages]::InstalledState($script:libraryInventory,[string[]]$app.Ids,'winget')
     $dependencies=if ($app.Requires.Count) { (@($app.Requires | ForEach-Object { $byKey[$_].Name }) -join ', ') } else { 'None declared' }
@@ -80,7 +80,7 @@ function Show-AppDetails([string]$Key) {
         }
         $content.Children.Add($panel) | Out-Null
     }
-    $website=New-Object Windows.Controls.Button; $website.Content='Open official website ↗'; $website.Tag=$websiteUrl; $website.IsEnabled=($websiteUrl -match '^https://'); $website.Margin='0,8,0,0'
+    $website=New-Object Windows.Controls.Button; Set-UiValue ($website) 'Content' $('Open official website ↗'); $website.Tag=$websiteUrl; $website.IsEnabled=($websiteUrl -match '^https://'); $website.Margin='0,8,0,0'
     $website.Add_Click({ param($sender,$e) if ([string]$sender.Tag -match '^https://[^\s]+$') { Start-Process ([string]$sender.Tag) } })
     [Windows.Controls.DockPanel]::SetDock($website,'Bottom'); $info.Dock.Children.Insert(1,$website)
     $info.Dock.Children.Add($scroll) | Out-Null
@@ -95,10 +95,10 @@ if (-not $nativeCards) {
 foreach ($app in $catalog) {
     $check=$checks[$app.Key]
     $check.MinHeight=140
-    $check.Content.Children[2].Text=if ($app.Ids.Count) { 'WinGet · automatic' } else { 'Website · guided' }
+    Set-UiValue ($check.Content.Children[2]) 'Text' $(if ($app.Ids.Count) { 'WinGet · automatic' } else { 'Website · guided' })
     if ($nativeCards) { $detail=$check.Content.Children[3] } else {
-    $detail=New-Object Windows.Controls.Button; $detail.Content='Details'; $detail.Tag=$app.Key; $detail.Margin='0,8,0,0'; $detail.Padding='6,4'; $detail.MinHeight=28
-    $detail.ToolTip='App details · F1 while the card is focused'
+    $detail=New-Object Windows.Controls.Button; Set-UiValue ($detail) 'Content' $('Details'); $detail.Tag=$app.Key; $detail.Margin='0,8,0,0'; $detail.Padding='6,4'; $detail.MinHeight=28
+    Set-UiValue ($detail) 'ToolTip' $('App details · F1 while the card is focused')
     [Windows.Automation.AutomationProperties]::SetName($detail,'Details for '+$app.Name)
     $check.Content.Children.Add($detail) | Out-Null
     }
@@ -117,11 +117,11 @@ $ui.Cards.Add_PreviewKeyDown({ param($sender,$e)
 $viewbar=$window.FindName('LibraryViews')
 $script:viewButtons=@{}
 foreach ($view in @('All apps','Installed')) {
-    $b=New-Object Windows.Controls.Button; $b.Content=$view; $b.Tag=$view; $b.Padding='10,6'; $b.FontSize=12
+    $b=New-Object Windows.Controls.Button; Set-UiValue ($b) 'Content' $($view); $b.Tag=$view; $b.Padding='10,6'; $b.FontSize=12
     $b.Add_Click({ param($sender,$e) $script:libraryView=[string]$sender.Tag; $script:category='All apps'; Save-LibraryView; Update-Filter })
     $script:viewButtons[$view]=$b; $viewbar.Children.Add($b) | Out-Null
 }
-$ui.RefreshLibrary=New-Object Windows.Controls.Button; $ui.RefreshLibrary.Content='Refresh'; $ui.RefreshLibrary.Padding='10,6'; $ui.RefreshLibrary.FontSize=12
+$ui.RefreshLibrary=New-Object Windows.Controls.Button; Set-UiValue ($ui.RefreshLibrary) 'Content' $('Refresh'); $ui.RefreshLibrary.Padding='10,6'; $ui.RefreshLibrary.FontSize=12
 $ui.RefreshLibrary.Add_Click({ Refresh-LibraryInventory }); $viewbar.Children.Add($ui.RefreshLibrary) | Out-Null
 if (-not $SmokeTest) {
     $script:libraryView='All apps'
@@ -138,7 +138,7 @@ $script:managerPage=New-Object Windows.Controls.Grid; $script:managerPage.Margin
 [Windows.Controls.Grid]::SetColumn($script:managerPage,1); [Windows.Controls.Grid]::SetColumnSpan($script:managerPage,2)
 $main.Children.Add($script:managerPage) | Out-Null
 foreach ($spec in @(,@('History','History & diagnostics'))) {
-    $b=New-Object Windows.Controls.Button; $b.Content=$spec[1]; $b.Tag=$spec[0]; $b.FontSize=12; $b.Padding='8,7'; $b.Margin='0,0,0,5'
+    $b=New-Object Windows.Controls.Button; Set-UiValue ($b) 'Content' $($spec[1]); $b.Tag=$spec[0]; $b.FontSize=12; $b.Padding='8,7'; $b.Margin='0,0,0,5'
     $ui[$spec[0]+'Mode']=$b
     $b.Add_Click({ param($sender,$e) Show-ManagerPage ([string]$sender.Tag) })
     $ui.InstallMode.Parent.Children.Add($b) | Out-Null
@@ -157,10 +157,10 @@ function Show-ManagerPage([string]$Mode) {
     $ui.ManagerStatus.Margin='0,9,0,15'; $top.Children.Add($ui.ManagerStatus) | Out-Null
     $bar=New-Object Windows.Controls.WrapPanel; $top.Children.Add($bar) | Out-Null
     $scroll=New-Object Windows.Controls.ScrollViewer; $scroll.VerticalScrollBarVisibility='Auto'; $dock.Children.Add($scroll) | Out-Null
-    $ui.ManagerList=New-Object Windows.Controls.StackPanel; $ui.ManagerList.Margin='0,12,0,0'; $scroll.Content=$ui.ManagerList
-    $refresh=New-Object Windows.Controls.Button; $refresh.Content='Refresh history'; $refresh.Add_Click({ Render-History }); $bar.Children.Add($refresh) | Out-Null
-    $diagnostic=New-Object Windows.Controls.Button; $diagnostic.Content='Review diagnostic export…'; $diagnostic.Add_Click({ Show-Diagnostics }); $bar.Children.Add($diagnostic) | Out-Null
-    $licenses=New-Object Windows.Controls.Button; $licenses.Content='Licenses & credits'; $licenses.Add_Click({ Show-ThirdPartyNotices }); $bar.Children.Add($licenses) | Out-Null
+    $ui.ManagerList=New-Object Windows.Controls.StackPanel; $ui.ManagerList.Margin='0,12,0,0'; Set-UiValue ($scroll) 'Content' $($ui.ManagerList)
+    $refresh=New-Object Windows.Controls.Button; Set-UiValue ($refresh) 'Content' $('Refresh history'); $refresh.Add_Click({ Render-History }); $bar.Children.Add($refresh) | Out-Null
+    $diagnostic=New-Object Windows.Controls.Button; Set-UiValue ($diagnostic) 'Content' $('Review diagnostic export…'); $diagnostic.Add_Click({ Show-Diagnostics }); $bar.Children.Add($diagnostic) | Out-Null
+    $licenses=New-Object Windows.Controls.Button; Set-UiValue ($licenses) 'Content' $('Licenses & credits'); $licenses.Add_Click({ Show-ThirdPartyNotices }); $bar.Children.Add($licenses) | Out-Null
     Render-History
 }
 foreach ($b in @($ui.InstallMode,$ui.UninstallMode)) { $b.Add_Click({ if (-not $script:busy -and -not $script:uninstallTask) { $script:managerPage.Visibility='Collapsed' } }) }
@@ -168,7 +168,7 @@ function Render-History {
     if ($script:mode -ne 'History') { return }
     $ui.ManagerList.Children.Clear()
     $records=@([OneInstallPackages]::History() | Select-Object -Last 100); [array]::Reverse($records)
-    if ([OneInstallPackages]::HistoryError) { $ui.ManagerStatus.Text=[OneInstallPackages]::HistoryError }
+    if ([OneInstallPackages]::HistoryError) { Set-UiValue ($ui.ManagerStatus) 'Text' $([OneInstallPackages]::HistoryError) }
     if (-not $records.Count) { $ui.ManagerList.Children.Add((New-Label 'Your operation history will appear here after installation or removal.' '#C2CADE' 15)) | Out-Null }
     foreach ($record in $records) {
         $panel=New-Object Windows.Controls.StackPanel; $panel.Margin='0,0,0,18'
@@ -176,13 +176,13 @@ function Render-History {
         if ($record.Action -eq 'Install' -and $record.Outcome -eq 'Failed' -and $record.Source -eq 'winget') {
             $matches=@($catalog | Where-Object { $_.Ids -contains $record.Id })
             if ($matches.Count -eq 1 -and [OneInstallPackages]::InstalledState($script:libraryInventory,[string[]]$matches[0].Ids,'winget') -eq 'Not installed') {
-                $retry=New-Object Windows.Controls.Button; $retry.Content='Refresh & review installation again'; $retry.Tag=$matches[0].Key; $retry.HorizontalAlignment='Left'; $retry.Margin='0,8,0,0'
+                $retry=New-Object Windows.Controls.Button; Set-UiValue ($retry) 'Content' $('Refresh & review installation again'); $retry.Tag=$matches[0].Key; $retry.HorizontalAlignment='Left'; $retry.Margin='0,8,0,0'
                 $retry.Add_Click({ param($sender,$e) $script:installRetryKey=[string]$sender.Tag; Set-AppMode 'Install'; $script:managerPage.Visibility='Collapsed'; Refresh-LibraryInventory })
                 $panel.Children.Add($retry) | Out-Null
             }
         }
         if ($record.LogPath -and (Test-Path -LiteralPath $record.LogPath) -and [IO.Path]::GetFullPath($record.LogPath).StartsWith([IO.Path]::GetFullPath($logDir)+'\',[StringComparison]::OrdinalIgnoreCase)) {
-            $b=New-Object Windows.Controls.Button; $b.Content='Open detailed log'; $b.Tag=$record.LogPath; $b.HorizontalAlignment='Left'; $b.Margin='0,8,0,0'
+            $b=New-Object Windows.Controls.Button; Set-UiValue ($b) 'Content' $('Open detailed log'); $b.Tag=$record.LogPath; $b.HorizontalAlignment='Left'; $b.Margin='0,8,0,0'
             $b.Add_Click({ param($sender,$e) Start-Process notepad.exe -ArgumentList ([OneInstallPackages]::Quote([string]$sender.Tag)) }); $panel.Children.Add($b) | Out-Null
         }
         $ui.ManagerList.Children.Add($panel) | Out-Null
@@ -190,7 +190,7 @@ function Render-History {
 }
 function Show-Diagnostics {
     $info=New-InfoDialog 'Review diagnostics' ([OneInstallPackages]::Diagnostics()+"`r`n`r`nNo raw logs, app data or credentials are included. Review the text for anything personal before saving or sharing. Nothing is sent automatically.")
-    $save=New-Object Windows.Controls.Button; $save.Content='Save reviewed diagnostics…'; $save.Tag=$info.Text.Text
+    $save=New-Object Windows.Controls.Button; Set-UiValue ($save) 'Content' $('Save reviewed diagnostics…'); $save.Tag=$info.Text.Text
     $save.Add_Click({ param($sender,$e) $dialog=New-Object Microsoft.Win32.SaveFileDialog; $dialog.Filter='Text (*.txt)|*.txt'; $dialog.FileName='1nstall-diagnostics.txt'; if ($dialog.ShowDialog($window)) { [IO.File]::WriteAllText($dialog.FileName,[string]$sender.Tag,[Text.Encoding]::UTF8) } })
     [Windows.Controls.DockPanel]::SetDock($save,'Bottom'); $info.Dock.Children.Insert(1,$save)
     if ($ManagerTest) { $info.Window.Add_ContentRendered({ Capture-TestDialog $info.Window 'diagnostics'; $info.Window.Close() }) }
@@ -199,14 +199,14 @@ function Show-Diagnostics {
 function Show-SetupPreview($Rows,[string]$Title) {
     $info=New-InfoDialog $Title 'This portable setup restores an app selection. It does not back up personal files, app settings or credentials, and cannot guarantee identical versions. Package availability is checked by WinGet when installation starts.'
     $list=New-Object Windows.Controls.StackPanel
-    $scroll=New-Object Windows.Controls.ScrollViewer; $scroll.Content=$list; $scroll.VerticalScrollBarVisibility='Auto'
+    $scroll=New-Object Windows.Controls.ScrollViewer; Set-UiValue ($scroll) 'Content' $($list); $scroll.VerticalScrollBarVisibility='Auto'
     $info.Dock.Children.Remove($info.Text); $info.Dock.Children.Add($scroll) | Out-Null
     $list.Children.Add((New-Label $info.Text.Text '#C2CADE' 12)) | Out-Null
     $choices=New-Object 'System.Collections.Generic.List[object]'
     foreach ($row in $Rows) {
-        $c=New-Object Windows.Controls.CheckBox; $c.Style=$window.Resources['InstalledCheck']; $c.Content=$row.Name+' · '+$row.State; $c.Tag=$row.Key; $c.IsEnabled=($row.Key -ne ''); $c.IsChecked=($row.Key -ne ''); $c.Margin='0,12,0,0'; $choices.Add($c); $list.Children.Add($c) | Out-Null
+        $c=New-Object Windows.Controls.CheckBox; $c.Style=$window.Resources['InstalledCheck']; Set-UiValue ($c) 'Content' $($row.Name+' · '+$row.State); $c.Tag=$row.Key; $c.IsEnabled=($row.Key -ne ''); $c.IsChecked=($row.Key -ne ''); $c.Margin='0,12,0,0'; $choices.Add($c); $list.Children.Add($c) | Out-Null
     }
-    $go=New-Object Windows.Controls.Button; $go.Content='Use selected apps'; $go.Margin='0,14,0,0'; $go.Add_Click({ param($sender,$e) [Windows.Window]::GetWindow($sender).DialogResult=$true })
+    $go=New-Object Windows.Controls.Button; Set-UiValue ($go) 'Content' $('Use selected apps'); $go.Margin='0,14,0,0'; $go.Add_Click({ param($sender,$e) [Windows.Window]::GetWindow($sender).DialogResult=$true })
     [Windows.Controls.DockPanel]::SetDock($go,'Bottom'); $info.Dock.Children.Insert(1,$go)
     if ($SmokeTest) { $info.Window.Add_ContentRendered({ if ($ManagerTest) { Capture-TestDialog $info.Window 'snapshot' }; $info.Window.DialogResult=$false }) }
     if ($info.Window.ShowDialog()) { return @($choices | Where-Object { $_.IsChecked -and $_.IsEnabled } | ForEach-Object { [string]$_.Tag }) }
@@ -236,7 +236,7 @@ function Load-UserProfile([string]$Path) {
     $keys=Show-SetupPreview $rows 'Preview portable setup'
     if ($null -ne $keys) { Set-Selection ([string[]]$keys) }
 }
-$snapshotItem=New-Object Windows.Controls.MenuItem; $snapshotItem.Header='Save installed setup snapshot…'
+$snapshotItem=New-Object Windows.Controls.MenuItem; Set-UiValue ($snapshotItem) 'Header' $('Save installed setup snapshot…')
 $snapshotItem.Add_Click({
     if (-not $script:libraryInventory.Complete -and -not $script:libraryInventory.Partial) { [Windows.MessageBox]::Show($window,'Refresh installed status first. A snapshot needs verified exact identities.','Inventory required') | Out-Null; return }
     $snapshotPackages=@{}
@@ -254,13 +254,13 @@ $libraryTimer=New-Object Windows.Threading.DispatcherTimer; $libraryTimer.Interv
 $libraryTimer.Add_Tick({
     if ($script:libraryTask -and $script:libraryTask.IsCompleted) {
         try {
-            $script:libraryInventory=$script:libraryTask.GetAwaiter().GetResult(); $ui.RefreshLibrary.ToolTip=$script:libraryInventory.Message; Add-Log $script:libraryInventory.Message; Update-LibraryStates
+            $script:libraryInventory=$script:libraryTask.GetAwaiter().GetResult(); Set-UiValue ($ui.RefreshLibrary) 'ToolTip' $($script:libraryInventory.Message); Add-Log $script:libraryInventory.Message; Update-LibraryStates
             if ($script:installRetryKey) {
                 $key=$script:installRetryKey; $script:installRetryKey=''
-                if ([OneInstallPackages]::InstalledState($script:libraryInventory,[string[]]$byKey[$key].Ids,'winget') -eq 'Not installed') { Set-Selection @($key); $ui.Status.Text='State rechecked. Review the installation again.' }
-                else { $ui.Status.Text='Retry withheld: app is installed or its current identity/state is unknown.' }
+                if ([OneInstallPackages]::InstalledState($script:libraryInventory,[string[]]$byKey[$key].Ids,'winget') -eq 'Not installed') { Set-Selection @($key); Set-UiValue ($ui.Status) 'Text' $('State rechecked. Review the installation again.') }
+                else { Set-UiValue ($ui.Status) 'Text' $('Retry withheld: app is installed or its current identity/state is unknown.') }
             }
-        } catch { $ui.RefreshLibrary.ToolTip=$_.Exception.Message; Add-Log $_.Exception.Message; $script:installRetryKey='' }
+        } catch { Set-UiValue ($ui.RefreshLibrary) 'ToolTip' $($_.Exception.Message); Add-Log $_.Exception.Message; $script:installRetryKey='' }
         $script:libraryTask=$null; $ui.RefreshLibrary.IsEnabled=$true
     }
     if (-not $script:libraryTask) { $libraryTimer.Stop() }

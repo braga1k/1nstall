@@ -4,9 +4,11 @@ A Windows app manager for choosing, installing and removing your software. Brows
 
 **325 apps · 24 categories · 20 profiles · Windows x64**
 
-[**Download 1nstall 3.2**](https://github.com/braga1k/1nstall/releases/latest/download/1nstall.exe) · [Windows ZIP](https://github.com/braga1k/1nstall/releases/download/v3.2.0/1nstall-3.2.0-Windows-x64.zip) · [Release notes](https://github.com/braga1k/1nstall/releases/tag/v3.2.0) · [Checksums](https://github.com/braga1k/1nstall/releases/download/v3.2.0/SHA256SUMS.txt) · [Buy me a beer](https://ko-fi.com/braga1k)
+[Settings](docs/SETTINGS.md) adds System/Light/Dark themes, optional Windows accent, ten interface languages and automatic 1nstall updates. Both appearances keep the same gradient materials, depth and pointer reflections; turning off accent makes the interface fully monochrome.
 
-![1nstall 3.2 library — rendered WPF preview](docs/images/3.2/install.png)
+[**Download 1nstall 3.3**](https://github.com/braga1k/1nstall/releases/latest/download/1nstall.exe) · [Windows ZIP](https://github.com/braga1k/1nstall/releases/download/v3.3.0/1nstall-3.3.0-Windows-x64.zip) · [Release notes](https://github.com/braga1k/1nstall/releases/tag/v3.3.0) · [Checksums](https://github.com/braga1k/1nstall/releases/download/v3.3.0/SHA256SUMS.txt) · [Buy me a beer](https://ko-fi.com/braga1k)
+
+![1nstall 3.3 light appearance — rendered WPF preview](docs/images/3.3/install-light.png)
 
 ## Choose your apps
 
@@ -14,6 +16,7 @@ A Windows app manager for choosing, installing and removing your software. Brows
 - **Profiles:** 20 setups for everyday work, creative projects, files, privacy and development. Save your own selection or preview an installed-app snapshot on another PC.
 - **Uninstall:** search registered desktop and current-user Microsoft Store apps, review your selection and run the original uninstallers in sequence.
 - **Selection:** both modes list the selected apps with individual × controls. Clear selection also clears their checkboxes. Nothing starts until you review and confirm.
+- **Settings:** immediate theme/language changes, optional Windows accent and verified automatic updates of 1nstall itself. Selections are preserved.
 - **History & diagnostics:** per-app outcomes, detailed logs, applicable retries and a diagnostic preview you can review before saving.
 - **Leftovers:** separately review supported folders and registry traces after removal. Cleanup requires explicit consent; registry changes require backups and folders go to Recycle Bin.
 
@@ -37,7 +40,17 @@ The standalone executable includes the interface, catalog, helpers and license n
 
 Native Desktop Acrylic requires supported Windows 11 builds; older systems and disabled transparency use opaque surfaces. See [validation and current limits](docs/VALIDATION.md) for coverage of Windows versions, accessibility and native operations.
 
-## What's new in 3.2
+## What's new in 3.3
+
+- Settings with persistent theme, accent, language and automatic-update preferences.
+- Light and dark appearances with the same gradients, reflections and depth. Accent off means black, white and grey throughout.
+- Ten interface languages, including Portuguese (Portugal) only and right-to-left Arabic/Urdu.
+- Verified updates of 1nstall applied on exit, retaining the previous executable.
+- Equal library margins, activity bars aligned to cards and pointer-following light in Uninstall and Settings.
+
+![Settings in monochrome dark appearance](docs/images/3.3/settings-dark-monochrome.png)
+
+## Retained from 3.2
 
 - A centered vector logo and a new violet-and-sage Windows icon.
 - Symmetrical sidebars, clearer categories, smooth text and matching toolbars in both modes.
@@ -47,7 +60,7 @@ Native Desktop Acrylic requires supported Windows 11 builds; older systems and d
 - Installed awareness, portable setup snapshots and operation history from the review build.
 - Essentials and the Update Center have been removed. 3.2 focuses on installation, removal and selection management.
 
-[Full changelog](CHANGELOG.md) · [3.2 release notes](docs/releases/3.2.0.md)
+[Full changelog](CHANGELOG.md) · [3.3 release notes](docs/releases/3.3.0.md)
 
 ## Profiles and portable selections
 
@@ -95,7 +108,7 @@ powershell.exe -NoProfile -STA -ExecutionPolicy Bypass -File .\tests\startup.ps1
 
 The executable also accepts `--self-test`, `--smoke-test` and `--manager-test`. Windows CI runs catalog, headless reliability and packaged self-tests before publishing, then verifies the uploaded asset hashes. WPF tests use fictional apps and do not install or remove personal software.
 
-Current local UI tests cover responsive cards, Details, search, selection synchronization, duplicate names, profiles, keyboard focus, glass and reduced-motion fallbacks. Startup measurements vary: this environment measured roughly 3.2 seconds in the final comparison; 1–2 seconds is not guaranteed. Publisher installers, Store removal, elevation, restart flows and physical accessibility/DPI checks need broader end-to-end coverage. [Full evidence and limitations](docs/VALIDATION.md).
+Current local UI tests cover responsive cards, Details, search, selections, profiles, all ten languages, light/dark and monochrome appearances, keyboard focus, glass, reduced-motion fallbacks, preference persistence and update integrity. Startup remains environment dependent; 1–2 seconds is not guaranteed. Publisher installers, Store removal, elevation, restart flows and physical accessibility/DPI checks need broader end-to-end coverage. [Full evidence and limitations](docs/VALIDATION.md).
 
 ## Troubleshooting
 

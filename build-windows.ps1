@@ -13,13 +13,16 @@ $source = $source.Replace('@@PROFILES@@', [IO.File]::ReadAllText((Join-Path $roo
 $source = $source.Replace('@@UNINSTALL_HELPER@@', '')
 $source = $source.Replace('@@THIRD_PARTY_NOTICES@@', [IO.File]::ReadAllText((Join-Path $root 'licenses\THIRD-PARTY-NOTICES.txt')))
 $source = $source.Replace('@@PACKAGE_HELPER@@', '')
+$settings=[IO.File]::ReadAllText((Join-Path $root 'src\settings.ps1')).Replace('@@LOCALES@@',[IO.File]::ReadAllText((Join-Path $root 'locales.json')))
+$source = $source.Replace('@@SETTINGS@@', [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($settings)))
+$source = $source.Replace('@@UPDATE_HELPER@@', [IO.File]::ReadAllText((Join-Path $root 'src\update-helper.cs')))
 $source = $source.Replace('@@MANAGER_UI@@', [IO.File]::ReadAllText((Join-Path $root 'src\manager-ui.ps1')))
 $source = $source.Replace('@@MANAGER_TEST@@', [IO.File]::ReadAllText((Join-Path $root 'tests\manager-ui.ps1')))
 $payload = Join-Path $dist '1nstall.embedded.ps1'
 [IO.File]::WriteAllText($payload, $source, [Text.UTF8Encoding]::new($true))
 $compiler = Join-Path $env:WINDIR 'Microsoft.NET\Framework64\v4.0.30319\csc.exe'
 $helpers=Join-Path $dist '1nstall.Helpers.dll'
-& $compiler /nologo /target:library /platform:x64 /optimize+ /warnaserror+ /reference:System.Web.Extensions.dll "/out:$helpers" "$root\src\package-helper.cs" "$root\src\uninstall-helper.cs" "$root\src\window-helper.cs"
+& $compiler /nologo /target:library /platform:x64 /optimize+ /warnaserror+ /reference:System.Web.Extensions.dll "/out:$helpers" "$root\src\package-helper.cs" "$root\src\uninstall-helper.cs" "$root\src\window-helper.cs" "$root\src\update-helper.cs"
 if ($LASTEXITCODE -ne 0) { throw 'Helper build failed.' }
 $compiledXaml=[IO.File]::ReadAllText((Join-Path $root 'interface.xaml')).Replace('<Window xmlns=', '<Window x:Class="OneInstall.MainWindow" xmlns=')
 [IO.File]::WriteAllText((Join-Path $dist 'interface.xaml'),$compiledXaml)
@@ -38,7 +41,7 @@ if ($CertificateThumbprint) {
     if ($signed.Status -ne 'Valid') { throw ('Signing could not be verified: '+$signed.StatusMessage) }
 }
 Copy-Item -LiteralPath (Join-Path $root 'licenses\THIRD-PARTY-NOTICES.txt') -Destination (Join-Path $dist 'THIRD-PARTY-NOTICES.txt')
-$inputs=@('vexan_installers.ps1','catalog.json','profiles.json','interface.xaml','src/1nstall.ico','src/package-helper.cs','src/manager-ui.ps1','src/uninstall-helper.cs','src/window-helper.cs','src/launcher.cs','src/ui-helper.cs','src/ui.csproj','src/app.manifest','tests/manager-ui.ps1','licenses/THIRD-PARTY-NOTICES.txt','build-windows.ps1')
+$inputs=@('vexan_installers.ps1','catalog.json','profiles.json','interface.xaml','src/1nstall.ico','src/package-helper.cs','src/manager-ui.ps1','src/uninstall-helper.cs','src/window-helper.cs','src/launcher.cs','src/ui-helper.cs','src/ui.csproj','src/settings.ps1','src/update-helper.cs','locales.json','src/app.manifest','tests/manager-ui.ps1','licenses/THIRD-PARTY-NOTICES.txt','build-windows.ps1')
 $hashes=[ordered]@{}
 foreach ($inputPath in $inputs) { $hashes[$inputPath]=(Get-FileHash -Algorithm SHA256 -LiteralPath (Join-Path $root $inputPath)).Hash.ToLowerInvariant() }
 $commit=$null; $sourceDirty=$null
@@ -57,8 +60,8 @@ if (Get-Command git -ErrorAction SilentlyContinue) {
     } catch { } # Git is optional for source-ZIP builds; unavailable provenance remains null.
 }
 $metadata=[ordered]@{
-    Product='1nstall'; Version='3.2.0'; BuiltAtUtc=[DateTime]::UtcNow.ToString('o');
-    UpstreamBase='0df2d26bfdb0371917acda5aed0e41ebdf648fa2'; SourceCommit=$commit; SourceDirty=$sourceDirty;
+    Product='1nstall'; Version='3.3.0'; BuiltAtUtc=[DateTime]::UtcNow.ToString('o');
+    UpstreamBase='d158884bb63bc0b11de5de84ee15189e3b334d22'; SourceCommit=$commit; SourceDirty=$sourceDirty;
     Windows=[Environment]::OSVersion.Version.ToString(); PowerShell=$PSVersionTable.PSVersion.ToString();
     Compiler=$compiler; CompilerSHA256=(Get-FileHash $compiler -Algorithm SHA256).Hash.ToLowerInvariant();
     Signed=([bool]$CertificateThumbprint); ExeSHA256=(Get-FileHash $exe -Algorithm SHA256).Hash.ToLowerInvariant();

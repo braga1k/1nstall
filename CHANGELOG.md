@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.3.0 - 2026-10-03
+
+- Add Settings with persistent System/Light/Dark themes, optional Windows accent and ten interface languages; Portuguese is pt-PT only, with right-to-left Arabic and Urdu.
+- Check for stable 1nstall updates in the background, verify release checksums and executable identity, then apply on exit while retaining the previous executable.
+- Match library margins, align activity panels with app cards and share Install's moving hover light with Uninstall.
+- Preserve gradient materials, reflections and depth in the light appearance; disabling Windows accent makes either theme fully monochrome. Extend pointer-following light to Settings cards and buttons.
+- Preserve selections while changing preferences; extend local geometry, language, theme, persistence and updater validation. See [settings and current limits](docs/SETTINGS.md).
+
 ## 3.2.0 - 2026-10-02
 
 - New centered vector logo and violet-and-sage Windows icon.

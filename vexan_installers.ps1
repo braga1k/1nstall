@@ -108,6 +108,16 @@ $windowCode = @'
 '@
 if ($windowCode.Trim().StartsWith('@@')) { $windowCode=Get-Content (Join-Path $ResourceRoot 'src/window-helper.cs') -Raw -Encoding UTF8 }
 if (-not ('FirstInstallWindow' -as [type])) { Add-Type -TypeDefinition $windowCode }
+$settingsCode='@@SETTINGS@@'
+if ($settingsCode.StartsWith('@@')) { $settingsCode=[IO.File]::ReadAllText((Join-Path $ResourceRoot 'src/settings.ps1')) } else { $settingsCode=[Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($settingsCode)) }
+. ([scriptblock]::Create($settingsCode))
+$updateCode=@'
+@@UPDATE_HELPER@@
+'@
+if (-not ('OneInstallUpdate' -as [type])) {
+    if ($updateCode.Trim().StartsWith('@@')) { $updateCode=[IO.File]::ReadAllText((Join-Path $ResourceRoot 'src/update-helper.cs')) }
+    Add-Type -TypeDefinition $updateCode -ReferencedAssemblies @('System.dll','System.Core.dll','System.Web.Extensions.dll')
+}
 # UI starts here
 try {
     if ($env:OS -ne 'Windows_NT' -or -not [Environment]::Is64BitOperatingSystem) { throw 'Requires 64-bit Windows.' }
@@ -126,6 +136,7 @@ try {
         $script:accentSettings=[Windows.UI.ViewManagement.UISettings]::new()
     } catch { }
     function Get-WindowsAccent {
+        if (-not $script:settings.WindowsAccent) { return [Windows.Media.ColorConverter]::ConvertFromString($(if (Get-AppLightMode) { '#282828' } else { '#D0D0D0' })) }
         try {
             if ($null -ne $script:accentSettings) {
                 $color=$script:accentSettings.GetColorValue([Windows.UI.ViewManagement.UIColorType]::Accent)
@@ -156,17 +167,19 @@ try {
             $window.FindName('AmbientLight').Opacity=0.5
         } else {
             $chrome.GlassFrameThickness=[Windows.Thickness]::new(0)
-            $source.CompositionTarget.BackgroundColor=[Windows.Media.ColorConverter]::ConvertFromString('#08091A')
+            $source.CompositionTarget.BackgroundColor=[Windows.Media.Colors]::Transparent
             $window.SetResourceReference([Windows.Controls.Control]::BackgroundProperty,'WindowFill')
             $window.FindName('AmbientLight').Opacity=1
         }
-        [FirstInstallWindow]::Apply($handle) | Out-Null
+        [FirstInstallWindow]::Apply($handle,$script:lightMode) | Out-Null
         Set-AccentPalette (Get-WindowsAccent)
         Set-ContrastResources
     }
     $script:lastGlass=$null
     $script:glassBrushes=@{}
     $script:glassTemplates=@{}
+    $script:decorationTemplates=@{}
+    foreach ($key in @('BevelBrush','HoverEdgeBrush','CardHoverEdgeBrush','ReflectionEdgeBrush','SeparatorBrush','GroupFill','GroupEdge','GroupHoverFill','TextShadowColor','GlassShadowColor','ButtonLightColor','CardLightColor','ReflectionColor','ReflectionSoftColor')) { $script:decorationTemplates[$key]=$window.Resources[$key] }
     foreach ($key in @('GlassPanelFill','GlassControlFill','GlassEdge','GlassMenuFill','ContentFill','CardEdge')) { $script:glassTemplates[$key]=$window.Resources[$key] }
     function Set-AccentPalette([Windows.Media.Color]$Color) {
         $white=[Windows.Media.Colors]::White
@@ -239,8 +252,11 @@ try {
         $script:lastGlass=$Enabled
         Update-NativeGlass
     }
+    $script:lightMode=$false
     function Update-WindowsAccent {
         $changed=$false
+        $light=Get-AppLightMode
+        if ($light -ne $script:lightMode) { $script:lightMode=$light; $script:lastGlass=$null; $changed=$true }
         $color=Get-WindowsAccent
         $contrast=[Windows.SystemParameters]::HighContrast
         if ($contrast -ne $script:lastContrast) { $script:lastGlass=$null; Set-AccentPalette $color; $script:lastContrast=$contrast; $changed=$true }
@@ -257,6 +273,7 @@ try {
         $window.Resources['InputFill']=if ($contrast) { [Windows.SystemColors]::WindowBrush } else { [Windows.Media.BrushConverter]::new().ConvertFromString('#1B1E25') }
         $window.Resources['DialogFill']=if ($contrast) { [Windows.SystemColors]::WindowBrush } else { [Windows.Media.BrushConverter]::new().ConvertFromString('#101526') }
         $window.Resources['FocusBrush']=if ($contrast) { [Windows.SystemColors]::WindowTextBrush } else { [Windows.Media.Brushes]::White }
+        $window.Resources['CheckBorderBrush']=if ($contrast) { [Windows.SystemColors]::WindowTextBrush } else { [Windows.Media.BrushConverter]::new().ConvertFromString('#A5AFC4') }
         if ($contrast) {
             foreach ($key in @('WindowFill','OpaqueWindowFill','DialogFill','InputFill','GlassPanelFill','GlassControlFill','GlassMenuFill','ContentFill')) { $window.Resources[$key]=[Windows.SystemColors]::WindowBrush }
             foreach ($key in @('GlassEdge','CardEdge')) { $window.Resources[$key]=[Windows.SystemColors]::WindowTextBrush }
@@ -265,6 +282,7 @@ try {
             $window.Resources['AccentTextBrush']=[Windows.SystemColors]::WindowTextBrush
             $window.Resources['AccentForegroundBrush']=[Windows.SystemColors]::HighlightTextBrush
         }
+        Set-AppMaterials
     }
     $script:lastAccent=''
     $script:lastContrast=$null
@@ -305,7 +323,7 @@ try {
     })
     $window.Add_StateChanged({
         $maximized=$window.WindowState -eq 'Maximized'
-        $ui.MaximizeWindow.ToolTip=if ($maximized) { 'Restore' } else { 'Maximize' }
+        Set-UiValue ($ui.MaximizeWindow) 'ToolTip' $(if ($maximized) { 'Restore' } else { 'Maximize' })
         [Windows.Automation.AutomationProperties]::SetName($ui.MaximizeWindow,[string]$ui.MaximizeWindow.ToolTip)
         $ui.MaximizeGlyph.Data=if ($maximized) { 'M 2,0 L 10,0 10,8 M 0,2 L 8,2 8,10 0,10 Z' } else { 'M 0,0 L 10,0 10,10 0,10 Z' }
     })
@@ -323,16 +341,16 @@ try {
     New-Item -ItemType Directory -Path $logDir -Force | Out-Null
     $logPath = Join-Path $logDir ('session-{0}-{1}.log' -f (Get-Date -Format 'yyyyMMdd-HHmmss'),$PID)
     $winget = [OneInstallPackages]::FindWinGet()
-    $ui.Environment.Text = if ($winget) { 'WinGet ready · {0} apps to explore' -f $catalog.Count } else { 'WinGet is missing. Install App Installer to enable automatic installs.' }
+    Set-UiValue ($ui.Environment) 'Text' $(if ($winget) { 'WinGet ready · {0} apps to explore' -f $catalog.Count } else { 'WinGet is missing. Install App Installer to enable automatic installs.' })
     function Add-Log([string]$Message) {
         $line = '[{0}] {1}' -f (Get-Date -Format 'yyyy-MM-dd HH:mm:ss'),$Message
         $ui.LogBox.AppendText($line + "`r`n")
         $ui.LogBox.ScrollToEnd()
-        try { Add-Content -LiteralPath $logPath -Value $line -Encoding UTF8 } catch { $ui.Status.Text = 'Could not save the log to disk.' }
+        try { Add-Content -LiteralPath $logPath -Value $line -Encoding UTF8 } catch { Set-UiValue ($ui.Status) 'Text' $('Could not save the log to disk.') }
     }
     function New-Label([string]$Text, [string]$Color='#F3F5F7', [double]$Size=13) {
         $label = New-Object Windows.Controls.TextBlock
-        $label.Text = $Text; $label.FontSize = $Size
+        Set-UiValue ($label) 'Text' $($Text); $label.FontSize = $Size
         $label.SetResourceReference([Windows.Controls.TextBlock]::ForegroundProperty,$(if ($Color -in @('#F3F5F7','#DCE1E7','#D7DFE8','#FFFFFF')) { 'TextPrimaryBrush' } else { 'TextSecondaryBrush' }))
         $label.TextWrapping = 'Wrap'
         $label.FontFamily=if ($Size -ge 20) { $window.Resources['HeadingFont'] } else { $window.FontFamily }
@@ -412,7 +430,7 @@ try {
         $now=[DateTime]::UtcNow.Ticks
         if ($now-[long]$Light.Tag -lt 250000) { return }
         $Light.Tag=$now
-        if ($Light.Background.IsFrozen) { $Light.Background=$Light.Background.CloneCurrentValue() }
+        if ($Light.Background.IsFrozen) { $Light.Background=$Light.Background.Clone() }
         $point=[Windows.Point]::new([Math]::Max(0.0,[Math]::Min(1.0,$Position.X/$Light.ActualWidth)),[Math]::Max(0.0,[Math]::Min(1.0,$Position.Y/$Light.ActualHeight)))
         $Light.Background.Center=$point; $Light.Background.GradientOrigin=$point
     }
@@ -452,10 +470,10 @@ try {
         $title=New-Label $Name; $title.FontWeight='SemiBold'; $title.Margin='0,0,8,0'; $title.VerticalAlignment='Center'
         $row.Children.Add($title) | Out-Null
         $removeButton=New-Object Windows.Controls.Button
-        $removeButton.Content='×'; $removeButton.Tag=$Tag; $removeButton.Width=32; $removeButton.MinHeight=32
+        Set-UiValue ($removeButton) 'Content' $('×'); $removeButton.Tag=$Tag; $removeButton.Width=32; $removeButton.MinHeight=32
         $removeButton.Padding='0'; $removeButton.Margin='0'; $removeButton.FontSize=18
         $removeButton.Background='Transparent'; $removeButton.BorderThickness='0'; $removeButton.IsEnabled=$Enabled
-        $removeButton.ToolTip='Remove '+$Name+' from selection'
+        Set-UiValue ($removeButton) 'ToolTip' $('Remove '+$Name+' from selection')
         [Windows.Automation.AutomationProperties]::SetName($removeButton,'Remove '+$Name+' from selection')
         Enable-HoverMotion $removeButton
         [Windows.Controls.Grid]::SetColumn($removeButton,1); $removeButton.Add_Click($Remove)
@@ -467,7 +485,7 @@ try {
         $script:syncing = $true
         foreach ($app in $catalog) { $checks[$app.Key].IsChecked = $selected.ContainsKey($app.Key) }
         $script:syncing = $false
-        $ui.SelectedCount.Text = '{0} apps selected' -f $selected.Count
+        Set-UiValue ($ui.SelectedCount) 'Text' $(if ($selected.Count -eq 1) { '1 app selected' } else { '{0} apps selected' -f $selected.Count })
         $ui.Install.IsEnabled = ($selected.Count -gt 0 -and -not $busy)
         $ui.SaveSetup.IsEnabled=($selected.Count -gt 0 -and -not $busy)
         $script:removeButtons=@{}
@@ -500,7 +518,7 @@ try {
     }
     function Set-AppStatus([string]$Key,[string]$Text) {
         $statuses[$Key]=$Text
-        $script:statusLabels[$Key].Text=$Text
+        Set-UiValue ($script:statusLabels[$Key]) 'Text' $($Text)
         Add-Log ($byKey[$Key].Name + ': ' + $Text)
     }
     function Remove-SelectedApp([string]$Key) {
@@ -513,19 +531,18 @@ try {
             }
         } while ($removed)
         Update-Selection
-        $ui.Status.Text='Selection updated. Review before installing.'
+        Set-UiValue ($ui.Status) 'Text' $('Selection updated. Review before installing.')
     }
     function Set-Selection([string[]]$Keys) {
         $selected.Clear(); $statuses.Clear()
         foreach ($app in @(Get-Plan $Keys)) { $selected[$app.Key] = $true }
         Update-Selection
-        $ui.Status.Text=if ($selected.Count) { 'Selection updated. Review before installing.' } else { 'Ready when you are.' }
+        Set-UiValue ($ui.Status) 'Text' $(if ($selected.Count) { 'Selection updated. Review before installing.' } else { 'Ready when you are.' })
     }
     function Update-Filter([switch]$ForceAnimation) {
         $query = $ui.Search.Text.Trim()
         $count = 0
-        # Fixed ItemWidth reserves a slot even for a collapsed child in WrapPanel.
-        # Keep checkbox instances in $checks, but only attach matching cards.
+        # Keep checkbox instances and selection, but only attach matching cards.
         $visible=New-Object 'System.Collections.Generic.List[object]'
         foreach ($app in $catalog) {
             $viewMatch=($script:libraryView -eq 'All apps' -or $query -ne '' -or
@@ -534,7 +551,7 @@ try {
                 ($searchTexts[$app.Key].IndexOf($query,[StringComparison]::OrdinalIgnoreCase) -ge 0)
             $visibility=if ($match) { 'Visible' } else { 'Collapsed' }
             if ($checks[$app.Key].Visibility -ne $visibility) { $checks[$app.Key].Visibility=$visibility }
-            $checks[$app.Key].Content.Children[1].Text=if ($app.AlsoIn -contains $category) { $category } else { $app.Category }
+            Set-UiValue ($checks[$app.Key].Content.Children[1]) 'Text' $(if ($app.AlsoIn -contains $category) { $category } else { $app.Category })
             if ($match) { $visible.Add($checks[$app.Key]); $count++ }
         }
         $changed=$ui.Cards.Children.Count -ne $visible.Count
@@ -547,8 +564,8 @@ try {
             $ui.Cards.Children.Clear()
             foreach ($card in $visible) { $ui.Cards.Children.Add($card) | Out-Null }
         }
-        $ui.ResultCount.Text = "$category · $count apps"
-        if ($script:libraryView -ne 'All apps' -and $query -eq '') { $ui.ResultCount.Text=$script:libraryView+' · '+$count+' apps' }
+        Set-UiValue ($ui.ResultCount) 'Text' $("$category · $count apps")
+        if ($script:libraryView -ne 'All apps' -and $query -eq '') { Set-UiValue ($ui.ResultCount) 'Text' $($script:libraryView+' · '+$count+' apps') }
         foreach ($view in $script:viewButtons.Keys) {
             if ($view -eq $script:libraryView) { $script:viewButtons[$view].SetResourceReference([Windows.Controls.Control]::BackgroundProperty,'AccentSurfaceBrush'); $script:viewButtons[$view].SetResourceReference([Windows.Controls.Control]::ForegroundProperty,'AccentTextBrush') }
             else { $script:viewButtons[$view].SetResourceReference([Windows.Controls.Control]::BackgroundProperty,'GlassControlFill'); $script:viewButtons[$view].SetResourceReference([Windows.Controls.Control]::ForegroundProperty,'TextPrimaryBrush') }
@@ -557,7 +574,7 @@ try {
             $active=$script:libraryView -eq 'All apps' -and $button.Tag -eq $category
             $button.IsChecked=$active
         }
-        if ($script:libraryView -eq 'Installed' -and $count -eq 0) { $ui.Empty.Text='No confirmed installed catalog apps. Refresh status; guided apps and unavailable inventory remain Unknown.' } else { $ui.Empty.Text='No apps found. Try another search or All apps.' }
+        if ($script:libraryView -eq 'Installed' -and $count -eq 0) { Set-UiValue ($ui.Empty) 'Text' $('No confirmed installed catalog apps. Refresh status; guided apps and unavailable inventory remain Unknown.') } else { Set-UiValue ($ui.Empty) 'Text' $('No apps found. Try another search or All apps.') }
         $ui.Empty.Visibility = if ($count -eq 0) { 'Visible' } else { 'Collapsed' }
         $ui.LibraryScroll.ScrollToTop()
         if ($nativeCards) { [OneInstall.NativeUI]::Realize($ui.Cards,$ui.LibraryScroll) }
@@ -578,15 +595,15 @@ try {
         $check = New-Object Windows.Controls.CheckBox
         Enable-HoverMotion $check
         $check.Style = $window.Resources['CardCheck']; $check.Tag = $app.Key
-        $check.Width = 184; $check.Margin = '0,0,8,8'; $check.MinHeight = 104
+        $check.Margin = '4,0,4,8'; $check.Height = 140; $check.MinHeight = 140
         $method = if ($app.Ids.Count) { 'Automatic · WinGet: ' + ($app.Ids -join ', ') } else { 'Guided · official website: ' + $app.Url }
         $help = $app.Description + "`n" + $app.Category + ' · ' + $app.LicenseLabel + "`n" + $method
         if ($app.AlsoIn.Count) { $help += "`nAlso in: " + ($app.AlsoIn -join ', ') }
         $tooltip = New-Object Windows.Controls.ToolTip
         $tooltip.SetResourceReference([Windows.Controls.Control]::BackgroundProperty,'DialogFill'); $tooltip.SetResourceReference([Windows.Controls.Control]::ForegroundProperty,'TextPrimaryBrush'); $tooltip.SetResourceReference([Windows.Controls.Control]::BorderBrushProperty,'GlassEdge')
         $tooltip.Padding='12'; $tooltip.MaxWidth=360
-        $tooltip.Content = New-Label ($app.Name + "`n`n" + $help) '#F3F5F7' 12
-        $check.ToolTip = $tooltip
+        Set-UiValue ($tooltip) 'Content' $(New-Label ($app.Name + "`n`n" + $help) '#F3F5F7' 12)
+        Set-UiValue ($check) 'ToolTip' $($tooltip)
         [Windows.Automation.AutomationProperties]::SetName($check,$app.Name)
         [Windows.Automation.AutomationProperties]::SetHelpText($check,$help)
         $content = New-Object Windows.Controls.StackPanel
@@ -602,7 +619,7 @@ try {
         $badge = New-Label $mode '#C2CADE' 11; $badge.Margin = '0,4,0,0'
         $badge.TextWrapping='NoWrap'; $badge.TextTrimming='CharacterEllipsis'
         $content.Children.Add($badge) | Out-Null
-        $check.Content = $content
+        Set-UiValue ($check) 'Content' $($content)
         }
         $checks[$app.Key] = $check; $ui.Cards.Children.Add($check) | Out-Null
     }
@@ -625,6 +642,17 @@ try {
             if ($light) { Move-GlassLight $light ($e.GetPosition($light)) }
         }
     })
+    function Get-InstalledCardLight($Origin) {
+        $item=[Windows.Controls.ItemsControl]::ContainerFromElement($ui.InstalledList,$Origin)
+        if ($item -isnot [Windows.Controls.ListBoxItem]) { return $null }
+        $presenter=[Windows.Media.VisualTreeHelper]::GetChild($item,0)
+        return $ui.InstalledList.ItemTemplate.FindName('InstalledHoverLight',$presenter)
+    }
+    $ui.InstalledList.Add_MouseMove({ param($sender,$e)
+        if (-not $script:lastGlass -or -not (Test-MotionEnabled)) { return }
+        $light=Get-InstalledCardLight $e.OriginalSource
+        if ($light) { Move-GlassLight $light ($e.GetPosition($light)) }
+    })
     $categoryButtons=New-Object 'System.Collections.Generic.List[object]'
     $categoryGroups=@{}
     $selectCategory={
@@ -639,7 +667,7 @@ try {
         if ($group -ne 'All apps') {
             $categoryPanel=New-Object Windows.Controls.StackPanel
             $expander=New-Object Windows.Controls.Expander
-            $expander.Header=$group; $expander.Content=$categoryPanel; $expander.FontWeight='SemiBold'
+            Set-UiValue ($expander) 'Header' $($group); Set-UiValue ($expander) 'Content' $($categoryPanel); $expander.FontWeight='SemiBold'
             $categoryPanel.Margin='10,0,0,0'
             $expander.Style=$window.Resources['CategoryGroup']
             $expander.Add_Expanded({ param($sender,$eventArgs)
@@ -655,7 +683,7 @@ try {
         foreach ($cat in $groupCategories) {
         $button=New-Object Windows.Controls.RadioButton
         $button.Style=$window.Resources['CategoryItem']; $button.GroupName='LibraryCategories'; $button.Tag=$cat
-        $button.Content=New-Label $cat '#DCE1E7' 14
+        Set-UiValue ($button) 'Content' $(New-Label $cat '#DCE1E7' 14)
         [Windows.Automation.AutomationProperties]::SetName($button,$cat)
         if ($cat -eq 'All apps') { $button.Content.FontSize=14; $button.Margin='0,0,0,12' }
         $button.IsChecked=($cat -eq $category)
@@ -677,7 +705,7 @@ try {
         if ($script:busy) { return }
         $profile=$profilesByKey[$Key]
         Set-Selection @($profile.Apps)
-        $ui.Status.Text=$profile.Name + ' profile applied. Review your apps before installing.'
+        Set-UiValue ($ui.Status) 'Text' $($profile.Name + ' profile applied. Review your apps before installing.')
     }
     $profileItems=@{}
     $profileMenu=New-Object Windows.Controls.ContextMenu
@@ -686,19 +714,19 @@ try {
     $profileMenu.MaxHeight=[Math]::Min(640,[Math]::Max(300,[Windows.SystemParameters]::WorkArea.Height-100))
     foreach ($group in @('Everyday & Work','Create','Files & Privacy','PC & Tools')) {
         if ($profileMenu.Items.Count) { $profileMenu.Items.Add((New-Object Windows.Controls.Separator)) | Out-Null }
-        $heading=New-Object Windows.Controls.MenuItem; $heading.Header=$group; $heading.IsEnabled=$false; $heading.FontWeight='SemiBold'; $heading.FontSize=11; $heading.Padding='10,6'
+        $heading=New-Object Windows.Controls.MenuItem; Set-UiValue ($heading) 'Header' $($group); $heading.IsEnabled=$false; $heading.FontWeight='SemiBold'; $heading.FontSize=11; $heading.Padding='10,6'
         $profileMenu.Items.Add($heading) | Out-Null
         foreach ($profile in @($profiles | Where-Object { $_.Group -eq $group })) {
             $plan=@(Get-Plan @($profile.Apps))
-            $item=New-Object Windows.Controls.MenuItem; $item.Header=$profile.Name+' ('+$plan.Count+' apps)'; $item.Tag=$profile.Key; $item.Padding='10,6'
-            $tip=New-Label ($profile.Description+"`n`n"+($plan.Name -join ', ')) '#F3F5F7' 12; $tip.MaxWidth=420; $item.ToolTip=$tip
+            $item=New-Object Windows.Controls.MenuItem; Set-UiValue ($item) 'Header' $($profile.Name+' ('+$plan.Count+' apps)'); $item.Tag=$profile.Key; $item.Padding='10,6'
+            $tip=New-Label ($profile.Description+"`n`n"+($plan.Name -join ', ')) '#F3F5F7' 12; $tip.MaxWidth=420; Set-UiValue ($item) 'ToolTip' $($tip)
             [Windows.Automation.AutomationProperties]::SetName($item,$profile.Name+' profile, '+$plan.Count+' apps')
             $item.Add_Click({ param($sender,$eventArgs) Apply-Profile ([string]$sender.Tag); $profileMenu.IsOpen=$false })
             $profileItems[$profile.Key]=$item; $profileMenu.Items.Add($item) | Out-Null
         }
     }
     $profileMenu.Add_Opened({ Animate-Appearance $profileMenu 3 })
-    $ui.Profiles.ToolTip='Choose a profile to select its apps. Review and adjust before installing.'
+    Set-UiValue ($ui.Profiles) 'ToolTip' $('Choose a profile to select its apps. Review and adjust before installing.')
     $ui.Profiles.Add_Click({ $profileMenu.IsOpen=$true })
     $userProfileMenu=New-Object Windows.Controls.ContextMenu
     $userProfileMenu.Resources=$window.Resources
@@ -707,7 +735,7 @@ try {
     $userProfileMenu.Add_Opened({ Animate-Appearance $userProfileMenu 3 })
     foreach ($action in @(@('Export','Save current selection...'),@('Import','Load saved profile...'))) {
         $item=New-Object Windows.Controls.MenuItem
-        $item.Header=$action[1]
+        Set-UiValue ($item) 'Header' $($action[1])
         $ui[$action[0]]=$item
         $userProfileMenu.Items.Add($item) | Out-Null
     }
@@ -725,7 +753,7 @@ try {
         if ($savedProfile.Version -ne 1 -or $null -eq $savedProfile.Apps) { throw 'Invalid profile.' }
         $plan=@(Get-Plan @($savedProfile.Apps))
         Set-Selection @($plan | ForEach-Object { $_.Key })
-        $ui.Status.Text='User profile loaded. Review your apps before installing.'
+        Set-UiValue ($ui.Status) 'Text' $('User profile loaded. Review your apps before installing.')
     }
     $ui.OpenLogs.Add_Click({ Start-Process explorer.exe -ArgumentList ('"{0}"' -f $logDir) })
     $saveProfileAction={
@@ -750,34 +778,34 @@ try {
         }
     })
     function Confirm-Plan($Plan) {
-        $dialog = New-Object Windows.Window
+        $dialog = New-Object Windows.Window; $dialog.FlowDirection=$window.FindName('AppPanes').FlowDirection; $dialog.Language=$window.Language
         $dialog.WindowStyle='SingleBorderWindow'
-        $dialog.Add_SourceInitialized({ [FirstInstallWindow]::Apply([Windows.Interop.WindowInteropHelper]::new($dialog).Handle) | Out-Null })
+        $dialog.Add_SourceInitialized({ [FirstInstallWindow]::Apply([Windows.Interop.WindowInteropHelper]::new($dialog).Handle,$script:lightMode) | Out-Null })
         $dialogChrome=New-Object Windows.Shell.WindowChrome
         $dialogChrome.CaptionHeight=48; $dialogChrome.ResizeBorderThickness='6'
         $dialogChrome.GlassFrameThickness='0'; $dialogChrome.UseAeroCaptionButtons=$false
         [Windows.Shell.WindowChrome]::SetWindowChrome($dialog,$dialogChrome)
-        $dialog.Icon=$window.Icon; $dialog.Title='Review installation'; $dialog.Width=580; $dialog.Height=570; $dialog.Owner=$window
+        $dialog.Icon=$window.Icon; Set-UiValue ($dialog) 'Title' $('Review installation'); $dialog.Width=580; $dialog.Height=570; $dialog.Owner=$window
         $dialog.WindowStartupLocation='CenterOwner'; $dialog.SetResourceReference([Windows.Controls.Control]::BackgroundProperty,'DialogFill'); $dialog.SetResourceReference([Windows.Controls.Control]::ForegroundProperty,'TextPrimaryBrush')
         $dialog.MinWidth=540; $dialog.MinHeight=540; $dialog.FontSize=13
         $dialog.FontFamily=$window.FontFamily; $dialog.Resources=$window.Resources
         $dock=New-Object Windows.Controls.DockPanel; $dock.Margin='20'
-        $surface=New-Object Windows.Controls.Border; $surface.Style=$window.Resources['GlassPanel']; $surface.Margin='12'; $surface.Child=$dock; $dialog.Content=$surface
+        $surface=New-Object Windows.Controls.Border; $surface.Style=$window.Resources['GlassPanel']; $surface.Margin='12'; $surface.Child=$dock; Set-UiValue ($dialog) 'Content' $($surface)
         $title=New-Label 'Ready to install?' '#F3F5F7' 23; $title.Margin='0,0,0,18'
         [Windows.Controls.DockPanel]::SetDock($title,'Top'); $dock.Children.Add($title) | Out-Null
         $bottom=New-Object Windows.Controls.StackPanel
         [Windows.Controls.DockPanel]::SetDock($bottom,'Bottom'); $dock.Children.Add($bottom) | Out-Null
         $info=New-Label 'Guided apps open their official websites for manual installation. For Peace, install Equalizer APO first, choose your audio device and follow any restart instructions before setting up Peace.' '#C2CADE' 12
         $info.Margin='0,16,0,16'; $bottom.Children.Add($info) | Out-Null
-        $agree=New-Object Windows.Controls.CheckBox; $agree.Content='I accept the app licenses and WinGet source terms.'; $agree.SetResourceReference([Windows.Controls.Control]::ForegroundProperty,'TextPrimaryBrush'); $agree.Margin='0,0,0,16'
+        $agree=New-Object Windows.Controls.CheckBox; Set-UiValue ($agree) 'Content' $('I accept the app licenses and WinGet source terms.'); $agree.SetResourceReference([Windows.Controls.Control]::ForegroundProperty,'TextPrimaryBrush'); $agree.Margin='0,0,0,16'
         $bottom.Children.Add($agree) | Out-Null
-        $go=New-Object Windows.Controls.Button; $go.Content='Start installation'; $go.IsEnabled=$false; $go.SetResourceReference([Windows.Controls.Control]::BackgroundProperty,'AccentBrush'); $go.SetResourceReference([Windows.Controls.Control]::ForegroundProperty,'AccentForegroundBrush')
+        $go=New-Object Windows.Controls.Button; Set-UiValue ($go) 'Content' $('Start installation'); $go.IsEnabled=$false; $go.SetResourceReference([Windows.Controls.Control]::BackgroundProperty,'AccentBrush'); $go.SetResourceReference([Windows.Controls.Control]::ForegroundProperty,'AccentForegroundBrush')
         $agree.Add_Checked({ $go.IsEnabled=$true }); $agree.Add_Unchecked({ $go.IsEnabled=$false })
         $go.Add_Click({ $dialog.DialogResult=$true }); $bottom.Children.Add($go) | Out-Null
-        $back=New-Object Windows.Controls.Button; $back.Content='Back'; $back.IsCancel=$true; $back.Margin='0,8,8,0'
+        $back=New-Object Windows.Controls.Button; Set-UiValue ($back) 'Content' $('Back'); $back.IsCancel=$true; $back.Margin='0,8,8,0'
         $back.Add_Click({ $dialog.DialogResult=$false }); $bottom.Children.Add($back) | Out-Null
         $scroll=New-Object Windows.Controls.ScrollViewer; $scroll.VerticalScrollBarVisibility='Auto'
-        $list=New-Object Windows.Controls.StackPanel; $scroll.Content=$list
+        $list=New-Object Windows.Controls.StackPanel; Set-UiValue ($scroll) 'Content' $($list)
         foreach ($app in $Plan) {
             $mode=if ($app.Ids.Count) { 'Automatic' } else { 'Guided' }
             $label=New-Label ($app.Name + '  ·  ' + $mode) '#D7DFE8' 14; $label.Margin='0,5'
@@ -869,7 +897,7 @@ try {
         $script:control=[hashtable]::Synchronized(@{Stop=$false})
         $script:total=$plan.Count; $script:completed=0
         $statuses.Clear(); foreach ($app in $plan) { $statuses[$app.Key]='Queued' }
-        Set-QueueProgress 0; $ui.Status.Text='Installation in progress…'
+        Set-QueueProgress 0; Set-UiValue ($ui.Status) 'Text' $('Installation in progress…')
         Set-Busy $true
         try {
             $script:job=[PowerShell]::Create()
@@ -882,11 +910,11 @@ try {
             if ($script:job) { $script:job.Dispose(); $script:job=$null }
             $timer.Stop()
             Set-Busy $false
-            $ui.Status.Text='Could not start. See the logs for details.'
+            Set-UiValue ($ui.Status) 'Text' $('Could not start. See the logs for details.')
         }
     })
     $ui.Cancel.Add_Click({
-        if ($script:busy) { $script:control.Stop=$true; $ui.Cancel.IsEnabled=$false; $ui.Status.Text='Stopping after the current app.'; Add-Log 'Stop requested. Waiting for the current installer.' }
+        if ($script:busy) { $script:control.Stop=$true; $ui.Cancel.IsEnabled=$false; Set-UiValue ($ui.Status) 'Text' $('Stopping after the current app.'); Add-Log 'Stop requested. Waiting for the current installer.' }
     })
     $timer=New-Object Windows.Threading.DispatcherTimer
     $timer.Interval=[TimeSpan]::FromMilliseconds(250)
@@ -897,12 +925,12 @@ try {
             switch ($event.Type) {
                 'status' { Set-AppStatus $event.Key $event.Text }
                 'log' { if ($event.Text) { Add-Log $event.Text } }
-                'error' { Add-Log $event.Text; $ui.Status.Text='Something went wrong. See the logs for details.' }
+                'error' { Add-Log $event.Text; Set-UiValue ($ui.Status) 'Text' $('Something went wrong. See the logs for details.') }
                 'url' {
                     try { Start-Process $event.Text }
                     catch { Add-Log ('Could not open: ' + $event.Text) }
                 }
-                'progress' { $script:completed++; Set-QueueProgress (100*$script:completed/$script:total); $ui.Status.Text="$script:completed of $script:total processed" }
+                'progress' { $script:completed++; Set-QueueProgress (100*$script:completed/$script:total); Set-UiValue ($ui.Status) 'Text' $("$script:completed of $script:total processed") }
             }
         }
         if ($script:async.IsCompleted -and $script:events.IsEmpty) {
@@ -913,8 +941,8 @@ try {
             foreach ($key in @($statuses.Keys)) { if ($statuses[$key] -eq 'Queued') { $statuses[$key]='Not started' } elseif ($statuses[$key] -like 'Installing*' -or $statuses[$key] -like 'Preparing*') { $statuses[$key]='Failed · operation interrupted' } }
             $failed=@($statuses.Values | Where-Object { $_ -like 'Failed*' }).Count
             $manual=@($statuses.Values | Where-Object { $_ -like 'Manual*' }).Count
-            $ui.Status.Text="Queue finished · $failed failed · $manual manual installs pending."
-            if ($script:control.Stop) { $ui.Status.Text='Queue stopped after the current app. Review the results.' }
+            Set-UiValue ($ui.Status) 'Text' $("Queue finished · $failed failed · $manual manual installs pending.")
+            if ($script:control.Stop) { Set-UiValue ($ui.Status) 'Text' $('Queue stopped after the current app. Review the results.') }
             Set-Busy $false
             Refresh-LibraryInventory
         }
@@ -939,16 +967,10 @@ try {
         if ($nativeCards) {
             [OneInstall.NativeUI]::Layout($ui.Cards,$available,$ui.LibraryScroll.ViewportHeight,$ui.LibraryScroll.VerticalOffset)
         } else {
-            # Use the measured viewport, never the size of the children being resized.
-            # One spare DIP per slot avoids an extra wrap at fractional display scaling.
-            $columns=[Math]::Max(1,[Math]::Min(6,[Math]::Floor(($available+8)/192)))
-            $slot=[Math]::Floor($available/$columns)-1
-            $ui.Cards.ItemWidth=$slot
-            foreach ($check in $checks.Values) { $check.Width=[Math]::Max(100,$slot-8) }
+            $ui.Cards.Columns=[Math]::Max(1,[Math]::Min(6,[Math]::Floor(($available+8)/192)))
+            $ui.Cards.Width=$available+8
         }
-        # Header ends at the full grid's last card, before its trailing gap and scroll rail.
-        $slot=$ui.Cards.ItemWidth
-        $window.FindName('InstallSearchRow').Width=[Math]::Max(0,[Math]::Floor($available/$slot)*$slot-8)
+        $window.FindName('InstallSearchRow').Width=$available
     }
     $ui.LibraryScroll.Add_ScrollChanged({
         param($sender,$scrollEvent)
@@ -962,7 +984,7 @@ try {
         if ($script:busy -and $script:job) {
             $eventArgs.Cancel=$true
             $script:control.Stop=$true
-            $ui.Status.Text='Wait for the current installer to finish, then close this window.'
+            Set-UiValue ($ui.Status) 'Text' $('Wait for the current installer to finish, then close this window.')
             $ui.Cancel.IsEnabled=$false
         }
     })
@@ -1001,7 +1023,7 @@ try {
             } (-not $script:uninstallTask)
             $ui.UninstallQueuePanel.Children.Add($row) | Out-Null
         }
-        $ui.UninstallSelectedCount.Text="$count $(if ($count -eq 1) { 'app' } else { 'apps' }) selected"
+        Set-UiValue ($ui.UninstallSelectedCount) 'Text' $("$count $(if ($count -eq 1) { 'app' } else { 'apps' }) selected")
         $ui.ReviewUninstall.IsEnabled=($count -gt 0 -and -not $script:uninstallTask)
         $ui.ClearUninstallSelection.IsEnabled=($count -gt 0 -and -not $script:uninstallTask)
         $ui.CheckLeftovers.IsEnabled=($script:uninstallTargets.Count -gt 0 -and -not $script:uninstallTask)
@@ -1014,9 +1036,9 @@ try {
         })
         # Give WPF native models, not pipeline PSObject wrappers, so INotifyPropertyChanged reaches checkboxes.
         $ui.InstalledList.ItemsSource=[InstalledApp[]]$matches
-        $ui.InstalledEmpty.Text=if ($script:uninstallTask -and $script:uninstallOperation -eq 'Inventory') { 'Reading installed apps…' } else { 'No apps found. Try another search or choose Refresh.' }
+        Set-UiValue ($ui.InstalledEmpty) 'Text' $(if ($script:uninstallTask -and $script:uninstallOperation -eq 'Inventory') { 'Reading installed apps…' } else { 'No apps found. Try another search or choose Refresh.' })
         $ui.InstalledEmpty.Visibility=if ($matches.Count -eq 0) { 'Visible' } else { 'Collapsed' }
-        if ($script:mode -eq 'Uninstall') { $ui.ResultCount.Text='Installed · '+$matches.Count+' apps' }
+        if ($script:mode -eq 'Uninstall') { Set-UiValue ($ui.ResultCount) 'Text' $('Installed · '+$matches.Count+' apps') }
         foreach ($name in @('InstalledAll','InstalledDesktop','InstalledStore')) {
             if ($ui[$name].Tag -eq $script:installedKind) { $ui[$name].SetResourceReference([Windows.Controls.Control]::BackgroundProperty,'AccentSurfaceBrush') }
             else { $ui[$name].SetResourceReference([Windows.Controls.Control]::BackgroundProperty,'GlassControlFill') }
@@ -1032,16 +1054,18 @@ try {
     }
     function Refresh-InstalledApps {
         if ($script:uninstallTask -or $SmokeTest) { return }
-        $ui.UninstallStatus.Text='Reading desktop and Microsoft Store apps…'
+        Set-UiValue ($ui.UninstallStatus) 'Text' $('Reading desktop and Microsoft Store apps…')
         Set-UninstallTask ([OneInstallUninstall]::InventoryAsync()) 'Inventory'
         Update-InstalledFilter
     }
     function Start-LeftoverScan {
-        $ui.UninstallStatus.Text='Checking removed apps and protecting shared folders...'
+        Set-UiValue ($ui.UninstallStatus) 'Text' $('Checking removed apps and protecting shared folders...')
         Set-UninstallTask ([OneInstallUninstall]::ScanAsync([InstalledApp[]]$script:uninstallTargets)) 'Scan'
     }
     function Set-AppMode([string]$Mode) {
         if ($script:busy -or $script:uninstallTask) { return }
+        if ($script:settingsPage) { $script:settingsPage.Visibility='Collapsed' }
+        if ($ui.ContainsKey('SettingsMode')) { $ui.SettingsMode.Background='Transparent' }
         $script:mode=$Mode; $uninstall=$Mode -eq 'Uninstall'
         $ui.InstallLibrary.Visibility=if ($uninstall) { 'Collapsed' } else { 'Visible' }
         $window.FindName('SetupGlass').Visibility=if ($uninstall) { 'Collapsed' } else { 'Visible' }
@@ -1049,7 +1073,7 @@ try {
         $ui.UninstallNavigation.Visibility=if ($uninstall) { 'Visible' } else { 'Collapsed' }
         $ui.UninstallPage.Visibility=if ($uninstall) { 'Visible' } else { 'Collapsed' }
         $window.FindName('WindowControls').Margin='0,30,30,0'
-        $ui.NavigationHeading.Text=if ($uninstall) { 'THIS PC' } else { 'LIBRARY' }
+        Set-UiValue ($ui.NavigationHeading) 'Text' $(if ($uninstall) { 'THIS PC' } else { 'LIBRARY' })
         foreach ($name in @('InstallMode','UninstallMode','HistoryMode')) {
             if (-not $ui[$name]) { continue }
             if ($name -eq $Mode+'Mode') { $ui[$name].SetResourceReference([Windows.Controls.Control]::BackgroundProperty,'AccentSurfaceBrush') }
@@ -1061,16 +1085,16 @@ try {
         } else { Update-Filter -ForceAnimation }
     }
     function Show-RemovalReview($Items,[bool]$Leftovers=$false) {
-        $dialog=New-Object Windows.Window; $script:removalDialog=$dialog
-        $dialog.Title=if ($Leftovers) { 'Review leftovers · 1nstall' } else { 'Review removal · 1nstall' }
+        $dialog=New-Object Windows.Window; $dialog.FlowDirection=$window.FindName('AppPanes').FlowDirection; $dialog.Language=$window.Language; $script:removalDialog=$dialog
+        Set-UiValue ($dialog) 'Title' $(if ($Leftovers) { 'Review leftovers · 1nstall' } else { 'Review removal · 1nstall' })
         $dialog.Width=760; $dialog.Height=[Math]::Min(660,[Windows.SystemParameters]::WorkArea.Height-40)
         $dialog.MinWidth=560; $dialog.MinHeight=450; $dialog.Owner=$window; $dialog.Icon=$window.Icon
         $dialog.WindowStartupLocation='CenterOwner'; $dialog.FontFamily=$window.FontFamily; $dialog.FontSize=13
         $chrome=New-Object Windows.Shell.WindowChrome; $chrome.CaptionHeight=24; $chrome.ResizeBorderThickness='6'; $chrome.GlassFrameThickness='0'; $chrome.UseAeroCaptionButtons=$false
         [Windows.Shell.WindowChrome]::SetWindowChrome($dialog,$chrome); $dialog.ShowInTaskbar=$false
         $dialog.Resources=$window.Resources; $dialog.SetResourceReference([Windows.Controls.Control]::BackgroundProperty,'OpaqueWindowFill'); $dialog.SetResourceReference([Windows.Controls.Control]::ForegroundProperty,'TextPrimaryBrush')
-        $dialog.Add_SourceInitialized({ [FirstInstallWindow]::Apply([Windows.Interop.WindowInteropHelper]::new($dialog).Handle) | Out-Null })
-        $dock=New-Object Windows.Controls.DockPanel; $dock.Margin='24'; $dialog.Content=$dock
+        $dialog.Add_SourceInitialized({ [FirstInstallWindow]::Apply([Windows.Interop.WindowInteropHelper]::new($dialog).Handle,$script:lightMode) | Out-Null })
+        $dock=New-Object Windows.Controls.DockPanel; $dock.Margin='24'; Set-UiValue ($dialog) 'Content' $($dock)
         $head=New-Object Windows.Controls.StackPanel
         $head.Children.Add((New-Label $(if ($Leftovers) { 'Keep what matters' } else { 'Ready to make some room?' }) '#F3F5F7' 27)) | Out-Null
         $copy=if ($Leftovers) { 'Possible leftovers need your judgment. Product folders can contain settings, saves or personal app data. Choose only what you want to remove. Files go to the Recycle Bin; registry keys are backed up first.' } else { 'These apps will be removed one at a time using their own uninstallers. Finish any dialogs they open. Microsoft Store removal affects your current Windows account. Back up app data you want to keep.' }
@@ -1079,19 +1103,19 @@ try {
         $bottom=New-Object Windows.Controls.StackPanel
         [Windows.Controls.DockPanel]::SetDock($bottom,'Bottom'); $dock.Children.Add($bottom) | Out-Null
         $agree=New-Object Windows.Controls.CheckBox; $agree.Style=$window.Resources['InstalledCheck']
-        $agree.Content=New-Label $(if ($Leftovers) { 'I reviewed the selected paths and want to remove their contents.' } else { 'I reviewed this list and want to remove these apps and their app data.' })
+        Set-UiValue ($agree) 'Content' $(New-Label $(if ($Leftovers) { 'I reviewed the selected paths and want to remove their contents.' } else { 'I reviewed this list and want to remove these apps and their app data.' }))
         $agree.Margin='0,18,0,16'; $bottom.Children.Add($agree) | Out-Null
         $actions=New-Object Windows.Controls.StackPanel; $actions.Orientation='Horizontal'; $actions.HorizontalAlignment='Right'; $bottom.Children.Add($actions) | Out-Null
-        $back=New-Object Windows.Controls.Button; $back.Content='Keep / go back'; $back.IsCancel=$true; $back.Add_Click({ $dialog.DialogResult=$false }); $actions.Children.Add($back) | Out-Null
-        $go=New-Object Windows.Controls.Button; $go.Content=if ($Leftovers) { 'Remove selected leftovers' } else { 'Remove '+$Items.Count+' apps' }
+        $back=New-Object Windows.Controls.Button; Set-UiValue ($back) 'Content' $('Keep / go back'); $back.IsCancel=$true; $back.Add_Click({ $dialog.DialogResult=$false }); $actions.Children.Add($back) | Out-Null
+        $go=New-Object Windows.Controls.Button; Set-UiValue ($go) 'Content' $(if ($Leftovers) { 'Remove selected leftovers' } else { 'Remove '+$Items.Count+' apps' })
         $go.IsEnabled=$false; $go.Margin='0'; $go.SetResourceReference([Windows.Controls.Control]::BackgroundProperty,'AccentActionBrush'); $go.SetResourceReference([Windows.Controls.Control]::ForegroundProperty,'AccentForegroundBrush')
         $go.Add_Click({ $dialog.DialogResult=$true }); $actions.Children.Add($go) | Out-Null
         $scroll=New-Object Windows.Controls.ScrollViewer; $scroll.VerticalScrollBarVisibility='Auto'; $scroll.HorizontalScrollBarVisibility='Disabled'
-        $list=New-Object Windows.Controls.StackPanel; $scroll.Content=$list; $dock.Children.Add($scroll) | Out-Null
+        $list=New-Object Windows.Controls.StackPanel; Set-UiValue ($scroll) 'Content' $($list); $dock.Children.Add($scroll) | Out-Null
         if ($Leftovers) {
             $selectionBar=New-Object Windows.Controls.StackPanel; $selectionBar.Orientation='Horizontal'; $selectionBar.Margin='0,0,0,12'
-            $selectAll=New-Object Windows.Controls.Button; $selectAll.Content='Select all'; $selectAll.Padding='12,6'
-            $clearAll=New-Object Windows.Controls.Button; $clearAll.Content='Clear selection'; $clearAll.Padding='12,6'
+            $selectAll=New-Object Windows.Controls.Button; Set-UiValue ($selectAll) 'Content' $('Select all'); $selectAll.Padding='12,6'
+            $clearAll=New-Object Windows.Controls.Button; Set-UiValue ($clearAll) 'Content' $('Clear selection'); $clearAll.Padding='12,6'
             $selectAll.Add_Click({ foreach ($row in $list.Children) { $row.Child.IsChecked=$true } })
             $clearAll.Add_Click({ foreach ($row in $list.Children) { $row.Child.IsChecked=$false } })
             $selectionBar.Children.Add($selectAll) | Out-Null; $selectionBar.Children.Add($clearAll) | Out-Null
@@ -1105,7 +1129,7 @@ try {
             $detail=if ($Leftovers) { $(if ($entry.Kind -eq 'Registry') { $(if ($entry.Machine) { 'HKLM' } else { 'HKCU' })+' · '+$(if ($entry.View32) { '32-bit' } else { '64-bit' })+' · ' } else { '' })+$entry.Detail } else { $entry.Detail }
             $subtitle=New-Label $detail '#C2CADE' 12; $subtitle.Margin='0,7,0,0'; $labels.Children.Add($subtitle) | Out-Null
             if ($Leftovers) {
-                $check=New-Object Windows.Controls.CheckBox; $check.Style=$window.Resources['InstalledCheck']; $check.Content=$labels; $check.Tag=$entry; $surface.Child=$check
+                $check=New-Object Windows.Controls.CheckBox; $check.Style=$window.Resources['InstalledCheck']; Set-UiValue ($check) 'Content' $($labels); $check.Tag=$entry; $surface.Child=$check
                 $entry.Selected=$false
                 $check.Add_Checked({ param($sender,$eventArgs) $sender.Tag.Selected=$true; $go.IsEnabled=$agree.IsChecked -and @($Items | Where-Object Selected).Count -gt 0 })
                 $check.Add_Unchecked({ param($sender,$eventArgs) $sender.Tag.Selected=$false; $go.IsEnabled=$agree.IsChecked -and @($Items | Where-Object Selected).Count -gt 0 })
@@ -1145,7 +1169,7 @@ try {
     }
     $uninstallTimer.Add_Tick({
         $message=''
-        while ([OneInstallUninstall]::Progress.TryDequeue([ref]$message)) { $ui.UninstallStatus.Text=$message; Add-UninstallLog $message }
+        while ([OneInstallUninstall]::Progress.TryDequeue([ref]$message)) { Set-UiValue ($ui.UninstallStatus) 'Text' $($message); Add-UninstallLog $message }
         if (-not $script:uninstallTask -or -not $script:uninstallTask.IsCompleted) { return }
         $uninstallTimer.Stop()
         $operation=$script:uninstallOperation; $task=$script:uninstallTask
@@ -1158,7 +1182,7 @@ try {
             if ($operation -eq 'Inventory') {
                 $script:installedApps=@($result.Apps)
                 foreach ($message in $result.Warnings) { Add-UninstallLog $message }
-                $ui.UninstallStatus.Text=if ($script:uninstallOutcome) { $script:uninstallOutcome } else { $installedApps.Count.ToString()+' installed apps · '+$result.Warnings.Count+' scan warnings. Review details in Removal activity.' }
+                Set-UiValue ($ui.UninstallStatus) 'Text' $(if ($script:uninstallOutcome) { $script:uninstallOutcome } else { $installedApps.Count.ToString()+' installed apps · '+$result.Warnings.Count+' scan warnings. Review details in Removal activity.' })
                 Update-InstalledFilter
             } else {
                 foreach ($message in $result.Messages) { Add-UninstallLog $message }
@@ -1177,7 +1201,7 @@ try {
                     $diskCount=@($items | Where-Object Kind -eq 'Folder').Count
                     $registryCount=@($items | Where-Object Kind -eq 'Registry').Count
                     $script:uninstallOutcome=if ($items.Count -gt 0) { $items.Count.ToString()+" verified cleanup candidates ($diskCount disk / $registryCount registry). Review paths before removal." } else { 'No cleanup candidates offered (0 disk / 0 registry). Removal or ownership may be unverified; see Removal activity for reasons.' }
-                    $ui.UninstallStatus.Text=$script:uninstallOutcome
+                    Set-UiValue ($ui.UninstallStatus) 'Text' $($script:uninstallOutcome)
                     Add-UninstallLog $script:uninstallOutcome
                     if ($items.Count -gt 0 -and (Show-RemovalReview $items $true)) {
                         $chosen=[LeftoverItem[]]@($items | Where-Object Selected)
@@ -1187,11 +1211,11 @@ try {
                 } elseif ($operation -eq 'Clean') {
                     Add-UninstallLog ('Backups and item record: '+$result.BackupFolder)
                     $script:uninstallOutcome='Cleanup finished. Review item results in Removal activity. Registry backups are available in Open backups.'
-                    $ui.UninstallStatus.Text=$script:uninstallOutcome
+                    Set-UiValue ($ui.UninstallStatus) 'Text' $($script:uninstallOutcome)
                     Refresh-InstalledApps
                 }
             }
-        } catch { Add-UninstallLog $_.Exception.Message; $ui.UninstallStatus.Text='Could not complete this step. Review Removal activity and try again.' }
+        } catch { Add-UninstallLog $_.Exception.Message; Set-UiValue ($ui.UninstallStatus) 'Text' $('Could not complete this step. Review Removal activity and try again.') }
         Update-UninstallSelection
     })
     $ui.InstallMode.Add_Click({ Set-AppMode 'Install' })
@@ -1217,7 +1241,7 @@ try {
         $plan=[InstalledApp[]]@($script:installedApps | Where-Object { $_.Selected -and $_.CanRemove })
         if ($plan.Count -gt 0 -and (Show-RemovalReview $plan)) { $script:uninstallOutcome=''; Set-UninstallTask ([OneInstallUninstall]::RemoveAsync($plan)) 'Remove' }
     })
-    $ui.StopUninstall.Add_Click({ [OneInstallUninstall]::StopRequested=$true; $ui.StopUninstall.IsEnabled=$false; $ui.UninstallStatus.Text='Waiting for the current uninstaller. The next app will be kept.' })
+    $ui.StopUninstall.Add_Click({ [OneInstallUninstall]::StopRequested=$true; $ui.StopUninstall.IsEnabled=$false; Set-UiValue ($ui.UninstallStatus) 'Text' $('Waiting for the current uninstaller. The next app will be kept.') })
     $ui.CheckLeftovers.Add_Click({
         if ($script:uninstallTask -or $SmokeTest -or $script:uninstallTargets.Count -eq 0) { return }
         Start-LeftoverScan
@@ -1229,7 +1253,7 @@ try {
     $window.Add_Closing({ param($sender,$eventArgs)
         if ($script:uninstallTask) {
             $eventArgs.Cancel=$true; [OneInstallUninstall]::StopRequested=$true
-            $ui.UninstallStatus.Text='Wait for the current removal/check to finish, then close this window.'
+            Set-UiValue ($ui.UninstallStatus) 'Text' $('Wait for the current removal/check to finish, then close this window.')
         }
     })
     $window.Add_Closed({ $uninstallTimer.Stop() })
@@ -1240,6 +1264,7 @@ try {
     if ($managerUI.Trim().StartsWith('@@')) { $managerUI=[IO.File]::ReadAllText((Join-Path $ResourceRoot 'src/manager-ui.ps1')) }
     . ([scriptblock]::Create($managerUI))
     Update-Selection; Set-AppMode 'Install'
+    Initialize-AppSettings
     if ($nativeCards) { [OneInstall.NativeUI]::Layout($ui.Cards,$window.Width-560,$window.Height-190,0) }
     if ($StartupTest) {
         $window.Resources['BeforeShowMs']=$StartupClock.ElapsedMilliseconds
@@ -1296,7 +1321,7 @@ try {
             $statusLabel.Text -ne 'Completed' -or $statuses[[string]$queueRow.Tag] -ne 'Completed' -or
             $selected.Count -ne 3 -or -not $checks['peace'].IsChecked) { throw 'Status update rebuilt the queue or changed selection.' }
         if ($timer.IsEnabled) { throw 'Queue timer is running while idle.' }
-        $ui.Search.Text='TeamSpeak'
+        Set-UiValue ($ui.Search) 'Text' $('TeamSpeak')
         if ($checks['ts3'].Visibility -ne 'Visible' -or $checks['apo'].Visibility -ne 'Collapsed') { throw 'Invalid search results.' }
         $ui.ClearSearch.RaiseEvent([Windows.RoutedEventArgs]::new([Windows.Controls.Primitives.ButtonBase]::ClickEvent))
         if ($ui.Search.Text -ne '' -or $selected.Count -ne 3) { throw 'Clearing search changed the selection.' }
@@ -1314,7 +1339,7 @@ try {
         Update-WindowsAccent
         if ($ui.Install.Background.GradientStops[1].Color -ne (Get-WindowsAccent)) { throw 'Windows accent mismatch.' }
         Set-Selection @('affinity','peace','extra_vlc')
-        $ui.Search.Text='LocalSend'
+        Set-UiValue ($ui.Search) 'Text' $('LocalSend')
         $script:removeButtons['affinity'].RaiseEvent([Windows.RoutedEventArgs]::new([Windows.Controls.Primitives.ButtonBase]::ClickEvent))
         if ($selected.ContainsKey('affinity') -or $checks['affinity'].IsChecked -or $ui.Search.Text -ne 'LocalSend') { throw 'Setup removal did not preserve the filtered view.' }
         $script:removeButtons['apo'].RaiseEvent([Windows.RoutedEventArgs]::new([Windows.Controls.Primitives.ButtonBase]::ClickEvent))
@@ -1324,7 +1349,7 @@ try {
         Set-Busy $false
         Set-Selection @()
         if ($ui.SaveSetup.IsEnabled) { throw 'Empty setup can be saved.' }
-        $ui.Search.Text=''
+        Set-UiValue ($ui.Search) 'Text' $('')
         $testProfile=Join-Path ([IO.Path]::GetTempPath()) ([Guid]::NewGuid().ToString()+'.json')
         try {
             Set-Selection @('peace','ts3')
@@ -1354,7 +1379,7 @@ try {
         $checks['apo'].IsChecked=$false
         $checks['apo'].RaiseEvent([Windows.RoutedEventArgs]::new([Windows.Controls.Primitives.ButtonBase]::ClickEvent))
         if ($selected.Count -ne 0) { throw 'Removing APO did not remove Peace.' }
-        $ui.Search.Text='LocalSend'
+        Set-UiValue ($ui.Search) 'Text' $('LocalSend')
         if ($checks['extra_localsend'].Visibility -ne 'Visible' -or $checks['ts3'].Visibility -ne 'Collapsed') { throw 'New app search failed.' }
         $ui.Search.Clear()
         foreach ($button in $categoryButtons) {
@@ -1403,7 +1428,7 @@ try {
                 if ($hint.Visibility -ne 'Visible') { throw 'Empty unfocused search needs its hint.' }
                 $search.Focus() | Out-Null; Wait-WindowMessages
                 if (-not $search.IsKeyboardFocusWithin -or $hint.Visibility -ne 'Collapsed') { throw 'Focused search hint must disappear.' }
-                $search.Text='existing query'; $ui.InstallMode.Focus() | Out-Null; Wait-WindowMessages
+                Set-UiValue ($search) 'Text' $('existing query'); $ui.InstallMode.Focus() | Out-Null; Wait-WindowMessages
                 if ($hint.Visibility -ne 'Collapsed' -or $search.Text -ne 'existing query') { throw 'Search text must remain visible and unchanged.' }
                 $search.Clear()
             }
@@ -1484,7 +1509,7 @@ try {
                 if ($ui.Cards.Children.Count -ne $expected.Count) { throw "Hidden cards still occupy grid slots in $($categoryButton.Tag)." }
                 if ($expected.Count) {
                     $position=$ui.Cards.Children[0].TranslatePoint([Windows.Point]::new(0,0),$ui.Cards)
-                    if ([Math]::Abs($position.X) -gt 1 -or [Math]::Abs($position.Y) -gt 1) { throw 'Filtered grid does not start at the first cell.' }
+                    if ([Math]::Abs($position.X-4) -gt 1 -or [Math]::Abs($position.Y) -gt 1) { throw 'Filtered grid does not start at the first cell.' }
                     for ($i=0;$i -lt $expected.Count;$i++) {
                         if ($ui.Cards.Children[$i].Tag -ne $expected[$i].Key) { throw 'Filtering changed catalog order.' }
                     }
@@ -1512,10 +1537,10 @@ try {
             foreach ($categoryButton in $categoryButtons) {
                 if ($categoryButton.Tag -eq 'All apps') { $categoryButton.RaiseEvent([Windows.RoutedEventArgs]::new([Windows.Controls.Primitives.ButtonBase]::ClickEvent)) }
             }
-            $ui.Search.Text='LocalSend'
+            Set-UiValue ($ui.Search) 'Text' $('LocalSend')
             $window.UpdateLayout()
             if ($ui.Cards.Children.Count -ne 1 -or $ui.Cards.Children[0].Tag -ne 'extra_localsend') { throw 'Search results did not compact.' }
-            $ui.Search.Text='__no_matching_apps__'
+            Set-UiValue ($ui.Search) 'Text' $('__no_matching_apps__')
             $window.UpdateLayout()
             if ($ui.Cards.Children.Count -ne 0 -or $ui.Empty.Visibility -ne 'Visible') { throw 'Empty search left grid slots behind.' }
             $ui.Search.Clear()
@@ -1630,7 +1655,7 @@ try {
             Set-UninstallTask $failure.Task 'Inventory'; $failure.SetException([InvalidOperationException]::new('Simulated scan failure'))
             Wait-WindowMessages; Wait-WindowMessages; Wait-WindowMessages
             if ($script:uninstallTask -or $ui.UninstallStatus.Text -notlike 'Could not complete*' -or -not $ui.InstallMode.IsEnabled) { throw 'Removal task failure left the app locked.' }
-            $ui.UninstallStatus.Text='Preview with fictional apps · no installed application has been removed.'
+            Set-UiValue ($ui.UninstallStatus) 'Text' $('Preview with fictional apps · no installed application has been removed.')
             Set-AppMode 'Uninstall'; $window.UpdateLayout(); Wait-WindowMessages
             if ($ui.InstalledList.Items.Count -ne 2 -or $ui.InstallLibrary.Visibility -ne 'Collapsed' -or $ui.CategoriesHost.Visibility -ne 'Collapsed') { throw 'Uninstall mode did not replace the library.' }
             if ($ui.InstallLibrary.Margin.Top -ne 32) { throw 'Library header lost its alignment with the sidebar wordmark.' }
@@ -1649,7 +1674,7 @@ try {
             $rowCheck.IsChecked=$true; Wait-WindowMessages
             if (-not $fixture.Selected) { throw 'Installed checkbox did not update its model.' }
             if (-not $ui.ReviewUninstall.IsEnabled -or $ui.UninstallSelectedCount.Text -ne '1 app selected') { throw 'Installed-app selection did not enable review.' }
-            $ui.InstalledSearch.Text='Notes'
+            Set-UiValue ($ui.InstalledSearch) 'Text' $('Notes')
             if ($ui.InstalledList.Items.Count -ne 1 -or -not $fixture.Selected) { throw 'Installed search lost the removal selection.' }
             $ui.InstalledSearch.Clear(); $script:installedKind='Microsoft Store'; Update-InstalledFilter
             if ($ui.InstalledList.Items.Count -ne 1 -or $ui.InstalledList.Items[0].Kind -ne 'Microsoft Store') { throw 'Installed source filtering failed.' }

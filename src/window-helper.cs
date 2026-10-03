@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Runtime.InteropServices;
 
 public static class FirstInstallWindow
@@ -44,13 +44,14 @@ public static class FirstInstallWindow
         return DwmGetWindowAttribute(window, 38, out value, 4) == 0 ? value : -1;
     }
 
-    public static int Apply(IntPtr window)
+    public static int Apply(IntPtr window) { return Apply(window,false); }
+    public static int Apply(IntPtr window,bool light)
     {
         // Custom WindowChrome owns the whole frame, including activation painting.
         // Border colour alone does not disable DWM's non-client accent surface.
         int nonClient = 1; // DWMNCRP_DISABLED
         DwmSetWindowAttribute(window, 2, ref nonClient, 4);
-        int dark = 1;
+        int dark = light ? 0 : 1;
         DwmSetWindowAttribute(window, 20, ref dark, 4);
         int border = unchecked((int)0xFFFFFFFE);
         DwmSetWindowAttribute(window, 34, ref border, 4);
