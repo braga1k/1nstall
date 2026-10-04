@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -63,11 +63,6 @@ namespace OneInstall {
                 Margin = new Thickness(4,0,4,8), Height = 140, MinHeight = 140, Template = EmptyCard };
             AutomationProperties.SetName(card,title);
             AutomationProperties.SetHelpText(card,help);
-            var tip = new ToolTip { Padding = new Thickness(12), MaxWidth = 360, Content = Label(title+"\n\n"+help,12,false) };
-            tip.SetResourceReference(Control.BackgroundProperty,"DialogFill");
-            tip.SetResourceReference(Control.ForegroundProperty,"TextPrimaryBrush");
-            tip.SetResourceReference(Control.BorderBrushProperty,"GlassEdge");
-            card.ToolTip=tip;
             var content=new StackPanel();
             var name=Label(title,14,false);
             name.FontWeight=FontWeights.SemiBold; name.Height=36; name.LineHeight=18;
@@ -79,7 +74,7 @@ namespace OneInstall {
             var method=Label(automatic?"WinGet · automatic":"Website · guided",11,true);
             method.TextWrapping=TextWrapping.NoWrap; method.TextTrimming=TextTrimming.CharacterEllipsis;
             method.Margin=new Thickness(0,4,0,0); content.Children.Add(method);
-            var details=new Button { Content="Details", Tag=key, Margin=new Thickness(0,8,0,0), Padding=new Thickness(6,4,6,4), MinHeight=28, ToolTip="App details · F1 while the card is focused" };
+            var details=new Button { Content="Details", Tag=key, Margin=new Thickness(0,8,0,0), Padding=new Thickness(6,4,6,4), MinHeight=28 };
             AutomationProperties.SetName(details,"Details for "+title); content.Children.Add(details);
             card.Content=content;
             return card;
@@ -87,7 +82,7 @@ namespace OneInstall {
         // Keep lightweight card slots for scrolling and keyboard navigation; construct
         // their visual templates only around the viewport. Content and selection persist.
         public static void Realize(UniformGrid panel, ScrollViewer scroll) {
-            Realize(panel,scroll.ViewportWidth,scroll.ViewportHeight,scroll.VerticalOffset);
+            Realize(panel,scroll.ViewportWidth-8,scroll.ViewportHeight,scroll.VerticalOffset);
         }
         public static void Layout(UniformGrid panel, double width, double height, double offset) {
             int columns=Math.Max(1,Math.Min(6,(int)Math.Floor((width+8)/192)));

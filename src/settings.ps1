@@ -42,8 +42,12 @@ function Resolve-AppLanguage([string]$Choice) {
     $code=[Globalization.CultureInfo]::CurrentUICulture.Name.ToLowerInvariant()
     if ($code.StartsWith('pt')) { return 'pt-PT' }
     if ($code.StartsWith('zh')) { return 'zh-Hans' }
-    $code=$code.Split('-')[0]
-    if ($script:locales.PSObject.Properties.Name -contains $code) { return $code }
+    if ($code -eq 'no' -or $code.StartsWith('no-')) { return 'nb' }
+    if ($code -eq 'cnr' -or $code.StartsWith('cnr-')) { return 'sr-Latn-ME' }
+    while ($code) {
+        if ($script:locales.PSObject.Properties.Name -contains $code) { return $code }
+        $dash=$code.LastIndexOf('-'); if ($dash -lt 0) { break }; $code=$code.Substring(0,$dash)
+    }
     return 'en'
 }
 $script:language=Resolve-AppLanguage $script:settings.Language
@@ -114,6 +118,7 @@ function Apply-AppLanguage {
     foreach ($element in @($ui.LogBox,$ui.UninstallLog)) { $element.FlowDirection='LeftToRight' }
     $window.Language=[Windows.Markup.XmlLanguage]::GetLanguage($script:language)
     if ($script:settingsPage) { Update-UiTree $script:settingsPage $seen }
+    if (Get-Command Update-CardLayout -ErrorAction SilentlyContinue) { Update-CardLayout }
 }
 function Get-AppLightMode {
     if ($script:settings.Theme -eq 'Light') { return $true }
@@ -138,12 +143,10 @@ function Set-AppMaterials {
     # Restore the original dark decoration before applying either appearance.
     foreach ($key in $script:decorationTemplates.Keys) { $window.Resources[$key]=$script:decorationTemplates[$key] }
     # Accessibility colours remain authoritative; visual effects are already disabled.
-    if ([Windows.SystemParameters]::HighContrast) { return }
+    if ([Windows.SystemParameters]::HighContrast) { $window.Resources['InstalledCardFill']=$window.Resources['ContentFill']; return }
     if ($script:lightMode) {
         $colors=@{TextPrimaryBrush='#1A1D25'; TextSecondaryBrush='#414753'; CheckBorderBrush='#68717F'; FocusBrush='#333A48'; InputFill='#F6F7FA'; DialogFill='#E9EBF1'; GlassMenuFill='#F4F5F8'; SeparatorBrush='#87909F'; GroupFill='#20FFFFFF'; GroupEdge='#30838B9B'; GroupHoverFill='#70FFFFFF'; BevelBrush='#E6FFFFFF'; HoverEdgeBrush='#717B8C'; CardHoverEdgeBrush='#717B8C'; ReflectionEdgeBrush='#C0FFFFFF'}
         foreach ($key in $colors.Keys) { $window.Resources[$key]=[Windows.Media.BrushConverter]::new().ConvertFromString($colors[$key]) }
-        $window.Resources['WindowFill']=(New-MaterialGradient @(@(0,'#EBEDF2'),@(0.45,'#E0E4EB'),@(1,'#D0D7E0')) 0.025).PSObject.BaseObject
-        $window.Resources['OpaqueWindowFill']=$window.Resources['WindowFill']
         $window.Resources['ContentFill']=(New-MaterialGradient @(@(0,'#FFFFFF'),@(0.42,'#F2F4F8'),@(1,'#DBE1E9')) 0.04).PSObject.BaseObject
         $window.Resources['GlassPanelFill']=(New-MaterialGradient @(@(0,'#EDFDFDFF'),@(0.32,'#D0E6EAF1'),@(0.72,'#C4CDD6E2'),@(1,'#E5F6F9FC')) 0.055).PSObject.BaseObject
         $window.Resources['GlassControlFill']=(New-MaterialGradient @(@(0,'#FAFFFFFF'),@(0.48,'#E8F0F2F7'),@(1,'#D4CAD4E0')) 0.035 '0.25,1').PSObject.BaseObject
@@ -159,13 +162,6 @@ function Set-AppMaterials {
             $window.Resources[$key]=[Windows.Media.ColorConverter]::ConvertFromString($value)
         }
         $window.Resources['GlassShadowColor']=[Windows.Media.ColorConverter]::ConvertFromString('#76849A')
-        # Keep the existing ambient fields and pointer reflections, with light-theme luminance.
-        foreach ($number in @(1,2,3)) {
-            $base=[Windows.Media.ColorConverter]::ConvertFromString($(if ($number -eq 2) {'#A6BAC6'} else {'#B1A5CA'}))
-            $tint=if ($script:settings.WindowsAccent) { Mix-Accent $base $color 0.16 } else { Convert-MonochromeColor $base }
-            foreach ($stop in $window.FindName('AmbientGradient'+$number).GradientStops) { $shade=$tint; $shade.A=$stop.Color.A; $stop.Color=$shade }
-        }
-        $window.FindName('AmbientLight').Opacity=0.7
         # Crisp dark type: depth comes from the surfaces and edges, not a text shadow.
         $window.Resources['TextShadowOpacity']=[double]0
         if (-not $script:lastGlass) {
@@ -192,8 +188,13 @@ function Set-AppMaterials {
                 $window.Resources[$key]=$brush
             }
         }
-        foreach ($number in @(1,2,3)) { foreach ($stop in $window.FindName('AmbientGradient'+$number).GradientStops) { $stop.Color=Convert-MonochromeColor $stop.Color } }
     }
+    [OneInstallAppearance]::Apply($window,$script:lightMode,$script:settings.WindowsAccent,(Get-WindowsAccent),$script:lastGlass,$script:nativeGlass)
+    $installedFill=$window.Resources['ContentFill'].CloneCurrentValue()
+    if ($installedFill -is [Windows.Media.GradientBrush]) {
+        foreach ($stop in $installedFill.GradientStops) { $shade=Convert-MonochromeColor $stop.Color; $shade.A=255; $stop.Color=$shade }
+    } else { $installedFill.Color=Convert-MonochromeColor $installedFill.Color }
+    $window.Resources['InstalledCardFill']=$installedFill
 }
 $script:settingsPage=$null; $script:updateTask=$null; $script:pendingRelease=$null; $script:restartAfterUpdate=$false
 $script:updateStatus='Updates are checked in the background.'
@@ -208,7 +209,7 @@ function Start-AppUpdateCheck {
     }
     $script:updateStatus='Checking for updates…'
     if ($script:settingsStatus) { Set-UiValue $script:settingsStatus 'Text' $script:updateStatus }
-    $script:updateTask=[OneInstallUpdate]::CheckAsync('3.3.0',$script:updateRoot,$true)
+    $script:updateTask=[OneInstallUpdate]::CheckAsync('3.4.0',$script:updateRoot,$true)
     $script:updateTimer.Start()
 }
 function Add-SettingsRow($Panel,[string]$Title,[string]$Description,$Control) {
@@ -255,7 +256,7 @@ function Show-AppSettings {
     $accent.Add_Click({ param($sender,$e) $script:settings.WindowsAccent=[bool]$sender.IsChecked; Save-AppSettings | Out-Null; $script:lastAccent=''; Update-WindowsAccent })
     Add-SettingsRow $script:settingsContent 'Accent colour' 'Turn off for black and white, keeping gradients and depth.' $accent
     $options=@(,@('System','Use system setting'))
-    foreach ($locale in $script:locales.PSObject.Properties) { $options+=,@($locale.Name,$locale.Value.Name) }
+    foreach ($locale in ($script:locales.PSObject.Properties | Sort-Object { $_.Value.Name })) { $options+=,@($locale.Name,$locale.Value.Name) }
     $language=New-SettingsChoice $options $script:settings.Language; $ui.LanguageChoice=$language
     $language.Add_SelectionChanged({ param($sender,$e) if ($null -eq $sender.SelectedItem) { return }; $script:settings.Language=[string]$sender.SelectedItem.Tag; Save-AppSettings | Out-Null; Apply-AppLanguage })
     Add-SettingsRow $script:settingsContent 'Language' 'Changes apply immediately.' $language
@@ -276,7 +277,9 @@ function Show-AppSettings {
         $button=New-Object Windows.Controls.Button; Set-UiValue $button 'Content' $spec[0]; $button.Tag=$spec[1]
         $button.Add_Click({ param($sender,$e) Start-Process ([string]$sender.Tag) }); Enable-HoverMotion $button; $about.Children.Add($button) | Out-Null
     }
-    Add-SettingsRow $script:settingsContent 'About' '1nstall 3.3.0' $about
+    Add-SettingsRow $script:settingsContent 'About' '1nstall 3.4.0' $about
+    $index=0
+    foreach ($row in $script:settingsContent.Children) { [OneInstall.Motion]::Enter($row,0,9,([Math]::Min(140,$index*28))); $index++ }
 }
 function Initialize-AppSettings {
     $script:settingsPage=New-Object Windows.Controls.ScrollViewer; $script:settingsPage.Visibility='Collapsed'; $script:settingsPage.VerticalScrollBarVisibility='Auto'; $script:settingsPage.Margin='18,32,18,18'

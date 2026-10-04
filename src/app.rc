@@ -1,8 +1,8 @@
 1 ICON "1nstall.ico"
 1 24 "app.manifest"
 1 VERSIONINFO
- FILEVERSION 3,3,0,0
- PRODUCTVERSION 3,3,0,0
+ FILEVERSION 3,4,0,0
+ PRODUCTVERSION 3,4,0,0
  FILEOS 0x40004
  FILETYPE 1
 BEGIN
@@ -11,9 +11,9 @@ BEGIN
   BLOCK "040904B0"
   BEGIN
    VALUE "FileDescription", "1nstall - Windows app manager"
-   VALUE "FileVersion", "3.3.0"
+   VALUE "FileVersion", "3.4.0"
    VALUE "ProductName", "1nstall"
-   VALUE "ProductVersion", "3.3.0"
+   VALUE "ProductVersion", "3.4.0"
   END
  END
  BLOCK "VarFileInfo"

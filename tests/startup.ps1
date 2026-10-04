@@ -10,7 +10,8 @@ for ($i=0;$i -lt $Samples;$i++) {
     if ($process.ExitCode -ne 0) { throw (Get-Content (Join-Path (Split-Path $exe) '1nstall-startup-error.log') -Raw) }
     $ready=@(Get-Content -LiteralPath $log | Where-Object { $_ -match '^READY [0-9]+$' })
     if ($ready.Count -ne 1) { throw 'Missing readiness measurement.' }
-    $rows += [pscustomobject]@{Sample=$i+1;ReadyMs=[long]($ready[0].Substring(6))}
+    $first=@(Get-Content -LiteralPath $log | Where-Object { $_ -match '^FirstFrameMs [0-9]+$' })
+    $rows += [pscustomobject]@{Sample=$i+1;FirstFrameMs=$(if ($first.Count -eq 1) { [long]$first[0].Substring(13) } else { $null });ReadyMs=[long]($ready[0].Substring(6))}
 }
 $output=Join-Path (Split-Path $exe) 'startup-timings.json'
 $rows | ConvertTo-Json | Set-Content -LiteralPath $output -Encoding UTF8

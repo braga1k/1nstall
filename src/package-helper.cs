@@ -255,6 +255,8 @@ public static class OneInstallPackages
         }
     }
     public static OperationRecord Install(string exe, string id, string source, string name, string logs)
+    { return Install(exe,id,source,name,logs,null); }
+    public static OperationRecord Install(string exe, string id, string source, string name, string logs, Action verifying)
     {
         string log = null;
         try
@@ -265,6 +267,7 @@ public static class OneInstallPackages
             string outcome = Outcome(r.ExitCode), message = Explain(r.ExitCode);
             if (outcome == "Unknown")
             {
+                if(verifying!=null) verifying();
                 var inventory = Inventory(); string state = InstalledState(inventory, new[] { id }, source);
                 if (state.StartsWith("Installed ·")) { outcome = "Success"; message = "Exact package identity verified: " + state; }
                 else message = "Installer finished; resulting state could not be confirmed. " + state + ". " + inventory.Message;

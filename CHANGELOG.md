@@ -1,5 +1,16 @@
 # Changelog
 
+## 3.4.0 - 2026-10-04
+
+- Add coordinated entrances, hover/press feedback, selection motion and a whole-window glow after verified installation/removal success, respecting Windows motion preferences.
+- Show a themed opening while the main app loads, sharing its light/dark/accent/monochrome background and native material. Transfer ownership before closing the opening to improve foreground handoff.
+- Expand to 51 offline language choices covering national official European languages, Japanese and existing languages. Portuguese remains pt-PT only; native-speaker review remains pending.
+- Restore Segoe UI, reserve space for animated controls, enforce a 1040 × 540-DIP minimum window and adapt profile controls to translated labels.
+- Dim confirmed installed apps while retaining interaction; remove app-description hover popups and keep Details/F1.
+- Center both library scrollbars in matching gutters and fix empty scroll tails across lists and menus.
+- Rebuild the README with current English screenshots and correct historical 3.3 screenshots to English.
+- Extend appearance, startup, scrolling and locale checks; target .NET Framework 4.8 explicitly for the WPF APIs in use.
+
 ## 3.3.0 - 2026-10-03
 
 - Add Settings with persistent System/Light/Dark themes, optional Windows accent and ten interface languages; Portuguese is pt-PT only, with right-to-left Arabic and Urdu.

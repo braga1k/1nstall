@@ -2,10 +2,11 @@
 $testData=Join-Path ([IO.Path]::GetTempPath()) ('1nstall-ui-'+[guid]::NewGuid().ToString('N'))
 [OneInstallPackages]::DataRoot=$testData
 $window.Add_ContentRendered({
+    [OneInstall.Motion]::TestOverride=$false; [OneInstall.Motion]::Stop()
     function Assert-UI($Value,[string]$Message) { if (-not $Value) { throw $Message } }
-    function Pump-UI {
+    function Pump-UI([int]$Milliseconds=100) {
         $frame=New-Object Windows.Threading.DispatcherFrame; $pulse=New-Object Windows.Threading.DispatcherTimer
-        $pulse.Interval=[TimeSpan]::FromMilliseconds(100)
+        $pulse.Interval=[TimeSpan]::FromMilliseconds($Milliseconds)
         $pulse.Add_Tick({ $pulse.Stop(); $frame.Continue=$false }); $pulse.Start(); [Windows.Threading.Dispatcher]::PushFrame($frame)
     }
     function Find-InstalledCheck($Element) {
@@ -15,6 +16,17 @@ $window.Add_ContentRendered({
             $found=Find-InstalledCheck ([Windows.Media.VisualTreeHelper]::GetChild($Element,$i))
             if ($found) { return $found }
         }
+    }
+    function Find-Visual($Element,[type]$Type) {
+        if ($Element -is $Type) { return $Element }
+        for ($i=0;$i -lt [Windows.Media.VisualTreeHelper]::GetChildrenCount($Element);$i++) {
+            $found=Find-Visual ([Windows.Media.VisualTreeHelper]::GetChild($Element,$i)) $Type
+            if ($found) { return $found }
+        }
+    }
+    function Assert-MotionFits($Surface,$Viewport,[string]$Name) {
+        $bounds=$Surface.TransformToAncestor($Viewport).TransformBounds([Windows.Rect]::new($Surface.RenderSize))
+        Assert-UI ($bounds.Left -ge 0 -and $bounds.Top -ge 0 -and $bounds.Right -le $Viewport.ActualWidth+0.5 -and $bounds.Bottom -le $Viewport.ActualHeight+0.5) "$Name animation clipped: $bounds inside $($Viewport.RenderSize)"
     }
     function Assert-InstalledChecks {
         for ($i=0;$i -lt $ui.InstalledList.Items.Count;$i++) {
@@ -90,7 +102,10 @@ $window.Add_ContentRendered({
             $firstCard=$ui.Cards.Children[0]
             $leftGap=$firstCard.TranslatePoint([Windows.Point]::new(0,0),$window).X-$nav.TranslatePoint([Windows.Point]::new($nav.ActualWidth,0),$window).X
             $rightGap=$side.TranslatePoint([Windows.Point]::new(0,0),$window).X-$cardRight
-            Assert-UI ([Math]::Abs($leftGap-18) -lt 1 -and [Math]::Abs($leftGap-$rightGap) -lt 1) "Install gutters differ at width ${width}: left=$leftGap right=$rightGap"
+            Assert-UI ([Math]::Abs($leftGap-20) -lt 1 -and [Math]::Abs($leftGap-$rightGap) -lt 1) "Install gutters differ at width ${width}: left=$leftGap right=$rightGap"
+            $bar=Find-Visual $ui.LibraryScroll ([Windows.Controls.Primitives.ScrollBar])
+            $barCenter=$bar.TranslatePoint([Windows.Point]::new($bar.ActualWidth/2,0),$window).X
+            Assert-UI ([Math]::Abs($barCenter-($cardRight+$rightGap/2)) -lt 1) 'Install scrollbar is not centred in the gutter.'
             $activity=$window.FindName('InstallActivity')
             Assert-UI ([Math]::Abs($activity.TranslatePoint([Windows.Point]::new($activity.ActualWidth,0),$window).X-$cardRight) -lt 1) 'Install activity must end at the card edge.'
             $brand=$window.FindName('BrandHeader')
@@ -124,7 +139,10 @@ $window.Add_ContentRendered({
                 $side=$window.FindName('RemovalGlass')
                 $leftGap=$surface.TranslatePoint([Windows.Point]::new(0,0),$window).X-$nav.TranslatePoint([Windows.Point]::new($nav.ActualWidth,0),$window).X
                 $rightGap=$side.TranslatePoint([Windows.Point]::new(0,0),$window).X-$cardRight
-                Assert-UI ([Math]::Abs($leftGap-18) -lt 1 -and [Math]::Abs($leftGap-$rightGap) -lt 1) "Uninstall gutters differ: left=$leftGap right=$rightGap"
+                Assert-UI ([Math]::Abs($leftGap-20) -lt 1 -and [Math]::Abs($leftGap-$rightGap) -lt 1) "Uninstall gutters differ: left=$leftGap right=$rightGap"
+                $bar=Find-Visual $ui.InstalledList ([Windows.Controls.Primitives.ScrollBar])
+                $barCenter=$bar.TranslatePoint([Windows.Point]::new($bar.ActualWidth/2,0),$window).X
+                Assert-UI ([Math]::Abs($barCenter-($cardRight+$rightGap/2)) -lt 1) 'Uninstall scrollbar is not centred in the gutter.'
                 $activity=$window.FindName('UninstallActivity')
                 Assert-UI ([Math]::Abs($activity.TranslatePoint([Windows.Point]::new($activity.ActualWidth,0),$window).X-$cardRight) -lt 1) 'Removal activity must end at the card edge.'
             }
@@ -269,9 +287,12 @@ $window.Add_ContentRendered({
         $p=New-Object PackageRecord; $p.Id='VideoLAN.VLC'; $p.Name='Publisher identity fixture'; $p.Source='winget'; $p.InstalledVersion='3.0.20'
         $inv.Packages.Add($p); $script:libraryInventory=$inv; Update-LibraryStates
         Assert-UI ([Windows.Automation.AutomationProperties]::GetHelpText($checks['extra_vlc']).Contains(' · Installed · 3.0.20 · ')) 'Library exact installed state failed.'
+        Assert-UI ($checks['extra_vlc'].Content.Children[2].Text -eq '✓ Installed' -and [object]::ReferenceEquals($checks['extra_vlc'].Background,$window.Resources['InstalledCardFill'])) 'Confirmed installed app was not greyed out.'
+        Assert-UI ($checks['extra_vlc'].IsEnabled -and $null -eq $checks['extra_vlc'].ToolTip -and $null -eq $checks['extra_vlc'].Content.Children[3].ToolTip) 'Installed app lost interaction or retained a hover description.'
         Assert-UI ([Windows.Automation.AutomationProperties]::GetHelpText($checks['affinity']).Contains(' · Unknown · ')) 'Guided app falsely identified.'
         $inv.Packages.Add($p); Update-LibraryStates
         Assert-UI ([Windows.Automation.AutomationProperties]::GetHelpText($checks['extra_vlc']).Contains(' · Unknown')) 'Multiple registrations were hidden.'
+        Assert-UI ($checks['extra_vlc'].Content.Children[2].Text -ne '✓ Installed' -and [object]::ReferenceEquals($checks['extra_vlc'].Background,$window.Resources['ContentFill'])) 'Ambiguous inventory left the installed appearance behind.'
         $inv.Packages.RemoveAt(1); Update-LibraryStates
         $script:libraryView='Installed'; Update-Filter
         Assert-UI ($ui.Cards.Children.Count -eq 1 -and $ui.Cards.Children[0].Tag -eq 'extra_vlc') 'Installed filter failed.'
@@ -307,6 +328,13 @@ $window.Add_ContentRendered({
             Assert-UI ($script:settingsPage.Visibility -eq 'Visible' -and $script:settingsContent.ActualWidth -gt 350) ('Settings layout failed: '+$locale.Name)
             Assert-UI ($window.FindName('AppPanes').FlowDirection -eq $(if($locale.Value.Rtl){'RightToLeft'}else{'LeftToRight'})) 'Locale writing direction was not applied.'
             Assert-UI ($selected.ContainsKey('extra_vlc')) 'Changing language lost the app selection.'
+            Set-AppMode 'Install'; $window.Width=1040; Pump-UI; Update-CardLayout; Pump-UI
+            Assert-UI ($window.ActualWidth -ge 1040) 'Minimum width was not enforced.'
+            foreach ($control in @($ui.Profiles,$ui.UserProfiles,$ui.ClearSelection)) {
+                $row=$window.FindName('InstallSearchRow'); $bounds=$control.TransformToAncestor($row).TransformBounds([Windows.Rect]::new($control.RenderSize))
+                Assert-UI ($bounds.Top -ge 0 -and $bounds.Left -ge 0 -and $bounds.Right -le $row.ActualWidth+1 -and $bounds.Bottom -le $row.ActualHeight+1) ('Translated profile tools clipped: '+$locale.Name+' '+$bounds)
+            }
+            Show-AppSettings; $window.Width=1240; Pump-UI
             Capture-UI ('settings-'+$locale.Name)
         }
         $script:settings.Language='pt-PT'; Apply-AppLanguage; Show-AppSettings
@@ -384,6 +412,59 @@ $window.Add_ContentRendered({
         Assert-UI ($rejected -and [IO.File]::ReadAllText($old) -eq 'old version') 'A corrupt update modified the original executable.'
         [OneInstallUpdate]::ReplaceVerified($new,$old,$newHash,$oldHash)
         Assert-UI ([OneInstallUpdate]::HashFile($old) -eq $newHash -and [OneInstallUpdate]::HashFile($old+'.previous') -eq $oldHash) 'Atomic update did not preserve the previous version.'
+        # Real WPF clocks, rapid intent changes and live reduced-motion cancellation.
+        Set-AppMode 'Install'; $ui.Search.Clear(); Set-Selection @(); $window.UpdateLayout()
+        [OneInstall.Motion]::TestOverride=$true
+        [OneInstall.Motion]::Opening($window)
+        Assert-UI ([OneInstall.Motion]::ActiveAnimations -gt 0 -and $ui.InstallMode.IsEnabled) 'Opening blocked input or did not animate.'
+        foreach ($wait in 1..7) { Pump-UI }
+        Assert-UI ([OneInstall.Motion]::Decorations -eq 0 -and [OneInstall.Motion]::ActiveAnimations -eq 0) 'Opening left clocks or decoration running.'
+        $ui.LibraryScroll.ScrollToTop(); $ui.CategoriesHost.ScrollToTop(); Pump-UI
+        $card=$ui.Cards.Children[0]; $card.ApplyTemplate() | Out-Null
+        $surface=$card.Template.FindName('Card',$card)
+        [OneInstall.Motion]::Hover($surface,$true); [OneInstall.Motion]::Pop($surface)
+        [OneInstall.Motion]::Hover($categoryButtons[0],$true); [OneInstall.Motion]::Pop($categoryButtons[0])
+        $header=$categoryGroups['Create'].Template.FindName('HeaderToggle',$categoryGroups['Create'])
+        [OneInstall.Motion]::Hover($header,$true); [OneInstall.Motion]::Pop($header)
+        Pump-UI 170
+        Assert-UI ($surface.RenderTransform.Children[0].ScaleX -gt 1 -and $surface.RenderTransform.Children[1].Y -lt -1) 'Hover lift or click overshoot was removed.'
+        Assert-MotionFits $surface (Find-Visual $ui.LibraryScroll ([Windows.Controls.ScrollContentPresenter])) 'First card'
+        Assert-MotionFits $categoryButtons[0] (Find-Visual $ui.CategoriesHost ([Windows.Controls.ScrollContentPresenter])) 'All apps'
+        Assert-MotionFits $header (Find-Visual $ui.CategoriesHost ([Windows.Controls.ScrollContentPresenter])) 'Category header'
+        [OneInstall.Motion]::Stop()
+        $key=[string]$ui.Cards.Children[0].Tag
+        foreach ($click in 1..4) {
+            Set-Selection @($key); Animate-SelectionFlight $key $true
+            Assert-UI ($selected.ContainsKey($key) -and $ui.Install.IsEnabled) 'Animation delayed the real selection.'
+            Remove-SelectedApp $key
+            Assert-UI ($selected.Count -eq 0 -and -not $ui.Install.IsEnabled) 'Rapid deselect lost the final intent.'
+            Assert-UI ([OneInstall.Motion]::Decorations -le 1) 'Reversing a selection left duplicate capsules.'
+        }
+        foreach ($wait in 1..7) { Pump-UI }
+        Assert-UI ([OneInstall.Motion]::Decorations -eq 0 -and [OneInstall.Motion]::ActiveAnimations -eq 0) 'Selection left a capsule or a cancelled clock alive.'
+        [OneInstall.Motion]::Result($ui.SelectedCount,$false)
+        Assert-UI ([OneInstall.Motion]::Decorations -eq 0) 'Failure/manual result was celebrated as success.'
+        [OneInstall.Motion]::Result($ui.SelectedCount,$true)
+        Assert-UI ([OneInstall.Motion]::Decorations -eq 3) 'Verified success did not get its check, halo and window glow.'
+        $glow=@($window.FindName('MotionOverlay').Children | Where-Object Tag -eq 'ConfirmationGlow')[0]
+        Pump-UI 170
+        Assert-UI ($glow.ActualWidth -eq $window.ActualWidth -and $glow.ActualHeight -eq $window.ActualHeight -and $glow.Opacity -gt 0 -and -not $glow.IsHitTestVisible) 'Confirmation glow must cover the window without blocking interaction.'
+        [OneInstall.Motion]::Confirm()
+        Assert-UI (@($window.FindName('MotionOverlay').Children | Where-Object Tag -eq 'ConfirmationGlow').Count -eq 1) 'Fast successes stacked window flashes.'
+        Pump-UI 1200
+        Assert-UI ([OneInstall.Motion]::Decorations -eq 0 -and [OneInstall.Motion]::ActiveAnimations -eq 0) 'Confirmation did not clean up.'
+        Set-AppMode 'Uninstall'; Pump-UI 400; [OneInstall.Motion]::Stop()
+        [OneInstallUninstall]::VerifiedRemovals.Enqueue('verified-removal-fixture')
+        $uninstallTimer.Start(); Pump-UI 350; $uninstallTimer.Stop()
+        Assert-UI (@($window.FindName('MotionOverlay').Children | Where-Object Tag -eq 'ConfirmationGlow').Count -eq 1) 'A verified removal did not confirm on the UI dispatcher.'
+        Show-AppSettings; Show-ManagerPage 'History'; Set-AppMode 'Uninstall'; Set-AppMode 'Install'
+        Assert-UI ($ui.InstallLibrary.Visibility -eq 'Visible' -and $ui.UninstallPage.Visibility -eq 'Collapsed' -and $script:settingsPage.Visibility -eq 'Collapsed' -and $script:managerPage.Visibility -eq 'Collapsed') 'Rapid navigation left the wrong page visible.'
+        [OneInstall.Motion]::TestOverride=$false; [OneInstall.Motion]::Stop()
+        Assert-UI ([OneInstall.Motion]::ActiveAnimations -eq 0 -and [OneInstall.Motion]::Decorations -eq 0) 'Reduced motion did not cancel active decoration.'
+        [OneInstall.Motion]::Opening($window); Animate-CardClick $ui.Cards.Children[0]
+        Assert-UI ([OneInstall.Motion]::ActiveAnimations -eq 0 -and [OneInstall.Motion]::Decorations -eq 0) 'Reduced motion started new clocks.'
+        'PASS: non-blocking opening, rapid select/deselect, capsule cleanup, honest result feedback, rapid navigation and live reduced-motion cancellation.'
+        [OneInstall.Motion]::TestOverride=$null
         $window.Close()
     } finally {
         $resolved=[IO.Path]::GetFullPath($testData); $tempRoot=[IO.Path]::GetFullPath([IO.Path]::GetTempPath()).TrimEnd('\')+'\'

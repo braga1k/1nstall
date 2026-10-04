@@ -12,6 +12,20 @@ New-Item -ItemType Directory -Path $fixtureRoot | Out-Null
 [OneInstallPackages]::DataRoot=Join-Path $fixtureRoot 'data'
 $tests=0
 try {
+    $localeSource=[IO.File]::ReadAllText((Join-Path $root 'src/settings.ps1'))
+    $localeAst=[Management.Automation.Language.Parser]::ParseInput($localeSource,[ref]$null,[ref]$null)
+    $resolver=$localeAst.Find({ param($n) $n -is [Management.Automation.Language.FunctionDefinitionAst] -and $n.Name -eq 'Resolve-AppLanguage' },$true)
+    . ([scriptblock]::Create($resolver.Extent.Text))
+    $script:locales=[IO.File]::ReadAllText((Join-Path $root 'locales.json')) | ConvertFrom-Json
+    $oldCulture=[Threading.Thread]::CurrentThread.CurrentUICulture
+    try {
+        foreach ($case in @(@('pt-BR','pt-PT'),@('ru-RU','ru'),@('ja-JP','ja'),@('nn-NO','nn'),@('sr-Latn-RS','sr-Latn'),@('sr-Latn-ME','sr-Latn-ME'),@('zh-TW','zh-Hans'),@('af-ZA','en'))) {
+            [Threading.Thread]::CurrentThread.CurrentUICulture=[Globalization.CultureInfo]::GetCultureInfo($case[0])
+            Assert ((Resolve-AppLanguage 'System') -eq $case[1]) ('System language resolved incorrectly: '+$case[0])
+        }
+        Assert ((Resolve-AppLanguage 'ja') -eq 'ja') 'Explicit language must override the system.'
+        $tests++
+    } finally { [Threading.Thread]::CurrentThread.CurrentUICulture=$oldCulture }
     $compiler=Join-Path $env:WINDIR 'Microsoft.NET/Framework64/v4.0.30319/csc.exe'
     $fixture=Join-Path $fixtureRoot 'package fixture.exe'
     & $compiler /nologo /target:exe /reference:System.Web.Extensions.dll "/out:$fixture" (Join-Path $PSScriptRoot 'process-fixture.cs')
@@ -60,6 +74,9 @@ try {
     $r=[OneInstallPackages]::Install($fixture,'Fixture.Cancelled','winget','Fixture',(Join-Path $fixtureRoot 'logs')); Assert ($r.Outcome -eq 'Cancelled') 'Cancelled installer lost outcome.'; $tests++
     $r=[OneInstallPackages]::Install($fixture,'Fixture.Offline','winget','Fixture',(Join-Path $fixtureRoot 'logs')); Assert ($r.Outcome -eq 'Failed' -and $r.Message -match 'connectivity') 'Offline failure lost actionable explanation.'; $tests++
     $r=[OneInstallPackages]::Install($fixture,'Fixture.Success','winget','Fixture',(Join-Path $fixtureRoot 'logs')); Assert ($r.Outcome -eq 'Unknown') 'Zero-exit process claimed installed identity.'; $tests++
+    $script:verificationEvents=0
+    $r=[OneInstallPackages]::Install($fixture,'Fixture.Success','winget','Fixture',(Join-Path $fixtureRoot 'logs'),[Action]{ $script:verificationEvents++ })
+    Assert ($script:verificationEvents -eq 1 -and $r.Outcome -eq 'Unknown') 'Verification phase must report real work without asserting success.'; $tests++
     $r=[OneInstallPackages]::Install((Join-Path $fixtureRoot 'missing.exe'),'Fixture.App','winget','Fixture',(Join-Path $fixtureRoot 'logs')); Assert ($r.Outcome -eq 'Failed') 'Missing WinGet claimed success.'; $tests++
     # Extract the trusted planner and worker from source without starting WPF.
     $source=[IO.File]::ReadAllText((Join-Path $root 'vexan_installers.ps1'))

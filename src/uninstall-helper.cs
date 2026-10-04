@@ -82,6 +82,7 @@ public static class OneInstallUninstall
     static readonly string PowerShell = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), @"WindowsPowerShell\v1.0\powershell.exe");
     static readonly string RegExe = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), "reg.exe");
     public static readonly ConcurrentQueue<string> Progress = new ConcurrentQueue<string>();
+    public static readonly ConcurrentQueue<string> VerifiedRemovals = new ConcurrentQueue<string>();
     public static volatile bool StopRequested;
     public static string HistoryFile { get { return System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"1nstall\uninstall-history.json"); } }
     static JavaScriptSerializer Json() { return new JavaScriptSerializer { MaxJsonLength = 4194304 }; }
@@ -269,7 +270,7 @@ public static class OneInstallUninstall
                     var after = Inventory();
                     if (app.Kind == "Microsoft Store" && after.Warnings.Count > 0) { item.Message = "Store inventory unavailable; removal cannot be verified. Cleanup withheld."; }
                     else if (Registered(app, after)) { item.Outcome = "Manual action required"; item.Message = "Still registered after the uninstaller finished. Finish publisher steps or restart, then refresh. Cleanup withheld."; }
-                    else { item.Outcome = "Success"; app.RemovalVerified = true; item.Message = "Exact registration absence verified. Cleanup remains a separate review."; }
+                    else { item.Outcome = "Success"; app.RemovalVerified = true; item.Message = "Exact registration absence verified. Cleanup remains a separate review."; VerifiedRemovals.Enqueue(app.Id); }
                     result.Messages.Add(app.Name + ": " + item.Outcome + " · " + item.Message);
                 }
                 catch (Exception e) { item.Outcome = e is Win32Exception && ((Win32Exception)e).NativeErrorCode == 1223 ? "Cancelled" : e is TimeoutException ? "Unknown" : "Failed"; item.Message = e.Message; result.Messages.Add(app.Name + ": " + item.Outcome + " · " + e.Message); }

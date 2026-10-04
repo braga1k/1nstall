@@ -1,134 +1,126 @@
 # 1nstall
 
-A Windows app manager for choosing, installing and removing your software. Browse a task-based library, start with a profile, and review each operation before it runs.
+### Your next Windows setup starts here.
 
-**325 apps · 24 categories · 20 profiles · Windows x64**
+Choose the apps you need, build a setup that fits your work, and keep every installation and removal in view. A Windows app manager with a curated library, reusable profiles and a little delight in the details.
 
-[Settings](docs/SETTINGS.md) adds System/Light/Dark themes, optional Windows accent, ten interface languages and automatic 1nstall updates. Both appearances keep the same gradient materials, depth and pointer reflections; turning off accent makes the interface fully monochrome.
+**325 apps · 24 categories · 20 profiles · 51 language choices**
 
-[**Download 1nstall 3.3**](https://github.com/braga1k/1nstall/releases/latest/download/1nstall.exe) · [Windows ZIP](https://github.com/braga1k/1nstall/releases/download/v3.3.0/1nstall-3.3.0-Windows-x64.zip) · [Release notes](https://github.com/braga1k/1nstall/releases/tag/v3.3.0) · [Checksums](https://github.com/braga1k/1nstall/releases/download/v3.3.0/SHA256SUMS.txt) · [Buy me a beer](https://ko-fi.com/braga1k)
+[**Download for Windows**](https://github.com/braga1k/1nstall/releases/latest/download/1nstall.exe) · [Portable ZIP](https://github.com/braga1k/1nstall/releases/download/v3.4.0/1nstall-3.4.0-Windows-x64.zip) · [What's new in 3.4](https://github.com/braga1k/1nstall/releases/tag/v3.4.0) · [Checksums](https://github.com/braga1k/1nstall/releases/download/v3.4.0/SHA256SUMS.txt)
 
-![1nstall 3.3 light appearance — rendered WPF preview](docs/images/3.3/install-light.png)
+Windows 10 / 11 · x64 · Standalone executable
 
-## Choose your apps
+![1nstall 3.4 — app library and selection in the dark appearance](docs/images/3.4/install-dark.png)
 
-- **Install:** 277 apps use WinGet; 48 open the publisher's official download page for guided installation. Compact cards keep the library visible; descriptions, license information and installed status live in Details.
-- **Profiles:** 20 setups for everyday work, creative projects, files, privacy and development. Save your own selection or preview an installed-app snapshot on another PC.
-- **Uninstall:** search registered desktop and current-user Microsoft Store apps, review your selection and run the original uninstallers in sequence.
-- **Selection:** both modes list the selected apps with individual × controls. Clear selection also clears their checkboxes. Nothing starts until you review and confirm.
-- **Settings:** immediate theme/language changes, optional Windows accent and verified automatic updates of 1nstall itself. Selections are preserved.
-- **History & diagnostics:** per-app outcomes, detailed logs, applicable retries and a diagnostic preview you can review before saving.
-- **Leftovers:** separately review supported folders and registry traces after removal. Cleanup requires explicit consent; registry changes require backups and folders go to Recycle Bin.
+## A setup that feels like yours
 
-The interface uses glass panels, your Windows accent, smooth transitions and the new 1nstall symbol. Windows transparency, high contrast and reduced-motion preferences are respected. Install and Uninstall share consistent search controls and full-height Selection panels.
+| Choose | Make it yours | Stay in control |
+| --- | --- | --- |
+| Browse by task, search the library or start from one of 20 profiles. | Light, dark or system appearance. Your Windows accent, or pure monochrome. | Review each queue before it starts. See individual outcomes and open the details when you need them. |
+| Save a selection and take it to another PC. | 51 language choices, including Japanese and Portuguese from Portugal. | Remove apps through their original uninstallers and review supported leftovers separately. |
 
-## Get started
+**3.4 brings the interface to life.** A themed opening animation leads into the app while it loads. Panels, menus, cards and selections move with their actions. Verified installation and removal successes get a soft, whole-window glow. Windows reduced-motion and high-contrast preferences are respected.
 
-1. Download **1nstall.exe**, or extract the Windows ZIP, and open it.
-2. Under **Install**, choose apps or a profile and adjust the **Selection** panel.
-3. Choose **Review & install**, check the plan and start the queue. Complete guided publisher downloads yourself.
-4. To remove software, open **Uninstall**, select apps and choose **Review & remove**. Review leftovers separately after removal.
+The same gradients, reflective edges and pointer light run through Install, Uninstall and Settings. Turning off accent keeps that depth in black, white and grey.
 
-The standalone executable includes the interface, catalog, helpers and license notices. No source folder, Python or Zig is required to run it. The release is unsigned; checksums accompany the downloads.
+![Light appearance with Windows accent disabled](docs/images/3.4/install-light-monochrome.png)
 
-### Requirements
+## From a fresh PC to your own setup
 
-- Windows 10 or 11, **64-bit**, with Windows PowerShell 5.1, WPF and .NET Framework 4.x.
-- WinGet from Windows App Installer for automatic installation; internet access for downloads.
-- Full installed-package awareness requires PowerShell 7 in its standard Program Files location and Microsoft.WinGet.Client 1.7 or later. Without these, WinGet export can confirm some identities; omitted apps remain Unknown. Automatic catalog installation remains available through WinGet.
-- Individual installers and machine-level removals may request administrator access.
+1. **Open 1nstall.** Download the executable, or extract the portable ZIP. There is no 1nstall installer to run.
+2. **Choose your apps.** Search, browse categories or choose **All profiles**. Adjust the list in **Selection**.
+3. **Review & install.** Check the plan, then start the queue. Follow any publisher installer that needs your input.
+4. **Keep your selection.** Use **Save selection…** to reuse it later or on another PC.
 
-Native Desktop Acrylic requires supported Windows 11 builds; older systems and disabled transparency use opaque surfaces. See [validation and current limits](docs/VALIDATION.md) for coverage of Windows versions, accessibility and native operations.
+**277 catalog apps use WinGet.** The other **48 open the publisher's official download page** for guided installation. Confirmed installed apps are dimmed and marked in the library; they stay available to inspect. Apps that cannot be identified confidently retain an Unknown state.
 
-## What's new in 3.3
+Profiles and snapshots restore app selections. They do not transfer personal files, credentials, app settings or guarantee the same installed versions.
 
-- Settings with persistent theme, accent, language and automatic-update preferences.
-- Light and dark appearances with the same gradients, reflections and depth. Accent off means black, white and grey throughout.
-- Ten interface languages, including Portuguese (Portugal) only and right-to-left Arabic/Urdu.
-- Verified updates of 1nstall applied on exit, retaining the previous executable.
-- Equal library margins, activity bars aligned to cards and pointer-following light in Uninstall and Settings.
+[Explore the app catalog](docs/SUPPORTED-APPS.md) · [Profiles and portable selections](docs/PROFILES.md)
 
-![Settings in monochrome dark appearance](docs/images/3.3/settings-dark-monochrome.png)
+## Remove with a clear view of the outcome
 
-## Retained from 3.2
+Search registered desktop and current-user Microsoft Store apps, select what to remove, then choose **Review & remove**. Original uninstallers run in sequence. **Stop** lets the current operation finish before stopping the queue.
 
-- A centered vector logo and a new violet-and-sage Windows icon.
-- Symmetrical sidebars, clearer categories, smooth text and matching toolbars in both modes.
-- Compact, stable app cards and integrated Details windows; numbers sort first, letters next and symbol-prefixed names last.
-- Selected apps appear in both Selection panels; Uninstall's Clear selection reliably updates the list.
-- Compiled interface and helpers, in-process PowerShell, background preparation and cached JIT startup while retaining animations.
-- Installed awareness, portable setup snapshots and operation history from the review build.
-- Essentials and the Update Center have been removed. 3.2 focuses on installation, removal and selection management.
+![Uninstall view with fictional example applications](docs/images/3.4/uninstall-dark.png)
 
-[Full changelog](CHANGELOG.md) · [3.3 release notes](docs/releases/3.3.0.md)
+After a verified removal, review supported leftover folders and registry entries separately. Nothing is selected or deleted automatically. Folder cleanup uses Recycle Bin; registry changes require backups. Detection is bounded and excludes personal documents, protected locations, shared registrations and uncertain ownership.
 
-## Profiles and portable selections
-
-Choose a profile from **All profiles**. Choosing one replaces the selection; it never starts installation. Save it with **Selection > Save selection...** or **User profiles > Save current selection...**, then load it on another PC.
-
-Snapshots restore selections, not personal files, settings, credentials or guaranteed identical versions. Imports preview installed, missing, unavailable and manual entries. Existing selection profiles remain compatible when their app keys are in the catalog.
-
-[Profiles](docs/PROFILES.md) · [Supported applications](docs/SUPPORTED-APPS.md) · [Category review](docs/CATEGORY-REVIEW.md)
-
-## Remove apps and review leftovers
-
-![Uninstall Selection panel with fictional test applications](docs/images/3.2/uninstall.png)
-
-Missing or unsupported uninstallers point to Windows Settings. Stop lets the current uninstaller finish before stopping the queue. A separate leftover review follows verified removal; nothing is selected or deleted automatically.
-
-Cleanup excludes protected locations, personal documents, broad vendor roots, shared registrations, links and uncertain ownership. Restart-dependent cleanup waits for a later boot. Registry exports are available under **Open backups**; recycled folders can be restored through Windows Recycle Bin. Detection is bounded and does not find every trace of every app.
+**Activity & details**, **Removal activity** and **History & diagnostics** keep results, logs and applicable retries accessible. Diagnostic exports show a preview before you save them.
 
 [Removal scope and recovery](docs/UNINSTALL.md)
 
-## Run or build from source
+## Set the mood. Keep the depth.
 
-Download the source ZIP, extract it and double-click `script_allower.cmd`, or run:
+![Settings in the light appearance](docs/images/3.4/settings-light.png)
+
+- **Appearance:** System, Light or Dark, with optional Windows accent. Changes apply immediately and preserve selections.
+- **Language:** 51 offline choices covering national official languages across Europe, Japanese and the original language set. Portuguese is exclusively **pt-PT**; Arabic and Urdu use right-to-left layout. Translations still need native-speaker review.
+- **Automatic 1nstall updates:** checks stable releases, verifies the download and applies it after the app closes. The previous executable is retained. This updates 1nstall itself; installed apps are outside its scope.
+
+[Settings and updates](docs/SETTINGS.md) · [Language coverage](docs/localization.md) · [Full changelog](CHANGELOG.md)
+
+## Before you start
+
+- **Windows 10 or 11, 64-bit**, with Windows PowerShell 5.1 and **.NET Framework 4.8 / WPF**.
+- **WinGet**, supplied through Windows App Installer, and internet access for automatic app downloads.
+- Full installed-package awareness uses **PowerShell 7** in its standard Program Files location and **Microsoft.WinGet.Client 1.7+**. Without them, WinGet export can confirm some identities; omitted apps remain Unknown. Automatic catalog installation still uses WinGet.
+- Some installers and machine-level removals request administrator access. Updating 1nstall requires a writable executable folder.
+
+The executable includes the interface, catalog, helpers and licence notices. Python and build tools are only needed for development. The release is **unsigned**; SHA-256 checksums accompany the downloads. Native Desktop Acrylic requires a supported Windows 11 build; other systems and disabled transparency use a fallback. The minimum window size is 1040 × 540 DIP.
+
+## Help and troubleshooting
+
+| What happened? | Where to look |
+| --- | --- |
+| Automatic installation is unavailable | Install or update Windows App Installer, then reopen 1nstall. |
+| An operation failed | Open Activity & details, Removal activity or History & diagnostics. |
+| A guided app is still missing | Complete the official download and installer opened by 1nstall. |
+| No leftovers are offered | Check the scan result; only supported, verified candidates are offered. |
+| A saved profile will not load | Its app keys must exist in the current catalog. Rejected imports preserve your selection. |
+| 1nstall cannot start | Check `%TEMP%\1nstall-startup-error.log`. |
+
+Preferences, logs and backups live under `%LOCALAPPDATA%\1nstall`. Review diagnostic exports before sharing; raw logs may contain personal paths.
+
+[Report an issue](https://github.com/braga1k/1nstall/issues) with your 1nstall version, Windows version and steps to reproduce the problem. Translation corrections and app suggestions are welcome; include the official website, installation method, licence and category for a new app.
+
+## Build and validate
+
+Run the source with `script_allower.cmd`, or use Windows PowerShell:
 
 ```powershell
 powershell.exe -NoProfile -STA -ExecutionPolicy Bypass -File .\vexan_installers.ps1
 ```
 
-Keep the catalog, profiles, interface and `src/` beside the script. The execution-policy option affects only that process. Build the standalone application with Windows' .NET Framework compiler and MSBuild:
+Build the standalone executable with the .NET Framework compiler and MSBuild included in Windows:
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\build-windows.ps1
 ```
 
-The output is `dist/1nstall.exe`. Rebuild after changing embedded source, data, interface, icon or notices. Verified assemblies and the startup profile are cached in `%LOCALAPPDATA%\1nstall\Runtime`. The alternate Python/Zig builder retains the slower script launcher and is not the release builder. Rebuild the icon with `build-brand.ps1`.
-
-## Validation
+The output is `dist/1nstall.exe`. Keep the source files together and rebuild after changing embedded code, data or assets. The alternate Python/Zig builder uses the legacy script launcher; releases use `build-windows.ps1`.
 
 ```powershell
 python tests/catalog.py
+python tests/locales.py
 powershell.exe -NoProfile -STA -ExecutionPolicy Bypass -File .\tests\reliability.ps1
-powershell.exe -NoProfile -STA -ExecutionPolicy Bypass -File .\vexan_installers.ps1 -ManagerTest -PreviewPath preview.png
-powershell.exe -NoProfile -STA -ExecutionPolicy Bypass -File .\tests\smoke.ps1
-powershell.exe -NoProfile -STA -ExecutionPolicy Bypass -File .\tests\startup.ps1
+powershell.exe -NoProfile -STA -ExecutionPolicy Bypass -File .\tests\scrolling.ps1
+powershell.exe -NoProfile -STA -ExecutionPolicy Bypass -File .\tests\appearance.ps1
+powershell.exe -NoProfile -STA -ExecutionPolicy Bypass -File .\tests\startup-opening.ps1
 ```
 
-The executable also accepts `--self-test`, `--smoke-test` and `--manager-test`. Windows CI runs catalog, headless reliability and packaged self-tests before publishing, then verifies the uploaded asset hashes. WPF tests use fictional apps and do not install or remove personal software.
+The executable also accepts `--self-test`, `--smoke-test` and `--manager-test`. Windows CI checks the catalog, locale structure, headless regressions and packaged self-test, builds from a clean commit, then verifies uploaded release hashes before publication. Local WPF checks use fictional apps.
 
-Current local UI tests cover responsive cards, Details, search, selections, profiles, all ten languages, light/dark and monochrome appearances, keyboard focus, glass, reduced-motion fallbacks, preference persistence and update integrity. Startup remains environment dependent; 1–2 seconds is not guaranteed. Publisher installers, Store removal, elevation, restart flows and physical accessibility/DPI checks need broader end-to-end coverage. [Full evidence and limitations](docs/VALIDATION.md).
+See [validation evidence and remaining coverage](docs/VALIDATION.md) for the scope of animation, theme, language, scrolling and startup tests. Live installer/removal flows, physical accessibility, DPI and other Windows configurations need broader testing. Startup timing depends on the machine.
 
-## Troubleshooting
+Public screenshots always use English. Generate them with `tests/screenshots.ps1 -PreviewDirectory <folder>` and inspect the result before publishing.
 
-| Problem | What to check |
-| --- | --- |
-| Automatic installation unavailable | Install/update Windows App Installer, then reopen 1nstall. |
-| Installation or removal failed | Inspect Activity & details, Removal activity and History & diagnostics. |
-| A guided app was not installed | Complete the official download and installer opened by the app. |
-| No leftovers offered | Check the scan result. Detection is intentionally limited to supported, verified candidates. |
-| A saved profile will not load | Its keys must exist in this catalog; rejected imports preserve your selection. |
-| App cannot start | Check `%TEMP%\1nstall-startup-error.log`. |
+## Credits and support
 
-Logs: `%LOCALAPPDATA%\1nstall\Logs`. Backups: `%LOCALAPPDATA%\1nstall\Backups`. Review diagnostic exports before sharing; raw logs may contain personal paths.
+[Buy me a beer](https://ko-fi.com/braga1k) if you'd like to support the project.
 
-## Contributions and credits
+The catalog takes inspiration from [WinUtil](https://github.com/ChrisTitusTech/winutil); [recorded coverage](docs/WINUTIL-COVERAGE.json) identifies the reviewed snapshot. Automatic installation uses [Microsoft WinGet](https://github.com/microsoft/winget-cli).
 
-[Report an issue](https://github.com/braga1k/1nstall/issues) with your app/Windows version and reproduction steps. App suggestions should include an official website, installation method, license and category. [Buy me a beer](https://ko-fi.com/braga1k) supports the project.
+Selected AppCompat/UserAssist scanners and ROT13 handling are adapted from [Bulk Crap Uninstaller](https://github.com/BCUninstaller/Bulk-Crap-Uninstaller) under Apache-2.0. The licence, upstream NOTICE and modifications are included in [third-party notices](licenses/THIRD-PARTY-NOTICES.txt) and **History & diagnostics > Licenses & credits**. 1nstall does not reproduce every BCU provider.
 
-The catalog takes inspiration from [WinUtil](https://github.com/ChrisTitusTech/winutil); [recorded coverage](docs/WINUTIL-COVERAGE.json) identifies the reviewed snapshot. Installation uses [Microsoft WinGet](https://github.com/microsoft/winget-cli).
-
-Selected AppCompat/UserAssist scanners and ROT13 handling are adapted from [Bulk Crap Uninstaller](https://github.com/BCUninstaller/Bulk-Crap-Uninstaller) under Apache-2.0. Full license, upstream NOTICE and modifications are included in [third-party notices](licenses/THIRD-PARTY-NOTICES.txt) and **History & diagnostics > Licenses & credits**. 1nstall does not reproduce every BCU provider.
-
-Third-party apps retain their own licenses and account requirements. The project does not currently declare a general license for its original code.
+Third-party apps retain their own licences and account requirements. The project does not currently declare a general licence for its original code.

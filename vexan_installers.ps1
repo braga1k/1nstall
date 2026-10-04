@@ -108,6 +108,13 @@ $windowCode = @'
 '@
 if ($windowCode.Trim().StartsWith('@@')) { $windowCode=Get-Content (Join-Path $ResourceRoot 'src/window-helper.cs') -Raw -Encoding UTF8 }
 if (-not ('FirstInstallWindow' -as [type])) { Add-Type -TypeDefinition $windowCode }
+$appearanceCode=@'
+@@APPEARANCE_HELPER@@
+'@
+if (-not ('OneInstallAppearance' -as [type])) {
+    if ($appearanceCode.Trim().StartsWith('@@')) { $appearanceCode=[IO.File]::ReadAllText((Join-Path $ResourceRoot 'src/appearance.cs')) }
+    Add-Type -TypeDefinition $appearanceCode -ReferencedAssemblies @('System.dll','System.Core.dll','System.Web.Extensions.dll','System.Xaml','WindowsBase','PresentationCore','PresentationFramework')
+}
 $settingsCode='@@SETTINGS@@'
 if ($settingsCode.StartsWith('@@')) { $settingsCode=[IO.File]::ReadAllText((Join-Path $ResourceRoot 'src/settings.ps1')) } else { $settingsCode=[Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($settingsCode)) }
 . ([scriptblock]::Create($settingsCode))
@@ -128,6 +135,14 @@ try {
         if (Test-Path -LiteralPath $compiledUI) { Add-Type -Path $compiledUI; $window=New-Object OneInstall.MainWindow }
         else { $reader=New-Object System.Xml.XmlNodeReader ([xml]$xamlText); $window=[Windows.Markup.XamlReader]::Load($reader) }
     }
+    $motionCode=@'
+@@MOTION_HELPER@@
+'@
+    if (-not ('OneInstall.Motion' -as [type])) {
+        if ($motionCode.Trim().StartsWith('@@')) { $motionCode=[IO.File]::ReadAllText((Join-Path $ResourceRoot 'src/motion.cs')) }
+        Add-Type -TypeDefinition $motionCode -ReferencedAssemblies @('System.dll','System.Core.dll','System.Xaml','WindowsBase','PresentationCore','PresentationFramework')
+    }
+    [OneInstall.Motion]::Initialize($window)
     $nativeCards=('OneInstall.NativeUI' -as [type]) -ne $null
     # UISettings exposes the actual Windows accent, including automatic wallpaper colors.
     $script:accentSettings=$null
@@ -205,12 +220,11 @@ try {
         $action.GradientStops.Add([Windows.Media.GradientStop]::new($Color,0.4))
         $action.GradientStops.Add([Windows.Media.GradientStop]::new((Mix-Accent $Color $contrastColor 0.12),1))
         $window.Resources['AccentActionBrush']=$action
-        $dark=[Windows.Media.ColorConverter]::ConvertFromString('#080B14')
+        $wash=[Windows.Media.RadialGradientBrush]::new(); $wash.Center='0.5,0.5'; $wash.GradientOrigin='0.5,0.5'; $wash.RadiusX=0.75; $wash.RadiusY=0.85
+        $wash.GradientStops.Add([Windows.Media.GradientStop]::new([Windows.Media.Color]::FromArgb(14,$Color.R,$Color.G,$Color.B),0))
+        $wash.GradientStops.Add([Windows.Media.GradientStop]::new([Windows.Media.Color]::FromArgb(68,$Color.R,$Color.G,$Color.B),1))
+        $window.Resources['ConfirmationFill']=$wash
         $backgroundTint=[Windows.Media.Color]::FromRgb((255-$Color.R),(255-$Color.G),(255-$Color.B))
-        $background=Mix-Accent $backgroundTint $dark 0.96
-        $window.Resources['OpaqueWindowFill']=[Windows.Media.SolidColorBrush]::new($background)
-        $background.A=if ($script:nativeGlass) { 224 } else { 255 }
-        $window.Resources['WindowFill']=[Windows.Media.SolidColorBrush]::new($background)
         foreach ($key in $script:glassTemplates.Keys) {
             $brush=$script:glassTemplates[$key].CloneCurrentValue()
             if ($brush -is [Windows.Media.GradientBrush]) {
@@ -225,13 +239,6 @@ try {
             }
             $script:glassBrushes[$key]=$brush
             if ($script:lastGlass -ne $false) { $window.Resources[$key]=$brush }
-        }
-        foreach ($number in @(1,2,3)) {
-            $gradient=$window.FindName('AmbientGradient'+$number)
-            if ($null -eq $gradient) { continue }
-            $light=Mix-Accent $(if ($number -eq 2) { $Color } else { $backgroundTint }) ([Windows.Media.ColorConverter]::ConvertFromString($(if ($number -eq 2) { '#607BAA' } else { '#AB8FE0' }))) 0.45
-            for ($i=0;$i -lt 20 -and (Get-Luminance $light) -gt 0.10;$i++) { $light=Mix-Accent $light ([Windows.Media.Colors]::Black) 0.08 }
-            foreach ($stop in $gradient.GradientStops) { $tint=$light; $tint.A=$stop.Color.A; $stop.Color=$tint }
         }
         $script:lastAccent=$Color.ToString()
     }
@@ -357,7 +364,7 @@ try {
         return $label
     }
     function Test-MotionEnabled {
-        return [Windows.SystemParameters]::ClientAreaAnimation -and -not [Windows.SystemParameters]::HighContrast
+        return [OneInstall.Motion]::Enabled
     }
     function Animate-Value($Target,$Property,[double]$From,[double]$To,[int]$Milliseconds=160) {
         $Target.BeginAnimation($Property,$null)
@@ -369,54 +376,34 @@ try {
         $Target.BeginAnimation($Property,$animation,[Windows.Media.Animation.HandoffBehavior]::SnapshotAndReplace)
     }
     function Animate-Appearance($Element,[double]$Offset=5) {
-        Animate-Value $Element ([Windows.UIElement]::OpacityProperty) 0.72 1
-        $move=[Windows.Media.TranslateTransform]::new(); $Element.RenderTransform=$move
-        Animate-Value $move ([Windows.Media.TranslateTransform]::YProperty) $Offset 0
+        [OneInstall.Motion]::Enter($Element,0,$Offset,0)
     }
     function Animate-CardEntrance($Card,[int]$Delay) {
-        $Card.ApplyTemplate()
-        $surface=$Card.Template.FindName('Card',$Card)
-        if ($null -eq $surface) { return }
-        $surface.RenderTransformOrigin=[Windows.Point]::new(0.5,0.5)
-        $group=[Windows.Media.TransformGroup]::new()
-        $scale=[Windows.Media.ScaleTransform]::new(1,1)
-        $move=[Windows.Media.TranslateTransform]::new()
-        $group.Children.Add($scale); $group.Children.Add($move); $surface.RenderTransform=$group
-        foreach ($spec in @(@($surface,[Windows.UIElement]::OpacityProperty,0.15,1),@($move,[Windows.Media.TranslateTransform]::YProperty,10,0))) {
-            $target=$spec[0]; $property=$spec[1]
-            $target.BeginAnimation($property,$null); $target.SetValue($property,[double]$spec[3])
-            if (-not (Test-MotionEnabled) -or -not $window.IsVisible) { continue }
-            $frames=[Windows.Media.Animation.DoubleAnimationUsingKeyFrames]::new()
-            $frames.KeyFrames.Add([Windows.Media.Animation.DiscreteDoubleKeyFrame]::new([double]$spec[2],[Windows.Media.Animation.KeyTime]::FromTimeSpan([TimeSpan]::Zero)))
-            $frames.KeyFrames.Add([Windows.Media.Animation.DiscreteDoubleKeyFrame]::new([double]$spec[2],[Windows.Media.Animation.KeyTime]::FromTimeSpan([TimeSpan]::FromMilliseconds($Delay))))
-            $ease=[Windows.Media.Animation.CubicEase]::new(); $ease.EasingMode='EaseOut'
-            $frames.KeyFrames.Add([Windows.Media.Animation.EasingDoubleKeyFrame]::new([double]$spec[3],[Windows.Media.Animation.KeyTime]::FromTimeSpan([TimeSpan]::FromMilliseconds($Delay+180)),$ease))
-            $frames.FillBehavior='Stop'
-            $target.BeginAnimation($property,$frames,[Windows.Media.Animation.HandoffBehavior]::SnapshotAndReplace)
-        }
+        $Card.ApplyTemplate(); $surface=$Card.Template.FindName('Card',$Card)
+        if ($surface) { [OneInstall.Motion]::Enter($surface,0,12,$Delay) }
     }
     function Animate-Library {
         if (-not $window.IsVisible) { return }
-        $ui.Cards.UpdateLayout()
-        $index=0
+        $ui.Cards.UpdateLayout(); $index=0
         foreach ($card in $ui.Cards.Children) {
-            $y=$card.TranslatePoint([Windows.Point]::new(0,0),$ui.Cards).Y
-            # Only stagger the current viewport; long catalogs must not queue seconds of motion.
-            $delay=if ($y -lt $ui.LibraryScroll.ViewportHeight) { [Math]::Min(240,$index*35) } else { 0 }
-            if ($y -lt $ui.LibraryScroll.ViewportHeight) { Animate-CardEntrance $card $delay; $index++ }
-            else { break }
+            $y=$card.TranslatePoint([Windows.Point]::new(0,0),$ui.LibraryScroll).Y
+            if ($y -gt $ui.LibraryScroll.ViewportHeight) { break }
+            if ($y -ge -$card.ActualHeight) { Animate-CardEntrance $card ([Math]::Min(140,$index*22)); $index++ }
         }
     }
     function Animate-CardClick($Card) {
         $Card.ApplyTemplate(); $surface=$Card.Template.FindName('Card',$Card)
-        if (-not $surface) { return }
-        $surface.BeginAnimation([Windows.UIElement]::OpacityProperty,$null); $surface.Opacity=1
-        $scale=[Windows.Media.ScaleTransform]::new(1,1)
-        $surface.RenderTransformOrigin=[Windows.Point]::new(0.5,0.5); $surface.RenderTransform=$scale
-        Animate-Value $scale ([Windows.Media.ScaleTransform]::ScaleXProperty) 0.965 1 170
-        Animate-Value $scale ([Windows.Media.ScaleTransform]::ScaleYProperty) 0.965 1 170
+        if ($surface) { [OneInstall.Motion]::Pop($surface) }
     }
-    $window.Add_ContentRendered({ Animate-Library })
+    function Animate-SelectionFlight([string]$Key,[bool]$Adding) {
+        if (-not $window.IsVisible -or -not $checks.ContainsKey($Key)) { return }
+        $destination=$ui.SelectedCount
+        foreach ($row in $ui.QueuePanel.Children) { if ($row.Tag -eq $Key) { $destination=$row; break } }
+        if ($Adding) { [OneInstall.Motion]::Fly($checks[$Key],$destination,$byKey[$Key].Name) }
+        else { [OneInstall.Motion]::Fly($destination,$checks[$Key],$byKey[$Key].Name) }
+        [OneInstall.Motion]::Pop($ui.SelectedCount)
+    }
+    $window.Add_Loaded({ [OneInstall.Motion]::Opening($window); Animate-Library })
     function Enable-HoverMotion($Element) {
         $Element.Add_MouseMove({ param($sender,$eventArgs)
             if (-not $script:lastGlass -or -not (Test-MotionEnabled)) { return }
@@ -503,6 +490,7 @@ try {
             $script:removeButtons[$app.Key]=$panel.Children[0].Children[1]
             $script:statusLabels[$app.Key]=$panel.Children[1]
             $ui.QueuePanel.Children.Add($panel) | Out-Null
+            [OneInstall.Motion]::Phase($panel.Children[1],$text)
         }
         if ($window.IsVisible) {
             $ui.QueuePanel.UpdateLayout()
@@ -519,10 +507,13 @@ try {
     function Set-AppStatus([string]$Key,[string]$Text) {
         $statuses[$Key]=$Text
         Set-UiValue ($script:statusLabels[$Key]) 'Text' $($Text)
+        [OneInstall.Motion]::Phase($script:statusLabels[$Key],$Text)
+        [OneInstall.Motion]::Result($script:statusLabels[$Key],($Text -eq 'Success'))
         Add-Log ($byKey[$Key].Name + ': ' + $Text)
     }
     function Remove-SelectedApp([string]$Key) {
         if ($script:busy) { return }
+        Animate-SelectionFlight $Key $false
         $selected.Remove($Key); $statuses.Remove($Key)
         do {
             $removed=$false
@@ -540,6 +531,13 @@ try {
         Set-UiValue ($ui.Status) 'Text' $(if ($selected.Count) { 'Selection updated. Review before installing.' } else { 'Ready when you are.' })
     }
     function Update-Filter([switch]$ForceAnimation) {
+        $oldCards=@{}
+        if ($window.IsVisible) {
+            foreach ($card in $ui.Cards.Children) {
+                $point=$card.TranslatePoint([Windows.Point]::new(0,0),$ui.LibraryScroll)
+                if ($point.Y -ge 0 -and $point.Y -lt $ui.LibraryScroll.ViewportHeight) { $oldCards[[string]$card.Tag]=$point }
+            }
+        }
         $query = $ui.Search.Text.Trim()
         $count = 0
         # Keep checkbox instances and selection, but only attach matching cards.
@@ -578,7 +576,20 @@ try {
         $ui.Empty.Visibility = if ($count -eq 0) { 'Visible' } else { 'Collapsed' }
         $ui.LibraryScroll.ScrollToTop()
         if ($nativeCards) { [OneInstall.NativeUI]::Realize($ui.Cards,$ui.LibraryScroll) }
-        if ($changed -or $ForceAnimation) { Animate-Library }
+        if ($ForceAnimation) { Animate-Library }
+        elseif ($changed -and $window.IsVisible) {
+            $ui.Cards.UpdateLayout(); $index=0
+            foreach ($card in $ui.Cards.Children) {
+                $point=$card.TranslatePoint([Windows.Point]::new(0,0),$ui.LibraryScroll)
+                if ($point.Y -gt $ui.LibraryScroll.ViewportHeight) { break }
+                if ($oldCards.ContainsKey([string]$card.Tag)) {
+                    $old=$oldCards[[string]$card.Tag]
+                    [OneInstall.Motion]::Reflow($card,($old.X-$point.X),($old.Y-$point.Y))
+                } else { Animate-CardEntrance $card ([Math]::Min(100,$index*18)) }
+                $index++
+            }
+            if ($count -eq 0) { Animate-Appearance $ui.Empty }
+        }
     }
     if ($nativeCards -and $window.Resources.Contains('NativeChecks')) {
         $checks=$window.Resources['NativeChecks']; $searchTexts=$window.Resources['NativeSearchTexts']
@@ -599,11 +610,6 @@ try {
         $method = if ($app.Ids.Count) { 'Automatic · WinGet: ' + ($app.Ids -join ', ') } else { 'Guided · official website: ' + $app.Url }
         $help = $app.Description + "`n" + $app.Category + ' · ' + $app.LicenseLabel + "`n" + $method
         if ($app.AlsoIn.Count) { $help += "`nAlso in: " + ($app.AlsoIn -join ', ') }
-        $tooltip = New-Object Windows.Controls.ToolTip
-        $tooltip.SetResourceReference([Windows.Controls.Control]::BackgroundProperty,'DialogFill'); $tooltip.SetResourceReference([Windows.Controls.Control]::ForegroundProperty,'TextPrimaryBrush'); $tooltip.SetResourceReference([Windows.Controls.Control]::BorderBrushProperty,'GlassEdge')
-        $tooltip.Padding='12'; $tooltip.MaxWidth=360
-        Set-UiValue ($tooltip) 'Content' $(New-Label ($app.Name + "`n`n" + $help) '#F3F5F7' 12)
-        Set-UiValue ($check) 'ToolTip' $($tooltip)
         [Windows.Automation.AutomationProperties]::SetName($check,$app.Name)
         [Windows.Automation.AutomationProperties]::SetHelpText($check,$help)
         $content = New-Object Windows.Controls.StackPanel
@@ -632,6 +638,7 @@ try {
         if ($card.IsChecked) { foreach ($item in @(Get-Plan @($key))) { $selected[$item.Key]=$true } }
         else { Remove-SelectedApp $key }
         Update-Selection; Animate-CardClick $card
+        if ($card.IsChecked) { Animate-SelectionFlight $key $true }
     })
     $ui.Cards.Add_MouseMove({ param($sender,$e)
         if (-not $script:lastGlass -or -not (Test-MotionEnabled)) { return }
@@ -668,7 +675,7 @@ try {
             $categoryPanel=New-Object Windows.Controls.StackPanel
             $expander=New-Object Windows.Controls.Expander
             Set-UiValue ($expander) 'Header' $($group); Set-UiValue ($expander) 'Content' $($categoryPanel); $expander.FontWeight='SemiBold'
-            $categoryPanel.Margin='10,0,0,0'
+            $categoryPanel.Margin='10,4,4,4'
             $expander.Style=$window.Resources['CategoryGroup']
             $expander.Add_Expanded({ param($sender,$eventArgs)
                 foreach ($other in $categoryGroups.Values) { if ($other -ne $sender) { $other.IsExpanded=$false } }
@@ -862,7 +869,7 @@ try {
                     $out=Join-Path $LogDir (([guid]::NewGuid().ToString('N'))+'.out.log')
                     $err=$out+'.err.log'
                     try {
-                        $result=[OneInstallPackages]::Install($Winget,$id,'winget',$app.Name,$LogDir)
+                        $result=[OneInstallPackages]::Install($Winget,$id,'winget',$app.Name,$LogDir,[Action]{ Emit 'status' $app.Key 'Verifying…' })
                         $states.Add($result.Outcome); Emit 'log' $app.Key $result.Detail
                         if ($result.Outcome -ne 'Success') { break }
                     } catch { $states.Add('Failed'); Emit 'log' $app.Key $_.Exception.Message }
@@ -938,12 +945,14 @@ try {
             try { $script:job.EndInvoke($script:async) | Out-Null; foreach ($err in $script:job.Streams.Error) { Add-Log $err.ToString() } }
             catch { Add-Log $_.Exception.Message }
             $script:job.Dispose(); $script:job=$null
-            foreach ($key in @($statuses.Keys)) { if ($statuses[$key] -eq 'Queued') { $statuses[$key]='Not started' } elseif ($statuses[$key] -like 'Installing*' -or $statuses[$key] -like 'Preparing*') { $statuses[$key]='Failed · operation interrupted' } }
+            foreach ($key in @($statuses.Keys)) { if ($statuses[$key] -eq 'Queued') { $statuses[$key]='Not started' } elseif ($statuses[$key] -like 'Installing*' -or $statuses[$key] -like 'Preparing*' -or $statuses[$key] -like 'Verifying*') { $statuses[$key]='Failed · operation interrupted' } }
             $failed=@($statuses.Values | Where-Object { $_ -like 'Failed*' }).Count
             $manual=@($statuses.Values | Where-Object { $_ -like 'Manual*' }).Count
             Set-UiValue ($ui.Status) 'Text' $("Queue finished · $failed failed · $manual manual installs pending.")
             if ($script:control.Stop) { Set-UiValue ($ui.Status) 'Text' $('Queue stopped after the current app. Review the results.') }
             Set-Busy $false
+            $allSucceeded=$statuses.Count -gt 0 -and @($statuses.Values | Where-Object { $_ -ne 'Success' }).Count -eq 0 -and -not $script:control.Stop
+            [OneInstall.Motion]::Result($ui.SelectedCount,$allSucceeded)
             Refresh-LibraryInventory
         }
     })
@@ -953,16 +962,18 @@ try {
         }
         foreach ($pair in @(@('InstallSearchRow','ProfilesTools','LibrarySearchFrame'),@('UninstallSearchRow','RemovalTools','InstalledSearchFrame'))) {
             $row=$window.FindName($pair[0]); $tools=$window.FindName($pair[1]); $frame=$window.FindName($pair[2])
-            $narrow=($ui.InstallLibrary.Parent.ColumnDefinitions[1].ActualWidth-32) -lt 540
+            $toolsWidth=0
+            foreach ($button in $tools.Children) { $button.Measure([Windows.Size]::new([double]::PositiveInfinity,[double]::PositiveInfinity)); $toolsWidth+=$button.DesiredSize.Width }
+            $narrow=($ui.InstallLibrary.Parent.ColumnDefinitions[1].ActualWidth-32) -lt [Math]::Max(540,$toolsWidth+192)
             $row.ColumnDefinitions[1].Width=if ($narrow) { '0' } else { 'Auto' }
-            $row.RowDefinitions[1].Height=if ($narrow) { '76' } else { '0' }
+            $row.RowDefinitions[1].Height=if ($narrow) { 'Auto' } else { '0' }
             [Windows.Controls.Grid]::SetRow($tools,$(if ($narrow) { 1 } else { 0 }))
             [Windows.Controls.Grid]::SetColumn($tools,$(if ($narrow) { 0 } else { 1 }))
             $tools.Margin=if ($narrow) { '0,8,0,0' } else { '0' }
             $tools.VerticalAlignment=if ($narrow) { 'Top' } else { 'Center' }
             $frame.Margin=if ($narrow) { '0' } else { '0,0,12,0' }
         }
-        $available=$ui.LibraryScroll.ViewportWidth
+        $available=$ui.LibraryScroll.ViewportWidth-8
         if ($available -le 0 -or [double]::IsInfinity($available)) { return }
         if ($nativeCards) {
             [OneInstall.NativeUI]::Layout($ui.Cards,$available,$ui.LibraryScroll.ViewportHeight,$ui.LibraryScroll.VerticalOffset)
@@ -1036,6 +1047,7 @@ try {
         })
         # Give WPF native models, not pipeline PSObject wrappers, so INotifyPropertyChanged reaches checkboxes.
         $ui.InstalledList.ItemsSource=[InstalledApp[]]$matches
+        if ($window.IsVisible) { Animate-Appearance $ui.InstalledList 7 }
         Set-UiValue ($ui.InstalledEmpty) 'Text' $(if ($script:uninstallTask -and $script:uninstallOperation -eq 'Inventory') { 'Reading installed apps…' } else { 'No apps found. Try another search or choose Refresh.' })
         $ui.InstalledEmpty.Visibility=if ($matches.Count -eq 0) { 'Visible' } else { 'Collapsed' }
         if ($script:mode -eq 'Uninstall') { Set-UiValue ($ui.ResultCount) 'Text' $('Installed · '+$matches.Count+' apps') }
@@ -1065,7 +1077,10 @@ try {
     function Set-AppMode([string]$Mode) {
         if ($script:busy -or $script:uninstallTask) { return }
         if ($script:settingsPage) { $script:settingsPage.Visibility='Collapsed' }
+        if ($script:managerPage) { $script:managerPage.Visibility='Collapsed' }
         if ($ui.ContainsKey('SettingsMode')) { $ui.SettingsMode.Background='Transparent' }
+        $changedMode=$script:mode -ne $Mode
+        if ($changedMode) { [OneInstall.Motion]::ClearDecorations() }
         $script:mode=$Mode; $uninstall=$Mode -eq 'Uninstall'
         $ui.InstallLibrary.Visibility=if ($uninstall) { 'Collapsed' } else { 'Visible' }
         $window.FindName('SetupGlass').Visibility=if ($uninstall) { 'Collapsed' } else { 'Visible' }
@@ -1083,6 +1098,11 @@ try {
             Update-InstalledFilter; Update-UninstallSelection
             if ($script:installedApps.Count -eq 0) { Refresh-InstalledApps }
         } else { Update-Filter -ForceAnimation }
+        if ($changedMode -and $window.IsVisible) {
+            $page=if ($uninstall) { $ui.UninstallPage } else { $ui.InstallLibrary }
+            [OneInstall.Motion]::Enter($page,0,10,0)
+            if (-not $uninstall) { [OneInstall.Motion]::Enter($window.FindName('SetupGlass'),10,0,40) }
+        }
     }
     function Show-RemovalReview($Items,[bool]$Leftovers=$false) {
         $dialog=New-Object Windows.Window; $dialog.FlowDirection=$window.FindName('AppPanes').FlowDirection; $dialog.Language=$window.Language; $script:removalDialog=$dialog
@@ -1170,6 +1190,7 @@ try {
     $uninstallTimer.Add_Tick({
         $message=''
         while ([OneInstallUninstall]::Progress.TryDequeue([ref]$message)) { Set-UiValue ($ui.UninstallStatus) 'Text' $($message); Add-UninstallLog $message }
+        while ([OneInstallUninstall]::VerifiedRemovals.TryDequeue([ref]$message)) { [OneInstall.Motion]::Result($ui.UninstallSelectedCount,$true) }
         if (-not $script:uninstallTask -or -not $script:uninstallTask.IsCompleted) { return }
         $uninstallTimer.Stop()
         $operation=$script:uninstallOperation; $task=$script:uninstallTask
@@ -1227,8 +1248,18 @@ try {
     foreach ($name in @('InstalledAll','InstalledDesktop','InstalledStore')) {
         $ui[$name].Add_Click({ param($sender,$eventArgs) $script:installedKind=[string]$sender.Tag; Update-InstalledFilter })
     }
-    $ui.InstalledList.AddHandler([Windows.Controls.Primitives.ToggleButton]::CheckedEvent,[Windows.RoutedEventHandler]{ Update-UninstallSelection })
-    $ui.InstalledList.AddHandler([Windows.Controls.Primitives.ToggleButton]::UncheckedEvent,[Windows.RoutedEventHandler]{ Update-UninstallSelection })
+    $removalSelectionMotion=[Windows.RoutedEventHandler]{
+        param($sender,$e)
+        Update-UninstallSelection
+        $check=$e.OriginalSource
+        if ($check -is [Windows.Controls.CheckBox] -and $check.DataContext -is [InstalledApp] -and -not $script:syncingUninstallSelection) {
+            if ($check.IsChecked) { [OneInstall.Motion]::Fly($check,$ui.UninstallSelectedCount,$check.DataContext.Name) }
+            else { [OneInstall.Motion]::Fly($ui.UninstallSelectedCount,$check,$check.DataContext.Name) }
+            [OneInstall.Motion]::Pop($ui.UninstallSelectedCount)
+        }
+    }
+    $ui.InstalledList.AddHandler([Windows.Controls.Primitives.ToggleButton]::CheckedEvent,$removalSelectionMotion)
+    $ui.InstalledList.AddHandler([Windows.Controls.Primitives.ToggleButton]::UncheckedEvent,$removalSelectionMotion)
     $ui.ClearUninstallSelection.Add_Click({
         if ($script:uninstallTask) { return }
         $script:syncingUninstallSelection=$true
@@ -1308,7 +1339,7 @@ try {
             if ($card.MinHeight -ne 140 -or $card.Content.Children.Count -ne 4 -or
                 [Windows.Automation.AutomationProperties]::GetName($card) -ne $app.Name -or
                 -not [Windows.Automation.AutomationProperties]::GetHelpText($card).Contains($app.Description) -or
-                -not $card.ToolTip.Content.Text.Contains($app.LicenseLabel)) { throw 'Compact card lost app details or accessibility.' }
+                -not ([Windows.Automation.AutomationProperties]::GetHelpText($card)).Contains($app.LicenseLabel) -or $null -ne $card.ToolTip) { throw 'Compact card lost accessible details or retained a hover description.' }
         }
         Set-Selection @('peace','ts3')
         if ($selected.Count -ne 3) { throw 'Selection did not add the dependency.' }
@@ -1398,6 +1429,8 @@ try {
                 $pulse.Start()
                 [Windows.Threading.Dispatcher]::PushFrame($frame)
             }
+            # Geometry/colour assertions inspect settled UI; motion has its own checks below.
+            [OneInstall.Motion]::TestOverride=$false; [OneInstall.Motion]::Stop()
             function Get-DrawnText($Drawing) {
                 if ($Drawing -is [Windows.Media.GlyphRunDrawing]) { return (-join $Drawing.GlyphRun.Characters) }
                 if ($Drawing -is [Windows.Media.DrawingGroup]) {
@@ -1717,23 +1750,23 @@ try {
             Set-QueueProgress 65
             $savedMotionFunction=${function:Test-MotionEnabled}
             try {
-                function Test-MotionEnabled { return $true }
+                [OneInstall.Motion]::TestOverride=$true
                 $testCard=$checks['affinity']
                 Animate-CardEntrance $testCard 70
                 $testSurface=$testCard.Template.FindName('Card',$testCard)
                 if (-not $testSurface.HasAnimatedProperties) { throw 'Card entrance animation did not start.' }
                 Animate-CardClick $testCard
-                if (-not $testSurface.RenderTransform.HasAnimatedProperties) { throw 'Click feedback did not start.' }
+                if (-not $testSurface.RenderTransform.Children[0].HasAnimatedProperties) { throw 'Click feedback did not start.' }
                 Wait-WindowMessages; Wait-WindowMessages; Wait-WindowMessages
-                if ($testSurface.RenderTransform.ScaleX -ne 1 -or $testSurface.Opacity -ne 1) { throw 'Card animation did not settle.' }
-                function Test-MotionEnabled { return $false }
+                if ($testSurface.RenderTransform.Children[0].ScaleX -ne 1 -or $testSurface.Opacity -ne 1) { throw 'Card animation did not settle.' }
+                [OneInstall.Motion]::TestOverride=$false; [OneInstall.Motion]::Stop()
                 Animate-CardEntrance $testCard 70
                 Animate-CardClick $testCard
-                if ($testSurface.HasAnimatedProperties -or $testSurface.RenderTransform.HasAnimatedProperties -or $testSurface.RenderTransform.ScaleX -ne 1) { throw 'Card motion ignored reduced motion.' }
+                if ($testSurface.HasAnimatedProperties -or $testSurface.RenderTransform.Children[0].HasAnimatedProperties -or $testSurface.RenderTransform.Children[0].ScaleX -ne 1) { throw 'Card motion ignored reduced motion.' }
                 Set-QueueProgress 100
                 Animate-Appearance $ui.Cards
-                if ($ui.Progress.Value -ne 100 -or $ui.Progress.HasAnimatedProperties -or $ui.Cards.Opacity -ne 1 -or $ui.Cards.HasAnimatedProperties -or $ui.Cards.RenderTransform.Y -ne 0) { throw 'Reduced motion did not apply final state immediately.' }
-            } finally { ${function:Test-MotionEnabled}=$savedMotionFunction }
+                if ($ui.Progress.Value -ne 100 -or $ui.Progress.HasAnimatedProperties -or $ui.Cards.Opacity -ne 1 -or $ui.Cards.HasAnimatedProperties -or $ui.Cards.RenderTransform.Children[1].Y -ne 0) { throw 'Reduced motion did not apply final state immediately.' }
+            } finally { ${function:Test-MotionEnabled}=$savedMotionFunction; [OneInstall.Motion]::TestOverride=$null }
             $ui.CloseWindow.RaiseEvent([Windows.RoutedEventArgs]::new([Windows.Controls.Primitives.ButtonBase]::ClickEvent))
         })
         $window.ShowDialog() | Out-Null

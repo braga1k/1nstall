@@ -23,7 +23,13 @@ function Refresh-LibraryInventory {
 function Update-LibraryStates {
     foreach ($app in $catalog) {
         $state=[OneInstallPackages]::InstalledState($script:libraryInventory,[string[]]$app.Ids,'winget')
-        [Windows.Automation.AutomationProperties]::SetHelpText($checks[$app.Key],$app.Description+' · '+$state+' · F1 for details')
+        $card=$checks[$app.Key]; $installed=$state.StartsWith('Installed ·')
+        $card.SetResourceReference([Windows.Controls.Control]::BackgroundProperty,$(if ($installed) { 'InstalledCardFill' } else { 'ContentFill' }))
+        $card.Content.Children[0].SetResourceReference([Windows.Controls.TextBlock]::ForegroundProperty,$(if ($installed) { 'TextSecondaryBrush' } else { 'TextPrimaryBrush' }))
+        $card.Content.Children[0].FontWeight=if ($installed) { 'Normal' } else { 'SemiBold' }
+        Set-UiValue $card.Content.Children[2] 'Text' $(if ($installed) { '✓ Installed' } elseif ($app.Ids.Count) { 'WinGet · automatic' } else { 'Website · guided' })
+        [Windows.Automation.AutomationProperties]::SetItemStatus($card,(Convert-UiText $state))
+        [Windows.Automation.AutomationProperties]::SetHelpText($card,$app.Description+' · '+$state+' · F1 for details')
     }
     Update-Filter
 }
@@ -98,7 +104,7 @@ foreach ($app in $catalog) {
     Set-UiValue ($check.Content.Children[2]) 'Text' $(if ($app.Ids.Count) { 'WinGet · automatic' } else { 'Website · guided' })
     if ($nativeCards) { $detail=$check.Content.Children[3] } else {
     $detail=New-Object Windows.Controls.Button; Set-UiValue ($detail) 'Content' $('Details'); $detail.Tag=$app.Key; $detail.Margin='0,8,0,0'; $detail.Padding='6,4'; $detail.MinHeight=28
-    Set-UiValue ($detail) 'ToolTip' $('App details · F1 while the card is focused')
+    [Windows.Automation.AutomationProperties]::SetHelpText($detail,'App details · F1 while the card is focused')
     [Windows.Automation.AutomationProperties]::SetName($detail,'Details for '+$app.Name)
     $check.Content.Children.Add($detail) | Out-Null
     }
@@ -162,6 +168,7 @@ function Show-ManagerPage([string]$Mode) {
     $diagnostic=New-Object Windows.Controls.Button; Set-UiValue ($diagnostic) 'Content' $('Review diagnostic export…'); $diagnostic.Add_Click({ Show-Diagnostics }); $bar.Children.Add($diagnostic) | Out-Null
     $licenses=New-Object Windows.Controls.Button; Set-UiValue ($licenses) 'Content' $('Licenses & credits'); $licenses.Add_Click({ Show-ThirdPartyNotices }); $bar.Children.Add($licenses) | Out-Null
     Render-History
+    Animate-Appearance $script:managerPage 10
 }
 foreach ($b in @($ui.InstallMode,$ui.UninstallMode)) { $b.Add_Click({ if (-not $script:busy -and -not $script:uninstallTask) { $script:managerPage.Visibility='Collapsed' } }) }
 function Render-History {

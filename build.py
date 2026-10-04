@@ -13,6 +13,8 @@ root = Path(__file__).resolve().parent
 source = (root / 'vexan_installers.ps1').read_text(encoding='utf-8-sig')
 source = source.replace('@@CATALOG@@', (root/'catalog.json').read_text(encoding='utf-8-sig')).replace('@@XAML@@', (root/'interface.xaml').read_text(encoding='utf-8-sig'))
 source = source.replace('@@ICON@@', base64.b64encode((root/'src/1nstall.ico').read_bytes()).decode('ascii'))
+source = source.replace('@@APPEARANCE_HELPER@@', (root/'src/appearance.cs').read_text(encoding='utf-8-sig'))
+source = source.replace('@@MOTION_HELPER@@', (root/'src/motion.cs').read_text(encoding='utf-8-sig'))
 source = source.replace('@@WINDOW_HELPER@@', (root/'src/window-helper.cs').read_text(encoding='utf-8-sig'))
 source = source.replace('@@UPDATE_HELPER@@', (root/'src/update-helper.cs').read_text(encoding='utf-8-sig'))
 settings = (root/'src/settings.ps1').read_text(encoding='utf-8-sig').replace('@@LOCALES@@', (root/'locales.json').read_text(encoding='utf-8-sig'))

@@ -13,8 +13,8 @@ using System.Security.Cryptography;
 [assembly: AssemblyTitle("1nstall")]
 [assembly: AssemblyDescription("1nstall - Windows app manager")]
 [assembly: AssemblyProduct("1nstall")]
-[assembly: AssemblyVersion("3.3.0.0")]
-[assembly: AssemblyFileVersion("3.3.0.0")]
+[assembly: AssemblyVersion("3.4.0.0")]
+[assembly: AssemblyFileVersion("3.4.0.0")]
 
 internal static class Launcher
 {
@@ -60,6 +60,9 @@ internal static class Launcher
         foreach(var item in ps.Invoke(null,new PSInvocationSettings { ApartmentState=Thread.CurrentThread.GetApartmentState() })) if(item!=null) output.AppendLine(item.ToString());
         if(ps.InvocationStateInfo.State==PSInvocationState.Failed) throw ps.InvocationStateInfo.Reason;
     }
+    internal static Type WindowHelper() {
+        return Assembly.LoadFrom(CacheAssembly("1nstall.Helpers","1nstall.Helpers.dll",false)).GetType("FirstInstallWindow",true);
+    }
     [STAThread]
     private static int Main(string[] args)
     {
@@ -76,10 +79,10 @@ internal static class Launcher
             System.Runtime.ProfileOptimization.SetProfileRoot(root);
             System.Runtime.ProfileOptimization.StartProfile("startup.profile");
         } catch(IOException) { } catch(UnauthorizedAccessException) { }
-        return Run(args);
+        using(var opening=(args.Length==0 || args.Length==1 && args[0]=="--startup-test")?new StartupView():null) return Run(args,opening);
     }
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
-    private static int Run(string[] args)
+    private static int Run(string[] args,StartupView opening)
     {
         var clock=new StartupTimer();
         bool test=args.Length==1 && (args[0]=="--smoke-test" || args[0]=="--self-test" || args[0]=="--manager-test" || args[0]=="--startup-test");
@@ -116,9 +119,14 @@ internal static class Launcher
             if(parameter!="SelfTest") {
                 var assembly=Assembly.LoadFrom(uiPath);
                 window=(Window)assembly.CreateInstance("OneInstall.MainWindow");
+                if(opening!=null) {
+                    window.Loaded+=delegate { if(opening.Cancelled) window.Close(); };
+                    window.ContentRendered+=delegate { opening.Complete(window); };
+                }
                 assembly.GetType("OneInstall.NativeUI").GetMethod("Populate").Invoke(null,new object[]{window,ReadResource("1nstall.Catalog")});
             }
             runspace=prepare.GetAwaiter().GetResult();
+            if(opening!=null && opening.Cancelled) return 0;
             if(window!=null) {
                 runspace.SessionStateProxy.SetVariable("NativeWindow",window);
                 runspace.SessionStateProxy.SetVariable("AppExecutable",Assembly.GetExecutingAssembly().Location);
@@ -129,6 +137,7 @@ internal static class Launcher
                 if(parameter=="StartupTest") {
                     if(!(window.Tag is long)) throw new Exception("Window did not reach the ready checkpoint.");
                     output.AppendLine("READY "+window.Tag);
+                    output.AppendLine("FirstFrameMs "+(opening==null?0:opening.FirstFrameMilliseconds));
                     foreach(string name in new[]{"BeforeShowMs","LoadedMs","RenderMs"}) output.AppendLine(name+" "+window.Resources[name]);
                 }
             }
@@ -136,6 +145,7 @@ internal static class Launcher
             return 0;
         }
         catch(Exception error) {
+            if(opening!=null) opening.Dispose();
             string log=Path.Combine(test?AppDomain.CurrentDomain.BaseDirectory:Path.GetTempPath(),"1nstall-startup-error.log");
             try { File.WriteAllText(log,error.ToString()); } catch { }
             if(!test) MessageBox.Show("Could not start 1nstall.\n\n"+error.Message+"\n\nLog: "+log,"1nstall",MessageBoxButton.OK,MessageBoxImage.Error);
