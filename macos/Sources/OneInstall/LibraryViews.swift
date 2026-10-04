@@ -26,75 +26,65 @@ extension ContentView {
     }.buttonStyle(CardPressStyle()).accessibilityAddTraits(m.category == id ? .isSelected : [])
   }
 
-  var uninstallGrid: some View {
-    GeometryReader { geometry in
-      ScrollView {
-        LazyVGrid(
-          columns: Array(
-            repeating: GridItem(.flexible(), spacing: 8), count: geometry.size.width < 560 ? 2 : 3),
-          spacing: 8
-        ) {
-          ForEach(filteredInventory) { app in installedCard(app) }
-        }.padding(.bottom, 4)
-        if filteredInventory.isEmpty {
-          VStack(spacing: 12) {
-            Image(systemName: m.scanning ? "app.badge.checkmark" : "square.grid.2x2").font(
-              .system(size: 25)
-            ).accessibilityHidden(true)
-            Text(
-              m.scanning
-                ? m.t("Reading app bundles…", "A ler as aplicações…")
-                : m.t("No apps match these filters.", "Nenhuma app corresponde a estes filtros."))
-            if !m.search.isEmpty || m.category != "all" || m.installedOnly {
-              Button(m.t("Reset filters", "Repor filtros")) {
-                m.search = ""
-                m.category = "all"
-                m.installedOnly = false
-              }.buttonStyle(GlassButtonStyle())
-            }
-          }.foregroundStyle(p.secondary).frame(maxWidth: .infinity).padding(.top, 50)
-        }
-      }.scrollIndicators(.visible)
-    }
+  var uninstallList: some View {
+    ScrollView {
+      LazyVStack(spacing: 8) {
+        ForEach(filteredInventory) { app in installedRow(app) }
+      }.padding(.bottom, 4)
+      if filteredInventory.isEmpty {
+        VStack(spacing: 12) {
+          Image(systemName: m.scanning ? "app.badge.checkmark" : "list.bullet.rectangle").font(
+            .system(size: 25)
+          ).accessibilityHidden(true)
+          Text(
+            m.scanning
+              ? m.t("Reading app bundles…", "A ler as aplicações…")
+              : m.t("No apps match these filters.", "Nenhuma app corresponde a estes filtros."))
+          if !m.search.isEmpty || m.category != "all" || m.installedOnly {
+            Button(m.t("Reset filters", "Repor filtros")) {
+              m.search = ""
+              m.category = "all"
+              m.installedOnly = false
+            }.buttonStyle(GlassButtonStyle())
+          }
+        }.foregroundStyle(p.secondary).frame(maxWidth: .infinity).padding(.top, 50)
+      }
+    }.scrollIndicators(.visible)
   }
 
-  func installedCard(_ installed: InstalledApp) -> some View {
+  func installedRow(_ installed: InstalledApp) -> some View {
     let catalog = m.apps.first { $0.bundleID == installed.bundleID }
     let managed = catalog.map { m.state.receipts[$0.id] == installed.path } ?? false
     let selected = catalog.map { m.state.removalSelection.contains($0.id) } ?? false
-    return VStack(alignment: .leading, spacing: 7) {
+    return HStack(spacing: 12) {
       Button {
         if managed, let catalog { m.toggle(catalog) } else { m.installedDetail = installed }
       } label: {
-        VStack(alignment: .leading, spacing: 8) {
-          HStack(alignment: .top) {
-            Text(installed.name).font(.system(size: 13)).lineLimit(2).multilineTextAlignment(
-              .leading)
-            Spacer(minLength: 3)
-            ZStack {
-              RoundedRectangle(cornerRadius: 6).stroke(
-                p.secondary.opacity(managed ? 0.7 : 0.25), lineWidth: 1)
-              if selected {
-                RoundedRectangle(cornerRadius: 6).fill(p.action)
-                Image(systemName: "checkmark").font(.system(size: 10, weight: .semibold))
-                  .foregroundStyle(p.actionText)
-              } else if !managed {
-                Image(systemName: "info").font(.system(size: 10)).foregroundStyle(p.secondary)
-              }
-            }.frame(width: 18, height: 18)
-          }
-          Spacer(minLength: 4)
-          VStack(alignment: .leading, spacing: 3) {
-            Text(installed.version)
+        HStack(spacing: 12) {
+          ZStack {
+            RoundedRectangle(cornerRadius: 5).stroke(
+              p.secondary.opacity(managed ? 0.7 : 0.35), lineWidth: 1)
+            if selected {
+              RoundedRectangle(cornerRadius: 5).fill(p.action)
+              Image(systemName: "checkmark").font(.system(size: 10, weight: .semibold))
+                .foregroundStyle(p.actionText)
+            } else if !managed {
+              Image(systemName: "info").font(.system(size: 10)).foregroundStyle(p.secondary)
+            }
+          }.frame(width: 18, height: 18)
+          VStack(alignment: .leading, spacing: 6) {
+            Text(installed.name).font(.system(size: 13)).lineLimit(1)
             Text(
-              managed
-                ? m.t("Homebrew · managed", "Homebrew · gerida")
-                : installed.store
-                  ? m.t("App Store · guided removal", "App Store · remoção guiada")
-                  : m.t("Installed · guided removal", "Instalada · remoção guiada"))
-          }.font(.system(size: 10.5)).foregroundStyle(p.secondary).lineLimit(1)
-        }.frame(maxWidth: .infinity, alignment: .leading).frame(height: 72).contentShape(
-          Rectangle())
+              (installed.version.isEmpty ? "" : installed.version + " · ")
+                + (managed
+                  ? m.t("Homebrew · managed", "Homebrew · gerida")
+                  : installed.store
+                    ? m.t("App Store · guided removal", "App Store · remoção guiada")
+                    : m.t("Installed · guided removal", "Instalada · remoção guiada"))
+            ).font(.system(size: 10.5)).foregroundStyle(p.secondary).lineLimit(1)
+          }.frame(maxWidth: .infinity, alignment: .leading)
+        }.frame(maxWidth: .infinity, minHeight: 70, alignment: .leading)
+          .contentShape(Rectangle())
       }.buttonStyle(CardPressStyle()).disabled(m.busy)
         .accessibilityLabel(installed.name).accessibilityValue(
           managed
@@ -103,10 +93,9 @@ extension ContentView {
       Button {
         m.installedDetail = installed
       } label: {
-        Text(m.t("Details", "Detalhes")).font(.system(size: 11)).frame(maxWidth: .infinity).frame(
-          height: 27)
-      }.buttonStyle(CardPressStyle()).glass(radius: 16, control: true).padding(.trailing, 22)
-    }.padding(13).frame(height: 140).glass(radius: 18, selected: selected)
+        Text(m.t("Details", "Detalhes")).font(.system(size: 11)).frame(width: 74, height: 30)
+      }.buttonStyle(CardPressStyle()).glass(radius: 16, control: true)
+    }.padding(.horizontal, 16).frame(height: 70).glass(radius: 18, selected: selected)
       .anchorPreference(key: SelectionAnchors.self, value: .bounds) { anchor in
         guard let catalog else { return [:] }
         return ["card-" + catalog.id: anchor]

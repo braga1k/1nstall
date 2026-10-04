@@ -1,7 +1,7 @@
 import AppKit
 import SwiftUI
 
-struct Palette {
+struct Palette: Equatable {
   var dark = true
   var accent = true
   var demo = false
@@ -66,24 +66,29 @@ struct Palette {
   }
   var separator: Color { color(0x46516B, 0x87909F) }
 }
+private struct MotionReducedKey: EnvironmentKey { static let defaultValue = true }
+private struct PointerLightingKey: EnvironmentKey { static let defaultValue = false }
 private struct PaletteKey: EnvironmentKey { static let defaultValue = Palette() }
-private struct PointerKey: EnvironmentKey { static let defaultValue: CGPoint? = nil }
 extension EnvironmentValues {
+  var motionReduced: Bool {
+    get { self[MotionReducedKey.self] }
+    set { self[MotionReducedKey.self] = newValue }
+  }
+  var pointerLighting: Bool {
+    get { self[PointerLightingKey.self] }
+    set { self[PointerLightingKey.self] = newValue }
+  }
   var palette: Palette {
     get { self[PaletteKey.self] }
     set { self[PaletteKey.self] = newValue }
-  }
-  var surfacePointer: CGPoint? {
-    get { self[PointerKey.self] }
-    set { self[PointerKey.self] = newValue }
   }
 }
 
 struct Glass: ViewModifier {
   @Environment(\.palette) var p
-  @Environment(\.surfacePointer) var pointer
   @Environment(\.colorSchemeContrast) var contrast
-  @EnvironmentObject var m: AppModel
+  @Environment(\.motionReduced) var reduced
+  @Environment(\.pointerLighting) var pointerLighting
   var radius: CGFloat = 18
   var panel = false
   var control = false
@@ -91,61 +96,54 @@ struct Glass: ViewModifier {
   var quiet = false
   @State private var hover = false
   func body(content: Content) -> some View {
-    content.background {
-      GeometryReader { geometry in
-        let shape = RoundedRectangle(cornerRadius: radius)
-        let frame = geometry.frame(in: .named("surface"))
-        let local =
-          pointer.map {
-            UnitPoint(
-              x: ($0.x - frame.minX) / max(1, frame.width),
-              y: ($0.y - frame.minY) / max(1, frame.height))
-          } ?? .topLeading
-        ZStack {
+    let _ = PerformanceHarness.surface()
+    return content.background {
+      let shape = RoundedRectangle(cornerRadius: radius)
+      ZStack {
+        shape.fill(
+          LinearGradient(
+            gradient: panel ? p.panel : control ? p.control : p.card,
+            startPoint: .topLeading, endPoint: UnitPoint(x: 0.8, y: 1))
+        )
+        .opacity(quiet ? (p.dark ? 0.20 : 0.45) : 1)
+        if selected { shape.fill(p.action.opacity(p.accent ? 0.22 : 0.10)) }
+        if panel {
           shape.fill(
-            LinearGradient(
-              gradient: panel ? p.panel : control ? p.control : p.card,
-              startPoint: .topLeading, endPoint: UnitPoint(x: 0.8, y: 1))
-          )
-          .opacity(quiet ? (p.dark ? 0.20 : 0.45) : 1)
-          if selected { shape.fill(p.action.opacity(p.accent ? 0.22 : 0.10)) }
-          if panel {
-            shape.fill(
-              RadialGradient(
-                colors: [.white.opacity(p.dark ? 0.06 : 0.14), .clear], center: .topLeading,
-                startRadius: 0, endRadius: 370))
-          }
-          if pointer != nil && !m.reduced {
-            shape.fill(
-              RadialGradient(
-                colors: [p.action.opacity(panel ? 0.075 : 0.10), .white.opacity(0.025), .clear],
-                center: local, startRadius: 0, endRadius: panel ? 360 : 230))
-          }
-          if hover {
-            shape.fill(.white.opacity(p.dark ? 0.025 : 0.13))
-          }
+            RadialGradient(
+              colors: [.white.opacity(p.dark ? 0.06 : 0.14), .clear], center: .topLeading,
+              startRadius: 0, endRadius: 370))
+        }
+        PointerLight(
+          color: p.action.opacity(panel ? 0.075 : 0.10), corner: radius,
+          radius: panel ? 360 : 230,
+          enabled: !reduced && pointerLighting
+        )
+        .allowsHitTesting(false).accessibilityHidden(true)
+        if hover {
+          shape.fill(.white.opacity(p.dark ? 0.025 : 0.13))
+        }
+        shape.stroke(
+          LinearGradient(
+            gradient: panel || control ? p.edge : p.cardEdge,
+            startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: 1
+        )
+        .opacity(quiet ? 0.30 : 1)
+        if (selected && !control) || contrast == .increased {
           shape.stroke(
+            selected ? p.action : p.secondary, lineWidth: contrast == .increased ? 1.5 : 1)
+        }
+        if hover { shape.stroke(p.secondary.opacity(0.6), lineWidth: 1) }
+        if panel || control {
+          shape.inset(by: 1).stroke(
             LinearGradient(
-              gradient: panel || control ? p.edge : p.cardEdge,
-              startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: 1
-          )
-          .opacity(quiet ? 0.30 : 1)
-          if (selected && !control) || contrast == .increased {
-            shape.stroke(
-              selected ? p.action : p.secondary, lineWidth: contrast == .increased ? 1.5 : 1)
-          }
-          if hover { shape.stroke(p.secondary.opacity(0.6), lineWidth: 1) }
-          if panel || control {
-            shape.inset(by: 1).stroke(
-              LinearGradient(
-                colors: [.white.opacity(p.dark ? 0.13 : 0.65), .clear, .clear], startPoint: .top,
-                endPoint: .bottom), lineWidth: 0.6)
-          }
-        }.shadow(color: .black.opacity(panel ? (p.dark ? 0.12 : 0.07) : 0), radius: 10, x: 0, y: 3)
-      }.allowsHitTesting(false)
+              colors: [.white.opacity(p.dark ? 0.13 : 0.65), .clear, .clear], startPoint: .top,
+              endPoint: .bottom), lineWidth: 0.6)
+        }
+      }.shadow(color: .black.opacity(panel ? (p.dark ? 0.12 : 0.07) : 0), radius: 10, x: 0, y: 3)
+        .allowsHitTesting(false)
     }
-    .onHover { hover = $0 }
-    .animation(m.reduced ? nil : .easeOut(duration: 0.16), value: hover)
+    .onHover { if !PerformanceHarness.suppressHover { hover = $0 } }
+    .animation(reduced ? nil : .easeOut(duration: 0.16), value: hover)
   }
 }
 extension View {
@@ -159,7 +157,7 @@ extension View {
 }
 struct GlassButtonStyle: ButtonStyle {
   @Environment(\.palette) var p
-  @EnvironmentObject var m: AppModel
+  @Environment(\.motionReduced) var reduced
   @Environment(\.isEnabled) var enabled
   var prominent = false
   var selected = false
@@ -175,20 +173,37 @@ struct GlassButtonStyle: ButtonStyle {
         }
       }
       .glass(radius: 20, control: true, selected: selected)
+      .animation(reduced ? nil : .easeOut(duration: 0.16), value: selected)
       .opacity(enabled ? 1 : 0.45)
-      .scaleEffect(configuration.isPressed && !m.reduced ? 0.975 : 1)
+      .scaleEffect(configuration.isPressed && !reduced ? 0.975 : 1)
       .animation(
-        m.reduced ? nil : .spring(response: 0.24, dampingFraction: 0.8),
+        reduced ? nil : .spring(response: 0.24, dampingFraction: 0.8),
         value: configuration.isPressed)
   }
 }
 struct CardPressStyle: ButtonStyle {
-  @EnvironmentObject var m: AppModel
+  @Environment(\.motionReduced) var reduced
   func makeBody(configuration: Configuration) -> some View {
-    configuration.label.scaleEffect(configuration.isPressed && !m.reduced ? 0.975 : 1)
+    configuration.label.scaleEffect(configuration.isPressed && !reduced ? 0.975 : 1)
       .animation(
-        m.reduced ? nil : .spring(response: 0.22, dampingFraction: 0.7),
+        reduced ? nil : .spring(response: 0.22, dampingFraction: 0.7),
         value: configuration.isPressed)
+  }
+}
+
+/// Animate only the live destination. No departing interactive tree is retained,
+/// and a new trigger restarts this short decorative motion immediately.
+struct PageArrival: ViewModifier {
+  var page: String
+  var reduced: Bool
+  func body(content: Content) -> some View {
+    content.keyframeAnimator(initialValue: 0.0, trigger: page) { view, progress in
+      let _ = PerformanceHarness.arrival(page, progress: reduced ? 0 : progress)
+      view.offset(y: reduced ? 0 : 5 * progress).opacity(reduced ? 1 : 1 - 0.08 * progress)
+    } keyframes: { _ in
+      MoveKeyframe(1.0)
+      CubicKeyframe(0.0, duration: reduced ? 0 : 0.20)
+    }
   }
 }
 

@@ -7,8 +7,6 @@ struct ContentView: View {
   @Environment(\.colorScheme) var systemScheme
   @FocusState var searchFocused: Bool
   @State var activity = false
-  @State var pointer: CGPoint?
-  @State var lastPointerTime = 0.0
   @State var appeared = false
   @State var activeProfile = Library.profiles[0].id
   @State var addProfile = false
@@ -18,6 +16,7 @@ struct ContentView: View {
       demo: m.capture)
   }
   var body: some View {
+    let _ = PerformanceHarness.root()
     ZStack {
       p.background
       RadialGradient(
@@ -35,7 +34,7 @@ struct ContentView: View {
           }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .id(m.page).transition(.opacity.combined(with: .offset(y: m.reduced ? 0 : 7)))
+        .modifier(PageArrival(page: m.page, reduced: m.reduced))
         if m.page == "install" || m.page == "uninstall" {
           selection.frame(width: 246).offset(x: appeared || m.reduced ? 0 : 12)
         }
@@ -45,6 +44,10 @@ struct ContentView: View {
           radius: 18
         ).padding(12).allowsHitTesting(false)
       }
+    }
+    .overlay {
+      PointerTracking(enabled: !m.reduced && !m.capture)
+        .allowsHitTesting(false).accessibilityHidden(true)
     }
     .coordinateSpace(name: "surface")
     .overlayPreferenceValue(SelectionAnchors.self) { anchors in
@@ -62,21 +65,6 @@ struct ContentView: View {
       }.allowsHitTesting(false)
     }
     .ignoresSafeArea()
-    .onContinuousHover { phase in
-      guard !m.capture, !m.reduced else {
-        pointer = nil
-        return
-      }
-      switch phase {
-      case .active(let location):
-        let now = ProcessInfo.processInfo.systemUptime
-        if now - lastPointerTime > 1.0 / 60 {
-          pointer = location
-          lastPointerTime = now
-        }
-      case .ended: pointer = nil
-      }
-    }
     .onAppear {
       if m.capture || m.reduced {
         appeared = true
@@ -85,15 +73,18 @@ struct ContentView: View {
       }
     }
     .foregroundStyle(p.ink).font(.system(size: 13))
-    .environment(\.palette, p).environment(\.surfacePointer, pointer).environmentObject(m)
+    .environment(\.palette, p).environmentObject(m)
     .preferredColorScheme(m.theme == "system" ? nil : (m.theme == "dark" ? .dark : .light))
     .tint(p.action)
     .saturation(m.accent ? 1 : 0)
     .frame(minWidth: 1040, minHeight: 640)
-    .animation(m.reduced ? nil : .easeInOut(duration: 0.2), value: m.page)
     .animation(
       m.reduced ? nil : .spring(response: 0.32, dampingFraction: 0.86),
-      value: m.selection
+      value: m.state.installSelection
+    )
+    .animation(
+      m.reduced ? nil : .spring(response: 0.32, dampingFraction: 0.86),
+      value: m.state.removalSelection
     )
     .animation(m.reduced ? nil : .easeInOut(duration: 0.2), value: m.category)
     .animation(m.reduced ? nil : .easeInOut(duration: 0.22), value: m.expandedGroups)
@@ -113,6 +104,8 @@ struct ContentView: View {
     .onReceive(NotificationCenter.default.publisher(for: Notification.Name("1nstall.search"))) {
       _ in searchFocused = true
     }
+    .environment(\.motionReduced, m.reduced)
+    .environment(\.pointerLighting, !m.capture || PerformanceHarness.enabled)
   }
   func button(
     _ label: String, selected: Bool = false, prominent: Bool = false, action: @escaping () -> Void
@@ -138,7 +131,7 @@ struct ContentView: View {
         }
         button(m.t("Uninstall", "Desinstalar"), selected: m.page == "uninstall") {
           m.changePage("uninstall")
-          m.refresh()
+          m.refreshIfStale()
         }
         button(
           m.t("History & diagnostics", "Histórico e diagnóstico"), selected: m.page == "history"
@@ -242,7 +235,7 @@ struct ContentView: View {
           }
         }
       }
-      if m.page == "install" { installGrid } else { uninstallGrid }
+      if m.page == "install" { installGrid } else { uninstallList }
       VStack(spacing: 0) {
         Button {
           activity.toggle()
@@ -511,7 +504,7 @@ struct ContentView: View {
           }
         }
         settingsCard(m.t("About this preview", "Sobre esta prévia")) {
-          Text("1nstall for Mac · 0.2.0 · Apple Silicon").fontWeight(.medium)
+          Text("1nstall for Mac · 0.2.1 · Apple Silicon").fontWeight(.medium)
           Text(
             m.t(
               "15 curated entries · 5 reviewed Homebrew installers. Other apps continue on their official website or App Store.",

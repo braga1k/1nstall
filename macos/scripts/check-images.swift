@@ -51,8 +51,8 @@ NSRect(x: 0, y: 0, width: 620 * columns, height: 1800).fill()
 for (i, name) in names.enumerated() {
   let y = 1800 - (i + 1) * 450
   var sources = [("Windows 3.5.0", original)]
-  if let previous { sources.append(("macOS 0.1.0", previous)) }
-  sources.append(("macOS 0.2.0", base))
+  if let previous { sources.append(("macOS 0.2.0", previous)) }
+  sources.append(("macOS 0.2.1", base))
   for (col, source) in sources.enumerated() {
     NSImage(contentsOf: source.1.appendingPathComponent(name))!.draw(
       in: NSRect(x: col * 620, y: y, width: 620, height: 420))
@@ -64,5 +64,24 @@ for (i, name) in names.enumerated() {
 NSGraphicsContext.restoreGraphicsState()
 try bitmap.representation(using: .png, properties: [:])!.write(
   to: base.appendingPathComponent("comparison.png"))
+// Separate comparison for the explicitly requested Windows-style Uninstall list.
+let removal = NSBitmapImageRep(
+  bitmapDataPlanes: nil, pixelsWide: 1240, pixelsHigh: 450, bitsPerSample: 8,
+  samplesPerPixel: 4, hasAlpha: true, isPlanar: false, colorSpaceName: .deviceRGB,
+  bytesPerRow: 0, bitsPerPixel: 0)!
+NSGraphicsContext.saveGraphicsState()
+NSGraphicsContext.current = NSGraphicsContext(bitmapImageRep: removal)
+NSColor(calibratedWhite: 0.08, alpha: 1).setFill()
+NSRect(x: 0, y: 0, width: 1240, height: 450).fill()
+for (column, source) in [("Windows 3.5.0", original), ("macOS 0.2.1", base)].enumerated() {
+  NSImage(contentsOf: source.1.appendingPathComponent("uninstall-dark.png"))!.draw(
+    in: NSRect(x: column * 620, y: 0, width: 620, height: 420))
+  (source.0 + " · Uninstall" as NSString).draw(
+    at: NSPoint(x: column * 620 + 12, y: 426),
+    withAttributes: [.font: NSFont.systemFont(ofSize: 12), .foregroundColor: NSColor.white])
+}
+NSGraphicsContext.restoreGraphicsState()
+try removal.representation(using: .png, properties: [:])!.write(
+  to: base.appendingPathComponent("uninstall-comparison.png"))
 print("\(monochrome.count) monochrome images checked; \(failures) failures")
 exit(failures == 0 ? 0 : 1)

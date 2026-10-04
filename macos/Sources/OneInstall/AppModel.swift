@@ -28,6 +28,7 @@ import UniformTypeIdentifiers
   @Published var selectionEvent: SelectionEvent?
   @Published var displayAccessibilityRevision = 0
   private var accessibilityObserver: NSObjectProtocol?
+  private var inventoryRefreshedAt: Date?
   private var pageFilters: [String: (String, String, Bool)] = [:]
   @Published var review = false
   @Published var leftoverApp: CatalogApp?
@@ -110,12 +111,21 @@ import UniformTypeIdentifiers
         "Unable to save the operation log.", "Não foi possível guardar o registo da operação.")
     }
   }
+  // Page navigation uses the current snapshot immediately. Explicit refresh and
+  // operation verification still scan unconditionally; returning after 30s refreshes.
+  func refreshIfStale() {
+    guard !capture, inventoryRefreshedAt.map({ Date().timeIntervalSince($0) < 30 }) != true else {
+      return
+    }
+    refresh()
+  }
   func refresh() {
     guard !scanning else { return }
     scanning = true
     Task {
       let result = await Task.detached(priority: .utility) { Inventory.scan() }.value
       inventory = result
+      inventoryRefreshedAt = Date()
       scanning = false
       if result.warnings.isEmpty && !busy {
         state.installSelection = Library.selectable(
@@ -241,6 +251,7 @@ import UniformTypeIdentifiers
   }
   func changePage(_ value: String) {
     guard value != page else { return }
+    PerformanceHarness.navigation(value)
     pageFilters[page] = (search, category, installedOnly)
     page = value
     let remembered = pageFilters[value] ?? ("", "all", false)

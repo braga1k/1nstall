@@ -4,6 +4,8 @@ import SwiftUI
 
 @main enum Main {
   @MainActor static func main() {
+    if PerformanceHarness.traceInteractions { setbuf(stdout, nil) }
+    PerformanceHarness.started = ProcessInfo.processInfo.systemUptime
     let app = NSApplication.shared
     let delegate = AppDelegate()
     app.delegate = delegate
@@ -17,7 +19,9 @@ import SwiftUI
   var model: AppModel!
   func applicationDidFinishLaunching(_ notification: Notification) {
     let args = CommandLine.arguments
-    model = AppModel(capture: args.contains("--capture") || args.contains("--ui-checks"))
+    model = AppModel(
+      capture: args.contains("--capture") || args.contains("--ui-checks")
+        || PerformanceHarness.enabled || PerformanceHarness.renderingChecks)
     if args.contains("--ui-checks") {
       do {
         try PreviewChecks.run(model)
@@ -55,7 +59,14 @@ import SwiftUI
     NotificationCenter.default.addObserver(
       self, selector: #selector(updateMenu), name: Notification.Name("1nstall.language"),
       object: nil)
-    if let index = args.firstIndex(of: "--capture"), args.count > index + 1 {
+    if PerformanceHarness.renderingChecks {
+      Task { await RenderingChecks.run(model, window: window) }
+    } else if let index = args.firstIndex(of: "--benchmark"), args.count > index + 1 {
+      Task {
+        await PerformanceHarness.run(
+          model: model, window: window, destination: URL(fileURLWithPath: args[index + 1]))
+      }
+    } else if let index = args.firstIndex(of: "--capture"), args.count > index + 1 {
       Task { await capture(to: URL(fileURLWithPath: args[index + 1])) }
     } else {
       model.refresh()
@@ -125,7 +136,7 @@ import SwiftUI
   @objc func installPage() { model.changePage("install") }
   @objc func uninstallPage() {
     model.changePage("uninstall")
-    if !model.capture { model.refresh() }
+    if !model.capture { model.refreshIfStale() }
   }
   @objc func historyPage() { model.changePage("history") }
   @objc func refreshInventory() { if !model.busy && !model.capture { model.refresh() } }
@@ -203,6 +214,17 @@ import SwiftUI
           count += 1
           model.expandedGroups = []
           model.category = "all"
+          model.page = "uninstall"
+          model.inventory.apps = model.apps.map { app in
+            InstalledApp(
+              name: app.name, bundleID: app.bundleID, path: "/Fixture Applications/" + app.appName,
+              version: app.version, store: app.source == "appstore")
+          }
+          window.setContentSize(NSSize(width: 1040, height: 640))
+          try await captureFrame("uninstall-minimum" + suffix, to: directory)
+          count += 1
+          model.page = "install"
+          model.inventory = InventoryResult()
           window.setContentSize(NSSize(width: 1040, height: 640))
           try await captureFrame("minimum" + suffix, to: directory)
           count += 1

@@ -1,5 +1,20 @@
 # Validação — 04/10/2026
 
+## Iteração 0.2.1 — resposta imediata e Uninstall em lista
+
+Base local limpa `4955f33e76c7c09f4def93b0bc72b0c05cd8bb38`. `main` e `v3.5.0` remotos voltaram a ser confirmados em `db4931e533aa951f7ff564555714ac38497ba20c`. Apenas `macos/` alterado; sem push/release.
+
+- **Pedido confirmado:** rapidez sem retirar animações; Install → Uninstall parecia aguardar a animação. Pedido posterior: Uninstall em lista, seguindo Windows. Implementadas linhas de 70 pontos com seleção, nome, versão, origem/tipo de remoção e detalhes; referência `docs/images/3.5/uninstall-dark.png`.
+- **Navegação:** destino aplicado imediatamente, entrada suave de 200 ms interrompível, sem hierarquia de saída a bloquear os novos controlos. Luz do rato em camadas Core Animation, sem atualizar o estado global; estilos isolados das alterações não visuais do modelo. Inventário recente reutilizado na navegação durante 30 s; atualização explícita e verificação de operações mantidas.
+- **Compilação:** release arm64 com Swift 6.3.1/SDK 26.4.1, sem avisos; assinatura ad hoc verificada. Nenhum Xcode completo ou dependência adicional instalado.
+- **19 verificações do núcleo + 10 de estado + 11 de composição/movimento**, zero falhas. A composição testa substituição do destino aos 40 ms, animação ativa, nova navegação e pesquisa antes de acabar, redução de movimento, luz visível/em movimento e overlays sem captura de cliques. Os testes usam fixtures e preservam o estado real.
+- **Benchmark:** duas execuções release por versão com catálogo fixo/200 bundles fictícios; hover físico suprimido de igual forma para estabilizar o ensaio. Movimento do rato em Install/Uninstall passa de 120 avaliações da raiz a zero; camadas luminosas verificadas como visíveis. Medianas e todos os resultados, incluindo fases sem melhoria, em `PERFORMANCE.md` e JSON da entrega. CPU não é FPS nem latência clique/píxel.
+- **Interface nativa antes da última alteração de disposição:** alternância por atalhos/cliques, pesquisa e filtros conservados, seleção existente e fila visíveis; tracking nativo registou luz ativa. A tentativa final de verificar cliques/deslocação na lista foi interrompida porque o Mac ficou bloqueado. Foi pedido desbloqueio; essa confirmação nativa permanece pendente, distinta dos testes de composição que passaram.
+- **20 capturas inglesas:** quatro aparências, Uninstall em lista, seleção/resultado com fixtures e tamanhos mínimos de ambos os modos. Inspeção visual da lista normal e mínima; comparações Install e Uninstall com Windows. Seis monocromáticas com diferença RGB máxima 1 e zero píxeis acima de 1. Capturas não expõem o inventário pessoal.
+- **Preservação:** seleção Final Cut Pro existente observada; não foi iniciada instalação/remoção nesta correção. Não se repetiu o ciclo Homebrew real da 0.2.0, porque o motor não foi alterado. Catálogo permanece 15 entradas/5 casks; remoção automática mantém os limites anteriores. Versões 0.1/0.2 preservadas.
+
+Continua uma prévia local, sem Developer ID/notarização. Ficam por ampliar catálogo, remoção anterior à prévia, resíduos e cobertura; pesquisa/seleção ainda têm custo a melhorar. A validação da 0.2.0 abaixo é histórica e não substitui os limites desta iteração.
+
 ## Iteração 0.2.0 — aproximação à experiência Windows
 
 Esta iteração parte do commit local `77142d85a797c14eda337162138a01ce277ff2dd`, com checkout limpo. `main` e `v3.5.0` remotos continuavam em `db4931e533aa951f7ff564555714ac38497ba20c`. O trabalho permanece apenas em `macos/`, sem publicar.

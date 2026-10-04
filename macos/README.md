@@ -1,6 +1,14 @@
-# 1nstall para macOS — prévia 0.2.0
+# 1nstall para macOS — prévia 0.2.1
 
 Implementação nativa em desenvolvimento em SwiftUI e AppKit, desenvolvida num M4 Pro com 24 GB e macOS Tahoe 26.5.2. Conserva a estrutura visual da 1nstall Windows 3.5.0. A versão Windows e o seu processo de compilação não foram modificados.
+
+## Rapidez e movimento — 0.2.1
+
+O Uninstall usa uma lista de linhas de 70 pontos, como na referência Windows: seleção/identificação à esquerda, nome, versão e tipo de remoção na mesma linha, com acesso aos detalhes. A troca Install/Uninstall aplica-se imediatamente. A página de destino conserva uma entrada suave de 200 ms, interrompível por nova navegação. A página anterior não permanece por cima dos novos controlos. Pressão, hover, cápsula da seleção, expansão e brilho após sucesso continuam presentes.
+
+A luz do rato é agora desenhada em camadas Core Animation, sem atualizar o estado global SwiftUI nem voltar a filtrar/construir o catálogo a cada movimento. Os estilos recebem apenas as preferências visuais de que precisam. A navegação reutiliza o inventário recente durante 30 segundos; ⌘R e a verificação após operações continuam a atualizar diretamente.
+
+Medições e limites em [Desempenho](docs/PERFORMANCE.md). O catálogo e o âmbito da remoção permanecem iguais aos da 0.2.0 nesta correção.
 
 ## Abrir e utilizar
 
@@ -9,7 +17,7 @@ Abre `1nstall Mac Preview.app`. A app entregue é arm64, com assinatura local ad
 - **Instalar:** pesquisa com ⌘F, explora dez subcategorias em quatro grupos e seleciona apps ou um perfil. A pesquisa e os filtros são conservados separadamente entre Install e Uninstall. Revê a lista antes de iniciar. Apps detetadas no Mac aparecem atenuadas.
 - **Catálogo:** 15 entradas, incluindo cinco casks revistos (IINA, Rectangle, Keka, LocalSend e VLC). As outras dez abrem o fabricante ou a App Store. Abrir uma página não conta como instalação confirmada.
 - **Perfis:** seis perfis com revisão, contagem de apps disponíveis e escolha entre acrescentar ou substituir a seleção, além de importação/exportação JSON. Um perfil não instala nada por si. As entradas já instaladas são excluídas da nova seleção.
-- **Desinstalar:** grelha com a mesma geometria dos cartões Install e inventário real em `/Applications`, `~/Applications` e `/System/Applications`, incluindo pastas de fabricantes até três níveis, sem contar apps internas/auxiliares como apps independentes. A remoção automática está limitada às instalações feitas por esta prévia. Outras apps têm acesso ao Finder e, quando há uma associação revista, análise de resíduos.
+- **Desinstalar:** lista vertical com linhas de 70 pontos e inventário real em `/Applications`, `~/Applications` e `/System/Applications`, incluindo pastas de fabricantes até três níveis, sem contar apps internas/auxiliares como apps independentes. A remoção automática está limitada às instalações feitas por esta prévia. Outras apps têm acesso ao Finder e, quando há uma associação revista, análise de resíduos.
 - **Fila:** etapas por app, progresso por apps processadas, parar após a app atual, verificação e resultados persistentes. As apps confirmadas saem da seleção; limpar os resultados conserva o histórico. A nova tentativa prepara uma seleção para revisão, sem executar. Um arranque após interrupção mostra esse estado e nunca o transforma em sucesso. Não há percentagens de descarga inventadas.
 - **Resíduos:** revisão independente; ficheiros regeneráveis, dados pessoais e contentores protegidos. Nada pré-selecionado. Uma app ainda instalada/em execução, inventário parcial, symlinks ou ficheiros alterados após análise bloqueiam a limpeza. Os itens aprovados vão para o Lixo. O tamanho é lógico e não significa espaço físico já libertado.
 - **Definições:** Sistema/Claro/Escuro, accent do macOS, opção monocromática, movimento reduzido e Português (Portugal)/English. A redução de movimento do sistema prevalece.
@@ -32,9 +40,10 @@ O script compila em release, inclui os recursos no bundle, reutiliza o ícone or
 ```sh
 swift run --package-path macos OneInstallChecks
 swift run --package-path macos 1nstall --ui-checks
+swift run --package-path macos 1nstall --render-checks
 ```
 
-As Command Line Tools locais não incluem XCTest. 19 verificações do núcleo e 10 de estado da interface passaram nesta iteração. As verificações são executadas por um pequeno runner Swift autónomo, com falha do processo quando uma asserção falha. Incluem inventário, associação e medição dos resíduos, symlinks, revisão obsoleta, proteção de cópias/contentores, ida e recuperação do Lixo, persistência, argumentos de processos, timeout e casks alterados/privilegiados. Apenas criam fixtures próprias.
+As Command Line Tools locais não incluem XCTest. 19 verificações do núcleo, 10 de estado da interface e 11 de composição/movimento passaram nesta iteração. As verificações são executadas por um pequeno runner Swift autónomo, com falha do processo quando uma asserção falha. Incluem inventário, associação e medição dos resíduos, symlinks, revisão obsoleta, proteção de cópias/contentores, ida e recuperação do Lixo, persistência, argumentos de processos, timeout e casks alterados/privilegiados. Apenas criam fixtures próprias.
 
 Ensaio real opcional, explicitamente delimitado a uma **pasta nova** em `work/`, com Rectangle e IINA ausentes do Mac:
 
@@ -52,7 +61,7 @@ Capturas reproduzíveis, com dados de seleção de demonstração e interface se
   --capture '/caminho/para/capturas'
 ```
 
-Gera 18 imagens inglesas de Install, Uninstall, Definições, subcategorias, fila e janela mínima. A remoção usa dados de demonstração explícitos, nunca o inventário pessoal. Captura a composição SwiftUI real num painel AppKit de 1240 × 840 pontos (1040 × 640 para a janela mínima), em Retina 2×, sem depender do gestor de janelas. Não é uma captura do compositor nem um teste de movimentos. Não lê o inventário pessoal nem altera preferências/seleções guardadas nesse modo. As imagens de comparação estão em `docs/images/`.
+Gera 20 imagens inglesas de Install, Uninstall, Definições, subcategorias, fila e janela mínima em ambos os modos. A remoção usa dados de demonstração explícitos, nunca o inventário pessoal. Captura a composição SwiftUI real num painel AppKit de 1240 × 840 pontos (1040 × 640 para a janela mínima), em Retina 2×, sem depender do gestor de janelas. Não é uma captura do compositor nem um teste de movimentos. Não lê o inventário pessoal nem altera preferências/seleções guardadas nesse modo. As imagens de comparação estão em `docs/images/`.
 
 ## Limites e continuidade
 
