@@ -54,10 +54,13 @@ public struct RemovalPlan: Identifiable, Sendable {
   public let cask: String?
   public let fingerprint: String
   public let caskFingerprint: String?
+  public let services: [AssociatedService]
+  public let needsAdmin: Bool
 }
 public struct RemovalResult: Sendable {
   public let trashPath: String?
   public let remainingCopies: Int
+  public let recoveryPath: String?
 }
 
 /// Filesystem evidence only; never guesses a cask from an application's name.
@@ -122,13 +125,15 @@ public struct RemovalEngine: Sendable {
   public let roots: [URL]
   public let caskRooms: [URL]
   public let brew: BrewEngine
+  public let services: ServiceRemoval
   public init(
     roots: [URL] = Inventory.roots, caskRooms: [URL] = CaskIndex.rooms,
-    brew: BrewEngine = BrewEngine()
+    brew: BrewEngine = BrewEngine(), services: ServiceRemoval = ServiceRemoval()
   ) {
     self.roots = roots
     self.caskRooms = caskRooms
     self.brew = brew
+    self.services = services
   }
   public static func protection(_ app: InstalledApp) -> String? {
     if app.path.hasPrefix("/System/") { return "system" }
@@ -145,7 +150,7 @@ public struct RemovalEngine: Sendable {
     }
     return nil
   }
-  private func validate(_ app: InstalledApp) throws -> URL {
+  func validate(_ app: InstalledApp) throws -> URL {
     guard Self.protection(app) == nil else {
       throw OperationError("This application is protected.")
     }
@@ -172,7 +177,7 @@ public struct RemovalEngine: Sendable {
     }
     return url
   }
-  private func fingerprint(_ url: URL) throws -> String {
+  func fingerprint(_ url: URL) throws -> String {
     let fm = FileManager.default
     var data = Data()
     for item in [
@@ -293,13 +298,40 @@ public struct RemovalEngine: Sendable {
     }
     let token = tokens.first
     let metadata = try token.map { try caskMetadata($0, app: identity.app) }
+    let associated = try services.discover(identity)
     return RemovalPlan(
       identity: identity, method: token == nil ? .trash : .homebrew,
-      cask: token, fingerprint: try fingerprint(url), caskFingerprint: metadata)
+      cask: token, fingerprint: try fingerprint(url), caskFingerprint: metadata,
+      services: associated,
+      needsAdmin: associated.contains { $0.privileged && $0.loaded }
+        || !fm.isWritableFile(atPath: url.deletingLastPathComponent().path)
+        || (try? fm.attributesOfItem(atPath: url.path)[.ownerAccountID] as? NSNumber)?.uint32Value
+          != getuid()
+    )
+  }
+  public func restore(
+    _ identity: RemovalIdentity, from path: String,
+    authorise: (AdministrativeRequest) throws -> AdministrativeResult
+  ) throws {
+    let source = URL(fileURLWithPath: path)
+    let request = AdministrativeRequest(
+      action: .restoreApp, identity: identity,
+      appFingerprint: try fingerprint(source), recoveryPath: path)
+    _ = try AdministrativeRemoval.validate(request)
+    let result = try authorise(request)
+    guard result.nonce == request.nonce, result.destination == identity.app.path,
+      !FileManager.default.fileExists(atPath: path),
+      NSDictionary(
+        contentsOf: URL(fileURLWithPath: identity.app.path).appendingPathComponent(
+          "Contents/Info.plist"))?["CFBundleIdentifier"] as? String == identity.bundleID
+    else {
+      throw OperationError("The restored app could not be verified.")
+    }
   }
   public func remove(
     _ plan: RemovalPlan, onStage: (QueueStage) -> Void,
-    log: @escaping (String) -> Void = { _ in }
+    log: @escaping (String) -> Void = { _ in },
+    authorise: ((AdministrativeRequest) throws -> AdministrativeResult)? = nil
   ) throws -> RemovalResult {
     onStage(.preparing)
     let app = plan.identity.app
@@ -313,7 +345,8 @@ public struct RemovalEngine: Sendable {
     }
     let current = try prepare(plan.identity)
     guard current.method == plan.method, current.cask == plan.cask,
-      current.caskFingerprint == plan.caskFingerprint
+      current.caskFingerprint == plan.caskFingerprint,
+      current.services == plan.services
     else {
       throw OperationError("The removal method changed after review. Review again.")
     }
@@ -321,8 +354,49 @@ public struct RemovalEngine: Sendable {
     guard try fingerprint(url) == plan.fingerprint else {
       throw OperationError("The app changed during preparation.")
     }
+    // A new copy must not lose a shared job when one bundle is removed.
+    let before = Inventory.scan(roots: roots)
+    if !plan.services.isEmpty {
+      guard before.warnings.isEmpty,
+        !before.apps.contains(where: { $0.bundleID == app.bundleID && $0.path != app.path })
+      else {
+        throw OperationError(
+          "Another copy uses the background services. Review the copies together.")
+      }
+      onStage(.stoppingServices)
+      let system = plan.services.filter { $0.privileged && $0.loaded }
+      if !system.isEmpty {
+        guard let authorise else {
+          throw OperationError("Administrator authorisation is required.")
+        }
+        let request = AdministrativeRequest(
+          action: .stopServices, identity: plan.identity,
+          appFingerprint: plan.fingerprint, services: system)
+        onStage(.authorising)
+        let result = try authorise(request)
+        onStage(.stoppingServices)
+        guard result.nonce == request.nonce, Set(result.stopped) == Set(system.map(\.id)) else {
+          throw OperationError("The administrative result could not be verified.")
+        }
+      }
+      for service in plan.services where !service.privileged {
+        try services.stop(service, identity: plan.identity)
+        log("Stopped and verified: \(service.id)\n")
+      }
+      for service in plan.services {
+        guard try !services.state(service.id, expectedProgram: service.program) else {
+          throw OperationError("The background service is still registered.")
+        }
+      }
+    }
+    guard try fingerprint(url) == plan.fingerprint,
+      NSRunningApplication.runningApplications(withBundleIdentifier: app.bundleID).isEmpty
+    else {
+      throw OperationError("The app changed or started while services were stopping. Review again.")
+    }
     onStage(.removing)
     var trashPath: String?
+    var recoveryPath: String?
     if let token = plan.cask {
       let result = try Command.run(brew.executable, ["uninstall", "--cask", token], onOutput: log)
       guard result.code == 0 else {
@@ -341,14 +415,45 @@ public struct RemovalEngine: Sendable {
       }
     } else {
       var destination: NSURL?
-      try FileManager.default.trashItem(at: url, resultingItemURL: &destination)
+      do {
+        try FileManager.default.trashItem(at: url, resultingItemURL: &destination)
+      } catch {
+        let code = error as NSError
+        log(
+          "Trash error: \(code.domain) \(code.code); underlying: \(code.userInfo[NSUnderlyingErrorKey] ?? "none")\n"
+        )
+        guard let authorise,
+          (code.domain == NSCocoaErrorDomain && code.code == NSFileWriteNoPermissionError)
+            || (code.domain == NSPOSIXErrorDomain && [Int(EACCES), Int(EPERM)].contains(code.code))
+        else { throw error }
+        log("Requesting the native macOS Trash operation.\n")
+        do { destination = try WorkspaceTrash.move(url) as NSURL } catch {
+          let native = error as NSError
+          guard
+            (native.domain == NSCocoaErrorDomain && native.code == NSFileWriteNoPermissionError)
+              || (native.domain == NSPOSIXErrorDomain
+                && [Int(EACCES), Int(EPERM)].contains(native.code))
+          else { throw error }
+          let request = AdministrativeRequest(
+            action: .trashApp, identity: plan.identity, appFingerprint: plan.fingerprint)
+          log("Requesting scoped administrative removal.\n")
+          onStage(.authorising)
+          let result = try authorise(request)
+          onStage(.removing)
+          guard let path = result.destination, result.nonce == request.nonce else {
+            throw OperationError("The administrative result could not be verified.")
+          }
+          destination = URL(fileURLWithPath: path) as NSURL
+          recoveryPath = path
+        }
+      }
       guard let trash = destination as URL?,
         let info = NSDictionary(contentsOf: trash.appendingPathComponent("Contents/Info.plist")),
         info["CFBundleIdentifier"] as? String == app.bundleID
       else {
         throw OperationError("The app's destination in Trash could not be verified.")
       }
-      trashPath = trash.path
+      if recoveryPath == nil { trashPath = trash.path }
     }
     onStage(.verifying)
     guard !FileManager.default.fileExists(atPath: url.path),
@@ -364,6 +469,7 @@ public struct RemovalEngine: Sendable {
     }
     return RemovalResult(
       trashPath: trashPath,
-      remainingCopies: inventory.apps.filter { $0.bundleID == app.bundleID }.count)
+      remainingCopies: inventory.apps.filter { $0.bundleID == app.bundleID }.count,
+      recoveryPath: recoveryPath)
   }
 }

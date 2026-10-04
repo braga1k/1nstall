@@ -7,6 +7,7 @@ let package = Package(
   targets: [
     .target(name: "OneInstallCore", resources: [.process("Resources")]),
     .executableTarget(name: "OneInstall", dependencies: ["OneInstallCore"]),
+    .executableTarget(name: "OneInstallAdmin", dependencies: ["OneInstallCore"]),
     .executableTarget(
       name: "OneInstallChecks", dependencies: ["OneInstallCore"], path: "Tests/OneInstallCoreTests"),
   ], swiftLanguageModes: [.v5]

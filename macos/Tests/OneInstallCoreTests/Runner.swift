@@ -42,6 +42,47 @@ func requireValue<T>(_ value: T?) throws -> T {
     let c = CoreTests()
     let tests: [(String, () throws -> Void)] = [
       (
+        "testRecoveryJournalRequiresAnExistingMatchingBundle",
+        c.testRecoveryJournalRequiresAnExistingMatchingBundle
+      ),
+      (
+        "testRecoveryJournalCannotPointOutsideRecoveryDirectory",
+        c.testRecoveryJournalCannotPointOutsideRecoveryDirectory
+      ),
+      (
+        "testRecoveryRefusesExistingDestinationBeforeAuthorisation",
+        c.testRecoveryRefusesExistingDestinationBeforeAuthorisation
+      ),
+      (
+        "testNewQueueStagesAndRecoveryPathSurviveRestart",
+        c.testNewQueueStagesAndRecoveryPathSurviveRestart
+      ),
+
+      (
+        "testServiceDiscoveryBindsExecutableAndProtectsForeignLabels",
+        c.testServiceDiscoveryBindsExecutableAndProtectsForeignLabels
+      ),
+      (
+        "testSystemServicesAreReviewedButNeverStoppedWithoutAuthorisation",
+        c.testSystemServicesAreReviewedButNeverStoppedWithoutAuthorisation
+      ),
+      (
+        "testLoadedDisposableServiceStopsBeforeAppRemoval",
+        c.testLoadedDisposableServiceStopsBeforeAppRemoval
+      ),
+      (
+        "testChangedServicePlanPreservesAppAndService",
+        c.testChangedServicePlanPreservesAppAndService
+      ),
+      (
+        "testServiceSiblingCopyPreservesTheSharedJob", c.testServiceSiblingCopyPreservesTheSharedJob
+      ),
+      (
+        "testAdministrativeWorkerRejectsUnprivilegedMalformedAndProtectedRequests",
+        c.testAdministrativeWorkerRejectsUnprivilegedMalformedAndProtectedRequests
+      ),
+
+      (
         "testExternalHomebrewUsesRecordedArtifactsAndVerifiesReceiptRemoval",
         c.testExternalHomebrewUsesRecordedArtifactsAndVerifiesReceiptRemoval
       ),
@@ -58,8 +99,8 @@ func requireValue<T>(_ value: T?) throws -> T {
         c.testSharedAssociationAppearingAfterReviewBlocksCleanup
       ),
       (
-        "testSystemResiduesAreMeasuredButCannotBeTrashed",
-        c.testSystemResiduesAreMeasuredButCannotBeTrashed
+        "testSystemResiduesNeedScopedAdministrativeRemoval",
+        c.testSystemResiduesNeedScopedAdministrativeRemoval
       ),
       (
         "testLegacySavedStateWithoutRemovalMetadataStillLoads",

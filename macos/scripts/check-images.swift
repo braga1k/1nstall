@@ -5,6 +5,13 @@ let base = URL(fileURLWithPath: CommandLine.arguments[1])
 let original = URL(fileURLWithPath: CommandLine.arguments[2])
 let previous =
   CommandLine.arguments.count > 3 ? URL(fileURLWithPath: CommandLine.arguments[3]) : nil
+func referenceImage(_ url: URL) -> NSImage {
+  guard let image = NSImage(contentsOf: url) else {
+    fputs("Missing or unreadable reference image: \(url.path)\n", stderr)
+    exit(1)
+  }
+  return image
+}
 let images = try FileManager.default.contentsOfDirectory(at: base, includingPropertiesForKeys: nil)
 var failures = 0
 let monochrome = images.filter {
@@ -31,8 +38,8 @@ for url in monochrome.sorted(by: { $0.path < $1.path }) {
     "\(url.lastPathComponent): \(b.pixelsWide)x\(b.pixelsHigh), maximum RGB difference \(maximum), pixels >1: \(coloured)"
   )
 }
-if monochrome.count != 6 {
-  print("Expected six monochrome views")
+if monochrome.count != 8 {
+  print("Expected eight monochrome views")
   failures += 1
 }
 let names = [
@@ -51,10 +58,10 @@ NSRect(x: 0, y: 0, width: 620 * columns, height: 1800).fill()
 for (i, name) in names.enumerated() {
   let y = 1800 - (i + 1) * 450
   var sources = [("Windows 3.5.0", original)]
-  if let previous { sources.append(("macOS 0.2.2", previous)) }
-  sources.append(("macOS 0.3.0", base))
+  if let previous { sources.append(("macOS 0.3.0", previous)) }
+  sources.append(("macOS 0.4.0", base))
   for (col, source) in sources.enumerated() {
-    NSImage(contentsOf: source.1.appendingPathComponent(name))!.draw(
+    referenceImage(source.1.appendingPathComponent(name)).draw(
       in: NSRect(x: col * 620, y: y, width: 620, height: 420))
     (source.0 + " · " + name as NSString).draw(
       at: NSPoint(x: col * 620 + 12, y: y + 426),
@@ -73,8 +80,8 @@ NSGraphicsContext.saveGraphicsState()
 NSGraphicsContext.current = NSGraphicsContext(bitmapImageRep: removal)
 NSColor(calibratedWhite: 0.08, alpha: 1).setFill()
 NSRect(x: 0, y: 0, width: 1240, height: 450).fill()
-for (column, source) in [("Windows 3.5.0", original), ("macOS 0.3.0", base)].enumerated() {
-  NSImage(contentsOf: source.1.appendingPathComponent("uninstall-dark.png"))!.draw(
+for (column, source) in [("Windows 3.5.0", original), ("macOS 0.4.0", base)].enumerated() {
+  referenceImage(source.1.appendingPathComponent("uninstall-dark.png")).draw(
     in: NSRect(x: column * 620, y: 0, width: 620, height: 420))
   (source.0 + " · Uninstall" as NSString).draw(
     at: NSPoint(x: column * 620 + 12, y: 426),
@@ -94,8 +101,8 @@ NSColor(calibratedWhite: 0.08, alpha: 1).setFill()
 NSRect(x: 0, y: 0, width: 1240, height: 1800).fill()
 for (row, appearance) in ["dark", "light", "dark-monochrome", "light-monochrome"].enumerated() {
   let y = 1800 - (row + 1) * 450
-  for (column, source) in [("Windows 3.5.0", original), ("macOS 0.3.0", base)].enumerated() {
-    NSImage(contentsOf: source.1.appendingPathComponent("settings-" + appearance + ".png"))!.draw(
+  for (column, source) in [("Windows 3.5.0", original), ("macOS 0.4.0", base)].enumerated() {
+    referenceImage(source.1.appendingPathComponent("settings-" + appearance + ".png")).draw(
       in: NSRect(x: column * 620, y: y, width: 620, height: 420))
     (source.0 + " · Settings · " + appearance as NSString).draw(
       at: NSPoint(x: column * 620 + 12, y: y + 426),

@@ -129,7 +129,8 @@ public enum Inventory {
   }
 }
 public enum QueueStage: String, Codable, Sendable {
-  case waiting, preparing, installing, removing, verifying, succeeded, failed, guided, stopped,
+  case waiting, preparing, installing, authorising, stoppingServices, removing, verifying,
+    succeeded, failed, guided, stopped,
     interrupted
   public var terminal: Bool {
     [.succeeded, .failed, .guided, .stopped, .interrupted].contains(self)
@@ -146,6 +147,7 @@ public struct QueueEntry: Codable, Identifiable, Sendable {
   public var removedApp: RemovalIdentity?
   public var removalMethod: RemovalMethod?
   public var trashPath: String?
+  public var recoveryPath: String?
   public init(app: CatalogApp, operation: String) {
     id = UUID()
     appID = app.id
@@ -155,11 +157,14 @@ public struct QueueEntry: Codable, Identifiable, Sendable {
     detail = ""
     date = Date()
   }
-  public init(cleanup identity: RemovalIdentity, detail: String, succeeded: Bool) {
+  public init(
+    cleanup identity: RemovalIdentity, detail: String, succeeded: Bool,
+    operation: String = "cleanup"
+  ) {
     id = UUID()
     appID = identity.id
     name = identity.name
-    operation = "cleanup"
+    self.operation = operation
     stage = succeeded ? .succeeded : .failed
     self.detail = detail
     date = Date()

@@ -280,6 +280,10 @@ extension ContentView {
               .plain
             ).font(.system(size: 11)).underline()
           }
+          if entry.recoveryPath != nil {
+            Button(m.t("Restore app", "Restaurar app")) { m.restoreApp(entry) }
+              .buttonStyle(GlassButtonStyle(compact: true)).disabled(m.busy)
+          }
           if entry.operation == "remove", entry.stage == .succeeded,
             let app = m.identity(for: entry)
           {

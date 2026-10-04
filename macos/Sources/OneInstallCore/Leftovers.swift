@@ -3,7 +3,7 @@ import CryptoKit
 import Foundation
 
 public enum DataKind: String, Codable, Sendable { case regenerable, personal, shared, system }
-public struct Leftover: Identifiable, Sendable {
+public struct Leftover: Identifiable, Codable, Sendable {
   public var id: String { url.path }
   public let url: URL
   public let kind: DataKind
@@ -12,7 +12,9 @@ public struct Leftover: Identifiable, Sendable {
   public let complete: Bool
   public let fingerprint: String
   public let reason: String
-  public var selectable: Bool { complete && kind != .shared && kind != .system }
+  public var selectable: Bool {
+    complete && kind != .shared && (kind != .system || reason == "systemExact")
+  }
 }
 public struct LeftoverReport: Sendable {
   public init() {}
@@ -192,7 +194,11 @@ public struct LeftoverScanner: Sendable {
           guard url.resolvingSymlinksInPath().path == url.path else {
             throw OperationError("Protected link")
           }
-          let item = try measure(url, kind: .system, reason: "system")
+          let exact = [
+            "Preferences/\(identity.bundleID).plist", "Application Support/\(identity.bundleID)",
+            "Caches/\(identity.bundleID)", "Logs/\(identity.bundleID)",
+          ].contains(relative)
+          let item = try measure(url, kind: .system, reason: exact ? "systemExact" : "system")
           report.items.append(item)
           if !item.complete { report.warnings.append("Partial measurement: \(url.path)") }
         } catch { report.warnings.append("\(url.path): \(error.localizedDescription)") }

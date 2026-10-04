@@ -5,9 +5,12 @@ DESTINATION="${1:-$MAC_DIR/build}"
 mkdir -p "$DESTINATION"
 DESTINATION="$(cd "$DESTINATION" && pwd)"
 swift build --package-path "$MAC_DIR" -c release --product 1nstall
+swift build --package-path "$MAC_DIR" -c release --product OneInstallAdmin
 BINARY_DIR="$(swift build --package-path "$MAC_DIR" -c release --show-bin-path)"
 APP="$DESTINATION/1nstall Mac Preview.app"
-mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
+mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources" "$APP/Contents/Helpers"
+cp "$BINARY_DIR/OneInstallAdmin" "$APP/Contents/Helpers/1nstall-admin"
+codesign --force --sign - "$APP/Contents/Helpers/1nstall-admin"
 cp "$BINARY_DIR/1nstall" "$APP/Contents/MacOS/1nstall"
 cp -R "$BINARY_DIR/OneInstallMac_OneInstallCore.bundle" "$APP/Contents/Resources/"
 cat > "$APP/Contents/Info.plist" <<'PLIST'
@@ -18,8 +21,8 @@ cat > "$APP/Contents/Info.plist" <<'PLIST'
 <key>CFBundleIdentifier</key><string>com.braga1k.1nstall.mac.preview</string>
 <key>CFBundleName</key><string>1nstall</string>
 <key>CFBundleDisplayName</key><string>1nstall Mac Preview</string>
-<key>CFBundleShortVersionString</key><string>0.3.0</string>
-<key>CFBundleVersion</key><string>5</string>
+<key>CFBundleShortVersionString</key><string>0.4.0</string>
+<key>CFBundleVersion</key><string>6</string>
 <key>CFBundlePackageType</key><string>APPL</string>
 <key>CFBundleIconFile</key><string>AppIcon</string>
 <key>LSMinimumSystemVersion</key><string>14.0</string>

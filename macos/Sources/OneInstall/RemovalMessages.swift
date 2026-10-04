@@ -6,6 +6,52 @@ extension AppModel {
     return Self.removalMessages[text] ?? text
   }
   private static let removalMessages: [String: String] = [
+    "A reviewed path is a symbolic link or changed location.":
+      "Um caminho revisto é uma ligação simbólica ou mudou de localização.",
+    "The reviewed metadata is too large.": "Os metadados revistos são demasiado grandes.",
+    "A service directory is a symbolic link. Review its location first.":
+      "Uma pasta de serviços é uma ligação simbólica. Revê primeiro a sua localização.",
+    "Several files claim the same background service. Resolve the conflict first.":
+      "Vários ficheiros identificam o mesmo serviço em segundo plano. Resolve primeiro o conflito.",
+    "The background service state could not be verified.":
+      "Não foi possível verificar o estado do serviço em segundo plano.",
+    "A loaded service belongs to another executable. It was preserved.":
+      "Um serviço carregado pertence a outro executável. Foi preservado.",
+    "The background service changed after review.":
+      "O serviço em segundo plano mudou após a revisão.",
+    "The background service could not be stopped. Its app was preserved.":
+      "Não foi possível parar o serviço em segundo plano. A app foi preservada.",
+    "Another copy uses the background services. Review the copies together.":
+      "Outra cópia utiliza os serviços em segundo plano. Revê as cópias em conjunto.",
+    "The app changed or started while services were stopping. Review again.":
+      "A app mudou ou foi aberta enquanto os serviços paravam. Revê novamente.",
+    "Administrator authorisation is required.": "É necessária autorização de administrador.",
+    "Administrator authorisation was cancelled. No success was recorded.":
+      "A autorização de administrador foi cancelada. Não foi registado sucesso.",
+    "The administrative result could not be verified.":
+      "Não foi possível verificar o resultado administrativo.",
+    "The administrative component is missing.": "Falta o componente administrativo.",
+    "The administrative request is too large.": "O pedido administrativo é demasiado grande.",
+    "Unable to prepare native authorisation.": "Não foi possível preparar a autorização nativa.",
+    "The app signature is invalid. Rebuild before requesting authorisation.":
+      "A assinatura da app é inválida. É necessário recompilar antes de pedir autorização.",
+    "The recovery directory is a symbolic link.": "A pasta de recuperação é uma ligação simbólica.",
+    "The recovery destination could not be verified.":
+      "Não foi possível verificar o destino de recuperação.",
+    "The reviewed file changed before removal.": "O ficheiro revisto mudou antes da remoção.",
+    "The recovery item or destination changed. Existing files were preserved.":
+      "O item de recuperação ou o destino mudou. Os ficheiros existentes foram preservados.",
+    "The restored app could not be verified.": "Não foi possível verificar a app restaurada.",
+    "Invalid recovery request.": "Pedido de recuperação inválido.",
+    "Invalid administrative request.": "Pedido administrativo inválido.",
+    "Invalid service plan.": "Plano de serviços inválido.",
+    "Invalid service scope.": "Âmbito de serviço inválido.",
+    "The account for this removal could not be verified.":
+      "Não foi possível verificar a conta para esta remoção.",
+    "The account's home directory could not be verified.":
+      "Não foi possível verificar a pasta pessoal da conta.",
+    "Homebrew or services require their reviewed removal method.":
+      "O Homebrew ou os serviços requerem o método de remoção revisto.",
     "This application is protected.": "Esta aplicação está protegida.",
     "The selected app's location or identity changed. Refresh and review again.":
       "A localização ou a identidade da app mudou. Atualiza o inventário e revê novamente.",

@@ -42,6 +42,7 @@ import UniformTypeIdentifiers
   @Published var leftoverSelection: Set<String> = []
   @Published var leftoverResult = ""
   @Published var cleanupConfirm = false
+  @Published var recoveryRecords: [RecoveryRecord] = []
   var persistenceBlocked = false
   let capture: Bool
   let storage: URL
@@ -125,6 +126,12 @@ import UniformTypeIdentifiers
     refresh()
   }
   func refresh() {
+    if !capture {
+      Task {
+        recoveryRecords = await Task.detached(priority: .utility) { RecoveryStore.records() }.value
+      }
+    }
+
     guard !scanning else { return }
     scanning = true
     Task {
@@ -280,6 +287,10 @@ import UniformTypeIdentifiers
     case .waiting: return t("Waiting", "Em espera")
     case .preparing: return t("Preparing", "A preparar")
     case .installing: return t("Installing", "A instalar")
+    case .authorising:
+      return t("Waiting for macOS authorisation", "A aguardar autorização do macOS")
+    case .stoppingServices:
+      return t("Stopping background services", "A parar serviços em segundo plano")
     case .removing: return t("Removing", "A desinstalar")
     case .verifying: return t("Verifying", "A verificar")
     case .succeeded: return t("Verified", "Confirmado")
@@ -291,9 +302,11 @@ import UniformTypeIdentifiers
     }
   }
   func resultLabel(_ entry: QueueEntry) -> String {
-    (entry.operation == "cleanup"
-      ? t("Data cleanup", "Limpeza de dados")
-      : entry.operation == "remove" ? t("Removal", "Remoção") : t("Installation", "Instalação"))
+    (entry.operation == "restore"
+      ? t("Restoration", "Restauro")
+      : entry.operation == "cleanup"
+        ? t("Data cleanup", "Limpeza de dados")
+        : entry.operation == "remove" ? t("Removal", "Remoção") : t("Installation", "Instalação"))
       + " · " + stageName(entry.stage)
   }
   func celebrate() {
@@ -422,19 +435,26 @@ import UniformTypeIdentifiers
                   self.state.queue[i].stage = stage
                   self.save()
                 }
-              }, log: { text in DispatchQueue.main.async { self?.appendLog(text) } })
+              }, log: { text in DispatchQueue.main.async { self?.appendLog(text) } },
+              authorise: NativeAuthorisation.perform)
           }.value
           state.queue[i].stage = .succeeded
           state.queue[i].trashPath = result.trashPath
+          state.queue[i].recoveryPath = result.recoveryPath
           state.queue[i].detail =
-            result.trashPath == nil
+            result.recoveryPath != nil
             ? t(
-              "App and Homebrew record removed. Personal data kept for review.",
-              "App e registo Homebrew removidos. Dados pessoais preservados para revisão.")
-            : t(
-              "App moved to Trash and verified. Data kept for review; disk space is not yet freed.",
-              "App movida para o Lixo e verificada. Dados preservados para revisão; o espaço ainda não foi libertado."
+              "App removed and verified. Kept in 1nstall Recovery; disk space is not yet freed.",
+              "App removida e verificada. Guardada na Recuperação da 1nstall; o espaço ainda não foi libertado."
             )
+            : result.trashPath == nil
+              ? t(
+                "App and Homebrew record removed. Personal data kept for review.",
+                "App e registo Homebrew removidos. Dados pessoais preservados para revisão.")
+              : t(
+                "App moved to Trash and verified. Data kept for review; disk space is not yet freed.",
+                "App movida para o Lixo e verificada. Dados preservados para revisão; o espaço ainda não foi libertado."
+              )
           if result.remainingCopies > 0 {
             state.queue[i].detail += t(
               " Another copy remains installed; data cleanup is blocked.",
@@ -537,6 +557,55 @@ import UniformTypeIdentifiers
       }
     }
   }
+  func restoreRecord(_ record: RecoveryRecord) {
+    var entry = QueueEntry(
+      cleanup: record.identity, detail: "", succeeded: true, operation: "remove")
+    entry.recoveryPath = record.recoveryPath
+    restoreApp(entry)
+  }
+  func openRecovery() {
+    let directory = AdministrativeRemoval.recoveryDirectory(
+      home: FileManager.default.homeDirectoryForCurrentUser)
+    if FileManager.default.fileExists(atPath: directory.path) { NSWorkspace.shared.open(directory) }
+  }
+  func restoreApp(_ entry: QueueEntry) {
+    guard !busy, !capture, let identity = entry.removedApp, let path = entry.recoveryPath else {
+      return
+    }
+    busy = true
+    var restoring = QueueEntry(
+      cleanup: identity, detail: "", succeeded: false, operation: "restore")
+    restoring.stage = .authorising
+    state.queue = [restoring]
+    save()
+    status = t(
+      "Restoring the app. macOS may request authorisation…",
+      "A restaurar a app. O macOS poderá pedir autorização…")
+    Task {
+      var succeeded = false
+      do {
+        try await Task.detached(priority: .userInitiated) {
+          try RemovalEngine().restore(identity, from: path, authorise: NativeAuthorisation.perform)
+        }.value
+        status = t("App restored and verified.", "App restaurada e verificada.")
+        for i in state.queue.indices where state.queue[i].recoveryPath == path {
+          state.queue[i].recoveryPath = nil
+        }
+        for i in state.history.indices where state.history[i].recoveryPath == path {
+          state.history[i].recoveryPath = nil
+        }
+        succeeded = true
+      } catch { status = issueText(error.localizedDescription) }
+      state.queue[0].stage = succeeded ? .succeeded : .failed
+      state.queue[0].detail = status
+      state.history.append(state.queue[0])
+      state.history = Array(state.history.suffix(200))
+      appendLog(status + "\n")
+      busy = false
+      save()
+      refresh()
+    }
+  }
   func scanLeftovers(_ app: CatalogApp) { scanLeftovers(RemovalIdentity(catalog: app)) }
   func scanLeftovers(_ installed: InstalledApp) {
     guard !busy else { return }
@@ -586,10 +655,23 @@ import UniformTypeIdentifiers
             break
           }
           do {
-            let destination = try scanner.trash(item, for: app, installed: inventory.apps)
+            let destination: URL
+            if item.kind == .system {
+              let request = AdministrativeRequest(action: .trashData, identity: app, data: item)
+              let result = try NativeAuthorisation.perform(request)
+              guard let path = result.destination, result.nonce == request.nonce,
+                !FileManager.default.fileExists(atPath: item.url.path),
+                FileManager.default.fileExists(atPath: path)
+              else {
+                throw OperationError("Moving to Trash was not confirmed.")
+              }
+              destination = URL(fileURLWithPath: path)
+            } else {
+              destination = try scanner.trash(item, for: app, installed: inventory.apps)
+            }
             count += 1
             bytes += item.bytes
-            errors.append("Trash: \(destination.path)")
+            errors.append((item.kind == .system ? "Recovery: " : "Trash: ") + destination.path)
           } catch { errors.append(error.localizedDescription) }
         }
         return (count, bytes, errors)
@@ -600,13 +682,15 @@ import UniformTypeIdentifiers
       leftoverResult =
         "\(result.0)/\(items.count) · \(ByteCountFormatter.string(fromByteCount:result.1,countStyle:.file)) "
         + t(
-          "moved to Trash. Disk space is not yet freed.",
-          "movidos para o Lixo. O espaço em disco ainda não foi libertado.")
+          "removed. Protected items are in 1nstall Recovery; other items are in Trash. Space is not yet freed.",
+          "removidos. Os itens protegidos estão na Recuperação da 1nstall; os restantes no Lixo. O espaço ainda não foi libertado."
+        )
       appendLog(leftoverResult + "\n" + result.2.joined(separator: "\n") + "\n")
       state.history.append(
         QueueEntry(cleanup: app, detail: leftoverResult, succeeded: result.0 == items.count))
       state.history = Array(state.history.suffix(200))
       save()
+      recoveryRecords = await Task.detached(priority: .utility) { RecoveryStore.records() }.value
       let installed = inventory.apps
       leftoverReport = await Task.detached(priority: .utility) {
         LeftoverScanner().scan(app, installed: installed)

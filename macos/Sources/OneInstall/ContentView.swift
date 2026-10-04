@@ -541,7 +541,7 @@ struct ContentView: View {
           Toggle(m.t("Reduce motion", "Reduzir movimento"), isOn: $m.lessMotion)
             .toggleStyle(.checkbox)
         }
-        settingsCard(m.t("About", "Sobre"), subtitle: "1nstall Mac Preview 0.3.0 · Apple Silicon") {
+        settingsCard(m.t("About", "Sobre"), subtitle: "1nstall Mac Preview 0.4.0 · Apple Silicon") {
           Text(
             m.t(
               "\(m.apps.count) curated entries · \(m.apps.filter(\.automatic).count) reviewed Homebrew installers.",
@@ -623,6 +623,34 @@ struct ContentView: View {
                 "As tuas operações vão aparecer aqui.")
             ).foregroundStyle(p.secondary)
           }
+          if !m.recoveryRecords.isEmpty {
+            VStack(alignment: .leading, spacing: 10) {
+              Text(m.t("1nstall Recovery", "Recuperação da 1nstall")).fontWeight(.semibold)
+              Text(
+                m.t(
+                  "These items remain on disk until restored or removed from the recovery folder.",
+                  "Estes itens continuam no disco até serem restaurados ou removidos da pasta de recuperação."
+                )
+              )
+              .font(.system(size: 11)).foregroundStyle(p.secondary)
+              ForEach(m.recoveryRecords) { record in
+                HStack {
+                  VStack(alignment: .leading) {
+                    Text(record.identity.name)
+                    Text(record.originalPath).font(.system(size: 10, design: .monospaced))
+                      .textSelection(.enabled)
+                  }
+                  Spacer()
+                  if record.application {
+                    Button(m.t("Restore app", "Restaurar app")) { m.restoreRecord(record) }
+                      .buttonStyle(GlassButtonStyle(compact: true)).disabled(m.busy)
+                  }
+                }
+              }
+              Button(m.t("Open recovery folder", "Abrir pasta de recuperação")) { m.openRecovery() }
+                .buttonStyle(GlassButtonStyle(compact: true))
+            }.padding(16).glass()
+          }
           ForEach(m.state.history.reversed()) { entry in
             VStack(alignment: .leading, spacing: 8) {
               HStack {
@@ -630,15 +658,25 @@ struct ContentView: View {
                 Spacer()
                 Text(m.resultLabel(entry))
               }
-              Text(entry.date, style: .date).font(.system(size: 11))
+              Text(
+                entry.date.formatted(
+                  Date.FormatStyle(date: .abbreviated, time: .omitted).locale(
+                    Locale(identifier: m.pt ? "pt_PT" : "en_GB")))
+              ).font(.system(size: 11))
               if !entry.detail.isEmpty {
-                Text(m.issueText(entry.detail)).font(.system(size: 11, design: .monospaced))
-                  .textSelection(
-                    .enabled)
+                Text(m.issueText(entry.detail)).font(
+                  .system(size: 11, design: .monospaced)
+                )
+                .textSelection(
+                  .enabled)
               }
               if entry.operation == "remove", entry.stage == .succeeded,
                 let app = m.identity(for: entry)
               {
+                if entry.recoveryPath != nil {
+                  Button(m.t("Restore app", "Restaurar app")) { m.restoreApp(entry) }
+                    .buttonStyle(GlassButtonStyle(compact: true)).disabled(m.busy)
+                }
                 Button(m.t("Review leftovers", "Rever resíduos")) { m.scanLeftovers(app) }
                   .buttonStyle(GlassButtonStyle(compact: true))
               }
@@ -707,8 +745,8 @@ struct ContentView: View {
       Text(
         m.page == "uninstall"
           ? m.t(
-            "Apps are moved to Trash, or uninstalled with Homebrew when it owns the bundle. Preferences and support files are kept for a separate review. Quit each app first.",
-            "As apps são movidas para o Lixo ou desinstaladas pelo Homebrew quando este gere a instalação. As preferências e o suporte ficam para uma revisão separada. Fecha cada app primeiro."
+            "Apps are moved to Trash, or uninstalled with Homebrew when it owns the bundle. Associated services are stopped and verified first. Preferences and support files are kept for a separate review. Quit each app first. macOS requests permission when needed. Apps requiring administrator access go to 1nstall Recovery and can be restored.",
+            "As apps são movidas para o Lixo ou desinstaladas pelo Homebrew quando este gere a instalação. Os serviços associados são parados e verificados primeiro. As preferências e o suporte ficam para uma revisão separada. Fecha cada app primeiro. O macOS pede autorização quando necessário. As apps que requerem acesso de administrador vão para a Recuperação da 1nstall e podem ser restauradas."
           )
           : m.t(
             "Homebrew installs the reviewed apps in /Applications. Guided entries open their official page; purchases and downloads remain your choice.",
@@ -725,6 +763,24 @@ struct ContentView: View {
                   Text(app.id).font(.system(size: 10, design: .monospaced)).foregroundStyle(
                     p.secondary
                   ).textSelection(.enabled)
+                  if let plan = m.removalPlans.first(where: { $0.id == app.id }) {
+                    ForEach(plan.services) { service in
+                      Text(
+                        (service.loaded
+                          ? m.t("Stop service: ", "Parar serviço: ")
+                          : m.t("Service inactive: ", "Serviço inativo: ")) + service.label
+                      )
+                      .font(.system(size: 10)).foregroundStyle(p.secondary)
+                    }
+                    if plan.needsAdmin {
+                      Text(
+                        m.t(
+                          "macOS may request administrator authorisation.",
+                          "O macOS poderá pedir autorização de administrador.")
+                      )
+                      .font(.system(size: 11, weight: .medium))
+                    }
+                  }
                 }
               }
               Spacer()
@@ -854,13 +910,15 @@ struct ContentView: View {
       if m.cleanupConfirm {
         Text(
           m.t(
-            "Move the selected items, including any personal data, to Trash? You can restore them from Trash.",
-            "Mover os itens selecionados, incluindo eventuais dados pessoais, para o Lixo? Podes restaurá-los a partir do Lixo."
+            "Move the selected items, including any personal data, to Trash? System resources need administrator authorisation and go to 1nstall Recovery. Restoring protected items may also require permission.",
+            "Mover os itens selecionados, incluindo eventuais dados pessoais, para o Lixo? Os recursos do sistema requerem autorização de administrador e vão para a Recuperação da 1nstall. A recuperação de itens protegidos também poderá pedir autorização."
           )
         ).fontWeight(.medium)
         HStack {
           button(m.t("Back", "Voltar")) { m.cleanupConfirm = false }
-          button(m.t("Move to Trash", "Mover para o Lixo"), prominent: true) { m.cleanup() }
+          button(m.t("Remove selected items", "Remover itens selecionados"), prominent: true) {
+            m.cleanup()
+          }
         }
       } else {
         button(m.t("Review selected cleanup", "Rever a limpeza selecionada"), prominent: true) {
@@ -873,6 +931,11 @@ struct ContentView: View {
   }
   func association(_ reason: String) -> String {
     switch reason {
+    case "systemExact":
+      return m.t(
+        "Exact bundle identifier. Administrator authorisation is required; contents go to 1nstall Recovery.",
+        "Identificador exato da app. Requer autorização de administrador; o conteúdo vai para a Recuperação da 1nstall."
+      )
     case "system":
       return m.t(
         "System-wide resource. Needs a dedicated removal handler; kept here.",
@@ -915,7 +978,7 @@ struct ContentView: View {
   }
   func kind(_ kind: DataKind) -> String {
     switch kind {
-    case .system: return m.t("System resource · protected", "Recurso do sistema · protegido")
+    case .system: return m.t("System resource", "Recurso do sistema")
     case .personal: return m.t("Personal data", "Dados pessoais")
     case .regenerable: return m.t("Regenerable files", "Ficheiros regeneráveis")
     case .shared:

@@ -195,6 +195,25 @@ import SwiftUI
         model.state.removalSelection = ["/Fixture Applications/IINA.app"]
         try await captureFrame("uninstall" + suffix, to: directory)
         count += 1
+        let identity = RemovalIdentity(catalog: model.apps.first { $0.id == "iina" }!)
+        let request = AdministrativeRequest(action: .trashApp, identity: identity)
+        let recovery = RecoveryRecord(
+          request: request, source: URL(fileURLWithPath: identity.app.path),
+          destination: URL(fileURLWithPath: "/Fixture Recovery/1nstall-example.app"))
+        model.recoveryRecords = [recovery]
+        var recovered = QueueEntry(
+          cleanup: identity,
+          detail:
+            "App removed and verified. Kept in 1nstall Recovery; disk space is not yet freed.",
+          succeeded: true, operation: "remove")
+        recovered.recoveryPath = recovery.recoveryPath
+        model.state.history = [recovered]
+        model.page = "history"
+        try await captureFrame("recovery" + suffix, to: directory)
+        count += 1
+        model.state.history = []
+        model.recoveryRecords = []
+        model.page = "uninstall"
         if accent {
           var entry = QueueEntry(app: model.apps.first { $0.id == "iina" }!, operation: "remove")
           entry.stage = .succeeded

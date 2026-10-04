@@ -316,7 +316,7 @@ extension CoreTests {
     expectError(try scanner.trash(item, for: identity, installed: [other]))
     expectTrue(FileManager.default.fileExists(atPath: item.url.path))
   }
-  func testSystemResiduesAreMeasuredButCannotBeTrashed() throws {
+  func testSystemResiduesNeedScopedAdministrativeRemoval() throws {
     let identity = RemovalIdentity(catalog: app)
     try file("SystemLibrary/Application Support/\(app.bundleID)/data", "123456789")
     let scanner = LeftoverScanner(
@@ -326,7 +326,8 @@ extension CoreTests {
     expectEqual(item.bytes, 9)
     expectEqual(item.files, 1)
     expectTrue(item.complete)
-    expectFalse(item.selectable)
+    expectTrue(item.selectable)
+    expectEqual(item.reason, "systemExact")
     expectError(try scanner.trash(item, for: identity, installed: []))
   }
   func testLegacySavedStateWithoutRemovalMetadataStillLoads() throws {
