@@ -632,7 +632,12 @@ struct ContentView: View {
       line
       Text(m.sourceName(app)).fontWeight(.medium)
       Text(m.t("Reviewed version: ", "Versão revista: ") + app.version)
-      Text("macOS ≥ \(app.minimumOS) · \(app.architecture)")
+      Text(
+        app.minimumOS == "source"
+          ? m.t(
+            "Confirm current macOS requirements at the source.",
+            "Confirma os requisitos atuais de macOS na fonte.") + " · \(app.architecture)"
+          : "macOS ≥ \(app.minimumOS) · \(app.architecture)")
       Text(m.t("Source checked: ", "Fonte consultada: ") + app.verified).foregroundStyle(
         p.secondary)
       if app.automatic {
