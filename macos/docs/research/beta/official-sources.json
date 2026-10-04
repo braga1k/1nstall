@@ -1,0 +1,2290 @@
+[
+  {
+    "id": "signal",
+    "url": "https://signal.org/",
+    "finalURL": "https://signal.org/",
+    "status": 200,
+    "title": "Signal >> Home",
+    "macHints": [],
+    "sha256": "920d6a116b9276a1e2356fd655784792bdf108fb1148537927ecf927a71ad8b9"
+  },
+  {
+    "id": "zen",
+    "url": "https://zen-browser.app/",
+    "finalURL": "https://zen-browser.app/",
+    "status": 200,
+    "title": "Zen Browser",
+    "macHints": [],
+    "sha256": "1e394e294320a74865f11f894b1490bc867077067f1b3b7051708d69aaecaa7b"
+  },
+  {
+    "id": "cursor",
+    "url": "https://www.cursor.com/",
+    "error": "HTTP Error 308: Permanent Redirect"
+  },
+  {
+    "id": "karabiner-elements",
+    "url": "https://karabiner-elements.pqrs.org/",
+    "finalURL": "https://karabiner-elements.pqrs.org/",
+    "status": 200,
+    "title": "Karabiner-Elements",
+    "macHints": [
+      "Elements A powerful and stable keyboard customizer for macOS. Download v16.3.0 Toggle Dropdown Download v16.3.0 For macOS 27 Golden Gate For macOS 26 Tahoe For macOS 15 S",
+      " Download v16.3.0 Toggle Dropdown Download v16.3.0 For macOS 27 Golden Gate For macOS 26 Tahoe For macOS 15 Sequoia For macOS 14 Sonoma For macOS 13 Ventura Download v14.",
+      "Dropdown Download v16.3.0 For macOS 27 Golden Gate For macOS 26 Tahoe For macOS 15 Sequoia For macOS 14 Sonoma For macOS 13 Ventura Download v14.13.0 For macOS 12 Montere"
+    ],
+    "sha256": "08b4280e794d6071be7168f2cd8c007eb9c0c1f9119b62193fc734f4053b791b"
+  },
+  {
+    "id": "insomnia",
+    "url": "https://insomnia.rest/",
+    "finalURL": "https://insomnia.rest/",
+    "status": 200,
+    "title": "The Collaborative API Development Platform - Insomnia",
+    "macHints": [],
+    "sha256": "c5c2802be1f08c3deb04eb4ac772550b6f173b7cb560b4b73b8ba59aa4ff69a7"
+  },
+  {
+    "id": "betterdisplay",
+    "url": "https://betterdisplay.pro/",
+    "finalURL": "https://betterdisplay.pro/",
+    "status": 200,
+    "title": "BetterDisplay Pro | Unlock Your Mac Displays",
+    "macHints": [
+      "syncing, layout protection, and more. Download app for macOS Download the current v5.x release for macOS 26 Tahoe, macOS 27 Golden Gate v4.3.7 - Sequoia , Sonoma , Ventur",
+      "ad app for macOS Download the current v5.x release for macOS 26 Tahoe, macOS 27 Golden Gate v4.3.7 - Sequoia , Sonoma , Ventura | v3.5.6 | v2.3.9 - Monterey | v1.4.15 - M",
+      " Download the current v5.x release for macOS 26 Tahoe, macOS 27 Golden Gate v4.3.7 - Sequoia , Sonoma , Ventura | v3.5.6 | v2.3.9 - Monterey | v1.4.15 - Mojave , Catalina"
+    ],
+    "sha256": "64db103b2c06e2328956c2d6a182fcc3b65bfcb0d3b74bcecc8e82da92e80685"
+  },
+  {
+    "id": "vivaldi",
+    "url": "https://vivaldi.com/",
+    "finalURL": "https://vivaldi.com/",
+    "status": 200,
+    "title": "Vivaldi Browser | Powerful, Personal and Private web browser",
+    "macHints": [],
+    "sha256": "7216f6b90fecab999851caede72d3d862b48dc6187af9fd0741f71e70a5f82f4"
+  },
+  {
+    "id": "heroic",
+    "url": "https://github.com/Heroic-Games-Launcher/HeroicGamesLauncher/",
+    "finalURL": "https://github.com/Heroic-Games-Launcher/HeroicGamesLauncher/",
+    "status": 200,
+    "title": "GitHub - Heroic-Games-Launcher/HeroicGamesLauncher: A games launcher for GOG, Amazon and Epic Games for Linux, Windows and macOS. · GitHub",
+    "macHints": [
+      " for GOG, Amazon and Epic Games for Linux, Windows and macOS. · GitHub Skip to content Navigation Menu Sign in Appearance settings Platform AI CODE CREATION GitHub Copilo",
+      "is an Open Source Game Launcher for Linux, Windows and macOS. Right now it supports launching games from the Epic Games Store using Legendary , GOG Games using our custom",
+      "(OS) Other Distributions (AppImage and TAR.XZ) Windows macOS Development environment Building Heroic Binaries Building with VS Code Quickly testing/debugging Heroic on yo"
+    ],
+    "sha256": "19f7bc12672dd9247ed4f41cdeb1a49a3db50e1fda44e8ccb80a8e9532e86827"
+  },
+  {
+    "id": "capcut",
+    "url": "https://www.capcut.com/",
+    "finalURL": "https://www.capcut.com/",
+    "status": 200,
+    "title": "CapCut AI Video Editor: Smart Online Video Editing with Advanced AI Tools",
+    "macHints": [],
+    "sha256": "c16d951bd41e0a6f966c681d38856ad5cf9ccf3082ec5f7caf83c4d537002637"
+  },
+  {
+    "id": "thunderbird",
+    "url": "https://www.thunderbird.net/en-US/",
+    "finalURL": "https://www.thunderbird.net/en-US/",
+    "status": 200,
+    "title": "Thunderbird — Free Your Inbox. — Thunderbird",
+    "macHints": [
+      "il, calendar, and contacts app for Windows, Linux, and macOS. Thunderbird Mobile Learn about the leading open-source email app for Android. Resources Blog Learn about new",
+      "id Windows 64-bit Download Windows MSI 64-bit Download macOS Download Linux 64-bit Download Windows 32-bit Download Linux 32-bit Download Windows 64-bit (7/8.1) Download "
+    ],
+    "sha256": "49c5ce5a6c9d3ffb3aefcec1a0ded19c2178ea00bf48a8df79bd529b15685d90"
+  },
+  {
+    "id": "transmission",
+    "url": "https://transmissionbt.com/",
+    "finalURL": "https://transmissionbt.com/",
+    "status": 200,
+    "title": "Transmission",
+    "macHints": [
+      "ansmission A Fast, Easy and Free Bittorrent Client For macOS, Windows and Linux &nbsp; &nbsp;&nbsp;Download v4.1.3 stable &nbsp; &nbsp;&nbsp;Download v4.0 beta --> Releas",
+      "ating system. &nbsp; &nbsp;&nbsp;&nbsp;Transmission on macOS is a truly native and polished experience. This isn't some cross-platform app that treats macOS as an afterth",
+      "rience. This isn't some cross-platform app that treats macOS as an afterthought. With a sleek and simple interface, Transmission meets or exceeds Apple UI standards while"
+    ],
+    "sha256": "bc0b828f7e0345b543bc527612aea2ec3ef4d86a1815d574e794805d05a5c176"
+  },
+  {
+    "id": "inkscape",
+    "url": "https://inkscape.org/",
+    "finalURL": "https://inkscape.org/",
+    "status": 200,
+    "title": "Inkscape - Draw Freely. | Inkscape",
+    "macHints": [],
+    "sha256": "2346d6fdb3723465c2aec642a8c85730ae4da5f7cad7bd1bfa14102db6aff8e2"
+  },
+  {
+    "id": "krita",
+    "url": "https://krita.org/",
+    "finalURL": "https://krita.org/",
+    "status": 200,
+    "title": "https://krita.org/en/",
+    "macHints": [],
+    "sha256": "b92b1cb2f0f01aa5d5be46472976afa3102bfa29f21f1f2c76487efc2bd9eee4"
+  },
+  {
+    "id": "steam",
+    "url": "https://store.steampowered.com/about/",
+    "finalURL": "https://store.steampowered.com/about/",
+    "status": 200,
+    "title": "Steam, The Ultimate Online Game Platform",
+    "macHints": [],
+    "sha256": "d7d38132324e4b5cc841c074bc9f0d96eb6ebd27047ce6a399f42e013057bcd2"
+  },
+  {
+    "id": "sublime-text",
+    "url": "https://www.sublimetext.com/",
+    "finalURL": "https://www.sublimetext.com/",
+    "status": 200,
+    "title": "Sublime Text - Text Editing, Done Right",
+    "macHints": [
+      "K resolutions, all while using less power than before. Apple Silicon and Linux ARM64 Sublime Text for Mac now includes native support for Apple Silicon processors. Linux ARM64 bu",
+      "4 Sublime Text for Mac now includes native support for Apple Silicon processors. Linux ARM64 builds are also available for devices like the Raspberry Pi. Tab Multi-Select File ta"
+    ],
+    "sha256": "ae0322a60dae8655d18be81d6ec748f3ba5271eab5453353dcc7d3e5af88dc86"
+  },
+  {
+    "id": "microsoft-edge",
+    "url": "https://www.microsoft.com/en-us/edge?form=",
+    "finalURL": "https://explore.microsoft.com/en-us/edge/?form=",
+    "status": 200,
+    "title": "Get to Know Microsoft Edge",
+    "macHints": [],
+    "sha256": "669c083b8cff40451525f9be686261d8570b46b6050310ea2931aa05e3d50bbb"
+  },
+  {
+    "id": "rawtherapee",
+    "url": "https://rawtherapee.com/",
+    "finalURL": "https://rawtherapee.com/",
+    "status": 200,
+    "title": "Home | RawTherapee",
+    "macHints": [
+      "mage (ARM64) Linux x86_64 Windows ARM64 Windows 64-bit macOS Source Code Latest News RawTherapee 5.13 Released RawTherapee 5.12 Released RawTherapee 5.11 Released Previou",
+      "earts; It is cross-platform - you can use it on Linux, macOS, or Microsoft Windows. It is also international and available in over 15 languages! Latest News RawTherapee 5"
+    ],
+    "sha256": "633641773b9aa75d4f101fd9ea92a781602224ca04e4d729e4d85ce8f33534ed"
+  },
+  {
+    "id": "little-snitch",
+    "url": "https://www.obdev.at/products/littlesnitch/index.html",
+    "finalURL": "https://www.obdev.at/products/littlesnitch/index.html",
+    "status": 200,
+    "title": "Little Snitch — Network Monitor and Application Firewall for macOS",
+    "macHints": [
+      " Snitch — Network Monitor and Application Firewall for macOS Products Little Snitch Little Snitch Mini Micro Snitch LaunchBar Internet Access Policy Viewer More Products ",
+      "eld. Application Groups Create rules that apply to all macOS or Simulator processes. Usage Statistics See how often your rules were applied. Bidirectional Rules Create ru"
+    ],
+    "sha256": "8f830a0ab24c7393e5482be9d162ea45a52d8ac2811b78001e8d42b952efdadc"
+  },
+  {
+    "id": "google-chrome",
+    "url": "https://www.google.com/chrome/",
+    "finalURL": "https://www.google.com/chrome/",
+    "status": 200,
+    "title": "Google Chrome - The Fast & Secure Web Browser Built to be Yours",
+    "macHints": [],
+    "sha256": "b225adee9748e706e693c9ff9defd59b99cfda73ee1af1374f097ae7734133a6"
+  },
+  {
+    "id": "gimp",
+    "url": "https://www.gimp.org/",
+    "finalURL": "https://www.gimp.org/",
+    "status": 200,
+    "title": "GIMP - GNU Image Manipulation Program",
+    "macHints": [
+      "a cross-platform image editor available for GNU/Linux, macOS, Windows and more operating systems. It is free software , you can change its source code and distribute your"
+    ],
+    "sha256": "87d52406bb6ff2adf1a958d15dcfe2a279e747c86d9916d5580fb68d9a51289b"
+  },
+  {
+    "id": "onlyoffice",
+    "url": "https://www.onlyoffice.com/",
+    "finalURL": "https://www.onlyoffice.com/",
+    "status": 200,
+    "title": "ONLYOFFICE - Secure Online Office | ONLYOFFICE",
+    "macHints": [
+      " offline with free office apps for Windows, Linux, and macOS Download now From your mobile devices Work on documents on the go with free apps for iOS and Android devices ",
+      "lude absolutely free desktop editors for Windows/Linux/macOS, free mobile apps for iOS/Android, the free Startup plan of ONLYOFFICE DocSpace Cloud. Free community builds ",
+      "top Editors which is available for Windows, Linux, and macOS. Does ONLYOFFICE have ads? No, ONLYOFFICE is ad-free. We don&#x27;t incorporate any external ads into our sol"
+    ],
+    "sha256": "5803ea1158e9da429ce70b69eca875083498fe4735d87ffe3f6fd9566991045b"
+  },
+  {
+    "id": "losslesscut",
+    "url": "https://github.com/mifi/lossless-cut",
+    "finalURL": "https://github.com/mifi/lossless-cut",
+    "status": 200,
+    "title": "GitHub - mifi/lossless-cut: The swiss army knife of lossless video/audio editing · GitHub",
+    "macHints": [
+      "lways be free (see also supported operating systems ): macOS: Intel / Apple Silicon DMG (note that PKG does not work) Windows: 7zip (Windows 7, 8 and 8.1 is no longer sup",
+      "see also supported operating systems ): macOS: Intel / Apple Silicon DMG (note that PKG does not work) Windows: 7zip (Windows 7, 8 and 8.1 is no longer supported after v3.50.0 ) ",
+      "mv7l More releases - Note that APPX (Windows) and PKG (macOS) do not work) Latest nightly builds 🧪 Note that the above are the only official downloads . There are also un"
+    ],
+    "sha256": "d8a075040b6f14109c710d7e5824a9ae551697f7b161a88132e432a68424bdb2"
+  },
+  {
+    "id": "balenaetcher",
+    "url": "https://balena.io/etcher",
+    "finalURL": "https://etcher.balena.io/",
+    "status": 200,
+    "title": "balenaEtcher - Flash OS images to SD cards &amp; USB drives",
+    "macHints": [
+      "crosoft Windows 10 and later, Linux (most distros) and macOS 10.10 (Yosemite) and later. Make sure you download the correct version from our downloads section. For Window"
+    ],
+    "sha256": "3c07fbc085c58fb92a60daa8d07da52ea0d89471bffa9e5145bcc0a918e7ae6b"
+  },
+  {
+    "id": "discord",
+    "url": "https://discord.com/",
+    "finalURL": "https://discord.com/",
+    "status": 200,
+    "title": "Discord - Group Chat That’s All Fun &amp; Games",
+    "macHints": [],
+    "sha256": "78e78c97a381e0c6412cbf98fa46bf45311b95a4e0dc6008d718bb9802245a03"
+  },
+  {
+    "id": "linearmouse",
+    "url": "https://linearmouse.org/",
+    "finalURL": "https://linearmouse.app/en/",
+    "status": 200,
+    "title": "LinearMouse | The mouse and trackpad utility for Mac.",
+    "macHints": [],
+    "sha256": "7a3d0aadcd6f35c91eb74a2dbfae22842490726fe041371d24f4c49bfcddd8d4"
+  },
+  {
+    "id": "sourcetree",
+    "url": "https://www.sourcetreeapp.com/",
+    "finalURL": "https://www.sourcetreeapp.com/",
+    "status": 200,
+    "title": "Sourcetreeapp",
+    "macHints": [
+      "mplicity and power in a beautiful Git GUI Download for Mac OS X Also available for Windows Latest release notes: Mac OS X &amp; Windows A free Git client for Windows and M",
+      " OS X Also available for Windows Latest release notes: Mac OS X &amp; Windows A free Git client for Windows and Mac Sourcetree simplifies how you interact with your Git re",
+      " in no time. Download Sourcetree for free Download for Mac OS X Also available for Windows Latest release notes: Mac OS X &amp; Windows Blog Resources Support Documentatio"
+    ],
+    "sha256": "ac3d1b1fa81ab75344759774ecd3953d1cc6d3969aff2365a4a7c6a103140be3"
+  },
+  {
+    "id": "raycast",
+    "url": "https://raycast.com/",
+    "error": "HTTP Error 308: Permanent Redirect"
+  },
+  {
+    "id": "cryptomator",
+    "url": "https://cryptomator.org/",
+    "finalURL": "https://cryptomator.org/",
+    "status": 200,
+    "title": "Cryptomator - Free & Open-Source Cloud Storage Encryption",
+    "macHints": [],
+    "sha256": "77130f05a0d0cda09dbe865fad6276155b17c7ca0e752e30bf4a798dbec014f1"
+  },
+  {
+    "id": "iterm2",
+    "url": "https://iterm2.com/",
+    "finalURL": "https://iterm2.com/",
+    "status": 200,
+    "title": "iTerm2 - macOS Terminal Replacement",
+    "macHints": [
+      " iTerm2 - macOS Terminal Replacement Menu Home News Features FAQ Documentation Downloads What is iTerm2? iTerm2 is a replacem",
+      "inal and the successor to iTerm. It works on Macs with macOS 10.14 or newer. iTerm2 brings the terminal into the modern age with features you never knew you always wanted"
+    ],
+    "sha256": "26bb027407f671e1973cab24e6c91f66653fa1bf4e10a0ce5e256165d184ad66"
+  },
+  {
+    "id": "zed",
+    "url": "https://zed.dev/",
+    "finalURL": "https://zed.dev/",
+    "status": 200,
+    "title": "Zed — Your last next editor",
+    "macHints": [
+      "ns and AI. Download now D Clone source C Available for macOS, Linux, and Windows Fast Written from scratch in Rust to efficiently leverage multiple CPU cores and your GPU",
+      "████╔╝ ╚══════╝╚══════╝╚═════╝ Editor : Zed Platform : macOS 1 5 Rust Trusted by world-class developers &amp; industry leading teams Yes! Now I can have shortcuts to run ",
+      " Icons 589k 🦊 Soothing pastel icons for Zed Catppuccin macOS Classic Theme 495k A macOS native style theme, let it same like native app in macOS. Jason Lee SCSS &amp; SAS"
+    ],
+    "sha256": "ab4ac5b017ec47eef89214096b379dcba868be5dc9e2d2ab7efea186c5344a8e"
+  },
+  {
+    "id": "libreoffice",
+    "url": "https://www.libreoffice.org/",
+    "finalURL": "https://www.libreoffice.org/",
+    "status": 200,
+    "title": "Free and private office suite, no forced AI — LibreOffice",
+    "macHints": [],
+    "sha256": "7b977a3ab81fa639836bdb08d8a5b55495c7c6c2a46998f10416f068b7ca3b97"
+  },
+  {
+    "id": "lm-studio",
+    "url": "https://lmstudio.ai/",
+    "finalURL": "https://lmstudio.ai/",
+    "status": 200,
+    "title": "LM Studio Bionic - Agent for Work and Code",
+    "macHints": [],
+    "sha256": "615ae812d641867904ce5229558969a6cb88bd1e466cca02fd43589faf8fc6fe"
+  },
+  {
+    "id": "alfred",
+    "url": "https://www.alfredapp.com/",
+    "finalURL": "https://www.alfredapp.com/",
+    "status": 200,
+    "title": "Alfred - Productivity App for macOS",
+    "macHints": [
+      " Alfred - Productivity App for macOS Alfred Powerpack Workflows Remote Forum Blog Help Search Alfred 5 for Mac Alfred is an award-winning app for ",
+      "ch Alfred 5 for Mac Alfred is an award-winning app for macOS which boosts your efficiency with hotkeys, keywords, text expansion and more. Search your Mac and the web, an",
+      "trolling your Mac using Alfred's deep integration with macOS. Swiftly take action on files and contacts, control your music player and dispatch System commands. Add some "
+    ],
+    "sha256": "735f4e55071023f81572f70f3861f6de8e93dae5334bb505a841a7196f1c616b"
+  },
+  {
+    "id": "appcleaner",
+    "url": "https://freemacsoft.net/appcleaner/",
+    "finalURL": "https://freemacsoft.net/appcleaner/",
+    "status": 200,
+    "title": "AppCleaner",
+    "macHints": [
+      " clicking the delete button. Downloads Version 3.7 For macOS 15 and later Version 3.6.8 For macOS 10.14 up to 15.6 Version 3.6 For macOS 10.13 Version 3.4 For macOS 10.10",
+      "s Version 3.7 For macOS 15 and later Version 3.6.8 For macOS 10.14 up to 15.6 Version 3.6 For macOS 10.13 Version 3.4 For macOS 10.10 up to 10.12 &copy; 2026 FreeMacSoft ",
+      "rsion 3.6.8 For macOS 10.14 up to 15.6 Version 3.6 For macOS 10.13 Version 3.4 For macOS 10.10 up to 10.12 &copy; 2026 FreeMacSoft . All rights reserved. "
+    ],
+    "sha256": "bc3a32c5091eb4c6e6c89441d0911f8ca75b356b1d4f284e3d975ea87f9ccbb9"
+  },
+  {
+    "id": "ableton-live-lite",
+    "url": "https://www.ableton.com/en/products/live-lite/",
+    "finalURL": "https://www.ableton.com/en/products/live-lite/",
+    "status": 200,
+    "title": "Get started with Ableton Live 12 Lite | Ableton",
+    "macHints": [
+      "rating System Operating System Windows 64-bit (3.3 GB) macOS Universal (3.5 GB) Download Ableton Live&nbsp;12&nbsp;Lite is a fresh and easy way to write, record, produce ",
+      "ade&nbsp; &nbsp; What are the system requirements? Mac macOS 11 Big Sur or higher Intel&reg; Core&trade; i5 processor or Apple Silicon 8 GB RAM 1280x800 display resolutio",
+      "g Sur or higher Intel&reg; Core&trade; i5 processor or Apple Silicon 8 GB RAM 1280x800 display resolution Core Audio compliant audio interface recommended Access to an internet c"
+    ],
+    "sha256": "27865d505b58133490e7fc5301ad207f32ff160e43c177f392fa325caee4b359"
+  },
+  {
+    "id": "docker-desktop",
+    "url": "https://www.docker.com/products/docker-desktop",
+    "finalURL": "https://www.docker.com/products/docker-desktop/",
+    "status": 200,
+    "title": "Docker Desktop: The #1 Containerization Tool for Developers | Docker",
+    "macHints": [
+      "ools. Download Docker Desktop Download for Mac &#8211; Apple Silicon Download for Mac &#8211; Intel Chip Download for Windows &#8211; AMD64 Download for Windows &#8211; ARM64 Dow"
+    ],
+    "sha256": "005c3384946fff3809102fd1dbe9faeaaa8f368eea7ca01d4b647a3e411b3235"
+  },
+  {
+    "id": "shutter-encoder",
+    "url": "https://www.shutterencoder.com/",
+    "finalURL": "https://www.shutterencoder.com/",
+    "status": 200,
+    "title": "Shutter Encoder | Open source software without any restriction - converter all formats professionals codecs and standards",
+    "macHints": [
+      "d for Windows (.zip) 185.29 MB - 597,133 downloads For macOS 10.14 Mojave or later. Intel &amp; Apple Silicon (M1, M2, M3, M4). Download for macOS (Intel) 170.87 MB - 358",
+      "downloads For macOS 10.14 Mojave or later. Intel &amp; Apple Silicon (M1, M2, M3, M4). Download for macOS (Intel) 170.87 MB - 358,679 downloads Download for macOS (Apple Silicon)",
+      "tel &amp; Apple Silicon (M1, M2, M3, M4). Download for macOS (Intel) 170.87 MB - 358,679 downloads Download for macOS (Apple Silicon) 174.99 MB - 394,056 downloads For mo"
+    ],
+    "sha256": "2b28013e0a79cac3481e5f2415455e7d7127cd04198b1abcca5c987b3ea48055"
+  },
+  {
+    "id": "affinity",
+    "url": "https://www.affinity.studio/",
+    "finalURL": "https://www.affinity.studio/",
+    "status": 200,
+    "title": "Unsupported client",
+    "macHints": [
+      " one of the following browsers: Chrome Firefox Safari (macOS only) Edge "
+    ],
+    "sha256": "40a60091e86528bba1df2b8628e027a9aa2f2bc8574cf836865d1b8afecbf2cc"
+  },
+  {
+    "id": "iina",
+    "url": "https://iina.io/",
+    "finalURL": "https://iina.io/",
+    "status": 200,
+    "title": "IINA: The modern media player for macOS",
+    "macHints": [
+      " IINA: The modern media player for macOS Home Downloads Plugins Blog Donate Documentation Translate GitHub Links Documentation Translate GitHub IINA T",
+      "tion Translate GitHub IINA The modern media player for macOS. Download 1.5.0 Requires macOS 12.0 (macOS 11.0 for Intel) Release notes · More downloads Read our blog post ",
+      "modern media player for macOS. Download 1.5.0 Requires macOS 12.0 (macOS 11.0 for Intel) Release notes · More downloads Read our blog post about IINA 1.5.0 Made for macOS"
+    ],
+    "sha256": "5bcbf1cc95e3106840ad26dc267b7bb752e879fc4804e67406282af597836327"
+  },
+  {
+    "id": "bbedit",
+    "url": "https://www.barebones.com/products/bbedit/",
+    "finalURL": "https://www.barebones.com/products/bbedit/",
+    "status": 200,
+    "title": "BBEdit | Bare Bones Software",
+    "macHints": [
+      "t is the leading professional HTML and text editor for macOS. This award-winning product has been crafted to serve the needs of writers, Web authors and software develope",
+      "and save; Git and Subversion integration; AppleScript; macOS Unix scripting support; text and code completion; and of course a complete set of robust HTML markup tools. W",
+      "ny authorized reseller . BBEdit 16 System Requirements macOS 14.0 or later required compatible with modern macOS versions ( see details ) universal, for Macs with Intel a"
+    ],
+    "sha256": "d13bba36c60511ffdd1406c9ba8ac9432eddc2e06579490174dd9116c3876bf0"
+  },
+  {
+    "id": "obs",
+    "url": "https://obsproject.com/",
+    "finalURL": "https://obsproject.com/",
+    "status": 200,
+    "title": "Open Broadcaster Software | OBS",
+    "macHints": [
+      "August 14th Windows Supports Windows 10 and Windows 11 macOS Supports macOS 13.0 or newer Linux Select macOS Version ‹ macOS (Intel) macOS (Apple Silicon) Free and open s",
+      "dows Supports Windows 10 and Windows 11 macOS Supports macOS 13.0 or newer Linux Select macOS Version ‹ macOS (Intel) macOS (Apple Silicon) Free and open source software ",
+      "ows 11 macOS Supports macOS 13.0 or newer Linux Select macOS Version ‹ macOS (Intel) macOS (Apple Silicon) Free and open source software for video recording and live stre"
+    ],
+    "sha256": "578b8fa40c4af2799654e085d96d573e7df4dd800a0af602e3c006f1ebffc9e8"
+  },
+  {
+    "id": "rectangle",
+    "url": "https://rectangleapp.com/",
+    "finalURL": "https://rectangleapp.com/",
+    "status": 200,
+    "title": "Rectangle",
+    "macHints": [
+      "> --> --> --> --> Rectangle Move and resize windows in macOS using keyboard shortcuts or snap areas Download Free and Open Source , Supports macOS 10.15+, Intel and Apple",
+      "or snap areas Download Free and Open Source , Supports macOS 10.15+, Intel and Apple Silicon Upgrade to Rectangle Pro Quicker window snapping, custom shortcuts for any si",
+      "ree and Open Source , Supports macOS 10.15+, Intel and Apple Silicon Upgrade to Rectangle Pro Quicker window snapping, custom shortcuts for any size & position, and a lot more ! "
+    ],
+    "sha256": "beaed07eb9e95245bc62eaa653394023ffc082c0315078441a914491856f2944"
+  },
+  {
+    "id": "calibre",
+    "url": "https://calibre-ebook.com/",
+    "finalURL": "https://calibre-ebook.com/",
+    "status": 200,
+    "title": "calibre - E-book management",
+    "macHints": [],
+    "sha256": "320596b17545f7dbbd326a2356c8f25250b3ac156bf038f3180ff472a6c68a4b"
+  },
+  {
+    "id": "spotify",
+    "url": "https://www.spotify.com/",
+    "finalURL": "https://open.spotify.com/",
+    "status": 200,
+    "title": "Spotify - Web Player: Music for everyone",
+    "macHints": [],
+    "sha256": "7748de07adcd819aab7bc245d0b6f56e58c83d55492a9181a1bbfdc6043050a6"
+  },
+  {
+    "id": "keka",
+    "url": "https://www.keka.io/",
+    "finalURL": "https://www.keka.io/",
+    "status": 200,
+    "title": "",
+    "macHints": [],
+    "sha256": "6cd8f86b5535e7c8537f226c5e517a71607a0e0001cb254af63fecce5a47cee1"
+  },
+  {
+    "id": "maccy",
+    "url": "https://maccy.app/",
+    "finalURL": "https://maccy.app/",
+    "status": 200,
+    "title": "Maccy - macOS clipboard manager",
+    "macHints": [
+      " Maccy - macOS clipboard manager Beware of fake websites impersonating Maccy. maccy.app is the only official website. Maccy ",
+      "the only official website. Maccy Clipboard manager for macOS which does one job - keep your copy history at hand. Period. Lightweight. Open source. No fluff. Get in App S",
+      "urce. No fluff. Get in App Store Download now Requires macOS Sonoma 14 or higher Fork me on GitHub Why? No fluff Unlike other Mac clipboard managers, Maccy does only one "
+    ],
+    "sha256": "41808f9166fb1e9599a8b3bcf3a27fa045cf40634844ca651e1918a31339c5f4"
+  },
+  {
+    "id": "pdf-expert",
+    "url": "https://pdfexpert.com/",
+    "finalURL": "https://pdfexpert.com/",
+    "status": 200,
+    "title": "PDF Editor and Reader for Mac | Free Trial | PDF Expert",
+    "macHints": [],
+    "sha256": "ef1612fc35c11893e2639375e5afe074cb54d33fb242af3fad246ff86f9ae34b"
+  },
+  {
+    "id": "obsidian",
+    "url": "https://obsidian.md/",
+    "finalURL": "https://obsidian.md/",
+    "status": 200,
+    "title": "Obsidian - Sharpen your thinking",
+    "macHints": [],
+    "sha256": "fe2ce957373def192a16d43b9f519212c07e1f3eda17d0167bf133a16230cc7c"
+  },
+  {
+    "id": "localsend",
+    "url": "https://localsend.org/",
+    "finalURL": "https://localsend.org/",
+    "status": 200,
+    "title": "LocalSend: Share files to nearby devices",
+    "macHints": [
+      "rk. Cross-platform LocalSend is available for Windows, macOS, Linux, Android, and iOS. Secure End-to-end encryption ensures that only you and the recipient can access you",
+      "rms are supported? LocalSend is available for Windows, macOS, Linux, Android, and iOS. Do I need to create an account? No. LocalSend does not require any account or login"
+    ],
+    "sha256": "35dc4930a649da555d3a6588c766820bcea09e60bf2851feff8220334808ba49"
+  },
+  {
+    "id": "visual-studio-code",
+    "url": "https://code.visualstudio.com/",
+    "finalURL": "https://code.visualstudio.com/",
+    "status": 200,
+    "title": "Visual Studio Code - The open source AI code editor | Your home for multi-agent development",
+    "macHints": [
+      "tor Your home for multi-agent development Download for macOS Download for Windows Download for Linux (.deb) Download for Linux (.rpm) Download Visual Studio Code Web , In",
+      ".1 spec +218 -12 · 2 days ago Diagnose flaky CI run on macOS arm64 4 days ago Optimize Live Share session bootstrap +52 -1 · 3 days ago Add devcontainer for monorepo work"
+    ],
+    "sha256": "933d757bb091ce27b6a33572ff634a820682b882ce2bb336556da6b984b2e2d0"
+  },
+  {
+    "id": "reaper",
+    "url": "https://www.reaper.fm/",
+    "finalURL": "https://www.reaper.fm/",
+    "status": 200,
+    "title": "REAPER | Audio Production Without Limits",
+    "macHints": [
+      "Swell.colortheme is dark, and enable overrides like on macOS/Windows default to loading a full GTK+, to improve compatibility with third-party GTK+ plug-ins (can be disab",
+      "icensed plug-in formats, on all OS platforms (Windows, macOS, and linux). FX Auto-Bypass, Oversampling, Multi-Mono, Multi-Stereo: Customizable per-FX auto-bypass, to disa"
+    ],
+    "sha256": "17cf496016933df167edc3c8bbde3c07270f95025511967bc8789cbda4d1da29"
+  },
+  {
+    "id": "blender",
+    "url": "https://www.blender.org/",
+    "finalURL": "https://www.blender.org/",
+    "status": 200,
+    "title": "Blender - The Free and Open Source 3D Creation Software — blender.org",
+    "macHints": [],
+    "sha256": "fa63cd25273eb267505c0a947e6693e203bb0995d2d5292d309c6dbd77705bf7"
+  },
+  {
+    "id": "proton-mail",
+    "url": "https://proton.me/mail",
+    "finalURL": "https://proton.me/mail",
+    "status": 200,
+    "title": "Proton Mail: Get a free email account with privacy and encryption | Proton",
+    "macHints": [
+      "pps iOS (new window) Android (new window) Desktop apps macOS Windows Linux Web app Web app (new window) Desktop client add-on Bridge Encrypted email Proton Mail VPN Proto",
+      "ur devices with our open-source apps for web, Windows, macOS, Linux, Android, and iPhone. Previous slide Next slide Keep your communications private Choose an email that "
+    ],
+    "sha256": "03e1929b3c956bb8c97710e7d515e752d06944115225adf09c71f89f22f21fb9"
+  },
+  {
+    "id": "telegram",
+    "url": "https://macos.telegram.org/",
+    "finalURL": "https://macos.telegram.org/",
+    "status": 200,
+    "title": "Telegram for macOS",
+    "macHints": [
+      " Telegram for macOS English Bahasa Indonesia Bahasa Melayu Deutsch Español Français Italiano Nederlands O‘zbek Polski Português (",
+      " 한국어 Follow on X Home FAQ Apps API Safety Telegram for macOS Get Telegram for macOS Mac App Store version This software is available under GPL v2 license. Source code is ",
+      "AQ Apps API Safety Telegram for macOS Get Telegram for macOS Mac App Store version This software is available under GPL v2 license. Source code is available on GitHub . B"
+    ],
+    "sha256": "1eb74285d95e69b869515ebdaac4d35e943eefc108a33a5b63421965a5733d81"
+  },
+  {
+    "id": "utm",
+    "url": "https://mac.getutm.app/",
+    "finalURL": "https://mac.getutm.app/",
+    "status": 200,
+    "title": "UTM | Virtual machines for Mac",
+    "macHints": [
+      "n your Mac Download Mac App Store Windows. Linux. Meet Apple Silicon . UTM employs Apple's Hypervisor virtualization framework to run ARM64 operating systems on Apple Silicon at ",
+      "ualization framework to run ARM64 operating systems on Apple Silicon at near native speeds. On Intel Macs, x86/x64 operating system can be virtualized. In addition, lower perform",
+      "ing systems on Apple Silicon at near native speeds. On Intel Macs, x86/x64 operating system can be virtualized. In addition, lower performance emulation is available to run x"
+    ],
+    "sha256": "8012afa982af05b32c608443a3608e641c7aafb2ad731851b2ccde1f2134c553"
+  },
+  {
+    "id": "1password",
+    "url": "https://1password.com/",
+    "finalURL": "https://1password.com/",
+    "status": 200,
+    "title": "Password Manager, Secrets, and Access Management | 1Password",
+    "macHints": [
+      "한국어 Português 简体中文 繁體中文 English Show options Downloads macOS Windows iOS Android Browser Linux CLI Unified Access Platform Unified Access Enterprise Password Manager Cred",
+      "1Password Marketplace Affiliate For Students Downloads macOS Windows iOS Android Browser Linux CLI Terms of Service Cookie Policy Your Privacy Choices California Consumer"
+    ],
+    "sha256": "a205abb4c7234373ca0482f43ab6fc23e782645634943d6609c9e5ba17e380d7"
+  },
+  {
+    "id": "google-drive",
+    "url": "https://www.google.com/drive/",
+    "finalURL": "https://workspace.google.com/products/drive/",
+    "status": 200,
+    "title": "Google Drive: partilhe ficheiros online com armazenamento na nuvem seguro | Google Workspace",
+    "macHints": [],
+    "sha256": "9aa4b8f6b106d6df0f589d6c3c6c6893b2550418445d896effbc42a65ccee2f7"
+  },
+  {
+    "id": "audacity",
+    "url": "https://www.audacityteam.org/",
+    "finalURL": "https://www.audacityteam.org/",
+    "status": 200,
+    "title": "Audacity | Free, Open Source Audio Editor and Recorder",
+    "macHints": [
+      "une 11, 2025 OpenVINO AI Plugins are now available for macOS AI Music separation, noise suppression, music generation, transcription and super resolution is coming to mac",
+      "ation, transcription and super resolution is coming to macOS Wednesday, May 28, 2025 Audacity turns 25 years old! Let&#39;s celebrate! Wednesday, October 30, 2024 Audacit",
+      " Cloud Saving Forum Merch NEW Manual downloads Windows macOS Linux MuseHub Plugins social Facebook X Instagram YouTube Discord plugins Soap Voice Clean &amp; Capture Bund"
+    ],
+    "sha256": "2509dd95a71624fe8a685ef5bf537f249264a3d198776fd5e63bab56381b83ac"
+  },
+  {
+    "id": "cyberduck",
+    "url": "https://cyberduck.io/",
+    "finalURL": "https://cyberduck.io/",
+    "status": 200,
+    "title": "Cyberduck | Libre server and cloud storage browser for Mac and\n            Windows with support for FTP, SFTP, WebDAV, Amazon S3, OpenStack Swift, Backblaze B2, Microsoft Azure &\n            OneDrive, Google Drive and Dropbox",
+    "macHints": [
+      "rl iRODS Local Filesystem Download Donate Download for macOS or Windows Cyberduck is a libre server and cloud storage browser for Mac and Windows with support for FTP , S",
+      "egration with system technologies. A native citizen of Mac OS X and Windows. Notification center, Gatekeeper and Retina resolution. Keychain All passwords are stored in th"
+    ],
+    "sha256": "e2439419296f4e5a8c41301ff21850aafdc9e70512f13927e9ba44fe9a551ec2"
+  },
+  {
+    "id": "skim",
+    "url": "https://skim-app.sourceforge.io/",
+    "finalURL": "https://skim-app.sourceforge.io/",
+    "status": 200,
+    "title": "Skim | Home",
+    "macHints": [
+      "-> Skim Current Version: 1.7.17 Download Release Notes macOS 10.13 or higher Previous Versions Choose Latest Sierra Version: 1.6.21 SkimNotes framework 1.6.4 Download Abo"
+    ],
+    "sha256": "f742f0145af6e1b980f7be5ad13db75a8e748a91d7d6d4f7b25b9b2ecde4f8e4"
+  },
+  {
+    "id": "ocenaudio",
+    "url": "https://www.ocenaudio.com/en",
+    "finalURL": "https://www.ocenaudio.com/en",
+    "status": 200,
+    "title": "ocenaudio",
+    "macHints": [],
+    "sha256": "6fddf48c6ec007ca21d7652811acd90133677fab16db0db5ad23695778e0c4ac"
+  },
+  {
+    "id": "jordanbaird-ice",
+    "url": "https://icemenubar.app/",
+    "finalURL": "https://icemenubar.app/",
+    "status": 200,
+    "title": "Ice - Menu Bar Manager",
+    "macHints": [],
+    "sha256": "4d45541e8b9a285ce5336d54da159749b83d0badbc5910e8db2397cc638eb799"
+  },
+  {
+    "id": "whatsapp",
+    "url": "https://www.whatsapp.com/",
+    "finalURL": "https://www.whatsapp.com/",
+    "status": 200,
+    "title": "WhatsApp | Secure and Reliable Free Private Messaging and Calling",
+    "macHints": [],
+    "sha256": "a0569ddccef3b488c9908bb7641cfae716db1dc638f61793449f8a61f4c24c58"
+  },
+  {
+    "id": "postman",
+    "url": "https://www.postman.com/",
+    "finalURL": "https://www.postman.com/",
+    "status": 200,
+    "title": "API engineering for your agents",
+    "macHints": [],
+    "sha256": "91ab9ec85b64abdf9fc058e07ef9b863f809545a90cdc4c0d2b01a32d28a7905"
+  },
+  {
+    "id": "protonvpn",
+    "url": "https://protonvpn.com/",
+    "finalURL": "https://protonvpn.com/",
+    "status": 200,
+    "title": "The best VPN for speed and security",
+    "macHints": [
+      " Apple TV All devices Pricing Download Devices Windows macOS Linux Chromebook Android iPhone / iPad VPN extensions Chrome Firefox Smart TV Android TV Apple TV Firestick A",
+      "sers and organizations Secure every connection Windows macOS Android iPhone/iPad Linux Chrome Firefox Chromebook Android TV Fire TV Expose nothing. Access everything. Shi",
+      "started Platforms Download VPN VPN for Windows VPN for macOS VPN for Android VPN for iOS VPN for Linux VPN for Chrome VPN for Firefox VPN for Chromebook VPN for Android T"
+    ],
+    "sha256": "fc18bbd84a0f0f3c091f7868f9f3b7c80ea4a7fad81df32bd6b0ce1fcaa0284c"
+  },
+  {
+    "id": "onedrive",
+    "url": "https://www.microsoft.com/en-us/microsoft-365/onedrive/online-cloud-storage",
+    "finalURL": "https://www.microsoft.com/en-us/microsoft-365/onedrive/online-cloud-storage",
+    "status": 200,
+    "title": "Your request has been blocked. This could be\r\n                        due to several reasons.",
+    "macHints": [],
+    "sha256": "5965b2c5472aaca1cd66ea5b0d07a971b961fee72fc27eb1f6c760042084b21b"
+  },
+  {
+    "id": "brave-browser",
+    "url": "https://brave.com/",
+    "finalURL": "https://brave.com/",
+    "status": 200,
+    "title": "The browser that puts you first | Brave",
+    "macHints": [
+      "s your privacy Download Brave for Android, iOS, Linux, macOS, or Windows Get Brave Let Brave power your business: Brave Ads Search API Enterprise group installs* *Brave s",
+      "is available on nearly all desktop computers (Windows, macOS, Linux) and nearly every mobile device (Android and iOS). To get started, simply download the Brave browser f"
+    ],
+    "sha256": "467dd7fbada2dfaac12685eee5a9a3fc8699a4b600cc3b48422a4a7338eb5dd0"
+  },
+  {
+    "id": "opera",
+    "url": "https://www.opera.com/",
+    "finalURL": "https://www.opera.com/",
+    "status": 200,
+    "title": "Opera Web Browser | Faster, Safer, Smarter | Opera",
+    "macHints": [],
+    "sha256": "3933c4deb7d43f4a0f9f1be22717c1516578f2f37f280e52e8e7aff9b26e950b"
+  },
+  {
+    "id": "fork",
+    "url": "https://fork.dev/",
+    "finalURL": "https://fork.dev/",
+    "status": 200,
+    "title": "Fork - a fast and friendly git client for Mac and Windows",
+    "macHints": [
+      "happy to share our results with you. Download Fork for Mac OS X 10.11+ $59.99 , free evaluation Download Fork for Windows Windows 7+ $59.99 , free evaluation Prev Next Com",
+      "it the button below to download Fork Download Fork for Mac OS X 10.11+ $59.99 , free evaluation Download Fork for Windows Windows 7+ $59.99 , free evaluation Home Release "
+    ],
+    "sha256": "b1b5c371c34f0c3619dfae38ab53d0bdba8399bc057942347648889f560701dc"
+  },
+  {
+    "id": "firefox",
+    "url": "https://www.mozilla.org/firefox/",
+    "finalURL": "https://www.firefox.com/",
+    "status": 200,
+    "title": "Get Firefox for desktop and mobile — Firefox.com",
+    "macHints": [
+      "ad a different build Firefox is no longer supported on macOS 10.14 and below. Please download Firefox ESR (Extended Support Release) to use Firefox. Download Firefox ESR ",
+      "ệt 中文 (简体) 正體中文 (繁體) Download Download Firefox Windows macOS iOS Android Linux Custom Download Options Latest Builds Nightly Beta Firefox for Business Enterprise Communit"
+    ],
+    "sha256": "46bca221092cc0037762042efbacc5e84a1698c7fa13d9fac18230e484f3fb95"
+  },
+  {
+    "id": "android-studio",
+    "url": "https://developer.android.com/studio/",
+    "finalURL": "https://developer.android.com/studio/",
+    "status": 200,
+    "title": "Download Android Studio & App Tools - Android Developers",
+    "macHints": [],
+    "sha256": "cf86523198f17b4f251953a4ddc46f545b4ac4dd977a98259e62057888cfb943"
+  },
+  {
+    "id": "microsoft-office",
+    "url": "https://www.microsoft.com/en-us/microsoft-365/mac/microsoft-365-for-mac/",
+    "finalURL": "https://www.microsoft.com/en-us/microsoft-365/mac/microsoft-365-for-mac/",
+    "status": 200,
+    "title": "Your request has been blocked. This could be\r\n                        due to several reasons.",
+    "macHints": [],
+    "sha256": "5965b2c5472aaca1cd66ea5b0d07a971b961fee72fc27eb1f6c760042084b21b"
+  },
+  {
+    "id": "vlc",
+    "url": "https://www.videolan.org/vlc/",
+    "finalURL": "https://www.videolan.org/vlc/",
+    "status": 200,
+    "title": "Official download of VLC media player, the best Open Source player - VideoLAN",
+    "macHints": [
+      "ols. Download VLC Windows Windows 64bit Windows ARM 64 macOS (Universal) macOS (Apple Silicon) Linux Android Other Systems Version 3.0.24 &nbsp;&#8226;&nbsp; Windows &nbs",
+      "Windows Windows 64bit Windows ARM 64 macOS (Universal) macOS (Apple Silicon) Linux Android Other Systems Version 3.0.24 &nbsp;&#8226;&nbsp; Windows &nbsp;&#8226;&nbsp; 43",
+      " Windows 64bit Windows ARM 64 macOS (Universal) macOS (Apple Silicon) Linux Android Other Systems Version 3.0.24 &nbsp;&#8226;&nbsp; Windows &nbsp;&#8226;&nbsp; 43&nbsp;MB Simple"
+    ],
+    "sha256": "488f8fe43a2793a5ed7b4f4e8927e27c34a9c13499b27e28b32e3d031b12f3fc"
+  },
+  {
+    "id": "shotcut",
+    "url": "https://www.shotcut.org/",
+    "finalURL": "https://www.shotcut.org/",
+    "status": 200,
+    "title": "Shotcut - Home",
+    "macHints": [],
+    "sha256": "f6fb3c0852fb0711a6686466652f9d8b627ac3f92dc2686a11a0d03e4f956078"
+  },
+  {
+    "id": "pearcleaner",
+    "url": "https://itsalin.com/appInfo/?id=pearcleaner",
+    "finalURL": "https://itsalin.com/appInfo/?id=pearcleaner",
+    "status": 200,
+    "title": "App Info - Alin Lupascu",
+    "macHints": [],
+    "sha256": "b8322862131cbe12aac6654b5beb5e46a539230fd38181e5326b8c9a0625e3b9"
+  },
+  {
+    "id": "ollama-app",
+    "url": "https://ollama.com/",
+    "finalURL": "https://ollama.com/",
+    "status": 200,
+    "title": "Ollama",
+    "macHints": [],
+    "sha256": "73a142ac418265ca79a1d9f66bf8be7e25c8f854b99fc17108ae477489d67ff6"
+  },
+  {
+    "id": "epic-games",
+    "url": "https://www.epicgames.com/",
+    "error": "HTTP Error 403: Forbidden"
+  },
+  {
+    "id": "dropbox",
+    "url": "https://www.dropbox.com/",
+    "finalURL": "https://www.dropbox.com/",
+    "status": 200,
+    "title": "Dropbox: Secure cloud storage, file sharing, and more",
+    "macHints": [],
+    "sha256": "d6418eb4e79d1a2f94a024ee82a33b83819d938573cedb1461595a1a7fc0ead7"
+  },
+  {
+    "id": "github",
+    "url": "https://desktop.github.com/",
+    "finalURL": "https://github.com/apps/desktop",
+    "status": 200,
+    "title": "GitHub Desktop | Simple collaboration from your desktop · GitHub",
+    "macHints": [],
+    "sha256": "cc1eacc35477b6ea8e1167c5b35372612b7dae7b250819c794e735c2fb6915db"
+  },
+  {
+    "id": "zoom",
+    "url": "https://www.zoom.us/",
+    "finalURL": "https://www.zoom.com/",
+    "status": 200,
+    "title": "One platform to connect | Zoom",
+    "macHints": [],
+    "sha256": "90481dde3d4fea2dc75401ef34206c935bb9114cf04a04df116a542dcdd6b5c9"
+  },
+  {
+    "id": "syncthing-app",
+    "url": "https://syncthing.net/",
+    "finalURL": "https://syncthing.net/",
+    "status": 200,
+    "title": "Syncthing",
+    "macHints": [
+      "werful interface accessible via your browser. Works on macOS, Windows, Linux, FreeBSD, Solaris, OpenBSD, and many others. Run it on your desktop computers and synchronize"
+    ],
+    "sha256": "ed24cbef3a825ce0eed0012e523ef7dc3c6894bfdcbf8ba73167c96451ef6854"
+  },
+  {
+    "id": "stats",
+    "url": "https://github.com/exelban/stats",
+    "finalURL": "https://github.com/exelban/stats",
+    "status": 200,
+    "title": "GitHub - exelban/stats: macOS system monitor in your menu bar · GitHub",
+    "macHints": [
+      " GitHub - exelban/stats: macOS system monitor in your menu bar · GitHub Skip to content Navigation Menu Sign in Appearance settings Platform",
+      "y files navigation README MIT license More items Stats macOS system monitor in your menu bar Installation Manual You can download the latest version here . This will down",
+      "uld be found here . Requirements Stats is supported on macOS 12 (Monterey) and newer. Beta versions of macOS are not supported - only stable releases. Features Stats is a"
+    ],
+    "sha256": "fbf43dccaa229c8b12b6c50c55d55a945237b109ea2a5d223453f12d3b6e1a4e"
+  },
+  {
+    "id": "notion",
+    "url": "https://www.notion.com/",
+    "finalURL": "https://www.notion.com/",
+    "status": 200,
+    "title": "The AI workspace that works for you. | Notion",
+    "macHints": [],
+    "sha256": "0582ddee2619c8f906e8dfc6ceeaf256602ce706175b7d32a6d3948c08a93339"
+  },
+  {
+    "id": "slack",
+    "url": "https://slack.com/",
+    "finalURL": "https://slack.com/",
+    "status": 200,
+    "title": "Slack | AI Work Platform &amp; Productivity Tools",
+    "macHints": [],
+    "sha256": "ad66c57d552d24f22218b46229556855249b8672434b48926abecc44696e38bd"
+  },
+  {
+    "id": "bitwarden",
+    "url": "https://bitwarden.com/",
+    "finalURL": "https://bitwarden.com/",
+    "status": 200,
+    "title": "Best Password Manager for Business, Enterprise & Personal | Bitwarden | Bitwarden",
+    "macHints": [],
+    "sha256": "04435f2cbf707762959197f83782c7f9fac675a5829e28fdb7696713cba69ea3"
+  },
+  {
+    "id": "ghostty",
+    "url": "https://ghostty.org/",
+    "finalURL": "https://ghostty.org/",
+    "status": 200,
+    "title": "Ghostty",
+    "macHints": [],
+    "sha256": "c2dd13ab481511949eaed1fccbb73122fe0f57194889e34d4e8530b7c295a84b"
+  },
+  {
+    "id": "orbstack",
+    "url": "https://orbstack.dev/",
+    "finalURL": "https://orbstack.dev/",
+    "status": 200,
+    "title": "OrbStack · Fast, light, simple Docker &amp; Linux",
+    "macHints": [
+      "ditor) and SSH agent forwarding. Run Intel machines on Apple Silicon with Rosetta. First-class command line integration Live in the terminal? We think our native app is great, bu",
+      " a feather With less than 0.1% background CPU usage on Apple Silicon, OrbStack sips power and stays out of your way. Less than 10 MB of disk space is used out of the box. You’ll ",
+      " Isolated machines Rosetta x86 emulation Optimized for Apple Silicon Low CPU usage Dynamic disk Native Swift app SSH agent forwarding File sharing USB passthrough Sound 2-way CLI"
+    ],
+    "sha256": "ac3a673794db50f37bc00c6c9d536c61fdf33972cd44b7691dc2220ca114619b"
+  },
+  {
+    "id": "veracrypt",
+    "url": "https://veracrypt.io/",
+    "finalURL": "https://veracrypt.io/",
+    "status": 200,
+    "title": "VeraCrypt - Free Open source disk encryption with strong security for the Paranoid",
+    "macHints": [],
+    "sha256": "07c857d33f99dadc7f7384a6bcd72dcd8e3fb4e2adfabbc342a8cfc0163bc08d"
+  },
+  {
+    "id": "claude",
+    "url": "https://claude.com/download",
+    "finalURL": "https://claude.com/download",
+    "status": 200,
+    "title": "Download Claude | Claude by Anthropic",
+    "macHints": [
+      "nd off tasks, and code, all in one place. Download for macOS Get started Access all of Claude on desktop and mobile. Desktop All of Claude, in one app. Works with your fi",
+      "pp. Works with your files and apps to get things done. macOS Download Windows Download Windows (arm 64) Download Microsoft Store (opens in new tab) Linux See docs Enterpr",
+      "opens in new tab) Linux See docs Enterprise deployment macOS (opens in new tab) Windows (opens in new tab) Mobile Take Claude anywhere. Pair with the desktop app. iOS Dow"
+    ],
+    "sha256": "3dee8d823a9cd683f0031bdf815b5ecd7d9b452652c75fd4057279f96a982acd"
+  },
+  {
+    "id": "onyx",
+    "url": "https://www.titanium-software.fr/en/onyx.html",
+    "finalURL": "https://www.titanium-software.fr/en/onyx.html",
+    "status": 200,
+    "title": "Titanium Software | Operating System Utilities for Mac - OnyX",
+    "macHints": [
+      "tended for an earlier operating system. OnyX 5.1.0 for macOS Golden Gate 27 Requirements: Mac with Apple silicon using macOS Golden Gate 27. Released: September 15, 2026 ",
+      " 5.1.0 for macOS Golden Gate 27 Requirements: Mac with Apple silicon using macOS Golden Gate 27. Released: September 15, 2026 Download (7.9 MB) &emsp; Release Notes Old versions ",
+      "den Gate 27 Requirements: Mac with Apple silicon using macOS Golden Gate 27. Released: September 15, 2026 Download (7.9 MB) &emsp; Release Notes Old versions Titanium Sof"
+    ],
+    "sha256": "84cd6adadd12805e653133df178a87e9e937493a5941234245ca8be82e0da56c"
+  },
+  {
+    "id": "keepassxc",
+    "url": "https://keepassxc.org/",
+    "finalURL": "https://keepassxc.org/",
+    "status": 200,
+    "title": "KeePassXC Password Manager",
+    "macHints": [
+      "latform Every feature is thoroughly tested on Windows, macOS, and Linux, so you can expect a seamless experience no matter which operating system you use. Open Source The",
+      "nsitive information. You can run KeePassXC on Windows, macOS, and Linux systems. KeePassXC is for people with extremely high demands of secure personal data management. I",
+      "s of downloading and installing KeePassXC for Windows, macOS, or Linux. Additionally, many Linux distributions ship their own versions, so in that case please check your "
+    ],
+    "sha256": "d4dfb3248c513470e015418e106f0ae36988caa04dc56b7d3422b0ebe3ff7ff7"
+  },
+  {
+    "id": "figma",
+    "url": "https://www.figma.com/",
+    "finalURL": "https://www.figma.com/",
+    "status": 200,
+    "title": "Figma: The collaborative canvas for design, code, and AI",
+    "macHints": [],
+    "sha256": "e5697a79867525ee96bae396f7671ca3ecf0703d2bdc0471c4cd2f3ddce49d56"
+  },
+  {
+    "id": "handbrake-app",
+    "url": "https://handbrake.fr/",
+    "finalURL": "https://handbrake.fr/",
+    "status": 200,
+    "title": "HandBrake: Open Source Video Transcoder",
+    "macHints": [],
+    "sha256": "a57b2a16b5fb70929392a4ce9ee8fb8862af788ee6d123e059db35e3e301f36d"
+  },
+  {
+    "id": "chatgpt",
+    "url": "https://chatgpt.com/",
+    "error": "HTTP Error 403: Forbidden"
+  },
+  {
+    "id": "canva",
+    "url": "https://www.canva.com/",
+    "error": "HTTP Error 403: Forbidden"
+  },
+  {
+    "id": "dbeaver-community",
+    "url": "https://dbeaver.io/",
+    "finalURL": "https://dbeaver.io/",
+    "status": 200,
+    "title": "DBeaver Community &#124; Free Open-Source Database Management Tool",
+    "macHints": [
+      "stom SSH agent socket for SSH tunnel authentication on macOS (thanks to @LystranG) Fixed importing connections from custom CSV files when optional URL parameters were mis",
+      " read-only dropdown menus when using the dark theme on macOS Improved dark theme colors for progress bars and embedded SQL editors Fixed an issue where log rotation failu",
+      "ith URL configuration Fixed database logo rendering on macOS Improved automatic connection name generation Fixed repeated driver download prompts during connection attemp"
+    ],
+    "sha256": "c12da43eb0325577e7309b73c0d70d36f9f5c2eb444bfa1648a98f082bac4cc2"
+  },
+  {
+    "id": "tableplus",
+    "url": "https://tableplus.com/",
+    "finalURL": "https://tableplus.com/",
+    "status": 200,
+    "title": "TablePlus | Modern, Native Tool for Database Management",
+    "macHints": [
+      "QLite & more Download For Mac Other Platforms Supports Apple Silicon Chip, macOS 10.13+, iOS 12+ Issue tracker Release Notes Explore more apps made by TablePlus Team Explore now ",
+      "d For Mac Other Platforms Supports Apple Silicon Chip, macOS 10.13+, iOS 12+ Issue tracker Release Notes Explore more apps made by TablePlus Team Explore now Supports a w",
+      "se management easier, faster & more efficient for you. macOS Windows Linux iOS Thoughtful UI that's easy to use Inline edit Edit data rows, table structure, or query resu"
+    ],
+    "sha256": "2546185deb352cb3d244013bd68aca265dc2edd78424fc233f0ccf3fa5dde6d6"
+  },
+  {
+    "id": "apple-whatsapp",
+    "url": "https://itunes.apple.com/search?term=WhatsApp&entity=macSoftware&country=pt&limit=5",
+    "status": 200,
+    "results": [
+      {
+        "name": "WhatsApp Messenger",
+        "id": 310633997,
+        "bundleID": "net.whatsapp.WhatsApp",
+        "version": "26.38.74",
+        "minimumOS": "15.1",
+        "seller": "WhatsApp Inc."
+      },
+      {
+        "name": "Canva: AI Foto, Vídeo & Editor",
+        "id": 897446215,
+        "bundleID": "com.canva.canvaeditor",
+        "version": "4.229.0",
+        "minimumOS": "15.0",
+        "seller": "Canva Pty Ltd"
+      },
+      {
+        "name": "Microsoft Word",
+        "id": 462054704,
+        "bundleID": "com.microsoft.Word",
+        "version": "16.113.3",
+        "minimumOS": "14.0",
+        "seller": "Microsoft Corporation"
+      },
+      {
+        "name": "Microsoft Excel",
+        "id": 462058435,
+        "bundleID": "com.microsoft.Excel",
+        "version": "16.113.3",
+        "minimumOS": "14.0",
+        "seller": "Microsoft Corporation"
+      },
+      {
+        "name": "Microsoft Outlook",
+        "id": 985367838,
+        "bundleID": "com.microsoft.Outlook",
+        "version": "16.113.3",
+        "minimumOS": "14.0",
+        "seller": "Microsoft Corporation"
+      }
+    ]
+  },
+  {
+    "id": "apple-telegram",
+    "url": "https://itunes.apple.com/search?term=Telegram&entity=macSoftware&country=pt&limit=5",
+    "status": 200,
+    "results": [
+      {
+        "name": "Telegram",
+        "id": 747648890,
+        "bundleID": "ru.keepcoder.Telegram",
+        "version": "12.10",
+        "minimumOS": "10.13",
+        "seller": "TELEGRAM MESSENGER LLP"
+      },
+      {
+        "name": "WhatsApp Messenger",
+        "id": 310633997,
+        "bundleID": "net.whatsapp.WhatsApp",
+        "version": "26.38.74",
+        "minimumOS": "15.1",
+        "seller": "WhatsApp Inc."
+      },
+      {
+        "name": "Telegram Lite",
+        "id": 946399090,
+        "bundleID": "org.telegram.desktop",
+        "version": "7.2.9",
+        "minimumOS": "10.13",
+        "seller": "Telegram FZ-LLC"
+      },
+      {
+        "name": "CapCut - Video Editor",
+        "id": 1500855883,
+        "bundleID": "com.lemon.lvoverseas",
+        "version": "19.6.0",
+        "minimumOS": "15.0",
+        "seller": "BYTEDANCE PTE. LTD."
+      },
+      {
+        "name": "Microsoft Word",
+        "id": 462054704,
+        "bundleID": "com.microsoft.Word",
+        "version": "16.113.3",
+        "minimumOS": "14.0",
+        "seller": "Microsoft Corporation"
+      }
+    ]
+  },
+  {
+    "id": "apple-affinity",
+    "url": "https://itunes.apple.com/search?term=Affinity&entity=macSoftware&country=pt&limit=5",
+    "status": 200,
+    "results": [
+      {
+        "name": "Canva: AI Foto, Vídeo & Editor",
+        "id": 897446215,
+        "bundleID": "com.canva.canvaeditor",
+        "version": "4.229.0",
+        "minimumOS": "15.0",
+        "seller": "Canva Pty Ltd"
+      },
+      {
+        "name": "DaVinci Resolve",
+        "id": 571213070,
+        "bundleID": "com.blackmagic-design.DaVinciResolveLite",
+        "version": "21.1",
+        "minimumOS": "15.0",
+        "seller": "Blackmagic Design Inc"
+      },
+      {
+        "name": "CapCut - Video Editor",
+        "id": 1500855883,
+        "bundleID": "com.lemon.lvoverseas",
+        "version": "19.6.0",
+        "minimumOS": "15.0",
+        "seller": "BYTEDANCE PTE. LTD."
+      },
+      {
+        "name": "WhatsApp Messenger",
+        "id": 310633997,
+        "bundleID": "net.whatsapp.WhatsApp",
+        "version": "26.38.74",
+        "minimumOS": "15.1",
+        "seller": "WhatsApp Inc."
+      },
+      {
+        "name": "Linearity Curve Design Gráfico",
+        "id": 1219074514,
+        "bundleID": "com.linearity.vn",
+        "version": "7.0.0",
+        "minimumOS": "16.0",
+        "seller": "Linearity GmbH"
+      }
+    ]
+  },
+  {
+    "id": "apple-canva",
+    "url": "https://itunes.apple.com/search?term=Canva&entity=macSoftware&country=pt&limit=5",
+    "status": 200,
+    "results": [
+      {
+        "name": "Canva: AI Foto, Vídeo & Editor",
+        "id": 897446215,
+        "bundleID": "com.canva.canvaeditor",
+        "version": "4.229.0",
+        "minimumOS": "15.0",
+        "seller": "Canva Pty Ltd"
+      },
+      {
+        "name": "WhatsApp Messenger",
+        "id": 310633997,
+        "bundleID": "net.whatsapp.WhatsApp",
+        "version": "26.38.74",
+        "minimumOS": "15.1",
+        "seller": "WhatsApp Inc."
+      },
+      {
+        "name": "CapCut - Video Editor",
+        "id": 1500855883,
+        "bundleID": "com.lemon.lvoverseas",
+        "version": "19.6.0",
+        "minimumOS": "15.0",
+        "seller": "BYTEDANCE PTE. LTD."
+      },
+      {
+        "name": "Microsoft Word",
+        "id": 462054704,
+        "bundleID": "com.microsoft.Word",
+        "version": "16.113.3",
+        "minimumOS": "14.0",
+        "seller": "Microsoft Corporation"
+      },
+      {
+        "name": "Save to Pinterest",
+        "id": 6473649042,
+        "bundleID": "pinterest.SaveToPinterest",
+        "version": "6.13.1",
+        "minimumOS": "11.0",
+        "seller": "Pinterest, Inc."
+      }
+    ]
+  },
+  {
+    "id": "apple-bitwarden",
+    "url": "https://itunes.apple.com/search?term=Bitwarden&entity=macSoftware&country=pt&limit=5",
+    "status": 200,
+    "results": [
+      {
+        "name": "Bitwarden",
+        "id": 1352778147,
+        "bundleID": "com.bitwarden.desktop",
+        "version": "2026.9.1",
+        "minimumOS": "12",
+        "seller": "Bitwarden Inc"
+      },
+      {
+        "name": "WhatsApp Messenger",
+        "id": 310633997,
+        "bundleID": "net.whatsapp.WhatsApp",
+        "version": "26.38.74",
+        "minimumOS": "15.1",
+        "seller": "WhatsApp Inc."
+      },
+      {
+        "name": "Passwarden - Password Manager",
+        "id": 1503642685,
+        "bundleID": "com.keepsolid.passwarden",
+        "version": "3.1.8",
+        "minimumOS": "12.0",
+        "seller": "KeepSolid Inc."
+      },
+      {
+        "name": "Vaultwarden Password Manager",
+        "id": 6799711599,
+        "bundleID": "xyz.0xmwehehe.vaultwardenApp",
+        "version": "1.0.5",
+        "minimumOS": "26.2",
+        "seller": "Rendi Wijiatmoko"
+      }
+    ]
+  },
+  {
+    "id": "apple-slack",
+    "url": "https://itunes.apple.com/search?term=Slack&entity=macSoftware&country=pt&limit=5",
+    "status": 200,
+    "results": [
+      {
+        "name": "Slack for Desktop",
+        "id": 803453959,
+        "bundleID": "com.tinyspeck.slackmacgap",
+        "version": "4.52.171",
+        "minimumOS": "13.0",
+        "seller": "SLACK TECHNOLOGIES L.L.C."
+      },
+      {
+        "name": "WhatsApp Messenger",
+        "id": 310633997,
+        "bundleID": "net.whatsapp.WhatsApp",
+        "version": "26.38.74",
+        "minimumOS": "15.1",
+        "seller": "WhatsApp Inc."
+      },
+      {
+        "name": "Microsoft Outlook",
+        "id": 985367838,
+        "bundleID": "com.microsoft.Outlook",
+        "version": "16.113.3",
+        "minimumOS": "14.0",
+        "seller": "Microsoft Corporation"
+      },
+      {
+        "name": "Microsoft Word",
+        "id": 462054704,
+        "bundleID": "com.microsoft.Word",
+        "version": "16.113.3",
+        "minimumOS": "14.0",
+        "seller": "Microsoft Corporation"
+      },
+      {
+        "name": "Microsoft Excel",
+        "id": 462058435,
+        "bundleID": "com.microsoft.Excel",
+        "version": "16.113.3",
+        "minimumOS": "14.0",
+        "seller": "Microsoft Corporation"
+      }
+    ]
+  },
+  {
+    "id": "apple-keka",
+    "url": "https://itunes.apple.com/search?term=Keka&entity=macSoftware&country=pt&limit=5",
+    "status": 200,
+    "results": [
+      {
+        "name": "Keka",
+        "id": 470158793,
+        "bundleID": "com.aone.keka",
+        "version": "1.6.8",
+        "minimumOS": "10.10",
+        "seller": "Jorge Garcia Armero"
+      },
+      {
+        "name": "The Unarchiver",
+        "id": 425424353,
+        "bundleID": "cx.c3.theunarchiver",
+        "version": "4.3.9",
+        "minimumOS": "10.13",
+        "seller": "MacPaw Way Ltd"
+      },
+      {
+        "name": "Unzip - RAR ZIP 7Z Unarchiver",
+        "id": 1537056818,
+        "bundleID": "com.Ababe.UnzipAnyFile",
+        "version": "3.4",
+        "minimumOS": "10.7",
+        "seller": "青青 余"
+      },
+      {
+        "name": "RAR Extractor - Unzip File",
+        "id": 1535136051,
+        "bundleID": "com.elimisoft.rarextract",
+        "version": "1.1.1",
+        "minimumOS": "15.6",
+        "seller": "万林 彭"
+      },
+      {
+        "name": "Unzip One: RAR ZIP Extractor",
+        "id": 1127253508,
+        "bundleID": "com.trendmicro.DrUnzip",
+        "version": "4.0.9",
+        "minimumOS": "10.13",
+        "seller": "Trend Micro, Incorporated"
+      }
+    ]
+  },
+  {
+    "id": "apple-localsend",
+    "url": "https://itunes.apple.com/search?term=LocalSend&entity=macSoftware&country=pt&limit=5",
+    "status": 200,
+    "results": [
+      {
+        "name": "LocalSend",
+        "id": 1661733229,
+        "bundleID": "org.localsend.localsendApp",
+        "version": "1.18.2",
+        "minimumOS": "13.0",
+        "seller": "Tien Do Nam"
+      },
+      {
+        "name": "WhatsApp Messenger",
+        "id": 310633997,
+        "bundleID": "net.whatsapp.WhatsApp",
+        "version": "26.38.74",
+        "minimumOS": "15.1",
+        "seller": "WhatsApp Inc."
+      },
+      {
+        "name": "ShareMe: File Sharing & MeDrop",
+        "id": 6783182140,
+        "bundleID": "com.sharedrop.wifiShare",
+        "version": "1.0.8",
+        "minimumOS": "15.0",
+        "seller": "嘉林 陈"
+      },
+      {
+        "name": "Feem - Transfer Files Offline",
+        "id": 6475391304,
+        "bundleID": "com.feeperfect.feem.macos",
+        "version": "6.5.0",
+        "minimumOS": "12.3.0",
+        "seller": "FeePerfect AG"
+      },
+      {
+        "name": "EasyJoin: File Transfer & Sync",
+        "id": 6752865855,
+        "bundleID": "net.easyjoin.mac.pro",
+        "version": "4.4.2",
+        "minimumOS": "12",
+        "seller": "Panagiotis Spiropoulos"
+      }
+    ]
+  },
+  {
+    "id": "apple-utm",
+    "url": "https://itunes.apple.com/search?term=UTM&entity=macSoftware&country=pt&limit=5",
+    "status": 200,
+    "results": [
+      {
+        "name": "UTM Virtual Machines",
+        "id": 1538878817,
+        "bundleID": "com.utmapp.UTM",
+        "version": "4.7.5",
+        "minimumOS": "11.3",
+        "seller": "Turing Software, LLC"
+      },
+      {
+        "name": "Parallels Desktop",
+        "id": 1085114709,
+        "bundleID": "com.parallels.desktop.appstore",
+        "version": "1.26.4",
+        "minimumOS": "13.3",
+        "seller": "Parallels International GmbH"
+      },
+      {
+        "name": "CrystalFetch ISO Downloader",
+        "id": 6454431289,
+        "bundleID": "llc.turing.CrystalFetch",
+        "version": "2.2.0",
+        "minimumOS": "12.0",
+        "seller": "Turing Software, LLC"
+      },
+      {
+        "name": "virtualOS VM",
+        "id": 1614659226,
+        "bundleID": "com.github.yep.ios.virtualOS",
+        "version": "3.0",
+        "minimumOS": "15.0",
+        "seller": "Jahn Bertsch"
+      },
+      {
+        "name": "VMTek",
+        "id": 6444082385,
+        "bundleID": "com.cyaneous.vmtek",
+        "version": "3.1.0",
+        "minimumOS": "15.4",
+        "seller": "Cyaneous Inc."
+      }
+    ]
+  },
+  {
+    "id": "apple-wireguard",
+    "url": "https://itunes.apple.com/search?term=WireGuard&entity=macSoftware&country=pt&limit=5",
+    "status": 200,
+    "results": [
+      {
+        "name": "WireGuard",
+        "id": 1451685025,
+        "bundleID": "com.wireguard.macos",
+        "version": "1.0.16",
+        "minimumOS": "12.0",
+        "seller": "WireGuard LLC"
+      },
+      {
+        "name": "Tailscale",
+        "id": 1475387142,
+        "bundleID": "io.tailscale.ipn.macos",
+        "version": "1.102.4",
+        "minimumOS": "12.4",
+        "seller": "Tailscale Inc."
+      },
+      {
+        "name": "AmneziaWG",
+        "id": 6478942365,
+        "bundleID": "org.amnezia.awg",
+        "version": "3.1.4",
+        "minimumOS": "15.0",
+        "seller": "Privacy Technologies OU"
+      },
+      {
+        "name": "Passepartout, Client VPN",
+        "id": 1433648537,
+        "bundleID": "com.algoritmico.ios.Passepartout",
+        "version": "3.12.1",
+        "minimumOS": "17.0",
+        "seller": "Algoritmico Ltd"
+      },
+      {
+        "name": "V2Box - V2ray Client",
+        "id": 6446814690,
+        "bundleID": "hossin.asaadi.V2Box",
+        "version": "10.1.8",
+        "minimumOS": "15.0",
+        "seller": "techlaim"
+      }
+    ]
+  },
+  {
+    "id": "apple-tailscale",
+    "url": "https://itunes.apple.com/search?term=Tailscale&entity=macSoftware&country=pt&limit=5",
+    "status": 200,
+    "results": [
+      {
+        "name": "Tailscale",
+        "id": 1475387142,
+        "bundleID": "io.tailscale.ipn.macos",
+        "version": "1.102.4",
+        "minimumOS": "12.4",
+        "seller": "Tailscale Inc."
+      },
+      {
+        "name": "Windows App",
+        "id": 1295203466,
+        "bundleID": "com.microsoft.rdc.macos",
+        "version": "11.4.3",
+        "minimumOS": "14.0",
+        "seller": "Microsoft Corporation"
+      },
+      {
+        "name": "SSH Files – Secure ShellFish",
+        "id": 1336634154,
+        "bundleID": "com.appliedphasor.secure-shellfish",
+        "version": "2026.31",
+        "minimumOS": "17.4",
+        "seller": "Anders Borum"
+      },
+      {
+        "name": "NeoServer SSH Client|Terminal",
+        "id": 6448362669,
+        "bundleID": "com.neo.NeoMan",
+        "version": "8.4.6",
+        "minimumOS": "16.4",
+        "seller": "Space-Time Transformation Technology Co., Ltd."
+      },
+      {
+        "name": "TailChat",
+        "id": 6740553383,
+        "bundleID": "io.cylonix.tailchat",
+        "version": "1.0.1",
+        "minimumOS": "15.6",
+        "seller": "EZBLOCK INC"
+      }
+    ]
+  },
+  {
+    "id": "apple-davinci-resolve",
+    "url": "https://itunes.apple.com/search?term=DaVinci+Resolve&entity=macSoftware&country=pt&limit=5",
+    "status": 200,
+    "results": [
+      {
+        "name": "DaVinci Resolve",
+        "id": 571213070,
+        "bundleID": "com.blackmagic-design.DaVinciResolveLite",
+        "version": "21.1",
+        "minimumOS": "15.0",
+        "seller": "Blackmagic Design Inc"
+      },
+      {
+        "name": "CapCut - Video Editor",
+        "id": 1500855883,
+        "bundleID": "com.lemon.lvoverseas",
+        "version": "19.6.0",
+        "minimumOS": "15.0",
+        "seller": "BYTEDANCE PTE. LTD."
+      },
+      {
+        "name": "iMovie",
+        "id": 408981434,
+        "bundleID": "com.apple.iMovieApp",
+        "version": "10.4.5",
+        "minimumOS": "26.6",
+        "seller": "Apple Distribution International"
+      },
+      {
+        "name": "Canva: AI Foto, Vídeo & Editor",
+        "id": 897446215,
+        "bundleID": "com.canva.canvaeditor",
+        "version": "4.229.0",
+        "minimumOS": "15.0",
+        "seller": "Canva Pty Ltd"
+      },
+      {
+        "name": "DaVinci Resolve Studio",
+        "id": 900392332,
+        "bundleID": "com.blackmagic-design.DaVinciResolveAppStore",
+        "version": "21.1",
+        "minimumOS": "15.0",
+        "seller": "Blackmagic Design Inc"
+      }
+    ]
+  },
+  {
+    "id": "apple-garageband",
+    "url": "https://itunes.apple.com/search?term=GarageBand&entity=macSoftware&country=pt&limit=5",
+    "status": 200,
+    "results": [
+      {
+        "name": "GarageBand",
+        "id": 682658836,
+        "bundleID": "com.apple.garageband10",
+        "version": "10.4.14",
+        "minimumOS": "15.6",
+        "seller": "Apple Distribution International"
+      },
+      {
+        "name": "iMovie",
+        "id": 408981434,
+        "bundleID": "com.apple.iMovieApp",
+        "version": "10.4.5",
+        "minimumOS": "26.6",
+        "seller": "Apple Distribution International"
+      },
+      {
+        "name": "n-Track Studio DAW",
+        "id": 446363299,
+        "bundleID": "com.ntrack.ntrackfree",
+        "version": "10.5.207",
+        "minimumOS": "10.15",
+        "seller": "n-Track S.r.l."
+      }
+    ]
+  },
+  {
+    "id": "apple-pages",
+    "url": "https://itunes.apple.com/search?term=Pages&entity=macSoftware&country=pt&limit=5",
+    "status": 200,
+    "results": [
+      {
+        "name": "Pages: crie documentos",
+        "id": 361309726,
+        "bundleID": "com.apple.Pages",
+        "version": "15.4",
+        "minimumOS": "26.0",
+        "seller": "Apple Distribution International"
+      },
+      {
+        "name": "Numbers: crie folhas",
+        "id": 361304891,
+        "bundleID": "com.apple.Numbers",
+        "version": "15.4",
+        "minimumOS": "26.0",
+        "seller": "Apple Distribution International"
+      },
+      {
+        "name": "Keynote: crie apresentações",
+        "id": 361285480,
+        "bundleID": "com.apple.Keynote",
+        "version": "15.4",
+        "minimumOS": "26.0",
+        "seller": "Apple Distribution International"
+      },
+      {
+        "name": "WhatsApp Messenger",
+        "id": 310633997,
+        "bundleID": "net.whatsapp.WhatsApp",
+        "version": "26.38.74",
+        "minimumOS": "15.1",
+        "seller": "WhatsApp Inc."
+      }
+    ]
+  },
+  {
+    "id": "apple-numbers",
+    "url": "https://itunes.apple.com/search?term=Numbers&entity=macSoftware&country=pt&limit=5",
+    "status": 200,
+    "results": [
+      {
+        "name": "Numbers: crie folhas",
+        "id": 361304891,
+        "bundleID": "com.apple.Numbers",
+        "version": "15.4",
+        "minimumOS": "26.0",
+        "seller": "Apple Distribution International"
+      },
+      {
+        "name": "Pages: crie documentos",
+        "id": 361309726,
+        "bundleID": "com.apple.Pages",
+        "version": "15.4",
+        "minimumOS": "26.0",
+        "seller": "Apple Distribution International"
+      },
+      {
+        "name": "Keynote: crie apresentações",
+        "id": 361285480,
+        "bundleID": "com.apple.Keynote",
+        "version": "15.4",
+        "minimumOS": "26.0",
+        "seller": "Apple Distribution International"
+      },
+      {
+        "name": "Sheets",
+        "id": 1518721142,
+        "bundleID": "com.bestmusicvideo.formmaster",
+        "version": "5.21",
+        "minimumOS": "14.0",
+        "seller": "BEST MUSIC VIDEO & IMAGE MAKER LIMITED"
+      }
+    ]
+  },
+  {
+    "id": "apple-keynote",
+    "url": "https://itunes.apple.com/search?term=Keynote&entity=macSoftware&country=pt&limit=5",
+    "status": 200,
+    "results": [
+      {
+        "name": "Keynote: crie apresentações",
+        "id": 361285480,
+        "bundleID": "com.apple.Keynote",
+        "version": "15.4",
+        "minimumOS": "26.0",
+        "seller": "Apple Distribution International"
+      },
+      {
+        "name": "Numbers: crie folhas",
+        "id": 361304891,
+        "bundleID": "com.apple.Numbers",
+        "version": "15.4",
+        "minimumOS": "26.0",
+        "seller": "Apple Distribution International"
+      },
+      {
+        "name": "Pages: crie documentos",
+        "id": 361309726,
+        "bundleID": "com.apple.Pages",
+        "version": "15.4",
+        "minimumOS": "26.0",
+        "seller": "Apple Distribution International"
+      }
+    ]
+  },
+  {
+    "id": "apple-microsoft-word",
+    "url": "https://itunes.apple.com/search?term=Microsoft+Word&entity=macSoftware&country=pt&limit=5",
+    "status": 200,
+    "results": [
+      {
+        "name": "Microsoft Word",
+        "id": 462054704,
+        "bundleID": "com.microsoft.Word",
+        "version": "16.113.3",
+        "minimumOS": "14.0",
+        "seller": "Microsoft Corporation"
+      },
+      {
+        "name": "Microsoft PowerPoint",
+        "id": 462062816,
+        "bundleID": "com.microsoft.Powerpoint",
+        "version": "16.113.3",
+        "minimumOS": "14.0",
+        "seller": "Microsoft Corporation"
+      },
+      {
+        "name": "Microsoft Excel",
+        "id": 462058435,
+        "bundleID": "com.microsoft.Excel",
+        "version": "16.113.3",
+        "minimumOS": "14.0",
+        "seller": "Microsoft Corporation"
+      }
+    ]
+  },
+  {
+    "id": "apple-microsoft-excel",
+    "url": "https://itunes.apple.com/search?term=Microsoft+Excel&entity=macSoftware&country=pt&limit=5",
+    "status": 200,
+    "results": [
+      {
+        "name": "Microsoft Excel",
+        "id": 462058435,
+        "bundleID": "com.microsoft.Excel",
+        "version": "16.113.3",
+        "minimumOS": "14.0",
+        "seller": "Microsoft Corporation"
+      },
+      {
+        "name": "Microsoft Word",
+        "id": 462054704,
+        "bundleID": "com.microsoft.Word",
+        "version": "16.113.3",
+        "minimumOS": "14.0",
+        "seller": "Microsoft Corporation"
+      },
+      {
+        "name": "Microsoft PowerPoint",
+        "id": 462062816,
+        "bundleID": "com.microsoft.Powerpoint",
+        "version": "16.113.3",
+        "minimumOS": "14.0",
+        "seller": "Microsoft Corporation"
+      }
+    ]
+  },
+  {
+    "id": "apple-microsoft-powerpoint",
+    "url": "https://itunes.apple.com/search?term=Microsoft+PowerPoint&entity=macSoftware&country=pt&limit=5",
+    "status": 200,
+    "results": [
+      {
+        "name": "Microsoft PowerPoint",
+        "id": 462062816,
+        "bundleID": "com.microsoft.Powerpoint",
+        "version": "16.113.3",
+        "minimumOS": "14.0",
+        "seller": "Microsoft Corporation"
+      },
+      {
+        "name": "Microsoft Excel",
+        "id": 462058435,
+        "bundleID": "com.microsoft.Excel",
+        "version": "16.113.3",
+        "minimumOS": "14.0",
+        "seller": "Microsoft Corporation"
+      },
+      {
+        "name": "Microsoft Word",
+        "id": 462054704,
+        "bundleID": "com.microsoft.Word",
+        "version": "16.113.3",
+        "minimumOS": "14.0",
+        "seller": "Microsoft Corporation"
+      }
+    ]
+  },
+  {
+    "id": "apple-microsoft-outlook",
+    "url": "https://itunes.apple.com/search?term=Microsoft+Outlook&entity=macSoftware&country=pt&limit=5",
+    "status": 200,
+    "results": [
+      {
+        "name": "Microsoft Outlook",
+        "id": 985367838,
+        "bundleID": "com.microsoft.Outlook",
+        "version": "16.113.3",
+        "minimumOS": "14.0",
+        "seller": "Microsoft Corporation"
+      },
+      {
+        "name": "WhatsApp Messenger",
+        "id": 310633997,
+        "bundleID": "net.whatsapp.WhatsApp",
+        "version": "26.38.74",
+        "minimumOS": "15.1",
+        "seller": "WhatsApp Inc."
+      },
+      {
+        "name": "Microsoft Word",
+        "id": 462054704,
+        "bundleID": "com.microsoft.Word",
+        "version": "16.113.3",
+        "minimumOS": "14.0",
+        "seller": "Microsoft Corporation"
+      },
+      {
+        "name": "Microsoft Excel",
+        "id": 462058435,
+        "bundleID": "com.microsoft.Excel",
+        "version": "16.113.3",
+        "minimumOS": "14.0",
+        "seller": "Microsoft Corporation"
+      }
+    ]
+  },
+  {
+    "id": "apple-microsoft-onenote",
+    "url": "https://itunes.apple.com/search?term=Microsoft+OneNote&entity=macSoftware&country=pt&limit=5",
+    "status": 200,
+    "results": [
+      {
+        "name": "Microsoft OneNote",
+        "id": 784801555,
+        "bundleID": "com.microsoft.onenote.mac",
+        "version": "16.113.3",
+        "minimumOS": "14.0",
+        "seller": "Microsoft Corporation"
+      },
+      {
+        "name": "Microsoft Word",
+        "id": 462054704,
+        "bundleID": "com.microsoft.Word",
+        "version": "16.113.3",
+        "minimumOS": "14.0",
+        "seller": "Microsoft Corporation"
+      },
+      {
+        "name": "Microsoft PowerPoint",
+        "id": 462062816,
+        "bundleID": "com.microsoft.Powerpoint",
+        "version": "16.113.3",
+        "minimumOS": "14.0",
+        "seller": "Microsoft Corporation"
+      },
+      {
+        "name": "Microsoft Outlook",
+        "id": 985367838,
+        "bundleID": "com.microsoft.Outlook",
+        "version": "16.113.3",
+        "minimumOS": "14.0",
+        "seller": "Microsoft Corporation"
+      }
+    ]
+  },
+  {
+    "id": "apple-the-unarchiver",
+    "url": "https://itunes.apple.com/search?term=The+Unarchiver&entity=macSoftware&country=pt&limit=5",
+    "status": 200,
+    "results": [
+      {
+        "name": "The Unarchiver",
+        "id": 425424353,
+        "bundleID": "cx.c3.theunarchiver",
+        "version": "4.3.9",
+        "minimumOS": "10.13",
+        "seller": "MacPaw Way Ltd"
+      },
+      {
+        "name": "Unzip - RAR ZIP 7Z Unarchiver",
+        "id": 1537056818,
+        "bundleID": "com.Ababe.UnzipAnyFile",
+        "version": "3.4",
+        "minimumOS": "10.7",
+        "seller": "青青 余"
+      },
+      {
+        "name": "RAR Extractor - Unarchiver",
+        "id": 646295438,
+        "bundleID": "com.ABabe.rarextractorfree",
+        "version": "6.4.3",
+        "minimumOS": "12.0",
+        "seller": "青青 余"
+      },
+      {
+        "name": "BestZip - Descompactar RAR, 7Z",
+        "id": 1450246547,
+        "bundleID": "com.fushao.bestzip-lite",
+        "version": "25.11.28",
+        "minimumOS": "12.0",
+        "seller": "Chengdu Jieyou Technology Co., Ltd"
+      },
+      {
+        "name": "Descompactar RAR&ZIP&7Z",
+        "id": 1527959974,
+        "bundleID": "com.ABabe.thearchiver",
+        "version": "3.5.5",
+        "minimumOS": "10.7",
+        "seller": "青青 余"
+      }
+    ]
+  },
+  {
+    "id": "apple-pixelmator-pro",
+    "url": "https://itunes.apple.com/search?term=Pixelmator+Pro&entity=macSoftware&country=pt&limit=5",
+    "status": 200,
+    "results": [
+      {
+        "name": "Pixelmator Pro",
+        "id": 1289583905,
+        "bundleID": "com.pixelmatorteam.pixelmator.x",
+        "version": "3.8",
+        "minimumOS": "12.0",
+        "seller": "Apple Distribution International"
+      },
+      {
+        "name": "Pixelmator Pro: editar imagens",
+        "id": 6746662575,
+        "bundleID": "com.apple.pixelmator",
+        "version": "4.4",
+        "minimumOS": "26.0",
+        "seller": "Apple Distribution International"
+      },
+      {
+        "name": "Photomator – Photo Editor",
+        "id": 1444636541,
+        "bundleID": "com.pixelmatorteam.pixelmator.touch.x.photo",
+        "version": "3.4.15",
+        "minimumOS": "17.0",
+        "seller": "Apple Distribution International"
+      }
+    ]
+  },
+  {
+    "id": "apple-magnet",
+    "url": "https://itunes.apple.com/search?term=Magnet&entity=macSoftware&country=pt&limit=5",
+    "status": 200,
+    "results": [
+      {
+        "name": "Magnet",
+        "id": 441258766,
+        "bundleID": "com.crowdcafe.windowmagnet",
+        "version": "3.0.7",
+        "minimumOS": "13.0",
+        "seller": "BOOTCODE A.S."
+      },
+      {
+        "name": "WhatsApp Messenger",
+        "id": 310633997,
+        "bundleID": "net.whatsapp.WhatsApp",
+        "version": "26.38.74",
+        "minimumOS": "15.1",
+        "seller": "WhatsApp Inc."
+      },
+      {
+        "name": "Align - Organize App Windows",
+        "id": 6480428845,
+        "bundleID": "com.swiftwave.align",
+        "version": "2.4.1",
+        "minimumOS": "12.0",
+        "seller": "尚辉 李"
+      },
+      {
+        "name": "Magnet Crop",
+        "id": 1547800025,
+        "bundleID": "xyz.heestand.magnet-crop",
+        "version": "3.3.0",
+        "minimumOS": "18.0",
+        "seller": "Anton Heestand"
+      }
+    ]
+  },
+  {
+    "id": "apple-bear",
+    "url": "https://itunes.apple.com/search?term=Bear&entity=macSoftware&country=pt&limit=5",
+    "status": 200,
+    "results": [
+      {
+        "name": "Bear - Anotações Particulares",
+        "id": 1091189122,
+        "bundleID": "net.shinyfrog.bear",
+        "version": "3.0.1",
+        "minimumOS": "12.4",
+        "seller": "Shiny Frog Ltd."
+      },
+      {
+        "name": "Ulysses: App de Escrita",
+        "id": 1225570693,
+        "bundleID": "com.ulyssesapp.mac",
+        "version": "41.1",
+        "minimumOS": "26.0",
+        "seller": "Ulysses GmbH & Co. KG"
+      },
+      {
+        "name": "VPN rápida e ilimitada NordVPN",
+        "id": 905953485,
+        "bundleID": "com.nordvpn.NordVPN",
+        "version": "9.14.1",
+        "minimumOS": "17.0",
+        "seller": "Nordvpn S.A."
+      },
+      {
+        "name": "VPN cat: Rápido e Ilimitado",
+        "id": 1134784923,
+        "bundleID": "com.vpn.cat",
+        "version": "2.12.5",
+        "minimumOS": "15.0",
+        "seller": "SAFDAR NETWORK SMC-PRIVATE LIMITED"
+      },
+      {
+        "name": "VPNIFY - Unlimited VPN",
+        "id": 1503251395,
+        "bundleID": "com.free.vpn.hotspot.secure.vpnify",
+        "version": "2.3.60",
+        "minimumOS": "15.0",
+        "seller": "Neonetworks solution ltd"
+      }
+    ]
+  },
+  {
+    "id": "apple-things-3",
+    "url": "https://itunes.apple.com/search?term=Things+3&entity=macSoftware&country=pt&limit=5",
+    "status": 200,
+    "results": [
+      {
+        "name": "Things 3",
+        "id": 904280696,
+        "bundleID": "com.culturedcode.ThingsMac",
+        "version": "3.24.1",
+        "minimumOS": "13.3",
+        "seller": "Cultured Code GmbH & Co. KG"
+      },
+      {
+        "name": "Todoist: To-do list–Calendário",
+        "id": 585829637,
+        "bundleID": "com.todoist.mac.Todoist",
+        "version": "9.30.0",
+        "minimumOS": "12.0",
+        "seller": "Todoist Inc."
+      },
+      {
+        "name": "Structured - Daily Planner",
+        "id": 1499198946,
+        "bundleID": "com.leomehlig.today",
+        "version": "4.6.4",
+        "minimumOS": "18.0",
+        "seller": "unorderly GmbH"
+      }
+    ]
+  },
+  {
+    "id": "apple-maccy",
+    "url": "https://itunes.apple.com/search?term=Maccy&entity=macSoftware&country=pt&limit=5",
+    "status": 200,
+    "results": [
+      {
+        "name": "Maccy",
+        "id": 1527619437,
+        "bundleID": "org.p0deje.Maccy",
+        "version": "2.7.1",
+        "minimumOS": "14.0",
+        "seller": "Antonina Ivanova"
+      },
+      {
+        "name": "CopyBox - Clipboard History",
+        "id": 6740539642,
+        "bundleID": "com.sluhai.copybox",
+        "version": "1.3.0",
+        "minimumOS": "13.0",
+        "seller": "Ihor Makarchuk"
+      },
+      {
+        "name": "PasteMe - Clipboard Manager",
+        "id": 6664068453,
+        "bundleID": "com.caiwenshuo.pasteme",
+        "version": "1.3.32",
+        "minimumOS": "14.0",
+        "seller": "文烁 蔡"
+      },
+      {
+        "name": "NotchNest - Notch Dinâmico",
+        "id": 6747612321,
+        "bundleID": "com.silverseahog.notchnestapp",
+        "version": "1.2.5",
+        "minimumOS": "14.0",
+        "seller": "Satnam Singh"
+      },
+      {
+        "name": "Folder Hub - File browser",
+        "id": 6473019059,
+        "bundleID": "com.lessimore.doc",
+        "version": "2.8.2",
+        "minimumOS": "13.0",
+        "seller": "志远 杨"
+      }
+    ]
+  },
+  {
+    "id": "apple-pdf-expert",
+    "url": "https://itunes.apple.com/search?term=PDF+Expert&entity=macSoftware&country=pt&limit=5",
+    "status": 200,
+    "results": [
+      {
+        "name": "PDF Expert – Edite, Assine PDF",
+        "id": 1055273043,
+        "bundleID": "com.readdle.PDFExpert-Mac",
+        "version": "3.13.4",
+        "minimumOS": "12.0",
+        "seller": "Readdle Technologies Limited"
+      },
+      {
+        "name": "PDFgear: PDF Editar, Converter",
+        "id": 6469021132,
+        "bundleID": "com.pdfeditor.pdfeditormac",
+        "version": "2.28",
+        "minimumOS": "12",
+        "seller": "PDF GEAR TECH PTE. LTD."
+      },
+      {
+        "name": "iLovePDF - Scan & Edição PDF",
+        "id": 1207332399,
+        "bundleID": "com.ilovepdf.www",
+        "version": "4.1.0",
+        "minimumOS": "18.0",
+        "seller": "ILOVEPDF S.L."
+      },
+      {
+        "name": "PDF Reader Pro: Ler e editar",
+        "id": 919472673,
+        "bundleID": "com.brother.pdfreaderprofree.mac",
+        "version": "6.0.0",
+        "minimumOS": "11.0",
+        "seller": "PDF Technologies, Inc."
+      }
+    ]
+  },
+  {
+    "id": "apple-final-cut-pro",
+    "url": "https://itunes.apple.com/search?term=Final+Cut+Pro&entity=macSoftware&country=pt&limit=5",
+    "status": 200,
+    "results": [
+      {
+        "name": "Final Cut Pro: crie vídeos",
+        "id": 1631624924,
+        "bundleID": "com.apple.FinalCutApp",
+        "version": "3.4",
+        "minimumOS": "26.6",
+        "seller": "Apple Distribution International"
+      },
+      {
+        "name": "Final Cut Pro",
+        "id": 424389933,
+        "bundleID": "com.apple.FinalCut",
+        "version": "12.4",
+        "minimumOS": "26.6",
+        "seller": "Apple Distribution International"
+      },
+      {
+        "name": "CapCut - Video Editor",
+        "id": 1500855883,
+        "bundleID": "com.lemon.lvoverseas",
+        "version": "19.6.0",
+        "minimumOS": "15.0",
+        "seller": "BYTEDANCE PTE. LTD."
+      },
+      {
+        "name": "DaVinci Resolve",
+        "id": 571213070,
+        "bundleID": "com.blackmagic-design.DaVinciResolveLite",
+        "version": "21.1",
+        "minimumOS": "15.0",
+        "seller": "Blackmagic Design Inc"
+      }
+    ]
+  },
+  {
+    "id": "apple-logic-pro",
+    "url": "https://itunes.apple.com/search?term=Logic+Pro&entity=macSoftware&country=pt&limit=5",
+    "status": 200,
+    "results": [
+      {
+        "name": "Logic Pro",
+        "id": 634148309,
+        "bundleID": "com.apple.logic10",
+        "version": "12.4",
+        "minimumOS": "15.4",
+        "seller": "Apple Distribution International"
+      },
+      {
+        "name": "GarageBand",
+        "id": 682658836,
+        "bundleID": "com.apple.garageband10",
+        "version": "10.4.14",
+        "minimumOS": "15.6",
+        "seller": "Apple Distribution International"
+      },
+      {
+        "name": "WhatsApp Messenger",
+        "id": 310633997,
+        "bundleID": "net.whatsapp.WhatsApp",
+        "version": "26.38.74",
+        "minimumOS": "15.1",
+        "seller": "WhatsApp Inc."
+      },
+      {
+        "name": "Spectre Analyzer for Logic Pro",
+        "id": 1664241226,
+        "bundleID": "com.audio.SRSpectrogramWave",
+        "version": "1.1",
+        "minimumOS": "15.0",
+        "seller": "Indigogo LTD"
+      }
+    ]
+  },
+  {
+    "id": "apple-motion",
+    "url": "https://itunes.apple.com/search?term=Motion&entity=macSoftware&country=pt&limit=5",
+    "status": 200,
+    "results": [
+      {
+        "name": "Motion",
+        "id": 434290957,
+        "bundleID": "com.apple.motionapp",
+        "version": "6.4",
+        "minimumOS": "26.6",
+        "seller": "Apple Distribution International"
+      },
+      {
+        "name": "Motion: anime efeitos",
+        "id": 6746637149,
+        "bundleID": "com.apple.motionappApp",
+        "version": "6.4",
+        "minimumOS": "26.6",
+        "seller": "Apple Distribution International"
+      },
+      {
+        "name": "CapCut - Video Editor",
+        "id": 1500855883,
+        "bundleID": "com.lemon.lvoverseas",
+        "version": "19.6.0",
+        "minimumOS": "15.0",
+        "seller": "BYTEDANCE PTE. LTD."
+      },
+      {
+        "name": "WhatsApp Messenger",
+        "id": 310633997,
+        "bundleID": "net.whatsapp.WhatsApp",
+        "version": "26.38.74",
+        "minimumOS": "15.1",
+        "seller": "WhatsApp Inc."
+      }
+    ]
+  }
+]

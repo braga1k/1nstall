@@ -180,17 +180,19 @@ extension ContentView {
           "Um ponto de partida para a seleção. As apps instaladas são ignoradas.")
       ).foregroundStyle(p.secondary)
       HStack(alignment: .top, spacing: 18) {
-        VStack(spacing: 7) {
-          ForEach(Library.profiles) { item in
-            Button {
-              activeProfile = item.id
-            } label: {
-              Text(m.t(item.english, item.portuguese)).frame(
-                maxWidth: .infinity, alignment: .leading)
+        ScrollView {
+          VStack(spacing: 7) {
+            ForEach(Library.profiles) { item in
+              Button {
+                activeProfile = item.id
+              } label: {
+                Text(m.t(item.english, item.portuguese)).frame(
+                  maxWidth: .infinity, alignment: .leading)
+              }
+              .buttonStyle(GlassButtonStyle(selected: item.id == activeProfile))
             }
-            .buttonStyle(GlassButtonStyle(selected: item.id == activeProfile))
           }
-        }.frame(width: 185)
+        }.frame(width: 185, height: 330)
         ScrollView {
           VStack(alignment: .leading, spacing: 14) {
             ForEach(apps) { app in

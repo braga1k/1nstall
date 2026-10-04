@@ -45,6 +45,8 @@ extension AppModel {
     "Invalid recovery request.": "Pedido de recuperação inválido.",
     "Invalid administrative request.": "Pedido administrativo inválido.",
     "Invalid service plan.": "Plano de serviços inválido.",
+    "The installed app name changed after review.":
+      "O nome da app a instalar mudou após a revisão.",
     "Invalid service scope.": "Âmbito de serviço inválido.",
     "The account for this removal could not be verified.":
       "Não foi possível verificar a conta para esta remoção.",

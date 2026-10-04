@@ -1,5 +1,18 @@
 # Validação — 04/10/2026
 
+## Beta 0.5.0-beta.1 — catálogo Mac
+
+Base local `31d059bd4f7f9e369c41124d27fb17bf5e207048`. Catálogo passou de 27 para **112 apps**, com **25 categorias, 20 perfis e 33 instalações automáticas**. As outras 79 abrem fontes oficiais; 35 ainda exigem confirmação do requisito mínimo na fonte. O Windows tem 325 entradas: não se anuncia igualdade de cobertura. Snapshots Homebrew/Apple e verificação de fabricantes em `research/beta/`; tabela em `SUPPORTED-APPS.md`. A popularidade Homebrew não foi tratada como utilização global.
+
+- **47 verificações do núcleo, 10 de estado e 11 de composição/movimento**, sem falhas. O preflight agora exige exatamente um bundle com o destino revisto; testes recusam outro nome e múltiplos bundles, aceitando renomeação explícita correta.
+- **33/33 entradas automáticas passaram preflight real**, sem instalar: versão, SHA-256, artefactos e destino conferidos. Firefox ficou na fonte oficial por ter checksums dependentes do idioma; Vivaldi ficou na fonte oficial porque a API individual e a resposta Homebrew consultada divergiam. Não se removeu a verificação de checksum.
+- **Maccy 2.7.1 e Skim 1.7.17:** ciclos reais em nova pasta descartável; instalação, bundle ID, arm64, origem Homebrew comprovada sem recibo próprio e remoção usando os registos instalados. Bundle e registo ausentes no fim. Apps não abertas; nenhuma app pessoal alvo do ensaio. Rectangle/IINA são provas anteriores, não repetidas nesta beta.
+- **Interface:** lista de perfis com scroll independente para acomodar 20 opções e conservar as ações visíveis. Na app nativa, deslocação até ao último perfil Data & databases e mudança da respetiva lista confirmadas; não foi aplicada a seleção nem iniciada instalação. A ficha avisa quando o mínimo revisto é superior ao macOS atual (por exemplo Final Cut Pro/Motion 26.6 no Mac 26.5.2). Uninstall continua em lista; navegação imediata e animações preservadas.
+- **24 capturas inglesas com fixtures**, três comparações com Windows e oito monocromáticas: diferença RGB máxima 1, zero píxeis acima de 1. Sem inventário pessoal nas imagens distribuídas. Sem novo benchmark CPU/FPS ou auditoria completa de acessibilidade.
+- **Distribuição:** app release arm64 e helper com assinatura ad hoc verificada; sem Developer ID/notarização. Target declarado macOS 14, validação real apenas em Tahoe 26.5.2. O bundle/nome anteriores são conservados para compatibilidade com preferências e histórico. Vitor pediu explicitamente a publicação de uma beta separada, preservando o Windows estável.
+
+A cobertura de remoção administrativa da 0.4.0 abaixo mantém-se. **Equivalência integral ao Mole pendente**, em particular helpers externos, PKG, extensões e desinstaladores especializados. Catálogo revisto não significa que todas as 112 apps tenham sido instaladas ou removidas em ensaios.
+
 ## Iteração 0.4.0 — autorização, serviços e recuperação
 
 Base local limpa `a94add4d57f6b2b73fb064db8b56a3bed5235c3f`. HEAD/main/tag Windows remotos novamente confirmados em `db4931e533aa951f7ff564555714ac38497ba20c`. Alterações limitadas a `macos/`. Esta entrega é um marco local anterior à expansão de catálogo e beta pedidas por Vitor no fim da sessão.

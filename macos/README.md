@@ -1,6 +1,12 @@
-# 1nstall para macOS — prévia 0.4.0
+# 1nstall para macOS — beta 0.5.0-beta.1
 
 Implementação nativa em desenvolvimento em SwiftUI e AppKit, desenvolvida num M4 Pro com 24 GB e macOS Tahoe 26.5.2. Conserva a estrutura visual da 1nstall Windows 3.5.0. A versão Windows e o seu processo de compilação não foram modificados.
+
+## Beta pública — 0.5.0-beta.1
+
+**112 apps, 25 categorias e 20 perfis.** 33 instalações automáticas revistas pelo Homebrew; as restantes 79 abrem o fabricante ou a Mac App Store. [Guia da beta em inglês](BETA.md) e [catálogo com fontes e limites](docs/SUPPORTED-APPS.md). O Windows 3.5 mantém 325 entradas; ainda não se anuncia equivalência de catálogo ou remoção integral ao Mole.
+
+Maccy e Skim passaram novos ciclos reais em pastas descartáveis, sem abrir as apps. Os 33 percursos automáticos passaram a verificação de versão, checksum e artefacto esperado. Requisitos desconhecidos ficam explicitamente remetidos para a fonte; versões que pedem um macOS mais recente mostram esse aviso na ficha. A interface conserva a lista Uninstall, quatro aparências, animações e cliques completos.
 
 ## Permissões, serviços e recuperação — 0.4.0
 
@@ -36,9 +42,9 @@ Medições e limites em [Desempenho](docs/PERFORMANCE.md). Nessa correção, o c
 
 Abre `1nstall Mac Preview.app`. A app entregue é arm64, com assinatura local ad hoc; ainda não está assinada para distribuição nem notarizada.
 
-- **Instalar:** pesquisa com ⌘F, explora 13 subcategorias em quatro grupos e seleciona apps ou um perfil. A pesquisa e os filtros são conservados separadamente entre Install e Uninstall. Revê a lista antes de iniciar. Apps detetadas no Mac aparecem atenuadas.
-- **Catálogo:** 27 entradas, incluindo cinco casks revistos (IINA, Rectangle, Keka, LocalSend e VLC). As outras 22 abrem o fabricante ou a App Store. Abrir uma página não conta como instalação confirmada.
-- **Perfis:** oito perfis com revisão, contagem de apps disponíveis e escolha entre acrescentar ou substituir a seleção, além de importação/exportação JSON. Um perfil não instala nada por si. As entradas já instaladas são excluídas da nova seleção.
+- **Instalar:** pesquisa com ⌘F, explora 25 subcategorias em quatro grupos e seleciona apps ou um perfil. A pesquisa e os filtros são conservados separadamente entre Install e Uninstall. Revê a lista antes de iniciar. Apps detetadas no Mac aparecem atenuadas.
+- **Catálogo:** 112 entradas, incluindo 33 casks revistos. As outras 79 abrem o fabricante ou a App Store. Abrir uma página não conta como instalação confirmada.
+- **Perfis:** 20 perfis com revisão, contagem de apps disponíveis e escolha entre acrescentar ou substituir a seleção, além de importação/exportação JSON. Um perfil não instala nada por si. As entradas já instaladas são excluídas da nova seleção.
 - **Desinstalar:** lista vertical com linhas de 70 pontos e inventário real em `/Applications`, `~/Applications` e `/System/Applications`, incluindo pastas de fabricantes até três níveis, sem contar apps internas/auxiliares como apps independentes. Seleção e remoção de apps comuns, da Store e Homebrew anteriores à prévia, incluindo apps fora do catálogo. Apps protegidas e percursos especiais têm diagnóstico explícito; ver REMOVAL.md para limites e métodos efetivamente suportados.
 - **Fila:** etapas por app, progresso por apps processadas, parar após a app atual, verificação e resultados persistentes. As apps confirmadas saem da seleção; limpar os resultados conserva o histórico. A nova tentativa prepara uma seleção para revisão, sem executar. Um arranque após interrupção mostra esse estado e nunca o transforma em sucesso. Não há percentagens de descarga inventadas.
 - **Resíduos:** revisão independente; ficheiros regeneráveis, dados pessoais, contentores com identidade confirmada, grupos partilhados protegidos e recursos do sistema com associação explícita. Os recursos exatos elegíveis pedem autorização administrativa e ficam em Recuperação. Nada pré-selecionado. Uma app ainda instalada/em execução, inventário parcial, symlinks ou ficheiros alterados após análise bloqueiam a limpeza. Os itens aprovados vão para o Lixo ou para Recuperação, conforme o percurso indicado na revisão. O tamanho é lógico e não significa espaço físico já libertado.

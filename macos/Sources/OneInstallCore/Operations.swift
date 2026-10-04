@@ -95,6 +95,15 @@ public struct BrewEngine: Sendable {
     guard let artifacts = cask["artifacts"] as? [[String: Any]],
       artifacts.allSatisfy({ Set($0.keys).isSubset(of: allowed) })
     else { throw OperationError("This installer needs a separate review.") }
+    let bundles = artifacts.compactMap { $0["app"] as? [Any] }
+    guard bundles.count == 1, let first = bundles[0].first as? String else {
+      throw OperationError("This installer needs a separate review.")
+    }
+    let renamed = bundles[0].compactMap { $0 as? [String: String] }.first?["target"]
+    guard (renamed ?? first) == app.appName,
+      URL(fileURLWithPath: app.appName).lastPathComponent == app.appName,
+      app.appName.hasSuffix(".app")
+    else { throw OperationError("The installed app name changed after review.") }
     for artifact in artifacts {
       if let actions = artifact["uninstall"] as? [[String: Any]],
         !actions.allSatisfy({ Set($0.keys).isSubset(of: ["quit", "login_item"]) })

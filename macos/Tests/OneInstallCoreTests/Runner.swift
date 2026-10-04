@@ -1,4 +1,5 @@
 import Foundation
+import OneInstallCore
 
 // Command Line Tools ship the macOS SDK, but not XCTest. These checks run as a
 // standalone Swift executable; no third-party test framework is required.
@@ -214,6 +215,25 @@ func requireValue<T>(_ value: T?) throws -> T {
       }
     } else {
       print("SKIP live Homebrew test: no disposable directory specified")
+    }
+    if ProcessInfo.processInfo.environment["ONEINSTALL_CATALOG_PREFLIGHT"] == "1" {
+      do {
+        let catalog = try Catalog.load().filter(\.automatic)
+        for app in catalog {
+          do {
+            try BrewEngine().preflight(app)
+            print(
+              "PREFLIGHT \(app.id): reviewed version, checksum, app target and method confirmed")
+          } catch {
+            failures += 1
+            print("FAIL PREFLIGHT \(app.id): \(error)")
+          }
+        }
+        print("\(catalog.count) automatic catalog entries checked without installing")
+      } catch {
+        failures += 1
+        print("FAIL catalog preflight: \(error)")
+      }
     }
     print("\(tests.count) core checks; \(failures) failures")
     exit(failures == 0 ? 0 : 1)

@@ -68,6 +68,30 @@ public enum Library {
     .init(
       id: "productivity", english: "Mac Productivity", portuguese: "Produtividade no Mac",
       group: "tools"),
+    .init(
+      id: "documents", english: "PDF & Reading", portuguese: "PDF e leitura", group: "everyday"),
+    .init(
+      id: "mail", english: "Email & Calendars", portuguese: "Correio e calendários",
+      group: "everyday"),
+    .init(id: "photos", english: "Photography", portuguese: "Fotografia", group: "create"),
+    .init(
+      id: "cloud", english: "Cloud & Sync", portuguese: "Nuvem e sincronização", group: "files"),
+    .init(
+      id: "gaming", english: "Games & Launchers", portuguese: "Jogos e lançadores", group: "tools"),
+    .init(
+      id: "virtualization", english: "Virtual Machines", portuguese: "Máquinas virtuais",
+      group: "tools"),
+    .init(id: "terminals", english: "Terminals", portuguese: "Terminais", group: "tools"),
+    .init(
+      id: "git", english: "Git & Version Control", portuguese: "Git e controlo de versões",
+      group: "tools"),
+    .init(id: "databases", english: "Databases", portuguese: "Bases de dados", group: "tools"),
+    .init(
+      id: "ai", english: "AI & Local Models", portuguese: "IA e modelos locais", group: "tools"),
+    .init(id: "network", english: "Network & VPN", portuguese: "Rede e VPN", group: "tools"),
+    .init(
+      id: "system", english: "System Utilities", portuguese: "Utilitários de sistema",
+      group: "tools"),
   ]
   public static let profiles: [LibraryProfile] = [
     .init(
@@ -94,6 +118,42 @@ public enum Library {
     .init(
       id: "communication", english: "Stay connected", portuguese: "Manter o contacto",
       apps: ["slack", "discord", "signal"]),
+    .init(
+      id: "writing", english: "Writing & research", portuguese: "Escrita e investigação",
+      apps: ["obsidian", "bear", "skim", "calibre"]),
+    .init(
+      id: "photography", english: "Photography", portuguese: "Fotografia",
+      apps: ["gimp", "affinity", "pixelmator-pro", "keka"]),
+    .init(
+      id: "podcast", english: "Podcast production", portuguese: "Produção de podcasts",
+      apps: ["reaper", "audacity", "iina"]),
+    .init(
+      id: "streaming", english: "Streaming & recording", portuguese: "Transmissão e gravação",
+      apps: ["obs", "discord", "handbrake-app", "vlc"]),
+    .init(
+      id: "web", english: "Web development", portuguese: "Programação Web",
+      apps: ["visual-studio-code", "firefox", "github", "iterm2", "postman"]),
+    .init(
+      id: "ai", english: "Local AI", portuguese: "IA local",
+      apps: ["ollama-app", "lm-studio", "zed"]),
+    .init(
+      id: "remote", english: "Remote collaboration", portuguese: "Colaboração à distância",
+      apps: ["zoom", "slack", "notion", "dropbox"]),
+    .init(
+      id: "privacy", english: "Privacy & security", portuguese: "Privacidade e segurança",
+      apps: ["brave-browser", "bitwarden", "signal", "cryptomator"]),
+    .init(
+      id: "gaming", english: "Mac gaming", portuguese: "Jogos no Mac",
+      apps: ["steam", "heroic", "epic-games", "discord"]),
+    .init(
+      id: "productivity", english: "A focused Mac", portuguese: "Um Mac organizado",
+      apps: ["raycast", "rectangle", "maccy", "jordanbaird-ice"]),
+    .init(
+      id: "cloud", english: "Cloud & backup", portuguese: "Nuvem e cópias",
+      apps: ["syncthing-app", "cyberduck", "localsend", "keka"]),
+    .init(
+      id: "data", english: "Data & databases", portuguese: "Dados e bases de dados",
+      apps: ["dbeaver-community", "tableplus", "microsoft-excel", "visual-studio-code"]),
   ]
   public static func matches(_ category: String, filter: String) -> Bool {
     filter == "all" || category == filter || categories.first { $0.id == category }?.group == filter

@@ -541,7 +541,9 @@ struct ContentView: View {
           Toggle(m.t("Reduce motion", "Reduzir movimento"), isOn: $m.lessMotion)
             .toggleStyle(.checkbox)
         }
-        settingsCard(m.t("About", "Sobre"), subtitle: "1nstall Mac Preview 0.4.0 · Apple Silicon") {
+        settingsCard(
+          m.t("About", "Sobre"), subtitle: "1nstall Mac Beta 0.5.0-beta.1 · Apple Silicon"
+        ) {
           Text(
             m.t(
               "\(m.apps.count) curated entries · \(m.apps.filter(\.automatic).count) reviewed Homebrew installers.",
@@ -716,6 +718,16 @@ struct ContentView: View {
           : "macOS ≥ \(app.minimumOS) · \(app.architecture)")
       Text(m.t("Source checked: ", "Fonte consultada: ") + app.verified).foregroundStyle(
         p.secondary)
+      if app.minimumOS != "source",
+        app.minimumOS.compare(
+          "\(ProcessInfo.processInfo.operatingSystemVersion.majorVersion).\(ProcessInfo.processInfo.operatingSystemVersion.minorVersion)",
+          options: .numeric) == .orderedDescending
+      {
+        Text(m.t(
+          "This version requires a newer macOS than this Mac is running.",
+          "Esta versão requer um macOS mais recente do que o instalado neste Mac."
+        )).font(.system(size: 12, weight: .semibold))
+      }
       if app.automatic {
         Text(
           m.t(

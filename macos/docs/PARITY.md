@@ -18,3 +18,6 @@ Estado local 0.4.0, 04/10/2026. A referência é Windows 3.5.0; a versão Mac ai
 | Distribuição | Compilação arm64 e assinatura ad hoc | Assinatura Developer ID, notarização e atualizador próprio |
 
 Prioridade confirmada: atingir a competência de remoção do Mole, sem generalizar o encaminhamento manual. A 0.4.0 acrescenta elevação pontual, serviços internos e recuperação. Os helpers externos e casos especiais ainda estão por implementar; não há paridade integral. Continuar fidelidade e expansão verificada do catálogo, sem promover popularidade Homebrew a utilização global. Não significa autorização para instalar/desinstalar apps pessoais, publicar ou criar horários. Nenhum módulo geral do Mole foi adotado.
+# Estado da beta 0.5.0-beta.1
+
+Catálogo Mac: 112 entradas/33 instalações automáticas, 25 categorias e 20 perfis; Windows: 325 entradas. Mantidos Uninstall em lista, quatro aparências, profundidade, animações interrompíveis e cliques completos. [Catálogo e fontes](SUPPORTED-APPS.md), [guia da beta](../BETA.md). A matriz anterior de remoção continua aplicável; não há paridade integral com Mole.

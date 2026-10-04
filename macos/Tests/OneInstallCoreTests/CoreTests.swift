@@ -236,6 +236,12 @@ final class CoreTests: CheckSuite {
     expectError(try engine.preflight(app))
     try mock(["artifacts": [["pkg": ["Privileged.pkg"]]]])
     expectError(try engine.preflight(app))
+    try mock(["artifacts": [["app": ["Other.app"]]]])
+    expectError(try engine.preflight(app))
+    try mock(["artifacts": [["app": ["Fixture.app"]], ["app": ["Other.app"]]]])
+    expectError(try engine.preflight(app))
+    try mock(["artifacts": [["app": ["Renamed.app", ["target": "Fixture.app"]]]]])
+    try engine.preflight(app)
   }
   func testCatalogAutomaticEntriesHaveChecksumsAndUniqueIdentities() throws {
     let catalog = try Catalog.load()
@@ -259,7 +265,11 @@ final class LiveBrewTests: CheckSuite {
     try FileManager.default.createDirectory(at: appDirectory, withIntermediateDirectories: true)
     let engine = BrewEngine(appDirectory: appDirectory)
     let catalog = try Catalog.load()
-    for token in ["rectangle", "iina"] {
+    let tokens =
+      ProcessInfo.processInfo.environment["ONEINSTALL_LIVE_TEST_CASKS"]?
+      .split(separator: ",").map(String.init) ?? ["rectangle", "iina"]
+    guard !tokens.isEmpty, tokens.count <= 5 else { throw OperationError("Invalid fixture list") }
+    for token in tokens {
       let app = try requireValue(catalog.first { $0.id == token })
       expectFalse(
         Inventory.scan().apps.contains { $0.bundleID == app.bundleID },
