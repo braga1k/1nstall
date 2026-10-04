@@ -1,0 +1,149 @@
+{
+  "token": "obsidian",
+  "full_token": "obsidian",
+  "old_tokens": [],
+  "tap": "homebrew/cask",
+  "name": [
+    "Obsidian"
+  ],
+  "desc": "Knowledge base that works on top of a local folder of plain text Markdown files",
+  "homepage": "https://obsidian.md/",
+  "url": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.13.7/Obsidian-1.13.7.dmg",
+  "url_specs": {},
+  "version": "1.13.7",
+  "autobump": true,
+  "no_autobump_message": null,
+  "skip_livecheck": false,
+  "installed": null,
+  "installed_time": null,
+  "bundle_version": null,
+  "bundle_short_version": null,
+  "pinned": false,
+  "pinned_version": null,
+  "outdated": false,
+  "sha256": "05daa54f5e1a4458f75da29f8faaa17e8e37ae16998432537f674c626db99bce",
+  "artifacts": [
+    {
+      "app": [
+        "Obsidian.app"
+      ],
+      "target": "/Applications/Obsidian.app"
+    },
+    {
+      "binary": [
+        "$APPDIR/Obsidian.app/Contents/MacOS/obsidian-cli",
+        {
+          "target": "obsidian"
+        }
+      ],
+      "target": "$HOMEBREW_PREFIX/bin/obsidian"
+    },
+    {
+      "zap": [
+        {
+          "trash": [
+            "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/md.obsidian.sfl*",
+            "~/Library/Application Support/obsidian",
+            "~/Library/Preferences/md.obsidian.plist",
+            "~/Library/Saved Application State/md.obsidian.savedState"
+          ]
+        }
+      ]
+    }
+  ],
+  "caveats": null,
+  "caveats_rosetta": null,
+  "depends_on": {
+    "macos": {
+      ">=": [
+        "12"
+      ]
+    }
+  },
+  "conflicts_with": null,
+  "container": null,
+  "rename": [],
+  "auto_updates": true,
+  "deprecated": false,
+  "deprecation_date": null,
+  "deprecation_reason": null,
+  "deprecation_replacement_formula": null,
+  "deprecation_replacement_cask": null,
+  "deprecate_args": null,
+  "disabled": false,
+  "disable_date": null,
+  "disable_reason": null,
+  "disable_replacement_formula": null,
+  "disable_replacement_cask": null,
+  "disable_args": null,
+  "tap_git_head": "cbc2487f55e148a7fd8505a0d9d48bebfbe05cd6",
+  "languages": [],
+  "ruby_source_path": "Casks/o/obsidian.rb",
+  "ruby_source_checksum": {
+    "sha256": "8adbd1a9eebb9199b74ccdcacb8b9a504790cdca6383d72b02ec11a031e88d5a"
+  },
+  "variations": {
+    "x86_64_linux": {
+      "url": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.13.7/Obsidian-1.13.7.AppImage",
+      "sha256": "e0d8e0a611624de8c9c7dcd8a9e648279fb0a0d552faa1312b7e4f3a5fa72663",
+      "artifacts": [
+        {
+          "app_image": [
+            "Obsidian-1.13.7.AppImage",
+            {
+              "target": "Obsidian.AppImage"
+            }
+          ],
+          "target": "/$HOME/Applications/Obsidian.AppImage"
+        }
+      ],
+      "depends_on": {}
+    },
+    "arm64_linux": {
+      "url": "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.13.7/Obsidian-1.13.7-arm64.AppImage",
+      "sha256": "e286fd2bb2a5d346a35a577bd764c73fd5537dddec2b99a1a3e5e35974085203",
+      "artifacts": [
+        {
+          "app_image": [
+            "Obsidian-1.13.7-arm64.AppImage",
+            {
+              "target": "Obsidian.AppImage"
+            }
+          ],
+          "target": "/$HOME/Applications/Obsidian.AppImage"
+        }
+      ],
+      "depends_on": {}
+    }
+  },
+  "supported_platforms": [
+    "golden_gate",
+    "arm64_golden_gate",
+    "tahoe",
+    "arm64_tahoe",
+    "sequoia",
+    "arm64_sequoia",
+    "sonoma",
+    "arm64_sonoma",
+    "ventura",
+    "arm64_ventura",
+    "monterey",
+    "arm64_monterey",
+    "x86_64_linux",
+    "arm64_linux"
+  ],
+  "analytics": {
+    "install": {
+      "30d": {
+        "obsidian": 8685
+      },
+      "90d": {
+        "obsidian": 51480
+      },
+      "365d": {
+        "obsidian": 192311
+      }
+    }
+  },
+  "generated_date": "2026-10-04"
+}

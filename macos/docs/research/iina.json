@@ -1,0 +1,178 @@
+{
+  "token": "iina",
+  "full_token": "iina",
+  "old_tokens": [],
+  "tap": "homebrew/cask",
+  "name": [
+    "IINA"
+  ],
+  "desc": "Free and open-source media player",
+  "homepage": "https://iina.io/",
+  "url": "https://dl.iina.io/IINA.v1.5.0.dmg",
+  "url_specs": {},
+  "version": "1.5.0",
+  "autobump": true,
+  "no_autobump_message": null,
+  "skip_livecheck": false,
+  "installed": null,
+  "installed_time": null,
+  "bundle_version": null,
+  "bundle_short_version": null,
+  "pinned": false,
+  "pinned_version": null,
+  "outdated": false,
+  "sha256": "8fad50479b10e09645053457cec46bd53d054ced2242cfe68f74586735a20dc7",
+  "artifacts": [
+    {
+      "uninstall": [
+        {
+          "quit": "com.colliderli.iina"
+        }
+      ]
+    },
+    {
+      "app": [
+        "IINA.app"
+      ],
+      "target": "/Applications/IINA.app"
+    },
+    {
+      "binary": [
+        "$APPDIR/IINA.app/Contents/MacOS/iina-cli",
+        {
+          "target": "iina"
+        }
+      ],
+      "target": "$HOMEBREW_PREFIX/bin/iina"
+    },
+    {
+      "zap": [
+        {
+          "trash": [
+            "~/Library/Application Scripts/com.colliderli.iina.OpenInIINA",
+            "~/Library/Application Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/com.colliderli.iina.sfl*",
+            "~/Library/Application Support/com.colliderli.iina",
+            "~/Library/Application Support/CrashReporter/IINA*.plist",
+            "~/Library/Caches/com.colliderli.iina",
+            "~/Library/Containers/com.colliderli.iina.OpenInIINA",
+            "~/Library/Cookies/com.colliderli.iina.binarycookies",
+            "~/Library/HTTPStorages/com.colliderli.iina",
+            "~/Library/Logs/com.colliderli.iina",
+            "~/Library/Logs/DiagnosticReports/IINA*.crash",
+            "~/Library/Preferences/com.colliderli.iina.plist",
+            "~/Library/Safari/Extensions/Open in IINA*.safariextz",
+            "~/Library/Saved Application State/com.colliderli.iina.savedState",
+            "~/Library/WebKit/com.colliderli.iina"
+          ]
+        }
+      ]
+    }
+  ],
+  "caveats": null,
+  "caveats_rosetta": null,
+  "depends_on": {
+    "macos": {
+      ">=": [
+        "12"
+      ]
+    }
+  },
+  "conflicts_with": null,
+  "container": null,
+  "rename": [],
+  "auto_updates": true,
+  "deprecated": false,
+  "deprecation_date": null,
+  "deprecation_reason": null,
+  "deprecation_replacement_formula": null,
+  "deprecation_replacement_cask": null,
+  "deprecate_args": null,
+  "disabled": false,
+  "disable_date": null,
+  "disable_reason": null,
+  "disable_replacement_formula": null,
+  "disable_replacement_cask": null,
+  "disable_args": null,
+  "tap_git_head": "cbc2487f55e148a7fd8505a0d9d48bebfbe05cd6",
+  "languages": [],
+  "ruby_source_path": "Casks/i/iina.rb",
+  "ruby_source_checksum": {
+    "sha256": "c77d5f9d7299e41a1d779551186c86ca5c6aa50daa49bbc21a0d7b09ef078e5c"
+  },
+  "variations": {
+    "golden_gate": {
+      "depends_on": {
+        "macos": {}
+      }
+    },
+    "tahoe": {
+      "depends_on": {
+        "macos": {}
+      }
+    },
+    "sequoia": {
+      "depends_on": {
+        "macos": {}
+      }
+    },
+    "sonoma": {
+      "depends_on": {
+        "macos": {}
+      }
+    },
+    "ventura": {
+      "depends_on": {
+        "macos": {}
+      }
+    },
+    "monterey": {
+      "depends_on": {
+        "macos": {}
+      }
+    },
+    "big_sur": {
+      "depends_on": {
+        "macos": {}
+      }
+    },
+    "x86_64_linux": {
+      "depends_on": {
+        "macos": {}
+      }
+    },
+    "arm64_linux": {
+      "depends_on": {
+        "macos": {}
+      }
+    }
+  },
+  "supported_platforms": [
+    "golden_gate",
+    "arm64_golden_gate",
+    "tahoe",
+    "arm64_tahoe",
+    "sequoia",
+    "arm64_sequoia",
+    "sonoma",
+    "arm64_sonoma",
+    "ventura",
+    "arm64_ventura",
+    "monterey",
+    "arm64_monterey",
+    "big_sur"
+  ],
+  "analytics": {
+    "install": {
+      "30d": {
+        "iina": 3388
+      },
+      "90d": {
+        "iina": 17550
+      },
+      "365d": {
+        "iina": 69063
+      }
+    }
+  },
+  "generated_date": "2026-10-04"
+}

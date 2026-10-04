@@ -1,0 +1,112 @@
+{
+  "token": "rectangle",
+  "full_token": "rectangle",
+  "old_tokens": [],
+  "tap": "homebrew/cask",
+  "name": [
+    "Rectangle"
+  ],
+  "desc": "Move and resize windows using keyboard shortcuts or snap areas",
+  "homepage": "https://rectangleapp.com/",
+  "url": "https://github.com/rxhanson/Rectangle/releases/download/v2.0.2/Rectangle2.0.2.dmg",
+  "url_specs": {},
+  "version": "2.0.2",
+  "autobump": true,
+  "no_autobump_message": null,
+  "skip_livecheck": false,
+  "installed": null,
+  "installed_time": null,
+  "bundle_version": null,
+  "bundle_short_version": null,
+  "pinned": false,
+  "pinned_version": null,
+  "outdated": false,
+  "sha256": "7a42f6b9e852fa7ef827ebe58596a49456d64754154da156df1a1dd184c38833",
+  "artifacts": [
+    {
+      "uninstall": [
+        {
+          "quit": "com.knollsoft.Rectangle",
+          "login_item": "Rectangle"
+        }
+      ]
+    },
+    {
+      "app": [
+        "Rectangle.app"
+      ],
+      "target": "/Applications/Rectangle.app"
+    },
+    {
+      "zap": [
+        {
+          "trash": [
+            "~/Library/Application Scripts/com.knollsoft.RectangleLauncher",
+            "~/Library/Application Support/Rectangle",
+            "~/Library/Caches/com.knollsoft.Rectangle",
+            "~/Library/Containers/com.knollsoft.RectangleLauncher",
+            "~/Library/HTTPStorages/com.knollsoft.Rectangle",
+            "~/Library/Preferences/com.knollsoft.Rectangle.plist",
+            "~/Library/WebKit/com.knollsoft.Rectangle"
+          ]
+        }
+      ]
+    }
+  ],
+  "caveats": null,
+  "caveats_rosetta": null,
+  "depends_on": {
+    "macos": {
+      ">=": [
+        "14"
+      ]
+    }
+  },
+  "conflicts_with": null,
+  "container": null,
+  "rename": [],
+  "auto_updates": true,
+  "deprecated": false,
+  "deprecation_date": null,
+  "deprecation_reason": null,
+  "deprecation_replacement_formula": null,
+  "deprecation_replacement_cask": null,
+  "deprecate_args": null,
+  "disabled": false,
+  "disable_date": null,
+  "disable_reason": null,
+  "disable_replacement_formula": null,
+  "disable_replacement_cask": null,
+  "disable_args": null,
+  "tap_git_head": "cbc2487f55e148a7fd8505a0d9d48bebfbe05cd6",
+  "languages": [],
+  "ruby_source_path": "Casks/r/rectangle.rb",
+  "ruby_source_checksum": {
+    "sha256": "226d94da61f6f802782f8a8ffd162c32067ec5ffdb4bf65ac4db573e496f99c6"
+  },
+  "variations": {},
+  "supported_platforms": [
+    "golden_gate",
+    "arm64_golden_gate",
+    "tahoe",
+    "arm64_tahoe",
+    "sequoia",
+    "arm64_sequoia",
+    "sonoma",
+    "arm64_sonoma"
+  ],
+  "analytics": {
+    "install": {
+      "30d": {
+        "rectangle": 4998
+      },
+      "90d": {
+        "rectangle": 27982
+      },
+      "365d": {
+        "rectangle": 114199
+      }
+    }
+  },
+  "generated_date": "2026-10-04"
+}

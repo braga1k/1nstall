@@ -1,0 +1,70 @@
+{
+  "resultCount": 1,
+  "results": [
+    {
+      "kind": "mac-software",
+      "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/6f/b2/f4/6fb2f489-a06f-aec7-99fd-154a92c68f37/AppIcon-0-85-220-0-6-0-0-2x-P3-0-0.png/100x100bb.png",
+      "artistViewUrl": "https://apps.apple.com/pt/developer/apple/id284417353?mt=12&uo=4",
+      "artworkUrl60": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/6f/b2/f4/6fb2f489-a06f-aec7-99fd-154a92c68f37/AppIcon-0-85-220-0-6-0-0-2x-P3-0-0.png/60x60bb.png",
+      "screenshotUrls": [
+        "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/51/3d/e3/513de3b4-9e64-b779-aa91-a91dd294446b/01_Magnetic_Mask.png/800x500bb.jpg",
+        "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/a8/09/d4/a809d4d7-e185-9c4f-7f6a-9b146dfe7f18/02_Distribute_Layers.png/800x500bb.jpg",
+        "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/e3/39/e1/e339e1b9-0b9a-3bd6-76c0-3ba9ce6bdbff/03_Templates.png/800x500bb.jpg",
+        "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/31/d5/5e/31d55e6a-7c99-00a5-45bb-172ecac14532/04_Performance.png/800x500bb.jpg",
+        "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/99/dc/1e/99dc1e88-c34e-621b-5e53-de36da64710d/05_Paint.png/800x500bb.jpg",
+        "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/05/32/2b/05322ba9-4a98-a297-3e4b-f543f7421af0/06_Particles_and_Replicators.png/800x500bb.jpg",
+        "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/6c/eb/85/6ceb8538-d917-82d3-54b8-901e2a8d40ec/07_Keyframing.png/800x500bb.jpg",
+        "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/98/69/f5/9869f52a-0346-7226-c740-884d3ba1c953/08_Ecosystem.png/800x500bb.jpg",
+        "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/f5/07/10/f5071080-8b21-3aa1-f195-9e217fbc3b1a/09_Behaviors.png/800x500bb.jpg"
+      ],
+      "artworkUrl512": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/6f/b2/f4/6fb2f489-a06f-aec7-99fd-154a92c68f37/AppIcon-0-85-220-0-6-0-0-2x-P3-0-0.png/512x512bb.png",
+      "releaseNotes": "\u2022 Edite v\u00eddeos com efeitos do modo Cinematogr\u00e1fico gravados no Final Cut Camera para ajustar os pontos de focagem e o efeito de profundidade*.\n\u2022 Esta atualiza\u00e7\u00e3o inclui melhorias a n\u00edvel de estabilidade e corre\u00e7\u00f5es de erros.\n\n* Requer o macOS Golden Gate 27 ou posterior\n\nTamb\u00e9m adicionado recentemente:\n\u2022 Importe ficheiros SVG que se adaptam a qualquer tamanho e mant\u00eam os ficheiros ultran\u00edtidos a qualquer resolu\u00e7\u00e3o.\n\u2022 Assuma o comando do cronograma com novos controlos intuitivos que lhe permitem empilhar, apresentar em cascata ou inverter instantaneamente clips para criar anima\u00e7\u00f5es complexas em alguns segundos.\n\u2022 Trabalhe mais depressa e mantenha a concentra\u00e7\u00e3o com atualiza\u00e7\u00f5es de desempenho que mant\u00eam os processos fluidos e com capacidade de resposta.",
+      "genres": [
+        "Fotografia e v\u00eddeo"
+      ],
+      "price": 59.99,
+      "bundleId": "com.apple.motionapp",
+      "isVppDeviceBasedLicensingEnabled": true,
+      "sellerName": "Apple Distribution International",
+      "genreIds": [
+        "6008"
+      ],
+      "primaryGenreName": "Photo & Video",
+      "primaryGenreId": 6008,
+      "releaseDate": "2011-06-21T14:09:15Z",
+      "trackId": 434290957,
+      "trackName": "Motion",
+      "currentVersionReleaseDate": "2026-09-29T17:03:07Z",
+      "version": "6.4",
+      "wrapperType": "software",
+      "currency": "EUR",
+      "description": "oncebido para editores de v\u00eddeo, o Motion \u00e9 uma ferramenta avan\u00e7ada de anima\u00e7\u00e3o gr\u00e1fica que permite criar facilmente t\u00edtulos cinematogr\u00e1ficos em 2D e 3D, transi\u00e7\u00f5es fluidas e efeitos realistas em tempo real.\n\nT\u00edtulos em 2D e 3D\n\u2022 Importe conte\u00fado multim\u00e9dia em 360\u00b0 e crie t\u00edtulos, geradores e efeitos em 360\u00b0.\n\u2022 Crie t\u00edtulos em 3D do zero a partir de modelos f\u00e1ceis de usar ou converta-os de 2D para 3D.\n\u2022 Crie facilmente t\u00edtulos magn\u00edficos e anime-os com mais de 100 funcionamentos de arrastar e soltar e ferramentas intuitivas de anima\u00e7\u00e3o de texto.\n\u2022 Personalize os t\u00edtulos em 3D para obter aspetos infind\u00e1veis com mais de 90 materiais em 3D concebidos pela Apple, incluindo superf\u00edcies em metal, madeira e pedra.\n\nAnima\u00e7\u00e3o gr\u00e1fica para Final Cut Pro\n\u2022 Guarde t\u00edtulos, efeitos, transi\u00e7\u00f5es ou geradores para acesso direto no Final Cut Pro.\n\u2022 Personalize t\u00edtulos, efeitos e transi\u00e7\u00f5es do Final Cut Pro abrindo-os no Motion.\n\u2022 Crie Modelos do Motion com qualquer combina\u00e7\u00e3o de par\u00e2metros \u00fanicos e rigs que lhe permitem controlar um grupo de par\u00e2metros com um nivelador, um menu pop-up ou uma op\u00e7\u00e3o assinal\u00e1vel no Final\u00a0Cut\u00a0Pro.\n\u2022 Use instant\u00e2neos de propor\u00e7\u00e3o da visualiza\u00e7\u00e3o para criar modelos compat\u00edveis com diversas propor\u00e7\u00f5es de visualiza\u00e7\u00e3o.\n\nEfeitos formid\u00e1veis\n\u2022 Escolha entre mais de 230 funcionamentos para obter uma anima\u00e7\u00e3o natural sem fotogramas-chave.\n\u2022 A funcionalidade m\u00e1scara magn\u00e9tica suportada por IA segue e isola automaticamente pessoas, objetos e formas em qualquer cena.\n\u2022 Altere os pontos de focagem ou o efeito de profundidade de v\u00eddeo gravado no modo cinematogr\u00e1fico no iPhone.\n\u2022 Crie os seus pr\u00f3prios emissores de part\u00edculas ou escolha entre 200 predefini\u00e7\u00f5es de efeitos do mundo real, como fumo ou fa\u00edscas.\n\u2022 Use ferramentas de m\u00e1scaras profissionais para desenhar rapidamente e ajustar pontos de controlo para rotoscopia.\n\u2022 Detete, rastreie e ajuste automaticamente o movimento de caras ou objetos com a aprendizagem autom\u00e1tica.\n\u2022 Escolha entre diferentes tipos de an\u00e1lise de seguimento.\n\u2022 Aplique o filtro N\u00e9on para adicionar facilmente um brilho de n\u00e9on a texto, formas, v\u00eddeo, imagens, etc.\n\u2022 Aproveite a grande variedade de plug-ins FxPlug de terceiros para tarefas como seguimento avan\u00e7ado, gr\u00e1ficos animados avan\u00e7ados, etc.\n\n3D simples\n\u2022 Adicione c\u00e2maras para passar do espa\u00e7o 2D para 3D.\n\u2022 Crie cen\u00e1rios 3D num projeto em 360\u00b0 para ambientes ultrarrealistas em 360\u00b0.\n\u2022 Crie sombras realistas que se animam de forma din\u00e2mica com o movimento das c\u00e2maras e luzes.\n\u2022 Converta qualquer forma, plano de v\u00eddeo ou pincelada numa superf\u00edcie refletora no espa\u00e7o 3D.\n\u2022 Importe objetos USDZ de terceiros ou use um dos 60 objetos predefinidos na biblioteca do Motion.\n\nVelocidade, qualidade e resultados inovadores\n\u2022 Importe imagens HDR com uma ampla gama de cores e exporte-as no espa\u00e7o de cor padr\u00e3o Rec. 709 ou no espa\u00e7o de ampla gama de cores Rec. 2020.\n\u2022 Velocidade e efici\u00eancia inigual\u00e1veis com otimiza\u00e7\u00f5es para a gera\u00e7\u00e3o mais recente de Apple Silicon.\n\nRequisitos do sistema: macOS 26.6 ou posterior, 8\u00a0GB de mem\u00f3ria (s\u00e3o recomendados 16\u00a0GB), placa gr\u00e1fica compat\u00edvel com Metal (apenas em computadores Mac com processador Intel), 4,7 GB de espa\u00e7o dispon\u00edvel no disco.\n\nAlgumas funcionalidades requerem acesso \u00e0 internet; \u00e9 poss\u00edvel que existam custos.",
+      "trackCensoredName": "Motion",
+      "trackViewUrl": "https://apps.apple.com/pt/app/motion/id434290957?mt=12&uo=4",
+      "contentAdvisoryRating": "4+",
+      "averageUserRating": 0,
+      "languageCodesISO2A": [
+        "EN",
+        "FR",
+        "DE",
+        "IT",
+        "JA",
+        "KO",
+        "PT",
+        "ZH",
+        "ES",
+        "ZH"
+      ],
+      "fileSizeBytes": "3181133065",
+      "formattedPrice": "59,99\u00a0\u20ac",
+      "trackContentRating": "4+",
+      "minimumOsVersion": "26.6",
+      "sellerUrl": "http://www.apple.com/finalcutpro/motion",
+      "averageUserRatingForCurrentVersion": 0,
+      "userRatingCountForCurrentVersion": 0,
+      "artistId": 284417353,
+      "artistName": "Apple",
+      "userRatingCount": 0
+    }
+  ]
+}

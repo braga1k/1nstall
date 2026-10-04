@@ -1,0 +1,29 @@
+{
+  "retrieved": "2026-10-04",
+  "scope": "Only official Homebrew casks; installation events, not unique people or all Mac apps",
+  "windows_base": "db4931e533aa951f7ff564555714ac38497ba20c",
+  "mole_reference_commit": "42b7b8d4c0331fed9c9c01480ec448ef23aabbdd",
+  "periods": [
+    {
+      "category": "cask_install",
+      "start_date": "2026-09-04",
+      "end_date": "2026-10-04",
+      "total_count": 1016984,
+      "total_items": 5611
+    },
+    {
+      "category": "cask_install",
+      "start_date": "2026-07-06",
+      "end_date": "2026-10-04",
+      "total_count": 5262767,
+      "total_items": 7828
+    },
+    {
+      "category": "cask_install",
+      "start_date": "2025-10-04",
+      "end_date": "2026-10-04",
+      "total_count": 23160924,
+      "total_items": 8620
+    }
+  ]
+}

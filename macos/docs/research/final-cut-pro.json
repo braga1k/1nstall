@@ -1,0 +1,68 @@
+{
+  "resultCount": 1,
+  "results": [
+    {
+      "kind": "mac-software",
+      "screenshotUrls": [
+        "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/44/53/84/4453849b-1eeb-3ad8-a15d-7e848fee57c2/01_Color_Correction.png/800x500bb.jpg",
+        "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/e3/d9/0c/e3d90c0c-f097-ef14-eeb9-0b72ccec2487/02_Generate_Captions.png/800x500bb.jpg",
+        "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/91/ad/cd/91adcd49-e2c7-d465-2daf-c978f96f76ad/03_Auto_Mask.png/800x500bb.jpg",
+        "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/8d/54/fe/8d54fed6-3502-5a8c-46ea-0b6197ba283c/04_Two_Up_Trim.png/800x500bb.jpg",
+        "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/6c/6e/d7/6c6ed73f-b0e7-0c7b-5059-9e801a3c3129/05_Smart_Conform.png/800x500bb.jpg",
+        "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/fd/cc/4a/fdcc4a38-2dd8-e226-18be-c5b35a39e50f/06_Beat_Detection.png/800x500bb.jpg",
+        "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/8b/8b/07/8b8b07e1-63ff-c631-9c4e-0465e1b9b0ea/07_Optimize_Files.png/800x500bb.jpg"
+      ],
+      "artworkUrl512": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/ce/35/ba/ce35ba64-0d95-921f-3d11-ff503cd73f1d/AppIcon-0-85-220-0-6-0-0-2x-sRGB-0-0.png/512x512bb.png",
+      "artworkUrl60": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/ce/35/ba/ce35ba64-0d95-921f-3d11-ff503cd73f1d/AppIcon-0-85-220-0-6-0-0-2x-sRGB-0-0.png/60x60bb.png",
+      "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/ce/35/ba/ce35ba64-0d95-921f-3d11-ff503cd73f1d/AppIcon-0-85-220-0-6-0-0-2x-sRGB-0-0.png/100x100bb.png",
+      "artistViewUrl": "https://apps.apple.com/pt/developer/apple/id284417353?mt=12&uo=4",
+      "releaseNotes": "\u2022 Edite v\u00eddeos com efeitos do modo Cinematogr\u00e1fico gravados no Final Cut Camera para ajustar os pontos de focagem e o efeito de profundidade*.\n\u2022 Esta atualiza\u00e7\u00e3o inclui melhorias a n\u00edvel de estabilidade e corre\u00e7\u00f5es de erros.\n\n* Requer o macOS Golden Gate 27 ou posterior\n\nTamb\u00e9m adicionado recentemente:\n\nIntelig\u00eancia poderosa\n\u2022 Use a funcionalidade de gera\u00e7\u00e3o de legendas para adicionar legendas rapidamente e personalizar facilmente o aspeto, para criar conte\u00fado acess\u00edvel e pronto a partilhar para redes sociais e plataformas de v\u00eddeo (requer um Mac com Apple Silicon; dispon\u00edvel apenas em ingl\u00eas dos EUA).\n\u2022 Isole objetos reconhecidos com a m\u00e1scara autom\u00e1tica para corrigir cores com simplicidade ou melhorar o v\u00eddeo, eliminando a necessidade de acompanhamento manual.\n\u2022 Uniformize a cor do v\u00eddeo em diferentes c\u00e2maras, condi\u00e7\u00f5es de ilumina\u00e7\u00e3o e estilos cinematogr\u00e1ficas com a nova ferramenta Correspond\u00eancia de cor, harmonizando o aspeto do cronograma.\n\u2022 Analise qualquer v\u00eddeo renderizado com a Dete\u00e7\u00e3o de edi\u00e7\u00f5es para mostrar altera\u00e7\u00f5es no v\u00eddeo e dividi-lo em clips separados com apenas um clique.\n\nMelhorias de processos\n\u2022 Otimize as edi\u00e7\u00f5es com todo o rigor com um modo de apresenta\u00e7\u00e3o duplo que se mant\u00e9m vis\u00edvel enquanto faz recortes no cronograma com atalhos de teclado ou com o Editor de precis\u00e3o.\n\u2022 Envie qualquer fotograma diretamente para o Pixelmator Pro com um clique, o que permite otimizar o processo de cria\u00e7\u00e3o de miniaturas personalizadas e gr\u00e1ficos para as redes sociais.\n\u2022 Troque instantaneamente as posi\u00e7\u00f5es de clips na storyline principal com um novo atalho de teclado para edi\u00e7\u00f5es mais r\u00e1pidas.\n\u2022 Copie e cole facilmente edi\u00e7\u00f5es complexas entre cronogramas com uma nova op\u00e7\u00e3o para selecionar um clip da storyline principal e todo o conte\u00fado multim\u00e9dia associado em simult\u00e2neo.",
+      "minimumOsVersion": "26.6",
+      "bundleId": "com.apple.FinalCut",
+      "artistId": 284417353,
+      "artistName": "Apple",
+      "price": 349.99,
+      "releaseDate": "2011-06-21T14:09:15Z",
+      "genreIds": [
+        "6008"
+      ],
+      "primaryGenreName": "Photo & Video",
+      "primaryGenreId": 6008,
+      "trackName": "Final Cut Pro",
+      "sellerName": "Apple Distribution International",
+      "isVppDeviceBasedLicensingEnabled": true,
+      "currentVersionReleaseDate": "2026-09-29T17:02:12Z",
+      "version": "12.4",
+      "wrapperType": "software",
+      "currency": "EUR",
+      "description": "O Final\u00a0Cut\u00a0Pro combina uma edi\u00e7\u00e3o de v\u00eddeo revolucion\u00e1ria com uma potente organiza\u00e7\u00e3o de conte\u00fado multim\u00e9dia e um desempenho incr\u00edvel para que possa criar \u00e0 velocidade do pensamento.\n\nEdi\u00e7\u00e3o de v\u00eddeo revolucion\u00e1ria\n\u2022 O cronograma magn\u00e9tico usa metadados avan\u00e7ados e associa\u00e7\u00f5es de clips para uma edi\u00e7\u00e3o mais r\u00e1pida e simples.\n\u2022 A funcionalidade de gera\u00e7\u00e3o de legendas usa IA para criar legendas opcionais ou legendas animadas no cronograma atrav\u00e9s da an\u00e1lise do \u00e1udio falado.\n\u2022 A funcionalidade m\u00e1scara magn\u00e9tica suportada por IA segue e isola automaticamente pessoas, objetos e formas em qualquer cena.\n\u2022 Transforme automaticamente projetos para entrega com formato quadrado ou vertical com a Adapta\u00e7\u00e3o inteligente.\n\nOrganiza\u00e7\u00e3o poderosa de conte\u00fado multim\u00e9dia\n\u2022 Organize o trabalho em bibliotecas para gerir conte\u00fados multim\u00e9dia eficazmente.\n\u2022 Aplique palavras-chave personalizadas ou favoritos de imediato ao selecionar intervalos de clips.\n\u2022 As ferramentas de pesquisa inteligentes tornam mais f\u00e1cil e r\u00e1pido encontrar a amostra de som ou o visual perfeito.\n\nDesempenho incr\u00edvel\n\u2022 Velocidade e efici\u00eancia inigual\u00e1veis com otimiza\u00e7\u00f5es para a gera\u00e7\u00e3o mais recente de Apple Silicon.\n\u2022 Trabalhe com uma grande variedade de formatos, como ProRes, ProRes RAW, RED, XAVC, AVCHD, Avid DNxHR\u00ae, Avid DNxHD\u00ae, H.264, HEVC e muito mais.\n\nEfeitos emocionantes e personaliz\u00e1veis\n\u2022 T\u00edtulos em 2D e 3D facilmente personaliz\u00e1veis e com anima\u00e7\u00f5es magn\u00edficas.\n\u2022 Altere o aspeto dos t\u00edtulos, transi\u00e7\u00f5es e efeitos com controlos intuitivos.\n\u2022 Escolha entre uma grande variedade de plug-ins FxPlug de terceiros com interfaces personalizadas.\n\nEdi\u00e7\u00e3o de \u00e1udio integrada\n\u2022 Atribua fun\u00e7\u00f5es durante a importa\u00e7\u00e3o para acompanhar e organizar facilmente o projeto.\n\u2022 Expanda e edite ficheiros de \u00e1udio multicanal diretamente no cronograma.\n\u2022 Aplique efeitos de \u00e1udio e reduza o ru\u00eddo de fundo para isolar as vozes usando tecnologia e plug-ins avan\u00e7ados do Logic Pro.\n\nGrada\u00e7\u00e3o de cores intuitiva\n\u2022 Rodas e curvas de cor avan\u00e7adas para ajustes precisos com isolamento e m\u00e1scaras.\n\u2022 Aplique automaticamente mapas de tons a clips para que correspondam ao espa\u00e7o de cor HDR ou SDR.\n\u2022 Tire partido dos v\u00eddeos ProRes RAW gravados no iPhone 17 Pro ou posterior para desfrutar de uma maior flexibilidade de grada\u00e7\u00e3o.\n\nSa\u00edda otimizada numa \u00fanica etapa\n\u2022 Exporte projetos com rapidez nos dispositivos Apple e carregue-os para plataformas como o Instagram e YouTube.\n\u2022 Exporte stems de \u00e1udio e v\u00e1rias vers\u00f5es de um v\u00eddeo conclu\u00eddo com metadados das fun\u00e7\u00f5es.\n\u2022 Importe e exporte XML para processos de terceiros para, por exemplo, grada\u00e7\u00e3o de cores e mistura de som.\n\nRequisitos do sistema: macOS\u00a026.6 ou posterior, 8\u00a0GB de mem\u00f3ria (s\u00e3o recomendados 16\u00a0GB), placa gr\u00e1fica compat\u00edvel com Metal (apenas em computadores Mac com processador Intel), 7,2\u00a0GB de espa\u00e7o dispon\u00edvel no disco. Algumas funcionalidades requerem um Mac com Apple Silicon. Algumas funcionalidades requerem acesso \u00e0 internet; \u00e9 poss\u00edvel que existam custos.",
+      "languageCodesISO2A": [
+        "EN",
+        "FR",
+        "DE",
+        "IT",
+        "JA",
+        "KO",
+        "PT",
+        "ZH",
+        "ES",
+        "ZH"
+      ],
+      "averageUserRatingForCurrentVersion": 0,
+      "userRatingCountForCurrentVersion": 0,
+      "trackContentRating": "4+",
+      "sellerUrl": "http://www.apple.com/finalcutpro/",
+      "fileSizeBytes": "6410047158",
+      "formattedPrice": "349,99\u00a0\u20ac",
+      "contentAdvisoryRating": "4+",
+      "averageUserRating": 0,
+      "trackCensoredName": "Final Cut Pro",
+      "trackViewUrl": "https://apps.apple.com/pt/app/final-cut-pro/id424389933?mt=12&uo=4",
+      "trackId": 424389933,
+      "genres": [
+        "Fotografia e v\u00eddeo"
+      ],
+      "userRatingCount": 0
+    }
+  ]
+}

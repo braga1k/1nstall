@@ -1,0 +1,61 @@
+﻿Categoria,App,Cask,Estado,Eventos_30d,Eventos_90d,Eventos_365d,Posicao_casks_oficiais_30d,Razao_quota_30d_vs_60d_anteriores,Site_oficial,Fonte,Recolha
+Navegadores,Google Chrome,google-chrome,Candidato; teste no Mac pendente,11470,92022,435641,12,0.59,https://www.google.com/chrome/,https://formulae.brew.sh/cask/google-chrome,2026-10-04
+Navegadores,Mozilla Firefox,firefox,Candidato; teste no Mac pendente,6518,34857,187097,28,0.96,https://www.mozilla.org/firefox/,https://formulae.brew.sh/cask/firefox,2026-10-04
+Navegadores,Brave,brave-browser,Candidato; teste no Mac pendente,3954,21422,90461,48,0.95,https://brave.com/,https://formulae.brew.sh/cask/brave-browser,2026-10-04
+Navegadores,Zen Browser,zen,Candidato; teste no Mac pendente,975,5820,29370,167,0.84,https://zen-browser.app/,https://formulae.brew.sh/cask/zen,2026-10-04
+Trabalho e organização,Obsidian,obsidian,Candidato; teste no Mac pendente,8685,51480,192311,21,0.85,https://obsidian.md/,https://formulae.brew.sh/cask/obsidian,2026-10-04
+Trabalho e organização,Notion,notion,Candidato; teste no Mac pendente,2347,13107,60878,78,0.91,https://www.notion.com/,https://formulae.brew.sh/cask/notion,2026-10-04
+Trabalho e organização,LibreOffice,libreoffice,Candidato; teste no Mac pendente,26393,136269,357057,3,1.0,https://www.libreoffice.org/,https://formulae.brew.sh/cask/libreoffice,2026-10-04
+Trabalho e organização,Microsoft Office,microsoft-office,Candidato; teste no Mac pendente,708,3863,17731,206,0.94,https://www.microsoft.com/en-us/microsoft-365/mac/microsoft-365-for-mac/,https://formulae.brew.sh/cask/microsoft-office,2026-10-04
+Trabalho e organização,Bitwarden,bitwarden,Candidato; teste no Mac pendente,2377,13161,55427,75,0.92,https://bitwarden.com/,https://formulae.brew.sh/cask/bitwarden,2026-10-04
+Trabalho e organização,1Password,1password,Candidato; teste no Mac pendente,2763,13319,58704,65,1.09,https://1password.com/,https://formulae.brew.sh/cask/1password,2026-10-04
+Trabalho e organização,Raycast,raycast,Candidato; teste no Mac pendente,4179,24469,115700,46,0.86,https://raycast.com/,https://formulae.brew.sh/cask/raycast,2026-10-04
+Trabalho e organização,Alfred,alfred,Candidato; teste no Mac pendente,1146,6360,24157,148,0.92,https://www.alfredapp.com/,https://formulae.brew.sh/cask/alfred,2026-10-04
+Trabalho e organização,Maccy,maccy,Candidato; teste no Mac pendente,4478,26488,110623,41,0.85,https://maccy.app/,https://formulae.brew.sh/cask/maccy,2026-10-04
+Comunicação,WhatsApp,whatsapp,Candidato; teste no Mac pendente,2563,13361,61367,70,0.99,https://www.whatsapp.com/,https://formulae.brew.sh/cask/whatsapp,2026-10-04
+Comunicação,Telegram for macOS,telegram,Candidato; teste no Mac pendente,1426,8465,45851,124,0.85,https://macos.telegram.org/,https://formulae.brew.sh/cask/telegram,2026-10-04
+Comunicação,Discord,discord,Candidato; teste no Mac pendente,3171,23137,93616,55,0.66,https://discord.com/,https://formulae.brew.sh/cask/discord,2026-10-04
+Comunicação,Slack,slack,Candidato; teste no Mac pendente,3347,18493,83126,53,0.92,https://slack.com/,https://formulae.brew.sh/cask/slack,2026-10-04
+Comunicação,Zoom,zoom,Candidato; teste no Mac pendente,3154,15195,64134,57,1.09,https://www.zoom.us/,https://formulae.brew.sh/cask/zoom,2026-10-04
+Áudio e reprodução,IINA,iina,Candidato; teste no Mac pendente,3388,17550,69063,52,1.0,https://iina.io/,https://formulae.brew.sh/cask/iina,2026-10-04
+Áudio e reprodução,VLC media player,vlc,Candidato; teste no Mac pendente,6071,31914,120601,31,0.98,https://www.videolan.org/vlc/,https://formulae.brew.sh/cask/vlc,2026-10-04
+Áudio e reprodução,Spotify,spotify,Candidato; teste no Mac pendente,3721,20912,94293,50,0.9,https://www.spotify.com/,https://formulae.brew.sh/cask/spotify,2026-10-04
+Áudio e reprodução,HandBrake,handbrake-app,Candidato; teste no Mac pendente,837,5193,21249,178,0.8,https://handbrake.fr/,https://formulae.brew.sh/cask/handbrake-app,2026-10-04
+Áudio e reprodução,Audacity,audacity,Candidato; teste no Mac pendente,1681,8898,28751,110,0.97,https://www.audacityteam.org/,https://formulae.brew.sh/cask/audacity,2026-10-04
+Áudio e reprodução,REAPER,reaper,Candidato; teste no Mac pendente,169,845,3173,558,1.04,https://www.reaper.fm/,https://formulae.brew.sh/cask/reaper,2026-10-04
+Criação,Blender,blender,Candidato; teste no Mac pendente,13999,37137,72584,11,2.53,https://www.blender.org/,https://formulae.brew.sh/cask/blender,2026-10-04
+Criação,Inkscape,inkscape,Candidato; teste no Mac pendente,2224,12210,50504,86,0.93,https://inkscape.org/,https://formulae.brew.sh/cask/inkscape,2026-10-04
+Criação,Krita,krita,Candidato; teste no Mac pendente,433,1914,7187,294,1.22,https://krita.org/,https://formulae.brew.sh/cask/krita,2026-10-04
+Criação,Figma,figma,Candidato; teste no Mac pendente,1884,10411,40063,98,0.92,https://www.figma.com/,https://formulae.brew.sh/cask/figma,2026-10-04
+Criação,Canva,canva,Candidato; teste no Mac pendente,161,794,3847,578,1.06,https://www.canva.com/,https://formulae.brew.sh/cask/canva,2026-10-04
+Criação,Affinity,affinity,Candidato; teste no Mac pendente,536,2547,13008,258,1.11,https://www.affinity.studio/,https://formulae.brew.sh/cask/affinity,2026-10-04
+Criação,OBS,obs,Candidato; teste no Mac pendente,2760,12400,48225,66,1.2,https://obsproject.com/,https://formulae.brew.sh/cask/obs,2026-10-04
+Criação,Ableton Live Lite,ableton-live-lite,Candidato; teste no Mac pendente,17,89,342,1910,0.99,https://www.ableton.com/en/products/live-lite/,https://formulae.brew.sh/cask/ableton-live-lite,2026-10-04
+Ficheiros e cloud,Keka,keka,Candidato; teste no Mac pendente,2280,11859,42587,82,0.99,https://www.keka.io/,https://formulae.brew.sh/cask/keka,2026-10-04
+Ficheiros e cloud,FreeMacSoft AppCleaner,appcleaner,Candidato; teste no Mac pendente,2304,11707,49005,80,1.02,https://freemacsoft.net/appcleaner/,https://formulae.brew.sh/cask/appcleaner,2026-10-04
+Ficheiros e cloud,LocalSend,localsend,Candidato; teste no Mac pendente,3170,17335,65138,56,0.93,https://localsend.org/,https://formulae.brew.sh/cask/localsend,2026-10-04
+Ficheiros e cloud,Google Drive,google-drive,Candidato; teste no Mac pendente,2244,10061,40989,83,1.2,https://www.google.com/drive/,https://formulae.brew.sh/cask/google-drive,2026-10-04
+Ficheiros e cloud,OneDrive,onedrive,Candidato; teste no Mac pendente,1378,8572,17924,126,0.8,https://www.microsoft.com/en-us/microsoft-365/onedrive/online-cloud-storage,https://formulae.brew.sh/cask/onedrive,2026-10-04
+Ficheiros e cloud,Syncthing,syncthing-app,Candidato; teste no Mac pendente,765,3738,13198,195,1.07,https://syncthing.net/,https://formulae.brew.sh/cask/syncthing-app,2026-10-04
+Ficheiros e cloud,Cyberduck,cyberduck,Candidato; teste no Mac pendente,1332,7671,31075,132,0.88,https://cyberduck.io/,https://formulae.brew.sh/cask/cyberduck,2026-10-04
+Ficheiros e cloud,Transmission,transmission,Candidato; teste no Mac pendente,1303,6356,27456,136,1.08,https://transmissionbt.com/,https://formulae.brew.sh/cask/transmission,2026-10-04
+Utilitários Mac,Rectangle,rectangle,Candidato; teste no Mac pendente,4998,27982,114199,36,0.91,https://rectangleapp.com/,https://formulae.brew.sh/cask/rectangle,2026-10-04
+Utilitários Mac,BetterDisplay,betterdisplay,Candidato; teste no Mac pendente,4671,22955,89763,39,1.07,https://betterdisplay.pro/,https://formulae.brew.sh/cask/betterdisplay,2026-10-04
+Utilitários Mac,Stats,stats,Candidato; teste no Mac pendente,5795,32203,142654,33,0.92,https://github.com/exelban/stats,https://formulae.brew.sh/cask/stats,2026-10-04
+Utilitários Mac,Ice,jordanbaird-ice,Candidato; teste no Mac pendente,2238,12841,58678,85,0.88,https://icemenubar.app/,https://formulae.brew.sh/cask/jordanbaird-ice,2026-10-04
+Utilitários Mac,Karabiner Elements,karabiner-elements,Candidato; teste no Mac pendente,2461,13115,57886,72,0.96,https://karabiner-elements.pqrs.org/,https://formulae.brew.sh/cask/karabiner-elements,2026-10-04
+Utilitários Mac,LinearMouse,linearmouse,Candidato; teste no Mac pendente,2406,12708,43438,73,0.98,https://linearmouse.org/,https://formulae.brew.sh/cask/linearmouse,2026-10-04
+Desenvolvimento,Ghostty,ghostty,Candidato; teste no Mac pendente,14326,79769,369507,10,0.91,https://ghostty.org/,https://formulae.brew.sh/cask/ghostty,2026-10-04
+Desenvolvimento,iTerm2,iterm2,Candidato; teste no Mac pendente,9183,53937,310729,17,0.86,https://iterm2.com/,https://formulae.brew.sh/cask/iterm2,2026-10-04
+Desenvolvimento,Microsoft Visual Studio Code,visual-studio-code,Candidato; teste no Mac pendente,17394,101146,478472,9,0.87,https://code.visualstudio.com/,https://formulae.brew.sh/cask/visual-studio-code,2026-10-04
+Desenvolvimento,Zed,zed,Candidato; teste no Mac pendente,4204,22923,111062,45,0.94,https://zed.dev/,https://formulae.brew.sh/cask/zed,2026-10-04
+Desenvolvimento,Cursor,cursor,Candidato; teste no Mac pendente,3017,19729,119387,59,0.75,https://www.cursor.com/,https://formulae.brew.sh/cask/cursor,2026-10-04
+Desenvolvimento,OrbStack,orbstack,Candidato; teste no Mac pendente,9128,43335,182672,18,1.11,https://orbstack.dev/,https://formulae.brew.sh/cask/orbstack,2026-10-04
+Desenvolvimento,Docker Desktop,docker-desktop,Candidato; teste no Mac pendente,20042,118369,526239,7,0.85,https://www.docker.com/products/docker-desktop,https://formulae.brew.sh/cask/docker-desktop,2026-10-04
+Desenvolvimento,UTM,utm,Candidato; teste no Mac pendente,3970,17645,64644,47,1.21,https://mac.getutm.app/,https://formulae.brew.sh/cask/utm,2026-10-04
+Desenvolvimento,GitHub Desktop,github,Candidato; teste no Mac pendente,2058,11341,50632,92,0.93,https://desktop.github.com/,https://formulae.brew.sh/cask/github,2026-10-04
+IA,ChatGPT,chatgpt,Candidato; teste no Mac pendente,6914,35961,85501,25,0.99,https://chatgpt.com/,https://formulae.brew.sh/cask/chatgpt,2026-10-04
+IA,Claude,claude,Candidato; teste no Mac pendente,9016,44143,213374,19,1.07,https://claude.com/download,https://formulae.brew.sh/cask/claude,2026-10-04
+IA,Codex,codex-app,Rever: cask descontinuado,610,7265,47318,236,0.38,https://openai.com/codex,https://formulae.brew.sh/cask/codex-app,2026-10-04
+IA,Ollama,ollama-app,Candidato; teste no Mac pendente,4301,19987,85001,43,1.14,https://ollama.com/,https://formulae.brew.sh/cask/ollama-app,2026-10-04
+IA,LM Studio,lm-studio,Candidato; teste no Mac pendente,2851,13925,54424,63,1.07,https://lmstudio.ai/,https://formulae.brew.sh/cask/lm-studio,2026-10-04

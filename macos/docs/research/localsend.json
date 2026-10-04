@@ -1,0 +1,149 @@
+{
+  "token": "localsend",
+  "full_token": "localsend",
+  "old_tokens": [],
+  "tap": "homebrew/cask",
+  "name": [
+    "LocalSend"
+  ],
+  "desc": "Open-source cross-platform alternative to AirDrop",
+  "homepage": "https://localsend.org/",
+  "url": "https://github.com/localsend/localsend/releases/download/v1.18.2/LocalSend-1.18.2.dmg",
+  "url_specs": {},
+  "version": "1.18.2",
+  "autobump": true,
+  "no_autobump_message": null,
+  "skip_livecheck": false,
+  "installed": null,
+  "installed_time": null,
+  "bundle_version": null,
+  "bundle_short_version": null,
+  "pinned": false,
+  "pinned_version": null,
+  "outdated": false,
+  "sha256": "126860d56f6f49b11845f601aac51de27a49b16d2b48102415da91e0e37e5155",
+  "artifacts": [
+    {
+      "app": [
+        "LocalSend.app"
+      ],
+      "target": "/Applications/LocalSend.app"
+    },
+    {
+      "zap": [
+        {
+          "trash": [
+            "~/Library/Application Scripts/org.localsend.localsendApp",
+            "~/Library/Containers/org.localsend.localsendApp",
+            "~/Library/Preferences/org.localsend.localsendApp.plist",
+            "~/Library/Saved Application State/org.localsend.localsendApp.savedState"
+          ]
+        }
+      ]
+    }
+  ],
+  "caveats": null,
+  "caveats_rosetta": null,
+  "depends_on": {},
+  "conflicts_with": null,
+  "container": null,
+  "rename": [],
+  "auto_updates": null,
+  "deprecated": false,
+  "deprecation_date": null,
+  "deprecation_reason": null,
+  "deprecation_replacement_formula": null,
+  "deprecation_replacement_cask": null,
+  "deprecate_args": null,
+  "disabled": false,
+  "disable_date": null,
+  "disable_reason": null,
+  "disable_replacement_formula": null,
+  "disable_replacement_cask": null,
+  "disable_args": null,
+  "tap_git_head": "cbc2487f55e148a7fd8505a0d9d48bebfbe05cd6",
+  "languages": [],
+  "ruby_source_path": "Casks/l/localsend.rb",
+  "ruby_source_checksum": {
+    "sha256": "90c95ad99e0aa921600878161accb8745d599d730942d72e806386b0da1f17bd"
+  },
+  "variations": {
+    "x86_64_linux": {
+      "url": "https://github.com/localsend/localsend/releases/download/v1.18.2/LocalSend-1.18.2-linux-x86-64.AppImage",
+      "sha256": "19f21613d1834f6caa69517113670461a3f10b80a2a315f86548c0663d9c0aaf",
+      "artifacts": [
+        {
+          "app_image": [
+            "LocalSend-1.18.2-linux-x86-64.AppImage",
+            {
+              "target": "LocalSend.AppImage"
+            }
+          ],
+          "target": "/$HOME/Applications/LocalSend.AppImage"
+        }
+      ],
+      "depends_on": {
+        "arch": [
+          {
+            "type": "intel",
+            "bits": 64
+          }
+        ]
+      }
+    },
+    "arm64_linux": {
+      "url": "https://github.com/localsend/localsend/releases/download/v1.18.2/LocalSend-1.18.2-linux-x86-64.AppImage",
+      "sha256": null,
+      "artifacts": [
+        {
+          "app_image": [
+            "LocalSend-1.18.2-linux-x86-64.AppImage",
+            {
+              "target": "LocalSend.AppImage"
+            }
+          ],
+          "target": "/$HOME/Applications/LocalSend.AppImage"
+        }
+      ],
+      "depends_on": {
+        "arch": [
+          {
+            "type": "intel",
+            "bits": 64
+          }
+        ]
+      }
+    }
+  },
+  "supported_platforms": [
+    "golden_gate",
+    "arm64_golden_gate",
+    "tahoe",
+    "arm64_tahoe",
+    "sequoia",
+    "arm64_sequoia",
+    "sonoma",
+    "arm64_sonoma",
+    "ventura",
+    "arm64_ventura",
+    "monterey",
+    "arm64_monterey",
+    "big_sur",
+    "arm64_big_sur",
+    "x86_64_linux"
+  ],
+  "analytics": {
+    "install": {
+      "30d": {
+        "localsend": 3170
+      },
+      "90d": {
+        "localsend": 17335
+      },
+      "365d": {
+        "localsend": 65138
+      }
+    }
+  },
+  "generated_date": "2026-10-04"
+}

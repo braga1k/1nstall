@@ -1,0 +1,230 @@
+{
+  "token": "blender",
+  "full_token": "blender",
+  "old_tokens": [],
+  "tap": "homebrew/cask",
+  "name": [
+    "Blender"
+  ],
+  "desc": "3D creation suite",
+  "homepage": "https://www.blender.org/",
+  "url": "https://download.blender.org/release/Blender5.2/blender-5.2.2-macos-arm64.dmg",
+  "url_specs": {},
+  "version": "5.2.2",
+  "autobump": true,
+  "no_autobump_message": null,
+  "skip_livecheck": false,
+  "installed": null,
+  "installed_time": null,
+  "bundle_version": null,
+  "bundle_short_version": null,
+  "pinned": false,
+  "pinned_version": null,
+  "outdated": false,
+  "sha256": "dc4125399b8bfefe283cc1624d6cfc7809d1cac20ace51072127eb371f31f210",
+  "artifacts": [
+    {
+      "preflight_steps": [
+        {
+          "steps": [
+            {
+              "paths": [
+                {
+                  "base": "staged_path",
+                  "path": "*.app/**/__pycache__"
+                }
+              ],
+              "permissions": "u+w",
+              "non_recursive": true,
+              "type": "set_permissions"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "app": [
+        "Blender.app"
+      ],
+      "target": "/Applications/Blender.app"
+    },
+    {
+      "command_wrapper": [
+        "blender",
+        {
+          "executable": "$APPDIR/Blender.app/Contents/MacOS/Blender"
+        }
+      ],
+      "target": "$HOMEBREW_PREFIX/bin/blender"
+    },
+    {
+      "zap": [
+        {
+          "trash": [
+            "~/Library/Application Support/Blender",
+            "~/Library/Saved Application State/org.blenderfoundation.blender.savedState"
+          ]
+        }
+      ]
+    }
+  ],
+  "caveats": null,
+  "caveats_rosetta": null,
+  "depends_on": {
+    "macos": {}
+  },
+  "conflicts_with": {
+    "cask": [
+      "blender@lts"
+    ]
+  },
+  "container": null,
+  "rename": [],
+  "auto_updates": null,
+  "deprecated": false,
+  "deprecation_date": null,
+  "deprecation_reason": null,
+  "deprecation_replacement_formula": null,
+  "deprecation_replacement_cask": null,
+  "deprecate_args": null,
+  "disabled": false,
+  "disable_date": null,
+  "disable_reason": null,
+  "disable_replacement_formula": null,
+  "disable_replacement_cask": null,
+  "disable_args": null,
+  "tap_git_head": "cbc2487f55e148a7fd8505a0d9d48bebfbe05cd6",
+  "languages": [],
+  "ruby_source_path": "Casks/b/blender.rb",
+  "ruby_source_checksum": {
+    "sha256": "b73caae9120ca117542f8338c47bd665c34f12bbce309841714647fa5df19034"
+  },
+  "variations": {
+    "golden_gate": {
+      "url": "https://download.blender.org/release/Blender4.5/blender-4.5.14-macos-x64.dmg",
+      "version": "4.5.14",
+      "sha256": "613e73339e97bd113adeeb28d9155beeacf2df7119ee4dbd6bdce234843645f6",
+      "deprecation_date": "2027-07-01",
+      "deprecate_args": {
+        "date": "2027-07-01",
+        "because": "unsupported",
+        "replacement_formula": null,
+        "replacement_cask": null
+      }
+    },
+    "tahoe": {
+      "url": "https://download.blender.org/release/Blender4.5/blender-4.5.14-macos-x64.dmg",
+      "version": "4.5.14",
+      "sha256": "613e73339e97bd113adeeb28d9155beeacf2df7119ee4dbd6bdce234843645f6",
+      "deprecation_date": "2027-07-01",
+      "deprecate_args": {
+        "date": "2027-07-01",
+        "because": "unsupported",
+        "replacement_formula": null,
+        "replacement_cask": null
+      }
+    },
+    "sequoia": {
+      "url": "https://download.blender.org/release/Blender4.5/blender-4.5.14-macos-x64.dmg",
+      "version": "4.5.14",
+      "sha256": "613e73339e97bd113adeeb28d9155beeacf2df7119ee4dbd6bdce234843645f6",
+      "deprecation_date": "2027-07-01",
+      "deprecate_args": {
+        "date": "2027-07-01",
+        "because": "unsupported",
+        "replacement_formula": null,
+        "replacement_cask": null
+      }
+    },
+    "sonoma": {
+      "url": "https://download.blender.org/release/Blender4.5/blender-4.5.14-macos-x64.dmg",
+      "version": "4.5.14",
+      "sha256": "613e73339e97bd113adeeb28d9155beeacf2df7119ee4dbd6bdce234843645f6",
+      "deprecation_date": "2027-07-01",
+      "deprecate_args": {
+        "date": "2027-07-01",
+        "because": "unsupported",
+        "replacement_formula": null,
+        "replacement_cask": null
+      }
+    },
+    "ventura": {
+      "url": "https://download.blender.org/release/Blender4.5/blender-4.5.14-macos-x64.dmg",
+      "version": "4.5.14",
+      "sha256": "613e73339e97bd113adeeb28d9155beeacf2df7119ee4dbd6bdce234843645f6",
+      "deprecation_date": "2027-07-01",
+      "deprecate_args": {
+        "date": "2027-07-01",
+        "because": "unsupported",
+        "replacement_formula": null,
+        "replacement_cask": null
+      }
+    },
+    "monterey": {
+      "url": "https://download.blender.org/release/Blender4.5/blender-4.5.14-macos-x64.dmg",
+      "version": "4.5.14",
+      "sha256": "613e73339e97bd113adeeb28d9155beeacf2df7119ee4dbd6bdce234843645f6",
+      "deprecation_date": "2027-07-01",
+      "deprecate_args": {
+        "date": "2027-07-01",
+        "because": "unsupported",
+        "replacement_formula": null,
+        "replacement_cask": null
+      }
+    },
+    "big_sur": {
+      "url": "https://download.blender.org/release/Blender4.5/blender-4.5.14-macos-x64.dmg",
+      "version": "4.5.14",
+      "sha256": "613e73339e97bd113adeeb28d9155beeacf2df7119ee4dbd6bdce234843645f6",
+      "deprecation_date": "2027-07-01",
+      "deprecate_args": {
+        "date": "2027-07-01",
+        "because": "unsupported",
+        "replacement_formula": null,
+        "replacement_cask": null
+      }
+    },
+    "x86_64_linux": {
+      "url": "https://download.blender.org/release/Blender4.5/blender-4.5.14-macos-x64.dmg",
+      "version": "4.5.14",
+      "sha256": "613e73339e97bd113adeeb28d9155beeacf2df7119ee4dbd6bdce234843645f6",
+      "deprecation_date": "2027-07-01",
+      "deprecate_args": {
+        "date": "2027-07-01",
+        "because": "unsupported",
+        "replacement_formula": null,
+        "replacement_cask": null
+      }
+    }
+  },
+  "supported_platforms": [
+    "golden_gate",
+    "arm64_golden_gate",
+    "tahoe",
+    "arm64_tahoe",
+    "sequoia",
+    "arm64_sequoia",
+    "sonoma",
+    "arm64_sonoma",
+    "ventura",
+    "arm64_ventura",
+    "monterey",
+    "arm64_monterey",
+    "big_sur",
+    "arm64_big_sur"
+  ],
+  "analytics": {
+    "install": {
+      "30d": {
+        "blender": 13999
+      },
+      "90d": {
+        "blender": 37137
+      },
+      "365d": {
+        "blender": 72584
+      }
+    }
+  },
+  "generated_date": "2026-10-04"
+}
