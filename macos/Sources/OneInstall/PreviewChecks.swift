@@ -46,7 +46,7 @@ import OneInstallCore
     m.state.receipts[iina.id] = "/fixture/IINA.app"
     m.prepareRetry()
     try check(
-      m.page == "uninstall" && m.selection == [iina.id] && !m.busy && !m.review,
+      m.page == "uninstall" && m.selection == ["/fixture/IINA.app"] && !m.busy && !m.review,
       "Retry prepares a fresh review without starting removal")
     m.busy = true
     m.clearResults()

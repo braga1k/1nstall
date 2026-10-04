@@ -53,12 +53,11 @@ extension ContentView {
   }
 
   func installedRow(_ installed: InstalledApp) -> some View {
-    let catalog = m.apps.first { $0.bundleID == installed.bundleID }
-    let managed = catalog.map { m.state.receipts[$0.id] == installed.path } ?? false
-    let selected = catalog.map { m.state.removalSelection.contains($0.id) } ?? false
+    let managed = RemovalEngine.protection(installed) == nil
+    let selected = m.state.removalSelection.contains(installed.path)
     return ZStack(alignment: .trailing) {
       Button {
-        if managed, let catalog { m.toggle(catalog) } else { m.installedDetail = installed }
+        if managed { m.toggleRemoval(installed) } else { m.installedDetail = installed }
       } label: {
         HStack(spacing: 12) {
           ZStack {
@@ -76,11 +75,7 @@ extension ContentView {
             Text(installed.name).font(.system(size: 13)).lineLimit(1)
             Text(
               (installed.version.isEmpty ? "" : installed.version + " · ")
-                + (managed
-                  ? m.t("Homebrew · managed", "Homebrew · gerida")
-                  : installed.store
-                    ? m.t("App Store · guided removal", "App Store · remoção guiada")
-                    : m.t("Installed · guided removal", "Instalada · remoção guiada"))
+                + m.removalName(installed)
             ).font(.system(size: 10.5)).foregroundStyle(p.secondary).lineLimit(1)
           }.frame(maxWidth: .infinity, alignment: .leading)
         }.padding(.leading, 16).padding(.trailing, 102)
@@ -90,7 +85,7 @@ extension ContentView {
         .accessibilityLabel(installed.name).accessibilityValue(
           managed
             ? selected ? m.t("Selected", "Selecionada") : m.t("Not selected", "Não selecionada")
-            : m.t("Guided removal", "Remoção guiada"))
+            : m.removalName(installed))
       Button {
         m.installedDetail = installed
       } label: {
@@ -98,8 +93,7 @@ extension ContentView {
       }.buttonStyle(CardPressStyle()).glass(radius: 16, control: true).padding(.trailing, 16)
     }.frame(height: 70).glass(radius: 18, selected: selected)
       .anchorPreference(key: SelectionAnchors.self, value: .bounds) { anchor in
-        guard let catalog else { return [:] }
-        return ["card-" + catalog.id: anchor]
+        return ["card-" + installed.path: anchor]
       }
   }
 
@@ -115,36 +109,52 @@ extension ContentView {
         .foregroundStyle(p.secondary)
       Text(installed.path).font(.system(size: 11, design: .monospaced)).textSelection(.enabled)
       line
-      if installed.path.hasPrefix("/System/") {
+      Text(m.removalName(installed)).fontWeight(.medium)
+      if RemovalEngine.protection(installed) == nil {
         Text(
           m.t(
-            "Included with macOS. This app is protected and is not offered for removal.",
-            "Incluída no macOS. Esta app está protegida e não é disponibilizada para remoção."))
-      } else if let catalog = m.apps.first(where: { $0.bundleID == installed.bundleID }),
-        m.state.receipts[catalog.id] == installed.path
-      {
-        Text(
-          m.t(
-            "Installed by 1nstall. Select this app to review its removal in the queue.",
-            "Instalada pela 1nstall. Seleciona esta app para rever a remoção na fila."))
+            "Select this app to review its removal. The queue verifies the selected bundle and keeps personal data for a separate review.",
+            "Seleciona esta app para rever a remoção. A fila verifica a aplicação selecionada e preserva os dados pessoais para uma revisão separada."
+          ))
+        Button(
+          m.state.removalSelection.contains(installed.path)
+            ? m.t("Remove from selection", "Retirar da seleção")
+            : m.t("Select for removal", "Selecionar para remoção")
+        ) {
+          m.toggleRemoval(installed)
+          m.installedDetail = nil
+        }.buttonStyle(GlassButtonStyle(prominent: true)).disabled(m.busy)
+        if !NSRunningApplication.runningApplications(withBundleIdentifier: installed.bundleID)
+          .isEmpty
+        {
+          Button(m.t("Quit app normally", "Fechar a app normalmente")) {
+            for process in NSRunningApplication.runningApplications(
+              withBundleIdentifier: installed.bundleID)
+            { process.terminate() }
+          }.buttonStyle(GlassButtonStyle()).disabled(m.busy)
+          Text(
+            m.t(
+              "Unsaved changes may need your attention in that app.",
+              "As alterações por guardar podem precisar da tua atenção nessa app.")
+          ).font(.system(size: 11)).foregroundStyle(p.secondary)
+        }
       } else {
         Text(
           m.t(
-            "This preview does not own this installation. Open its location and use Finder or the manufacturer's uninstaller.",
-            "Esta instalação não foi feita pela prévia. Abre a localização e utiliza o Finder ou o desinstalador do fabricante."
-          ))
+            "This application is protected and cannot be removed here.",
+            "Esta aplicação está protegida e não pode ser removida aqui."))
       }
       HStack {
         Button(m.t("Show in Finder", "Mostrar no Finder")) {
           NSWorkspace.shared.activateFileViewerSelecting([URL(fileURLWithPath: installed.path)])
         }.buttonStyle(GlassButtonStyle())
-        if let catalog = m.apps.first(where: { $0.bundleID == installed.bundleID }) {
+        if RemovalEngine.protection(installed) == nil {
           Button(m.t("Review leftovers", "Rever resíduos")) {
             m.installedDetail = nil
             // Present after the current sheet has dismissed; there is never a second modal underneath it.
             Task {
               try? await Task.sleep(for: .milliseconds(250))
-              m.scanLeftovers(catalog)
+              m.scanLeftovers(installed)
             }
           }.buttonStyle(GlassButtonStyle()).disabled(m.busy)
         }
@@ -181,21 +191,23 @@ extension ContentView {
             .buttonStyle(GlassButtonStyle(selected: item.id == activeProfile))
           }
         }.frame(width: 185)
-        VStack(alignment: .leading, spacing: 14) {
-          ForEach(apps) { app in
-            HStack {
-              VStack(alignment: .leading, spacing: 4) {
-                Text(app.name)
-                Text(m.sourceName(app)).font(.system(size: 11)).foregroundStyle(p.secondary)
-              }
-              Spacer()
-              if m.installed(app) {
-                Text(m.t("Installed", "Instalada")).font(.system(size: 11)).foregroundStyle(
-                  p.secondary)
-              }
-            }.padding(12).glass()
+        ScrollView {
+          VStack(alignment: .leading, spacing: 14) {
+            ForEach(apps) { app in
+              HStack {
+                VStack(alignment: .leading, spacing: 4) {
+                  Text(app.name)
+                  Text(m.sourceName(app)).font(.system(size: 11)).foregroundStyle(p.secondary)
+                }
+                Spacer()
+                if m.installed(app) {
+                  Text(m.t("Installed", "Instalada")).font(.system(size: 11)).foregroundStyle(
+                    p.secondary)
+                }
+              }.padding(12).glass()
+            }
           }
-        }.frame(maxWidth: .infinity, minHeight: 230, alignment: .topLeading)
+        }.frame(maxWidth: .infinity).frame(height: 330)
       }
       Toggle(m.t("Add to current selection", "Acrescentar à seleção atual"), isOn: $addProfile)
         .toggleStyle(.checkbox)
@@ -261,12 +273,15 @@ extension ContentView {
             }.accessibilityHidden(true)
           }
           if !entry.detail.isEmpty {
-            Button(m.t("View issue", "Ver problema")) { m.changePage("history") }.buttonStyle(
+            Button(
+              entry.stage == .succeeded
+                ? m.t("View result", "Ver resultado") : m.t("View issue", "Ver problema")
+            ) { m.changePage("history") }.buttonStyle(
               .plain
             ).font(.system(size: 11)).underline()
           }
           if entry.operation == "remove", entry.stage == .succeeded,
-            let app = m.apps.first(where: { $0.id == entry.appID })
+            let app = m.identity(for: entry)
           {
             Button(m.t("Review leftovers", "Rever resíduos")) { m.scanLeftovers(app) }.buttonStyle(
               GlassButtonStyle(compact: true)

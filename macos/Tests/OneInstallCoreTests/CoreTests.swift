@@ -2,7 +2,7 @@ import Foundation
 import OneInstallCore
 
 final class CoreTests: CheckSuite {
-  func testRemovalSelectionRequiresTheOwnedCopyToStillExist() throws {
+  func testLegacyRemovalSelectionMigratesOnlyTheMatchingOwnedCopy() throws {
     let catalog = try Catalog.load()
     let app = catalog[0]
     let owned = InstalledApp(
@@ -14,7 +14,7 @@ final class CoreTests: CheckSuite {
     let receipts = [app.id: owned.path]
     expectEqual(
       Library.removableSelection(
-        [app.id], catalog: catalog, installed: [owned], receipts: receipts), Set([app.id]))
+        [app.id], catalog: catalog, installed: [owned], receipts: receipts), Set([owned.path]))
     expectTrue(
       Library.removableSelection([app.id], catalog: catalog, installed: [other], receipts: receipts)
         .isEmpty)
@@ -205,11 +205,13 @@ final class CoreTests: CheckSuite {
   func testTimeoutIsAnError() throws {
     expectError(try Command.run("/bin/sleep", ["3"], timeout: 0.1))
   }
-  func testUnownedRemovalIsRejectedWithoutInvokingBrew() throws {
-    let engine = BrewEngine(executable: "/usr/bin/false", appDirectory: root)
-    expectError(
-      try engine.remove(
-        app, receipt: "/Applications/Personal.app", onStage: { _ in }, log: { _ in }))
+  func testRemovalRejectsInvalidIdentityWithoutInvokingBrew() throws {
+    let installed = InstalledApp(
+      name: "Fixture", bundleID: "test.invalid.fixture",
+      path: root.appendingPathComponent("Applications/Absent.app").path, version: "1", store: false)
+    let engine = RemovalEngine(
+      roots: [root], caskRooms: [], brew: BrewEngine(executable: "/usr/bin/false"))
+    expectError(try engine.prepare(RemovalIdentity(app: installed)))
   }
   func testChangedCaskOrPrivilegedInstallerIsRejected() throws {
     let script = root.appendingPathComponent("brew-fixture")
@@ -268,9 +270,16 @@ final class LiveBrewTests: CheckSuite {
       let receipt = try engine.install(app, inventoryRoots: roots, onStage: stage, log: log)
       expectTrue(
         Inventory.scan(roots: [appDirectory]).apps.contains { $0.bundleID == app.bundleID })
-      try engine.remove(app, receipt: receipt, inventoryRoots: roots, onStage: stage, log: log)
+      let installed = try requireValue(
+        Inventory.scan(roots: [appDirectory]).apps.first { $0.bundleID == app.bundleID })
+      let removal = RemovalEngine(roots: roots, brew: engine)
+      let plan = try removal.prepare(RemovalIdentity.inspect(installed, catalog: catalog))
+      expectEqual(plan.method, .homebrew)
+      _ = try removal.remove(plan, onStage: stage, log: log)
       expectFalse(FileManager.default.fileExists(atPath: receipt))
-      print("VERIFIED install → identity/arm64 → uninstall → absent: \(token)")
+      print(
+        "VERIFIED install → identity/arm64 → independent Homebrew detection → recorded uninstall → absent: \(token)"
+      )
     }
   }
 }

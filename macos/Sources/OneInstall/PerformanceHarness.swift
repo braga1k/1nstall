@@ -115,7 +115,7 @@ import OneInstallCore
       }
       let report: [String: Any] = [
         "method":
-          "Release build; internal events on real NSHostingView; 1240x840pt; fixed 15-app catalog and 200 installed fixtures. Tick interval includes a 16ms sleep (80ms for navigation); not display FPS. CPU excludes WindowServer. No real state writes or operations.",
+          "Release build; internal events on real NSHostingView; 1240x840pt; packaged catalog and 200 installed fixtures. Tick interval includes a 16ms sleep (80ms for navigation); not display FPS. CPU excludes WindowServer. No real state writes or operations.",
         "mainToWindowMS": ready, "inventoryReadMS": scanMS, "inventoryCount": inventory.apps.count,
         "phases": results,
       ]

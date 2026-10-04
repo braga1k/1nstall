@@ -150,42 +150,4 @@ public struct BrewEngine: Sendable {
     }
     return destination.path
   }
-  public func remove(
-    _ app: CatalogApp, receipt: String, inventoryRoots: [URL] = Inventory.roots,
-    onStage: (QueueStage) -> Void, log: @escaping (String) -> Void
-  ) throws {
-    onStage(.preparing)
-    let destination = appDirectory.appendingPathComponent(app.appName)
-    guard receipt == destination.path,
-      destination.resolvingSymlinksInPath().path == destination.path,
-      let info = NSDictionary(
-        contentsOf: destination.appendingPathComponent("Contents/Info.plist")),
-      info["CFBundleIdentifier"] as? String == app.bundleID
-    else {
-      throw OperationError(
-        "Only the verified installation created by 1nstall can be removed automatically in this preview."
-      )
-    }
-    guard NSRunningApplication.runningApplications(withBundleIdentifier: app.bundleID).isEmpty
-    else { throw OperationError("Quit the app before removing it.") }
-    try preflight(app, removal: true)
-    let listing = try Command.run(executable, ["list", "--cask", app.id], timeout: 30)
-    guard listing.code == 0,
-      listing.output.split(separator: "\n").contains(where: {
-        URL(fileURLWithPath: String($0).trimmingCharacters(in: .whitespaces))
-          .resolvingSymlinksInPath().path == destination.path
-      })
-    else { throw OperationError("Homebrew ownership could not be confirmed.") }
-    onStage(.removing)
-    let r = try Command.run(executable, ["uninstall", "--cask", app.id], onOutput: log)
-    onStage(.verifying)
-    let inventory = Inventory.scan(roots: inventoryRoots)
-    guard r.code == 0, !FileManager.default.fileExists(atPath: destination.path),
-      inventory.warnings.isEmpty,
-      !inventory.apps.contains(where: { $0.bundleID == app.bundleID })
-    else {
-      throw OperationError(
-        "Removal is incomplete or another copy is installed. Data cleanup stays blocked.")
-    }
-  }
 }

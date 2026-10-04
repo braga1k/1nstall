@@ -162,11 +162,12 @@ struct GlassButtonStyle: ButtonStyle {
   var prominent = false
   var selected = false
   var compact = false
+  var cornerRadius: CGFloat = 20
   func makeBody(configuration: Configuration) -> some View {
     configuration.label.font(.system(size: compact ? 11 : 12, weight: .regular))
       .padding(.horizontal, compact ? 11 : 14).frame(minHeight: compact ? 34 : 36)
       // Include padding and the full visible pill in the button hit area.
-      .contentShape(Capsule())
+      .contentShape(RoundedRectangle(cornerRadius: cornerRadius))
       .foregroundStyle(prominent ? p.actionText : p.ink)
       .background {
         if prominent {
@@ -174,7 +175,7 @@ struct GlassButtonStyle: ButtonStyle {
             Capsule().stroke(.white.opacity(0.16), lineWidth: 1).padding(1))
         }
       }
-      .glass(radius: 20, control: true, selected: selected)
+      .glass(radius: cornerRadius, control: true, selected: selected)
       .animation(reduced ? nil : .easeOut(duration: 0.16), value: selected)
       .opacity(enabled ? 1 : 0.45)
       .scaleEffect(configuration.isPressed && !reduced ? 0.975 : 1)

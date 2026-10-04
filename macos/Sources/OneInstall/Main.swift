@@ -192,7 +192,7 @@ import SwiftUI
             version: app.version, store: app.source == "appstore")
         }
         model.state.receipts["iina"] = "/Fixture Applications/IINA.app"
-        model.state.removalSelection = ["iina"]
+        model.state.removalSelection = ["/Fixture Applications/IINA.app"]
         try await captureFrame("uninstall" + suffix, to: directory)
         count += 1
         if accent {

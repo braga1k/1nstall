@@ -25,12 +25,16 @@ public enum Library {
   public static func removableSelection(
     _ ids: Set<String>, catalog: [CatalogApp], installed: [InstalledApp], receipts: [String: String]
   ) -> Set<String> {
+    // Migrate legacy catalog selections to exact installed paths; keep duplicate bundles separate.
     Set(
-      ids.filter { id in
-        guard let app = catalog.first(where: { $0.id == id }), let path = receipts[id] else {
-          return false
+      ids.compactMap { id in
+        if installed.contains(where: { $0.path == id && RemovalEngine.protection($0) == nil }) {
+          return id
         }
-        return installed.contains { $0.bundleID == app.bundleID && $0.path == path }
+        guard let catalogApp = catalog.first(where: { $0.id == id }), let path = receipts[id],
+          installed.contains(where: { $0.path == path && $0.bundleID == catalogApp.bundleID })
+        else { return nil }
+        return path
       })
   }
   public static let groups: [LibraryGroup] = [
@@ -45,6 +49,14 @@ public enum Library {
       id: "players", english: "Media Players", portuguese: "Leitores multimédia", group: "everyday"),
     .init(
       id: "notes", english: "Notes & Writing", portuguese: "Notas e escrita", group: "everyday"),
+    .init(
+      id: "office", english: "Office & Documents", portuguese: "Escritório e documentos",
+      group: "everyday"),
+    .init(
+      id: "communication", english: "Communication", portuguese: "Comunicação", group: "everyday"),
+    .init(
+      id: "security", english: "Security & Privacy", portuguese: "Segurança e privacidade",
+      group: "tools"),
     .init(id: "design", english: "3D & Design", portuguese: "3D e design", group: "create"),
     .init(id: "video", english: "Video & Motion", portuguese: "Vídeo e motion", group: "create"),
     .init(id: "audio", english: "Music & Audio", portuguese: "Música e áudio", group: "create"),
@@ -63,19 +75,25 @@ public enum Library {
       apps: ["firefox", "iina", "rectangle", "localsend"]),
     .init(
       id: "create", english: "Creative studio", portuguese: "Estúdio criativo",
-      apps: ["blender", "keka", "vlc"]),
+      apps: ["blender", "inkscape", "keka", "vlc"]),
     .init(
       id: "development", english: "Development", portuguese: "Programação",
       apps: ["visual-studio-code", "firefox", "rectangle", "keka"]),
     .init(
       id: "video", english: "Video & motion", portuguese: "Vídeo e motion",
-      apps: ["iina", "blender", "final-cut-pro", "motion"]),
+      apps: ["iina", "blender", "final-cut-pro", "motion", "handbrake-app", "obs"]),
     .init(
       id: "music", english: "Music & audio", portuguese: "Música e áudio",
-      apps: ["logic-pro", "spotify", "keka"]),
+      apps: ["logic-pro", "audacity", "spotify", "keka"]),
     .init(
       id: "files", english: "Files between devices", portuguese: "Ficheiros entre dispositivos",
       apps: ["localsend", "keka"]),
+    .init(
+      id: "office", english: "Office & study", portuguese: "Trabalho e estudo",
+      apps: ["libreoffice", "obsidian", "bitwarden", "localsend"]),
+    .init(
+      id: "communication", english: "Stay connected", portuguese: "Manter o contacto",
+      apps: ["slack", "discord", "signal"]),
   ]
   public static func matches(_ category: String, filter: String) -> Bool {
     filter == "all" || category == filter || categories.first { $0.id == category }?.group == filter

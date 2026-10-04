@@ -143,6 +143,9 @@ public struct QueueEntry: Codable, Identifiable, Sendable {
   public var stage: QueueStage
   public var detail: String
   public var date: Date
+  public var removedApp: RemovalIdentity?
+  public var removalMethod: RemovalMethod?
+  public var trashPath: String?
   public init(app: CatalogApp, operation: String) {
     id = UUID()
     appID = app.id
@@ -151,6 +154,27 @@ public struct QueueEntry: Codable, Identifiable, Sendable {
     stage = .waiting
     detail = ""
     date = Date()
+  }
+  public init(cleanup identity: RemovalIdentity, detail: String, succeeded: Bool) {
+    id = UUID()
+    appID = identity.id
+    name = identity.name
+    operation = "cleanup"
+    stage = succeeded ? .succeeded : .failed
+    self.detail = detail
+    date = Date()
+    removedApp = identity
+  }
+  public init(plan: RemovalPlan) {
+    id = UUID()
+    appID = plan.identity.id
+    name = plan.identity.name
+    operation = "remove"
+    stage = .waiting
+    detail = ""
+    date = Date()
+    removedApp = plan.identity
+    removalMethod = plan.method
   }
 }
 public struct SavedState: Codable {

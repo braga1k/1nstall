@@ -31,7 +31,12 @@ import UniformTypeIdentifiers
   private var inventoryRefreshedAt: Date?
   private var pageFilters: [String: (String, String, Bool)] = [:]
   @Published var review = false
-  @Published var leftoverApp: CatalogApp?
+  private var removalReviewID = UUID()
+  @Published var preparingRemoval = false
+  @Published var removalPlans: [RemovalPlan] = []
+  @Published var removalIssues: [String: String] = [:]
+  @Published var caskOwners: [String: Set<String>] = [:]
+  @Published var leftoverApp: RemovalIdentity?
   @Published var leftoverReport = LeftoverReport()
   @Published var leftoverScanning = false
   @Published var leftoverSelection: Set<String> = []
@@ -125,6 +130,7 @@ import UniformTypeIdentifiers
     Task {
       let result = await Task.detached(priority: .utility) { Inventory.scan() }.value
       inventory = result
+      caskOwners = await Task.detached(priority: .utility) { CaskIndex().owners }.value
       inventoryRefreshedAt = Date()
       scanning = false
       if result.warnings.isEmpty && !busy {
@@ -147,7 +153,49 @@ import UniformTypeIdentifiers
   var selection: Set<String> {
     page == "uninstall" ? state.removalSelection : state.installSelection
   }
-  var selectedApps: [CatalogApp] { apps.filter { selection.contains($0.id) } }
+  func installed(_ identity: RemovalIdentity) -> Bool {
+    inventory.apps.contains { $0.bundleID == identity.bundleID || $0.path == identity.app.path }
+  }
+  var selectedInstalledApps: [InstalledApp] {
+    inventory.apps.filter { state.removalSelection.contains($0.path) }
+  }
+  var selectedApps: [CatalogApp] {
+    page == "uninstall"
+      ? selectedInstalledApps.map(presentationApp) : apps.filter { selection.contains($0.id) }
+  }
+  // Visual selection tokens carry the exact installed path; they are never installation catalog entries.
+  func presentationApp(_ app: InstalledApp) -> CatalogApp {
+    CatalogApp(
+      id: app.path, name: app.name,
+      category: apps.first { $0.bundleID == app.bundleID }?.category ?? "all",
+      summaryEN: "", summaryPT: "", bundleID: app.bundleID,
+      appName: URL(fileURLWithPath: app.path).lastPathComponent, website: "", source: "installed",
+      version: app.version, minimumOS: "", architecture: "", sha256: nil, verified: "",
+      supportNames: [])
+  }
+  func removalName(_ app: InstalledApp) -> String {
+    if let reason = RemovalEngine.protection(app) {
+      return reason == "self"
+        ? t("1nstall is running", "A 1nstall está em execução")
+        : t("Protected by macOS", "Protegida pelo macOS")
+    }
+    if caskOwners[app.path]?.isEmpty == false {
+      return "Homebrew · " + t("uninstall", "desinstalação")
+    }
+    return app.store
+      ? t("App Store · move to Trash", "App Store · mover para o Lixo")
+      : t("App · move to Trash", "App · mover para o Lixo")
+  }
+  func toggleRemoval(_ app: InstalledApp) {
+    guard RemovalEngine.protection(app) == nil else {
+      installedDetail = app
+      return
+    }
+    toggle(presentationApp(app))
+  }
+  func identity(for entry: QueueEntry) -> RemovalIdentity? {
+    entry.removedApp ?? apps.first { $0.id == entry.appID }.map(RemovalIdentity.init(catalog:))
+  }
   func toggle(_ app: CatalogApp) {
     guard !busy else { return }
     if page == "uninstall" {
@@ -206,7 +254,9 @@ import UniformTypeIdentifiers
     changePage(operation == "remove" ? "uninstall" : "install")
     let ids = failed.filter { $0.operation == operation }.map(\.appID)
     if operation == "remove" {
-      state.removalSelection = Set(ids.filter { state.receipts[$0] != nil })
+      state.removalSelection = Library.removableSelection(
+        Set(ids), catalog: apps,
+        installed: inventory.apps, receipts: state.receipts)
     } else {
       state.installSelection = Library.selectable(ids, catalog: apps, installed: inventory.apps)
     }
@@ -216,7 +266,10 @@ import UniformTypeIdentifiers
     save()
   }
   func sourceName(_ app: CatalogApp) -> String {
-    app.automatic
+    if page == "uninstall", let installed = inventory.apps.first(where: { $0.path == app.id }) {
+      return removalName(installed)
+    }
+    return app.automatic
       ? t("Homebrew · automatic", "Homebrew · automática")
       : app.source == "appstore"
         ? t("App Store · guided", "App Store · guiada")
@@ -238,7 +291,9 @@ import UniformTypeIdentifiers
     }
   }
   func resultLabel(_ entry: QueueEntry) -> String {
-    (entry.operation == "remove" ? t("Removal", "Remoção") : t("Installation", "Instalação"))
+    (entry.operation == "cleanup"
+      ? t("Data cleanup", "Limpeza de dados")
+      : entry.operation == "remove" ? t("Removal", "Remoção") : t("Installation", "Instalação"))
       + " · " + stageName(entry.stage)
   }
   func celebrate() {
@@ -302,11 +357,121 @@ import UniformTypeIdentifiers
   func openOfficial(_ app: CatalogApp) {
     if let url = URL(string: app.website), url.scheme == "https" { NSWorkspace.shared.open(url) }
   }
+  func beginReview() {
+    guard !busy, !selectedApps.isEmpty else { return }
+    review = true
+    guard page == "uninstall" else { return }
+    preparingRemoval = true
+    removalPlans = []
+    removalIssues = [:]
+    let selected = selectedInstalledApps
+    let revision = UUID()
+    removalReviewID = revision
+    let catalog = apps
+    Task {
+      let result = await Task.detached(priority: .userInitiated) {
+        () -> ([RemovalPlan], [String: String]) in
+        var plans: [RemovalPlan] = []
+        var issues: [String: String] = [:]
+        let engine = RemovalEngine()
+        for app in selected {
+          do {
+            plans.append(try engine.prepare(RemovalIdentity.inspect(app, catalog: catalog)))
+          } catch { issues[app.path] = error.localizedDescription }
+        }
+        return (plans, issues)
+      }.value
+      guard removalReviewID == revision else { return }
+      removalPlans = result.0
+      removalIssues = result.1
+      preparingRemoval = false
+    }
+  }
+  func runRemovalQueue() {
+    guard !capture, !busy, !preparingRemoval, removalIssues.isEmpty, !removalPlans.isEmpty,
+      Set(removalPlans.map(\.id)) == Set(selectedInstalledApps.map(\.id))
+    else { return }
+    let plans = removalPlans
+    state.queue = plans.map { QueueEntry(plan: $0) }
+    busy = true
+    stopRequested = false
+    review = false
+    save()
+    status = t(
+      "Removing selected apps. Data is kept for review.",
+      "A remover as apps selecionadas. Os dados ficam para revisão.")
+    Task {
+      for (i, plan) in plans.enumerated() {
+        if stopRequested {
+          state.queue[i].stage = .stopped
+          save()
+          continue
+        }
+        let entryID = state.queue[i].id
+        appendLog("\nREMOVE \(plan.identity.app.path) · \(plan.method.rawValue)\n")
+        do {
+          let result = try await Task.detached(priority: .userInitiated) { [weak self] in
+            try RemovalEngine().remove(
+              plan,
+              onStage: { stage in
+                DispatchQueue.main.async {
+                  guard let self, self.state.queue.indices.contains(i),
+                    self.state.queue[i].id == entryID,
+                    !self.state.queue[i].stage.terminal
+                  else { return }
+                  self.state.queue[i].stage = stage
+                  self.save()
+                }
+              }, log: { text in DispatchQueue.main.async { self?.appendLog(text) } })
+          }.value
+          state.queue[i].stage = .succeeded
+          state.queue[i].trashPath = result.trashPath
+          state.queue[i].detail =
+            result.trashPath == nil
+            ? t(
+              "App and Homebrew record removed. Personal data kept for review.",
+              "App e registo Homebrew removidos. Dados pessoais preservados para revisão.")
+            : t(
+              "App moved to Trash and verified. Data kept for review; disk space is not yet freed.",
+              "App movida para o Lixo e verificada. Dados preservados para revisão; o espaço ainda não foi libertado."
+            )
+          if result.remainingCopies > 0 {
+            state.queue[i].detail += t(
+              " Another copy remains installed; data cleanup is blocked.",
+              " Continua instalada outra cópia; a limpeza de dados está bloqueada.")
+          }
+          state.receipts = state.receipts.filter { $0.value != plan.identity.app.path }
+          state.removalSelection.remove(plan.id)
+          appendLog(state.queue[i].detail + "\n")
+        } catch {
+          state.queue[i].stage = .failed
+          state.queue[i].detail = error.localizedDescription
+          appendLog(error.localizedDescription + "\n")
+        }
+        save()
+      }
+      state.history.append(contentsOf: state.queue)
+      state.history = Array(state.history.suffix(200))
+      busy = false
+      save()
+      refresh()
+      let succeeded = state.queue.filter { $0.stage == .succeeded }.count
+      status =
+        "\(succeeded)/\(state.queue.count) "
+        + t(
+          "removals verified. Review associated data below.",
+          "remoções confirmadas. Revê os dados associados abaixo.")
+      if succeeded == state.queue.count { celebrate() }
+    }
+  }
   func runQueue() {
+    if page == "uninstall" {
+      runRemovalQueue()
+      return
+    }
     guard !busy, !selectedApps.isEmpty, !capture else { return }
     let batch = selectedApps
-    let removing = page == "uninstall"
-    state.queue = batch.map { QueueEntry(app: $0, operation: removing ? "remove" : "install") }
+    state.queue = batch.map { QueueEntry(app: $0, operation: "install") }
     save()
     busy = true
     status = t(
@@ -322,9 +487,9 @@ import UniformTypeIdentifiers
           continue
         }
         appendLog(
-          "\n\(ISO8601DateFormatter().string(from:Date())) \(removing ? "REMOVE":"INSTALL") \(app.id)\n"
+          "\n\(ISO8601DateFormatter().string(from:Date())) INSTALL \(app.id)\n"
         )
-        if !app.automatic && !removing {
+        if !app.automatic {
           openOfficial(app)
           state.queue[i].stage = .guided
           save()
@@ -332,7 +497,6 @@ import UniformTypeIdentifiers
         }
         do {
           let engine = brew
-          let receipt = state.receipts[app.id]
           let entryID = state.queue[i].id
           let path = try await Task.detached(priority: .userInitiated) { [weak self] () -> String in
             let stage: (QueueStage) -> Void = { s in
@@ -345,24 +509,11 @@ import UniformTypeIdentifiers
               }
             }
             let log: (String) -> Void = { s in DispatchQueue.main.async { self?.appendLog(s) } }
-            if removing {
-              guard let receipt else {
-                throw OperationError(
-                  "This app was not installed by 1nstall. Use its official uninstaller or Finder.")
-              }
-              try engine.remove(app, receipt: receipt, onStage: stage, log: log)
-              return ""
-            }
             return try engine.install(app, onStage: stage, log: log)
           }.value
           state.queue[i].stage = .succeeded
-          if removing {
-            state.receipts.removeValue(forKey: app.id)
-            state.removalSelection.remove(app.id)
-          } else {
-            state.receipts[app.id] = path
-            state.installSelection.remove(app.id)
-          }
+          state.receipts[app.id] = path
+          state.installSelection.remove(app.id)
         } catch {
           state.queue[i].stage = .failed
           state.queue[i].detail = error.localizedDescription
@@ -386,7 +537,18 @@ import UniformTypeIdentifiers
       }
     }
   }
-  func scanLeftovers(_ app: CatalogApp) {
+  func scanLeftovers(_ app: CatalogApp) { scanLeftovers(RemovalIdentity(catalog: app)) }
+  func scanLeftovers(_ installed: InstalledApp) {
+    guard !busy else { return }
+    let catalog = apps
+    Task {
+      let identity = await Task.detached(priority: .utility) {
+        RemovalIdentity.inspect(installed, catalog: catalog)
+      }.value
+      scanLeftovers(identity)
+    }
+  }
+  func scanLeftovers(_ app: RemovalIdentity) {
     guard !busy else { return }
     leftoverSelection = []
     leftoverResult = ""
@@ -395,7 +557,10 @@ import UniformTypeIdentifiers
     cleanupConfirm = false
     leftoverApp = app
     Task {
-      let report = await Task.detached(priority: .utility) { LeftoverScanner().scan(app) }.value
+      let installed = inventory.apps
+      let report = await Task.detached(priority: .utility) {
+        LeftoverScanner().scan(app, installed: installed)
+      }.value
       if leftoverApp?.id == app.id {
         leftoverReport = report
         leftoverScanning = false
@@ -438,7 +603,14 @@ import UniformTypeIdentifiers
           "moved to Trash. Disk space is not yet freed.",
           "movidos para o Lixo. O espaço em disco ainda não foi libertado.")
       appendLog(leftoverResult + "\n" + result.2.joined(separator: "\n") + "\n")
-      leftoverReport = await Task.detached(priority: .utility) { LeftoverScanner().scan(app) }.value
+      state.history.append(
+        QueueEntry(cleanup: app, detail: leftoverResult, succeeded: result.0 == items.count))
+      state.history = Array(state.history.suffix(200))
+      save()
+      let installed = inventory.apps
+      leftoverReport = await Task.detached(priority: .utility) {
+        LeftoverScanner().scan(app, installed: installed)
+      }.value
     }
   }
 }

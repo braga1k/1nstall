@@ -151,42 +151,46 @@ struct ContentView: View {
       }.foregroundStyle(p.secondary).frame(maxWidth: .infinity, alignment: .leading).padding(
         .horizontal, 8
       ).padding(.top, 22).padding(.bottom, 12)
-      ScrollView {
-        VStack(spacing: 8) {
-          Button {
-            m.category = "all"
-          } label: {
-            Text(m.t("All apps", "Todas as apps")).frame(maxWidth: .infinity, alignment: .leading)
-          }.buttonStyle(GlassButtonStyle(selected: m.category == "all", compact: true)).padding(
-            .bottom, 2)
-          ForEach(Library.groups) { group in
-            VStack(spacing: 4) {
-              Button {
-                if !m.expandedGroups.insert(group.id).inserted { m.expandedGroups.remove(group.id) }
-              } label: {
-                HStack {
-                  Text(m.t(group.english, group.portuguese))
-                  Spacer()
-                  Image(systemName: "chevron.right").font(.system(size: 10, weight: .semibold))
-                    .rotationEffect(.degrees(m.expandedGroups.contains(group.id) ? 90 : 0))
-                }.padding(.horizontal, 10).frame(height: 43)
-              }.buttonStyle(CardPressStyle()).glass(radius: 12, quiet: true)
-                .accessibilityValue(
-                  m.expandedGroups.contains(group.id)
-                    ? m.t("Expanded", "Expandido") : m.t("Collapsed", "Recolhido"))
-              if m.expandedGroups.contains(group.id) {
-                VStack(spacing: 2) {
-                  categoryRow(group.id, name: m.t("All in this group", "Todas deste grupo"))
-                  ForEach(Library.categories.filter { $0.group == group.id }) { category in
-                    categoryRow(category.id, name: m.t(category.english, category.portuguese))
+      if m.page == "install" || m.page == "uninstall" {
+        ScrollView {
+          VStack(spacing: 8) {
+            Button {
+              m.category = "all"
+            } label: {
+              Text(m.t("All apps", "Todas as apps")).frame(maxWidth: .infinity, alignment: .leading)
+            }.buttonStyle(GlassButtonStyle(selected: m.category == "all", compact: true)).padding(
+              .bottom, 2)
+            ForEach(Library.groups) { group in
+              VStack(spacing: 4) {
+                Button {
+                  if !m.expandedGroups.insert(group.id).inserted {
+                    m.expandedGroups.remove(group.id)
                   }
-                }.padding(.leading, 8).transition(
-                  .opacity.combined(with: .offset(y: m.reduced ? 0 : -5)))
+                } label: {
+                  HStack {
+                    Text(m.t(group.english, group.portuguese))
+                    Spacer()
+                    Image(systemName: "chevron.right").font(.system(size: 10, weight: .semibold))
+                      .rotationEffect(.degrees(m.expandedGroups.contains(group.id) ? 90 : 0))
+                  }.padding(.horizontal, 10).frame(height: 43)
+                }.buttonStyle(CardPressStyle()).glass(radius: 12, quiet: true)
+                  .accessibilityValue(
+                    m.expandedGroups.contains(group.id)
+                      ? m.t("Expanded", "Expandido") : m.t("Collapsed", "Recolhido"))
+                if m.expandedGroups.contains(group.id) {
+                  VStack(spacing: 2) {
+                    categoryRow(group.id, name: m.t("All in this group", "Todas deste grupo"))
+                    ForEach(Library.categories.filter { $0.group == group.id }) { category in
+                      categoryRow(category.id, name: m.t(category.english, category.portuguese))
+                    }
+                  }.padding(.leading, 8).transition(
+                    .opacity.combined(with: .offset(y: m.reduced ? 0 : -5)))
+                }
               }
             }
-          }
-        }.padding(.vertical, 4)
-      }.scrollIndicators(.hidden)
+          }.padding(.vertical, 4)
+        }.scrollIndicators(.hidden)
+      }
       Spacer(minLength: 8)
       button(m.t("Settings", "Definições"), selected: m.page == "settings") {
         m.changePage("settings")
@@ -211,7 +215,7 @@ struct ContentView: View {
           GlassButtonStyle(selected: !m.installedOnly, compact: true))
         Button(
           m.page == "uninstall"
-            ? m.t("Managed by 1nstall", "Geridas pela 1nstall") : m.t("Installed", "Instaladas")
+            ? m.t("Removable apps", "Apps removíveis") : m.t("Installed", "Instaladas")
         ) { m.installedOnly = true }.buttonStyle(
           GlassButtonStyle(selected: m.installedOnly, compact: true))
         Button(m.scanning ? m.t("Scanning…", "A analisar…") : m.t("Refresh", "Atualizar")) {
@@ -387,7 +391,7 @@ struct ContentView: View {
       return (m.search.isEmpty || installed.name.localizedCaseInsensitiveContains(m.search))
         && (m.category == "all"
           || catalog.map { Library.matches($0.category, filter: m.category) } == true)
-        && (!m.installedOnly || catalog.map { m.state.receipts[$0.id] == installed.path } == true)
+        && (!m.installedOnly || RemovalEngine.protection(installed) == nil)
     }
   }
   var selection: some View {
@@ -399,7 +403,9 @@ struct ContentView: View {
           + (m.selection.count == 1
             ? m.t("app selected", "app selecionada") : m.t("apps selected", "apps selecionadas"))
       ).foregroundStyle(p.secondary).padding(.bottom, 18)
-      button(m.t("Save selection…", "Guardar seleção…")) { m.saveProfile() }.disabled(m.busy)
+      if m.page == "install" {
+        button(m.t("Save selection…", "Guardar seleção…")) { m.saveProfile() }.disabled(m.busy)
+      }
       line.padding(.top, 16).padding(.bottom, 12)
       ScrollView {
         VStack(alignment: .leading, spacing: 17) {
@@ -444,8 +450,8 @@ struct ContentView: View {
       Text(
         m.page == "uninstall"
           ? m.t(
-            "Automatic removal: apps installed by this preview. Data gets a separate review.",
-            "Remoção automática: apps instaladas por esta prévia. Os dados têm uma revisão separada."
+            "Remove installed apps, including apps outside the catalog. Data gets a separate review.",
+            "Remove apps instaladas, incluindo apps fora do catálogo. Os dados têm uma revisão separada."
           )
           : m.t(
             "Automatic: installs with Homebrew.\nGuided: opens the official website.",
@@ -462,7 +468,7 @@ struct ContentView: View {
           m.page == "uninstall"
             ? m.t("Review & remove  →", "Rever e remover  →")
             : m.t("Review & install  →", "Rever e instalar  →"), prominent: true
-        ) { m.review = true }.disabled(m.selectedApps.isEmpty)
+        ) { m.beginReview() }.disabled(m.selectedApps.isEmpty || m.preparingRemoval)
       }
       Button {
         m.changePage("history")
@@ -476,78 +482,116 @@ struct ContentView: View {
   var line: some View { Rectangle().fill(p.separator).frame(height: 1) }
   var settings: some View {
     ScrollView {
-      VStack(alignment: .leading, spacing: 22) {
-        Text(m.t("Settings", "Definições")).font(.system(size: 28, weight: .semibold))
-        Text(
-          m.t(
-            "The same identity, in every appearance.", "A mesma identidade, em todas as aparências."
-          )
-        ).foregroundStyle(p.secondary)
-        settingsCard(m.t("Appearance", "Aparência")) {
-          HStack {
+      VStack(alignment: .leading, spacing: 12) {
+        Text(m.t("Settings", "Definições")).font(.system(size: 26, weight: .regular))
+          .padding(.bottom, 10)
+        settingsCard(
+          m.t("Theme", "Tema"),
+          subtitle: m.t(
+            "Choose the appearance of 1nstall.", "Escolhe a aparência da 1nstall.")
+        ) {
+          Menu {
             ForEach(["system", "light", "dark"], id: \.self) { value in
-              button(
-                value == "system"
-                  ? m.t("System", "Sistema")
-                  : value == "light" ? m.t("Light", "Claro") : m.t("Dark", "Escuro"),
-                selected: m.theme == value
-              ) { m.theme = value }
+              Button {
+                m.theme = value
+              } label: {
+                if m.theme == value {
+                  Label(themeName(value), systemImage: "checkmark")
+                } else {
+                  Text(themeName(value))
+                }
+              }
             }
+          } label: {
+            settingsChoice(themeName(m.theme))
           }
+          .menuStyle(.button).buttonStyle(GlassButtonStyle(compact: true, cornerRadius: 12))
+          .accessibilityLabel(m.t("Theme", "Tema")).accessibilityValue(themeName(m.theme))
+        }
+        settingsCard(
+          m.t("Accent colour", "Cor de destaque"),
+          subtitle: m.t(
+            "Turn off for black and white, keeping gradients and depth.",
+            "Desliga para preto e branco, mantendo os gradientes e a profundidade.")
+        ) {
           Toggle(m.t("Use macOS accent colour", "Usar a cor de destaque do macOS"), isOn: $m.accent)
             .toggleStyle(.checkbox)
+        }
+        settingsCard(
+          m.t("Language", "Idioma"),
+          subtitle: m.t(
+            "Changes apply immediately.", "As alterações são aplicadas de imediato.")
+        ) {
+          Menu {
+            Button("Português (Portugal)") { m.language = "pt-PT" }
+            Button("English") { m.language = "en" }
+          } label: {
+            settingsChoice(m.pt ? "Português (Portugal)" : "English")
+          }
+          .menuStyle(.button).buttonStyle(GlassButtonStyle(compact: true, cornerRadius: 12))
+          .accessibilityLabel(m.t("Language", "Idioma"))
+          .accessibilityValue(m.pt ? "Português (Portugal)" : "English")
+        }
+        settingsCard(
+          m.t("Motion", "Movimento"),
+          subtitle: m.t(
+            "The system's Reduce Motion preference is always respected.",
+            "A preferência Reduzir movimento do sistema é sempre respeitada.")
+        ) {
+          Toggle(m.t("Reduce motion", "Reduzir movimento"), isOn: $m.lessMotion)
+            .toggleStyle(.checkbox)
+        }
+        settingsCard(m.t("About", "Sobre"), subtitle: "1nstall Mac Preview 0.3.0 · Apple Silicon") {
           Text(
             m.t(
-              "Off gives you a completely monochrome interface, with the same gradients and depth.",
-              "Desligada, a interface fica totalmente monocromática, mantendo os gradientes e a profundidade."
+              "\(m.apps.count) curated entries · \(m.apps.filter(\.automatic).count) reviewed Homebrew installers.",
+              "\(m.apps.count) entradas selecionadas · \(m.apps.filter(\.automatic).count) instalações Homebrew revistas."
             )
-          ).font(.system(size: 12)).foregroundStyle(p.secondary)
-        }
-        settingsCard(m.t("Motion", "Movimento")) {
-          Toggle(m.t("Reduce motion", "Reduzir movimento"), isOn: $m.lessMotion).toggleStyle(
-            .checkbox)
+          )
+          .foregroundStyle(p.secondary)
           Text(
             m.t(
-              "The system's Reduce Motion preference is always respected.",
-              "A preferência Reduzir movimento do sistema é sempre respeitada.")
-          ).font(.system(size: 12)).foregroundStyle(p.secondary)
-        }
-        settingsCard(m.t("Language", "Idioma")) {
-          HStack {
-            button("Português (Portugal)", selected: m.pt) { m.language = "pt-PT" }
-            button("English", selected: !m.pt) { m.language = "en" }
+              "Development preview. App updates will arrive in a future version.",
+              "Prévia de desenvolvimento. As atualizações da app chegarão numa próxima versão.")
+          )
+          .foregroundStyle(p.secondary)
+          HStack(spacing: 8) {
+            Button("GitHub") {
+              NSWorkspace.shared.open(URL(string: "https://github.com/braga1k/1nstall")!)
+            }
+            .buttonStyle(GlassButtonStyle(compact: true))
+            Button(m.t("Report a problem", "Comunicar um problema")) {
+              NSWorkspace.shared.open(URL(string: "https://github.com/braga1k/1nstall/issues")!)
+            }.buttonStyle(GlassButtonStyle(compact: true))
           }
         }
-        settingsCard(m.t("About this preview", "Sobre esta prévia")) {
-          Text("1nstall for Mac · 0.2.2 · Apple Silicon").fontWeight(.medium)
-          Text(
-            m.t(
-              "15 curated entries · 5 reviewed Homebrew installers. Other apps continue on their official website or App Store.",
-              "15 entradas selecionadas · 5 instalações Homebrew revistas. As restantes apps continuam no site oficial ou na App Store."
-            ))
-          Text(
-            m.t(
-              "App updates, signing and notarisation are not included in this development preview.",
-              "As atualizações da própria app, a assinatura de distribuição e a notarização ainda não estão incluídas nesta prévia de desenvolvimento."
-            )
-          ).foregroundStyle(p.secondary)
-          Text(
-            m.brew.available
-              ? m.t("Homebrew available", "Homebrew disponível")
-              : m.t(
-                "Homebrew not found. Guided downloads remain available.",
-                "Homebrew não encontrado. As descargas guiadas continuam disponíveis."))
-        }
-      }.padding(24).frame(maxWidth: .infinity, alignment: .leading)
-    }.glass(radius: 26, panel: true)
+      }.font(.system(size: 12)).frame(maxWidth: 780, alignment: .leading)
+        .padding(.leading, 68).padding(.trailing, 28).padding(.vertical, 24)
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }.scrollIndicators(.visible)
   }
-  func settingsCard<Content: View>(_ title: String, @ViewBuilder content: () -> Content)
+  func themeName(_ value: String) -> String {
+    value == "system"
+      ? m.t("System", "Sistema")
+      : value == "light" ? m.t("Light", "Claro") : m.t("Dark", "Escuro")
+  }
+  func settingsChoice(_ title: String) -> some View {
+    HStack {
+      Text(title)
+      Spacer(minLength: 6)
+      Image(systemName: "chevron.down").font(.system(size: 9))
+    }.frame(width: 168, height: 38).contentShape(RoundedRectangle(cornerRadius: 12))
+  }
+  func settingsCard<Content: View>(
+    _ title: String, subtitle: String, @ViewBuilder content: () -> Content
+  )
     -> some View
   {
-    VStack(alignment: .leading, spacing: 16) {
-      Text(title).font(.system(size: 17, weight: .semibold))
+    VStack(alignment: .leading, spacing: 10) {
+      Text(title).font(.system(size: 15, weight: .medium))
+      Text(subtitle).font(.system(size: 11)).foregroundStyle(p.secondary)
       content()
-    }.frame(maxWidth: .infinity, alignment: .leading).padding(20).glass(radius: 20)
+    }.frame(maxWidth: .infinity, alignment: .leading).padding(20).glass(radius: 16)
   }
   var history: some View {
     VStack(alignment: .leading, spacing: 18) {
@@ -588,11 +632,12 @@ struct ContentView: View {
               }
               Text(entry.date, style: .date).font(.system(size: 11))
               if !entry.detail.isEmpty {
-                Text(entry.detail).font(.system(size: 11, design: .monospaced)).textSelection(
-                  .enabled)
+                Text(m.issueText(entry.detail)).font(.system(size: 11, design: .monospaced))
+                  .textSelection(
+                    .enabled)
               }
               if entry.operation == "remove", entry.stage == .succeeded,
-                let app = m.apps.first(where: { $0.id == entry.appID })
+                let app = m.identity(for: entry)
               {
                 Button(m.t("Review leftovers", "Rever resíduos")) { m.scanLeftovers(app) }
                   .buttonStyle(GlassButtonStyle(compact: true))
@@ -662,8 +707,8 @@ struct ContentView: View {
       Text(
         m.page == "uninstall"
           ? m.t(
-            "The app bundle is removed with Homebrew. Preferences and support files are kept for a separate review. Quit each app first.",
-            "A app é removida através do Homebrew. As preferências e os ficheiros de suporte ficam para uma revisão separada. Fecha cada app primeiro."
+            "Apps are moved to Trash, or uninstalled with Homebrew when it owns the bundle. Preferences and support files are kept for a separate review. Quit each app first.",
+            "As apps são movidas para o Lixo ou desinstaladas pelo Homebrew quando este gere a instalação. As preferências e o suporte ficam para uma revisão separada. Fecha cada app primeiro."
           )
           : m.t(
             "Homebrew installs the reviewed apps in /Applications. Guided entries open their official page; purchases and downloads remain your choice.",
@@ -674,13 +719,36 @@ struct ContentView: View {
         VStack(spacing: 10) {
           ForEach(m.selectedApps) { app in
             HStack {
-              Text(app.name)
+              VStack(alignment: .leading, spacing: 5) {
+                Text(app.name)
+                if m.page == "uninstall" {
+                  Text(app.id).font(.system(size: 10, design: .monospaced)).foregroundStyle(
+                    p.secondary
+                  ).textSelection(.enabled)
+                }
+              }
               Spacer()
-              Text(m.sourceName(app)).font(.system(size: 11)).foregroundStyle(p.secondary)
+              VStack(alignment: .trailing, spacing: 4) {
+                Text(m.sourceName(app)).font(.system(size: 11)).foregroundStyle(p.secondary)
+                if m.page == "uninstall", let issue = m.removalIssues[app.id] {
+                  Text(m.issueText(issue)).font(.system(size: 11)).foregroundStyle(p.secondary)
+                    .fixedSize(
+                      horizontal: false, vertical: true)
+                }
+              }
             }.padding(14).glass()
           }
         }
       }.frame(maxHeight: 250)
+      if m.page == "uninstall", m.preparingRemoval {
+        HStack {
+          ProgressView().controlSize(.small)
+          Text(
+            m.t(
+              "Checking ownership and removal instructions…",
+              "A verificar a origem e as instruções de remoção…"))
+        }
+      }
       Text(
         m.t(
           "Progress counts completed apps, not download bytes. Success is shown only after verification.",
@@ -693,12 +761,14 @@ struct ContentView: View {
           m.page == "uninstall"
             ? m.t("Remove these apps", "Remover estas apps")
             : m.t("Start installation", "Iniciar instalação"), prominent: true
-        ) { m.runQueue() }
+        ) { m.runQueue() }.disabled(
+          m.page == "uninstall"
+            && (m.preparingRemoval || !m.removalIssues.isEmpty || m.removalPlans.isEmpty))
       }
     }.padding(28).frame(width: 570).background(p.background).foregroundStyle(p.ink).saturation(
       m.accent ? 1 : 0)
   }
-  func leftovers(_ app: CatalogApp) -> some View {
+  func leftovers(_ app: RemovalIdentity) -> some View {
     VStack(alignment: .leading, spacing: 16) {
       HStack {
         Text(m.t("Review leftovers", "Rever resíduos")).font(.system(size: 24, weight: .semibold))
@@ -709,33 +779,39 @@ struct ContentView: View {
       Text(app.name).fontWeight(.semibold)
       Text(
         m.t(
-          "Exact bundle paths only. Personal data can include settings and saved content. Containers and shared resources stay protected. Nothing is selected automatically.",
-          "Apenas caminhos exatos associados ao bundle. Os dados pessoais podem incluir definições e conteúdo guardado. Os contentores e recursos partilhados ficam protegidos. Nada é selecionado automaticamente."
+          "Review each association before removing data. Preferences, support and verified containers may hold personal content. Shared resources stay protected. Nothing is selected automatically.",
+          "Revê cada associação antes de remover dados. As preferências, o suporte e os contentores verificados podem guardar conteúdo pessoal. Os recursos partilhados ficam protegidos. Nada é selecionado automaticamente."
         )
       ).foregroundStyle(p.secondary)
       ScrollView {
         VStack(alignment: .leading, spacing: 12) {
           ForEach(m.leftoverReport.items) { item in
-            HStack(alignment: .top) {
-              Toggle(
-                isOn: Binding(
-                  get: { m.leftoverSelection.contains(item.id) },
-                  set: {
-                    if $0 {
-                      m.leftoverSelection.insert(item.id)
-                    } else {
-                      m.leftoverSelection.remove(item.id)
-                    }
-                  })
-              ) { EmptyView() }.toggleStyle(.checkbox).labelsHidden().disabled(
-                !item.selectable || m.installed(app) || m.busy
-              ).accessibilityLabel(item.url.lastPathComponent)
-              VStack(alignment: .leading, spacing: 6) {
-                Text(item.url.path).font(.system(size: 11, design: .monospaced)).textSelection(
-                  .enabled)
-                Text(itemSummary(item)).font(.system(size: 11)).foregroundStyle(p.secondary)
+            Button {
+              if !m.leftoverSelection.insert(item.id).inserted {
+                m.leftoverSelection.remove(item.id)
               }
-            }.padding(13).glass()
+            } label: {
+              HStack(alignment: .top, spacing: 12) {
+                Image(
+                  systemName: m.leftoverSelection.contains(item.id)
+                    ? "checkmark.square.fill" : item.selectable ? "square" : "lock"
+                )
+                .font(.system(size: 17)).foregroundStyle(p.secondary).frame(width: 20)
+                VStack(alignment: .leading, spacing: 6) {
+                  Text(item.url.path).font(.system(size: 11, design: .monospaced))
+                    .multilineTextAlignment(.leading)
+                  Text(itemSummary(item)).font(.system(size: 11)).foregroundStyle(p.secondary)
+                  Text(association(item.reason)).font(.system(size: 10)).foregroundStyle(
+                    p.secondary)
+                }.frame(maxWidth: .infinity, alignment: .leading)
+              }.padding(13).frame(maxWidth: .infinity, alignment: .leading)
+                .contentShape(RoundedRectangle(cornerRadius: 18))
+            }.buttonStyle(CardPressStyle()).glass(selected: m.leftoverSelection.contains(item.id))
+              .disabled(!item.selectable || m.installed(app) || m.busy)
+              .accessibilityLabel(item.url.lastPathComponent + " · " + itemSummary(item))
+              .accessibilityValue(
+                m.leftoverSelection.contains(item.id)
+                  ? m.t("Selected", "Selecionado") : m.t("Not selected", "Não selecionado"))
           }
           if m.leftoverScanning {
             HStack(spacing: 10) {
@@ -758,7 +834,10 @@ struct ContentView: View {
       if !m.leftoverScanning {
         let selected = m.leftoverReport.items.filter { m.leftoverSelection.contains($0.id) }
         Text(
-          "\(selected.count) " + m.t("items selected", "itens selecionados") + " · "
+          "\(selected.count) "
+            + (selected.count == 1
+              ? m.t("item selected", "item selecionado")
+              : m.t("items selected", "itens selecionados")) + " · "
             + ByteCountFormatter.string(
               fromByteCount: selected.reduce(0) { $0 + $1.bytes }, countStyle: .file)
         )
@@ -792,15 +871,51 @@ struct ContentView: View {
       m.accent ? 1 : 0
     ).interactiveDismissDisabled(m.busy)
   }
+  func association(_ reason: String) -> String {
+    switch reason {
+    case "system":
+      return m.t(
+        "System-wide resource. Needs a dedicated removal handler; kept here.",
+        "Recurso disponível para todo o sistema. Precisa de um método de remoção específico; preservado aqui."
+      )
+    case "name":
+      return m.t(
+        "Exact app name; review the contents before removing.",
+        "Nome exato da app; revê o conteúdo antes de remover.")
+    case "sharedName":
+      return m.t(
+        "Name is shared or may belong to a suite; protected.",
+        "Nome partilhado ou associado a uma família de apps; protegido.")
+    case "container":
+      return m.t(
+        "Container metadata matches this app's identifier.",
+        "Os metadados do contentor correspondem ao identificador da app.")
+    case "unverifiedContainer":
+      return m.t(
+        "Container ownership is not verified; protected.",
+        "A origem do contentor não foi confirmada; protegido.")
+    case "group":
+      return m.t(
+        "Application group from the app's signature; may be shared.",
+        "Grupo de aplicações identificado na assinatura; pode ser partilhado.")
+    case "launchAgent":
+      return m.t(
+        "Background service points inside this app; it will be stopped first.",
+        "Serviço em segundo plano aponta para esta app; será parado primeiro.")
+    default: return m.t("Exact application identifier.", "Identificador exato da aplicação.")
+    }
+  }
   func itemSummary(_ item: Leftover) -> String {
     let size = ByteCountFormatter.string(fromByteCount: item.bytes, countStyle: .file)
-    let count = "\(item.files) " + m.t("files", "ficheiros")
+    let count =
+      "\(item.files) " + (item.files == 1 ? m.t("file", "ficheiro") : m.t("files", "ficheiros"))
     return [kind(item.kind), count, size, item.complete ? "" : m.t("partial", "parcial")].filter {
       !$0.isEmpty
     }.joined(separator: " · ")
   }
   func kind(_ kind: DataKind) -> String {
     switch kind {
+    case .system: return m.t("System resource · protected", "Recurso do sistema · protegido")
     case .personal: return m.t("Personal data", "Dados pessoais")
     case .regenerable: return m.t("Regenerable files", "Ficheiros regeneráveis")
     case .shared:

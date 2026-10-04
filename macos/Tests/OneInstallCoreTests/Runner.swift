@@ -42,8 +42,65 @@ func requireValue<T>(_ value: T?) throws -> T {
     let c = CoreTests()
     let tests: [(String, () throws -> Void)] = [
       (
-        "testRemovalSelectionRequiresTheOwnedCopyToStillExist",
-        c.testRemovalSelectionRequiresTheOwnedCopyToStillExist
+        "testExternalHomebrewUsesRecordedArtifactsAndVerifiesReceiptRemoval",
+        c.testExternalHomebrewUsesRecordedArtifactsAndVerifiesReceiptRemoval
+      ),
+      (
+        "testHomebrewFailureDoesNotFallBackToDeletingBundle",
+        c.testHomebrewFailureDoesNotFallBackToDeletingBundle
+      ),
+      (
+        "testHomebrewMetadataChangesAndScriptsInvalidateReview",
+        c.testHomebrewMetadataChangesAndScriptsInvalidateReview
+      ),
+      (
+        "testSharedAssociationAppearingAfterReviewBlocksCleanup",
+        c.testSharedAssociationAppearingAfterReviewBlocksCleanup
+      ),
+      (
+        "testSystemResiduesAreMeasuredButCannotBeTrashed",
+        c.testSystemResiduesAreMeasuredButCannotBeTrashed
+      ),
+      (
+        "testLegacySavedStateWithoutRemovalMetadataStillLoads",
+        c.testLegacySavedStateWithoutRemovalMetadataStillLoads
+      ),
+
+      ("testNativeRemovalOutsideCatalogAndRestore", c.testNativeRemovalOutsideCatalogAndRestore),
+      ("testStoreReceiptDoesNotForceGuidedRemoval", c.testStoreReceiptDoesNotForceGuidedRemoval),
+      ("testRemovalOnlyAffectsSelectedCopy", c.testRemovalOnlyAffectsSelectedCopy),
+      ("testChangedIdentityInvalidatesRemovalPlan", c.testChangedIdentityInvalidatesRemovalPlan),
+      (
+        "testRemovalRejectsSymlinksNestedAppsAndSystem",
+        c.testRemovalRejectsSymlinksNestedAppsAndSystem
+      ),
+      (
+        "testSystemExtensionsRequireARealUninstaller", c.testSystemExtensionsRequireARealUninstaller
+      ),
+      ("testCaskOwnershipRequiresTheExactLink", c.testCaskOwnershipRequiresTheExactLink),
+      (
+        "testNonCatalogRemovalPersistsIdentityAndInterruptedState",
+        c.testNonCatalogRemovalPersistsIdentityAndInterruptedState
+      ),
+      (
+        "testGenericNamesAndSharedGroupsAreReviewedSeparately",
+        c.testGenericNamesAndSharedGroupsAreReviewedSeparately
+      ),
+      (
+        "testConfirmedSandboxContainerAndTwoPartBundleID",
+        c.testConfirmedSandboxContainerAndTwoPartBundleID
+      ),
+      (
+        "testLaunchAgentRequiresProgramInsideSelectedApp",
+        c.testLaunchAgentRequiresProgramInsideSelectedApp
+      ),
+      (
+        "testByHostAssociationUsesExactBundleAndUUID", c.testByHostAssociationUsesExactBundleAndUUID
+      ),
+
+      (
+        "testLegacyRemovalSelectionMigratesOnlyTheMatchingOwnedCopy",
+        c.testLegacyRemovalSelectionMigratesOnlyTheMatchingOwnedCopy
       ),
       (
         "testLibraryCategoriesAndProfilesStayConnected",
@@ -82,8 +139,8 @@ func requireValue<T>(_ value: T?) throws -> T {
       ("testProcessArgumentsAreNotShellCode", c.testProcessArgumentsAreNotShellCode),
       ("testTimeoutIsAnError", c.testTimeoutIsAnError),
       (
-        "testUnownedRemovalIsRejectedWithoutInvokingBrew",
-        c.testUnownedRemovalIsRejectedWithoutInvokingBrew
+        "testRemovalRejectsInvalidIdentityWithoutInvokingBrew",
+        c.testRemovalRejectsInvalidIdentityWithoutInvokingBrew
       ),
       (
         "testChangedCaskOrPrivilegedInstallerIsRejected",
