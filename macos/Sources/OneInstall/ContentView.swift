@@ -7,6 +7,11 @@ struct ContentView: View {
   @Environment(\.colorScheme) var systemScheme
   @FocusState var searchFocused: Bool
   @State var activity = false
+  @State var pointer: CGPoint?
+  @State var lastPointerTime = 0.0
+  @State var appeared = false
+  @State var activeProfile = Library.profiles[0].id
+  @State var addProfile = false
   var p: Palette {
     Palette(
       dark: m.theme == "dark" || (m.theme == "system" && systemScheme == .dark), accent: m.accent,
@@ -19,7 +24,7 @@ struct ContentView: View {
         colors: [p.action.opacity(p.dark ? 0.1 : 0.12), .clear], center: .topLeading,
         startRadius: 10, endRadius: 850)
       HStack(spacing: 20) {
-        navigation.frame(width: 244)
+        navigation.frame(width: 246).offset(x: appeared || m.reduced ? 0 : -12)
         Group {
           if m.page == "settings" {
             settings
@@ -30,17 +35,57 @@ struct ContentView: View {
           }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        if m.page == "install" || m.page == "uninstall" { selection.frame(width: 244) }
-      }.padding(12)
+        .id(m.page).transition(.opacity.combined(with: .offset(y: m.reduced ? 0 : 7)))
+        if m.page == "install" || m.page == "uninstall" {
+          selection.frame(width: 246).offset(x: appeared || m.reduced ? 0 : 12)
+        }
+      }.padding(12).opacity(appeared || m.capture || m.reduced ? 1 : 0)
       if m.successPulse {
         RoundedRectangle(cornerRadius: 26).stroke(p.action.opacity(0.65), lineWidth: 5).blur(
           radius: 18
         ).padding(12).allowsHitTesting(false)
       }
     }
+    .coordinateSpace(name: "surface")
+    .overlayPreferenceValue(SelectionAnchors.self) { anchors in
+      GeometryReader { geometry in
+        if let event = m.selectionEvent, !m.reduced,
+          let origin = anchors["card-" + event.app.id], let destination = anchors["selection"]
+        {
+          let card = geometry[origin]
+          let selection = geometry[destination]
+          let a = CGPoint(x: card.midX, y: card.midY)
+          let b = CGPoint(x: selection.midX, y: selection.minY + 180)
+          SelectionFlight(event: event, start: event.adding ? a : b, end: event.adding ? b : a).id(
+            event.id)
+        }
+      }.allowsHitTesting(false)
+    }
     .ignoresSafeArea()
+    .onContinuousHover { phase in
+      guard !m.capture, !m.reduced else {
+        pointer = nil
+        return
+      }
+      switch phase {
+      case .active(let location):
+        let now = ProcessInfo.processInfo.systemUptime
+        if now - lastPointerTime > 1.0 / 60 {
+          pointer = location
+          lastPointerTime = now
+        }
+      case .ended: pointer = nil
+      }
+    }
+    .onAppear {
+      if m.capture || m.reduced {
+        appeared = true
+      } else {
+        withAnimation(.easeOut(duration: 0.55)) { appeared = true }
+      }
+    }
     .foregroundStyle(p.ink).font(.system(size: 13))
-    .environment(\.palette, p).environmentObject(m)
+    .environment(\.palette, p).environment(\.surfacePointer, pointer).environmentObject(m)
     .preferredColorScheme(m.theme == "system" ? nil : (m.theme == "dark" ? .dark : .light))
     .tint(p.action)
     .saturation(m.accent ? 1 : 0)
@@ -48,9 +93,17 @@ struct ContentView: View {
     .animation(m.reduced ? nil : .easeInOut(duration: 0.2), value: m.page)
     .animation(
       m.reduced ? nil : .spring(response: 0.32, dampingFraction: 0.86),
-      value: m.state.installSelection
+      value: m.selection
     )
     .animation(m.reduced ? nil : .easeInOut(duration: 0.2), value: m.category)
+    .animation(m.reduced ? nil : .easeInOut(duration: 0.22), value: m.expandedGroups)
+    .animation(m.reduced ? nil : .easeInOut(duration: 0.20), value: activity)
+    .sheet(isPresented: $m.profilePicker) {
+      profilePicker.environment(\.palette, p).environmentObject(m)
+    }
+    .sheet(item: $m.installedDetail) { app in
+      installedDetails(app).environment(\.palette, p).environmentObject(m)
+    }
     .sheet(item: $m.detailApp) { app in details(app).environment(\.palette, p).environmentObject(m)
     }
     .sheet(isPresented: $m.review) { review.environment(\.palette, p).environmentObject(m) }
@@ -78,7 +131,7 @@ struct ContentView: View {
             NSApp.keyWindow?.toggleFullScreen(nil)
           }
         }.padding(.top, 1)
-      }.frame(height: 60)
+      }.frame(height: 64, alignment: .top)
       VStack(spacing: 5) {
         button(m.t("Install", "Instalar"), selected: m.page == "install") {
           m.changePage("install")
@@ -93,32 +146,51 @@ struct ContentView: View {
       }
       VStack(alignment: .leading, spacing: 8) {
         Text(m.page == "uninstall" ? m.t("INSTALLED", "INSTALADAS") : m.t("LIBRARY", "BIBLIOTECA"))
-          .font(.system(size: 11, weight: .medium))
+          .font(.system(size: 11, weight: .regular))
         Text(
           m.page == "uninstall"
-            ? "\(m.inventory.apps.count) " + m.t("apps found", "apps encontradas")
-            : "\(m.apps.count) " + m.t("apps · Mac preview", "apps · prévia Mac")
+            ? "\(filteredInventory.count) "
+              + (filteredInventory.count == 1
+                ? m.t("app shown", "app apresentada") : m.t("apps shown", "apps apresentadas"))
+            : m.categoryName(m.category) + " · \(filtered.count) "
+              + (filtered.count == 1 ? "app" : "apps")
         ).font(.system(size: 11))
       }.foregroundStyle(p.secondary).frame(maxWidth: .infinity, alignment: .leading).padding(
         .horizontal, 8
       ).padding(.top, 22).padding(.bottom, 12)
       ScrollView {
-        VStack(spacing: 9) {
-          button(m.t("All apps", "Todas as apps"), selected: m.category == "all") {
+        VStack(spacing: 8) {
+          Button {
             m.category = "all"
-          }
-          ForEach(["everyday", "create", "files", "tools"], id: \.self) { id in
-            Button {
-              m.category = m.category == id ? "all" : id
-            } label: {
-              HStack {
-                Text(m.categoryName(id))
-                Spacer()
-                Image(systemName: m.category == id ? "chevron.down" : "chevron.right").font(
-                  .system(size: 10, weight: .semibold))
-              }.padding(.horizontal, 10).frame(height: 43)
+          } label: {
+            Text(m.t("All apps", "Todas as apps")).frame(maxWidth: .infinity, alignment: .leading)
+          }.buttonStyle(GlassButtonStyle(selected: m.category == "all", compact: true)).padding(
+            .bottom, 2)
+          ForEach(Library.groups) { group in
+            VStack(spacing: 4) {
+              Button {
+                if !m.expandedGroups.insert(group.id).inserted { m.expandedGroups.remove(group.id) }
+              } label: {
+                HStack {
+                  Text(m.t(group.english, group.portuguese))
+                  Spacer()
+                  Image(systemName: "chevron.right").font(.system(size: 10, weight: .semibold))
+                    .rotationEffect(.degrees(m.expandedGroups.contains(group.id) ? 90 : 0))
+                }.padding(.horizontal, 10).frame(height: 43)
+              }.buttonStyle(CardPressStyle()).glass(radius: 12, quiet: true)
+                .accessibilityValue(
+                  m.expandedGroups.contains(group.id)
+                    ? m.t("Expanded", "Expandido") : m.t("Collapsed", "Recolhido"))
+              if m.expandedGroups.contains(group.id) {
+                VStack(spacing: 2) {
+                  categoryRow(group.id, name: m.t("All in this group", "Todas deste grupo"))
+                  ForEach(Library.categories.filter { $0.group == group.id }) { category in
+                    categoryRow(category.id, name: m.t(category.english, category.portuguese))
+                  }
+                }.padding(.leading, 8).transition(
+                  .opacity.combined(with: .offset(y: m.reduced ? 0 : -5)))
+              }
             }
-            .buttonStyle(.plain).glass(radius: 13, selected: m.category == id)
           }
         }.padding(.vertical, 4)
       }.scrollIndicators(.hidden)
@@ -170,7 +242,7 @@ struct ContentView: View {
           }
         }
       }
-      if m.page == "install" { installGrid } else { uninstallList }
+      if m.page == "install" { installGrid } else { uninstallGrid }
       VStack(spacing: 0) {
         Button {
           activity.toggle()
@@ -194,7 +266,7 @@ struct ContentView: View {
             ).padding(12)
           }.frame(height: 130)
         }
-      }.glass(radius: 14).padding(.bottom, 5)
+      }.glass(radius: 14, quiet: true).padding(.bottom, 5)
     }
   }
   var searchField: some View {
@@ -212,23 +284,8 @@ struct ContentView: View {
   }
   @ViewBuilder var profileTools: some View {
     if m.page == "install" {
-      Menu {
-        Button(
-          m.t("Everyday · IINA, Rectangle, LocalSend", "Dia a dia · IINA, Rectangle, LocalSend")
-        ) { m.profile(["iina", "rectangle", "localsend"]) }
-        Button(m.t("Create · Blender, Keka, VLC", "Criar · Blender, Keka, VLC")) {
-          m.profile(["blender", "keka", "vlc"])
-        }
-        Button(
-          m.t(
-            "Development · VS Code, Firefox, Rectangle", "Programação · VS Code, Firefox, Rectangle"
-          )
-        ) { m.profile(["visual-studio-code", "firefox", "rectangle"]) }
-      } label: {
-        Text(m.t("All profiles", "Perfis")).foregroundStyle(p.ink)
-      }.menuStyle(.borderlessButton).fixedSize().padding(.horizontal, 11).frame(height: 35).glass(
-        control: true
-      ).disabled(m.busy)
+      Button(m.t("All profiles", "Perfis")) { m.profilePicker = true }
+        .buttonStyle(GlassButtonStyle(compact: true)).fixedSize().disabled(m.busy)
       Menu {
         Button(m.t("Save selection…", "Guardar seleção…")) { m.saveProfile() }
         Button(m.t("Load profile…", "Carregar perfil…")) { m.loadProfile() }
@@ -244,7 +301,7 @@ struct ContentView: View {
   }
   var filtered: [CatalogApp] {
     m.apps.filter {
-      (m.category == "all" || $0.category == m.category) && (!m.installedOnly || m.installed($0))
+      Library.matches($0.category, filter: m.category) && (!m.installedOnly || m.installed($0))
         && (m.search.isEmpty
           || "\($0.name) \(m.categoryName($0.category)) \($0.summaryEN) \($0.summaryPT)"
             .localizedCaseInsensitiveContains(m.search))
@@ -285,7 +342,11 @@ struct ContentView: View {
             ZStack {
               RoundedRectangle(cornerRadius: 6).stroke(p.secondary.opacity(0.7), lineWidth: 1)
               if selected || installed {
+                RoundedRectangle(cornerRadius: 6).fill(
+                  installed ? p.secondary.opacity(0.20) : p.action)
                 Image(systemName: "checkmark").font(.system(size: 10, weight: .semibold))
+                  .foregroundStyle(installed ? p.ink : p.actionText)
+                  .transition(.scale.combined(with: .opacity))
               }
             }.frame(width: 18, height: 18)
           }
@@ -299,7 +360,7 @@ struct ContentView: View {
           }.font(.system(size: 10.5)).tracking(0.2).foregroundStyle(p.secondary).lineLimit(1)
         }.frame(maxWidth: .infinity, alignment: .leading).frame(height: 72).contentShape(
           Rectangle())
-      }.buttonStyle(.plain).disabled(installed || m.busy).accessibilityLabel(app.name)
+      }.buttonStyle(CardPressStyle()).disabled(installed || m.busy).accessibilityLabel(app.name)
         .accessibilityValue(
           installed
             ? m.t("Installed", "Instalada")
@@ -309,68 +370,19 @@ struct ContentView: View {
       } label: {
         Text(m.t("Details", "Detalhes")).font(.system(size: 11)).frame(maxWidth: .infinity).frame(
           height: 27)
-      }.buttonStyle(.plain).glass(radius: 16, control: true)
-    }.padding(13).frame(height: 140).glass(radius: 18, selected: selected).opacity(
-      installed ? 0.57 : 1)
+      }.buttonStyle(CardPressStyle()).glass(radius: 16, control: true).padding(.trailing, 22)
+    }.padding(13).frame(height: 140).glass(radius: 18, selected: selected)
+      .saturation(installed ? 0 : 1).opacity(installed ? 0.62 : 1)
+      .anchorPreference(key: SelectionAnchors.self, value: .bounds) { ["card-" + app.id: $0] }
   }
   var filteredInventory: [InstalledApp] {
     m.inventory.apps.filter { installed in
       let catalog = m.apps.first { $0.bundleID == installed.bundleID }
       return (m.search.isEmpty || installed.name.localizedCaseInsensitiveContains(m.search))
-        && (m.category == "all" || catalog?.category == m.category)
-        && (!m.installedOnly || catalog.map { m.state.receipts[$0.id] != nil } == true)
+        && (m.category == "all"
+          || catalog.map { Library.matches($0.category, filter: m.category) } == true)
+        && (!m.installedOnly || catalog.map { m.state.receipts[$0.id] == installed.path } == true)
     }
-  }
-  var uninstallList: some View {
-    ScrollView {
-      LazyVStack(spacing: 8) {
-        ForEach(filteredInventory) { installed in
-          let app = m.apps.first { $0.bundleID == installed.bundleID }
-          HStack(spacing: 12) {
-            VStack(alignment: .leading, spacing: 5) {
-              Text(installed.name).fontWeight(.medium)
-              Text(installed.path).font(.system(size: 10)).foregroundStyle(p.secondary).lineLimit(1)
-              Text(installed.version + (installed.store ? " · App Store" : "")).font(
-                .system(size: 10)
-              ).foregroundStyle(p.secondary)
-            }
-            Spacer()
-            if let app {
-              Button(m.t("Leftovers", "Resíduos")) { m.scanLeftovers(app) }.buttonStyle(
-                GlassButtonStyle(compact: true)
-              ).disabled(m.busy)
-              if m.state.receipts[app.id] != nil {
-                Button(
-                  m.selection.contains(app.id)
-                    ? m.t("Selected", "Selecionada") : m.t("Select", "Selecionar")
-                ) { m.toggle(app) }.buttonStyle(
-                  GlassButtonStyle(selected: m.selection.contains(app.id), compact: true)
-                ).disabled(m.busy)
-              } else {
-                Button(m.t("Show in Finder", "Mostrar no Finder")) {
-                  NSWorkspace.shared.activateFileViewerSelecting([
-                    URL(fileURLWithPath: installed.path)
-                  ])
-                }.buttonStyle(GlassButtonStyle(compact: true))
-              }
-            } else {
-              Button(m.t("Show in Finder", "Mostrar no Finder")) {
-                NSWorkspace.shared.activateFileViewerSelecting([
-                  URL(fileURLWithPath: installed.path)
-                ])
-              }.buttonStyle(GlassButtonStyle(compact: true))
-            }
-          }.padding(14).glass(radius: 18)
-        }
-        if filteredInventory.isEmpty {
-          Text(
-            m.scanning
-              ? m.t("Reading app bundles…", "A ler as aplicações…")
-              : m.t("No apps in the scanned locations.", "Nenhuma app nos locais analisados.")
-          ).padding(30)
-        }
-      }.padding(.bottom, 4)
-    }.scrollIndicators(.hidden)
   }
   var selection: some View {
     VStack(alignment: .leading, spacing: 0) {
@@ -398,38 +410,10 @@ struct ContentView: View {
                 Image(systemName: "xmark").font(.system(size: 10))
               }.buttonStyle(.plain).disabled(m.busy).accessibilityLabel(
                 m.t("Remove ", "Retirar ") + app.name)
-            }.padding(.vertical, 12)
+            }.padding(.vertical, 12).transition(
+              .opacity.combined(with: .offset(x: m.reduced ? 0 : 14)))
           }
-          if !m.state.queue.isEmpty {
-            line
-            Text(m.t("QUEUE RESULTS", "RESULTADOS DA FILA")).font(
-              .system(size: 10, weight: .semibold)
-            ).foregroundStyle(p.secondary)
-            ForEach(m.state.queue) { entry in
-              VStack(alignment: .leading, spacing: 6) {
-                HStack {
-                  Text(entry.name)
-                  Spacer()
-                  if entry.stage == .succeeded {
-                    Image(systemName: "checkmark.circle")
-                  } else if !entry.stage.terminal && entry.stage != .waiting {
-                    ProgressView().controlSize(.small)
-                  }
-                }
-                Text(m.resultLabel(entry)).font(.system(size: 11)).foregroundStyle(p.secondary)
-                if !entry.detail.isEmpty {
-                  Text(m.t("See diagnostics for details.", "Consulta os detalhes no diagnóstico."))
-                    .font(.system(size: 10)).foregroundStyle(p.secondary)
-                }
-                if entry.operation == "remove", entry.stage == .succeeded,
-                  let app = m.apps.first(where: { $0.id == entry.appID })
-                {
-                  Button(m.t("Review leftovers", "Rever resíduos")) { m.scanLeftovers(app) }
-                    .buttonStyle(GlassButtonStyle(compact: true))
-                }
-              }
-            }
-          }
+          if !m.state.queue.isEmpty { queueResults }
         }.frame(maxWidth: .infinity, alignment: .leading)
       }.scrollIndicators(.hidden)
       line.padding(.vertical, 14)
@@ -479,6 +463,7 @@ struct ContentView: View {
         Text(m.t("Open logs", "Abrir registos")).frame(maxWidth: .infinity).padding(.top, 14)
       }.buttonStyle(.plain).font(.system(size: 12))
     }.padding(.horizontal, 18).padding(.top, 25).padding(.bottom, 22).glass(radius: 26, panel: true)
+      .anchorPreference(key: SelectionAnchors.self, value: .bounds) { ["selection": $0] }
   }
   var line: some View { Rectangle().fill(p.separator).frame(height: 1) }
   var settings: some View {
@@ -526,7 +511,7 @@ struct ContentView: View {
           }
         }
         settingsCard(m.t("About this preview", "Sobre esta prévia")) {
-          Text("1nstall for Mac · 0.1.0 · Apple Silicon").fontWeight(.medium)
+          Text("1nstall for Mac · 0.2.0 · Apple Silicon").fontWeight(.medium)
           Text(
             m.t(
               "15 curated entries · 5 reviewed Homebrew installers. Other apps continue on their official website or App Store.",
@@ -744,7 +729,12 @@ struct ContentView: View {
               }
             }.padding(13).glass()
           }
-          if m.leftoverReport.items.isEmpty {
+          if m.leftoverScanning {
+            HStack(spacing: 10) {
+              ProgressView().controlSize(.small)
+              Text(m.t("Reviewing associated locations…", "A analisar os locais associados…"))
+            }
+          } else if m.leftoverReport.items.isEmpty {
             Text(
               m.t(
                 "No candidates found in the reviewed locations. This does not prove that all traces are absent.",
@@ -757,6 +747,15 @@ struct ContentView: View {
           }
         }
       }.frame(minHeight: 100, maxHeight: 280)
+      if !m.leftoverScanning {
+        let selected = m.leftoverReport.items.filter { m.leftoverSelection.contains($0.id) }
+        Text(
+          "\(selected.count) " + m.t("items selected", "itens selecionados") + " · "
+            + ByteCountFormatter.string(
+              fromByteCount: selected.reduce(0) { $0 + $1.bytes }, countStyle: .file)
+        )
+        .font(.system(size: 12, weight: .medium)).monospacedDigit()
+      }
       if m.installed(app) {
         Text(
           m.t(

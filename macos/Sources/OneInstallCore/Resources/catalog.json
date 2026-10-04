@@ -2,7 +2,7 @@
   {
     "id": "blender",
     "name": "Blender",
-    "category": "create",
+    "category": "design",
     "summaryEN": "3D modelling, animation and rendering.",
     "summaryPT": "Modelação 3D, animação e renderização.",
     "bundleID": "org.blenderfoundation.blender",
@@ -19,7 +19,7 @@
   {
     "id": "brave-browser",
     "name": "Brave",
-    "category": "everyday",
+    "category": "browsers",
     "summaryEN": "Browse with built-in privacy protection.",
     "summaryPT": "Navegação com proteção de privacidade integrada.",
     "bundleID": "com.brave.Browser",
@@ -36,7 +36,7 @@
   {
     "id": "firefox",
     "name": "Firefox",
-    "category": "everyday",
+    "category": "browsers",
     "summaryEN": "An independent, customisable browser.",
     "summaryPT": "Um navegador independente e personalizável.",
     "bundleID": "org.mozilla.firefox",
@@ -53,7 +53,7 @@
   {
     "id": "iina",
     "name": "IINA",
-    "category": "everyday",
+    "category": "players",
     "summaryEN": "A media player built for macOS.",
     "summaryPT": "Um leitor multimédia criado para macOS.",
     "bundleID": "com.colliderli.iina",
@@ -70,7 +70,7 @@
   {
     "id": "keka",
     "name": "Keka",
-    "category": "files",
+    "category": "archives",
     "summaryEN": "Compress, encrypt and extract your files.",
     "summaryPT": "Comprimir, cifrar e extrair ficheiros.",
     "bundleID": "com.aone.keka",
@@ -89,7 +89,7 @@
   {
     "id": "localsend",
     "name": "LocalSend",
-    "category": "files",
+    "category": "transfer",
     "summaryEN": "Share files directly across your devices.",
     "summaryPT": "Partilhar ficheiros diretamente entre dispositivos.",
     "bundleID": "org.localsend.localsendApp",
@@ -106,7 +106,7 @@
   {
     "id": "obsidian",
     "name": "Obsidian",
-    "category": "everyday",
+    "category": "notes",
     "summaryEN": "A private workspace for connected notes.",
     "summaryPT": "Um espaço privado para notas interligadas.",
     "bundleID": "md.obsidian",
@@ -123,7 +123,7 @@
   {
     "id": "raycast",
     "name": "Raycast",
-    "category": "tools",
+    "category": "productivity",
     "summaryEN": "Find apps and work from your keyboard.",
     "summaryPT": "Encontrar apps e trabalhar com o teclado.",
     "bundleID": "com.raycast.macos",
@@ -140,7 +140,7 @@
   {
     "id": "rectangle",
     "name": "Rectangle",
-    "category": "tools",
+    "category": "productivity",
     "summaryEN": "Arrange your windows with keyboard shortcuts.",
     "summaryPT": "Organizar janelas com atalhos de teclado.",
     "bundleID": "com.knollsoft.Rectangle",
@@ -159,7 +159,7 @@
   {
     "id": "spotify",
     "name": "Spotify",
-    "category": "everyday",
+    "category": "players",
     "summaryEN": "Music and podcasts in one place.",
     "summaryPT": "Música e podcasts num só lugar.",
     "bundleID": "com.spotify.client",
@@ -176,7 +176,7 @@
   {
     "id": "visual-studio-code",
     "name": "Visual Studio Code",
-    "category": "tools",
+    "category": "development",
     "summaryEN": "Code editing, debugging and extensions.",
     "summaryPT": "Edição de código, depuração e extensões.",
     "bundleID": "com.microsoft.VSCode",
@@ -193,7 +193,7 @@
   {
     "id": "vlc",
     "name": "VLC",
-    "category": "everyday",
+    "category": "players",
     "summaryEN": "Play video and audio in many formats.",
     "summaryPT": "Reproduzir vídeo e áudio em vários formatos.",
     "bundleID": "org.videolan.vlc",
@@ -212,7 +212,7 @@
   {
     "id": "final-cut-pro",
     "name": "Final Cut Pro",
-    "category": "create",
+    "category": "video",
     "summaryEN": "Professional video editing. Purchase required.",
     "summaryPT": "Edição profissional de vídeo. Requer compra.",
     "bundleID": "com.apple.FinalCut",
@@ -229,7 +229,7 @@
   {
     "id": "logic-pro",
     "name": "Logic Pro",
-    "category": "create",
+    "category": "audio",
     "summaryEN": "Music production and mixing. Purchase required.",
     "summaryPT": "Produção musical e mistura. Requer compra.",
     "bundleID": "com.apple.logic10",
@@ -246,7 +246,7 @@
   {
     "id": "motion",
     "name": "Motion",
-    "category": "create",
+    "category": "video",
     "summaryEN": "Motion graphics and visual effects. Purchase required.",
     "summaryPT": "Motion graphics e efeitos visuais. Requer compra.",
     "bundleID": "com.apple.motionapp",

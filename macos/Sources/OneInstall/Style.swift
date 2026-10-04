@@ -10,92 +10,151 @@ struct Palette {
     let r = Double((v >> 16) & 255) / 255
     let g = Double((v >> 8) & 255) / 255
     let b = Double(v & 255) / 255
-    if !accent {
-      let grey = 0.2126 * r + 0.7152 * g + 0.0722 * b
-      return Color(white: grey)
-    }
+    if !accent { return Color(white: 0.2126 * r + 0.7152 * g + 0.0722 * b) }
     return Color(red: r, green: g, blue: b)
   }
-  var ink: Color { color(0xF3F5F7, 0x191B23) }
-  var secondary: Color { color(0xC2CADE, 0x464A56) }
-  var background: Color { color(0x0D1418, 0xD7DBE5) }
+  var ink: Color { color(0xF3F5F7, 0x1A1D25) }
+  var secondary: Color { color(0xC2CADE, 0x414753) }
+  var background: Color { color(0x0B1115, 0xDADDE6) }
   var action: Color {
     if !accent { return dark ? Color(white: 0.84) : Color(white: 0.13) }
     return demo ? Color(red: 0.41, green: 0.26, blue: 0.59) : Color(nsColor: .controlAccentColor)
   }
-  var actionText: Color { accent ? .white : (dark ? .black : .white) }
-  var panel: [Color] {
-    [color(0x454457, 0xF9F8FD), color(0x22282F, 0xCCD2E0), color(0x1A2328, 0xF0F1F7)]
+  var actionText: Color {
+    guard accent else { return dark ? .black : .white }
+    let c = NSColor(action).usingColorSpace(.sRGB) ?? .white
+    let luminance = 0.2126 * c.redComponent + 0.7152 * c.greenComponent + 0.0722 * c.blueComponent
+    return luminance > 0.63 ? .black : .white
   }
-  var card: [Color] { [color(0x2D303A, 0xFBFAFF), color(0x222A2F, 0xD6DBE6)] }
-  var control: [Color] { [color(0x35333F, 0xFFFFFF), color(0x20272D, 0xC9D1E0)] }
-  var edge: [Color] {
-    [color(0xC7B5F3, 0xFFFFFF).opacity(dark ? 0.85 : 1), color(0x6D7690, 0xA6ABC0).opacity(0.6)]
+  var panel: Gradient {
+    Gradient(stops: [
+      .init(color: color(0x464357, 0xF9F8FE), location: 0),
+      .init(color: color(0x252932, 0xD3D6E5), location: 0.42),
+      .init(color: color(0x1B252A, 0xCDD3E0), location: 0.76),
+      .init(color: color(0x1C262A, 0xF0F1F7), location: 1),
+    ])
   }
-  var separator: Color { secondary.opacity(0.28) }
+  var card: Gradient {
+    Gradient(stops: [
+      .init(color: color(0x2B2D36, 0xFCFBFF), location: 0),
+      .init(color: color(0x242B31, 0xE4E6F0), location: 0.42),
+      .init(color: color(0x232B30, 0xD7DDE8), location: 1),
+    ])
+  }
+  var control: Gradient {
+    Gradient(stops: [
+      .init(color: color(0x393541, 0xFFFFFF), location: 0),
+      .init(color: color(0x252B32, 0xD6DCEA), location: 0.48),
+      .init(color: color(0x21292E, 0xC9D2E1), location: 1),
+    ])
+  }
+  var edge: Gradient {
+    Gradient(stops: [
+      .init(color: color(0xD9D2FF, 0xFFFFFF).opacity(0.92), location: 0),
+      .init(color: color(0x978BBF, 0xAEB8C8).opacity(0.76), location: 0.25),
+      .init(color: color(0x4E447E, 0x758095).opacity(0.22), location: 0.55),
+      .init(color: color(0x7593C9, 0xA4B4C7).opacity(0.55), location: 0.85),
+      .init(color: color(0xCDF4FF, 0xFFFFFF).opacity(0.70), location: 1),
+    ])
+  }
+  var cardEdge: Gradient {
+    Gradient(stops: [
+      .init(color: color(0x978EC4, 0xFFFFFF).opacity(dark ? 0.5 : 0.97), location: 0),
+      .init(color: color(0x3F3A66, 0x919AAA).opacity(dark ? 0.15 : 0.5), location: 0.45),
+      .init(color: color(0x6578A1, 0x9AA7B9).opacity(dark ? 0.28 : 0.8), location: 1),
+    ])
+  }
+  var separator: Color { color(0x46516B, 0x87909F) }
 }
 private struct PaletteKey: EnvironmentKey { static let defaultValue = Palette() }
+private struct PointerKey: EnvironmentKey { static let defaultValue: CGPoint? = nil }
 extension EnvironmentValues {
   var palette: Palette {
     get { self[PaletteKey.self] }
     set { self[PaletteKey.self] = newValue }
   }
+  var surfacePointer: CGPoint? {
+    get { self[PointerKey.self] }
+    set { self[PointerKey.self] = newValue }
+  }
 }
+
 struct Glass: ViewModifier {
   @Environment(\.palette) var p
+  @Environment(\.surfacePointer) var pointer
+  @Environment(\.colorSchemeContrast) var contrast
   @EnvironmentObject var m: AppModel
   var radius: CGFloat = 18
   var panel = false
   var control = false
   var selected = false
-  @State private var pointer = UnitPoint(x: 0.3, y: 0.1)
+  var quiet = false
   @State private var hover = false
   func body(content: Content) -> some View {
     content.background {
-      RoundedRectangle(cornerRadius: radius).fill(
-        LinearGradient(
-          colors: panel ? p.panel : control ? p.control : p.card, startPoint: .topLeading,
-          endPoint: .bottomTrailing))
-      if selected {
-        RoundedRectangle(cornerRadius: radius).fill(p.action.opacity(p.accent ? 0.20 : 0.12))
-      }
-      RoundedRectangle(cornerRadius: radius).fill(
-        RadialGradient(
-          colors: [Color.white.opacity(panel ? 0.09 : 0.045), .clear], center: .topLeading,
-          startRadius: 0, endRadius: panel ? 420 : 150))
-      if hover {
-        RoundedRectangle(cornerRadius: radius).fill(
-          RadialGradient(
-            colors: [p.action.opacity(0.18), Color.white.opacity(0.05), .clear], center: pointer,
-            startRadius: 0, endRadius: 220))
-      }
+      GeometryReader { geometry in
+        let shape = RoundedRectangle(cornerRadius: radius)
+        let frame = geometry.frame(in: .named("surface"))
+        let local =
+          pointer.map {
+            UnitPoint(
+              x: ($0.x - frame.minX) / max(1, frame.width),
+              y: ($0.y - frame.minY) / max(1, frame.height))
+          } ?? .topLeading
+        ZStack {
+          shape.fill(
+            LinearGradient(
+              gradient: panel ? p.panel : control ? p.control : p.card,
+              startPoint: .topLeading, endPoint: UnitPoint(x: 0.8, y: 1))
+          )
+          .opacity(quiet ? (p.dark ? 0.20 : 0.45) : 1)
+          if selected { shape.fill(p.action.opacity(p.accent ? 0.22 : 0.10)) }
+          if panel {
+            shape.fill(
+              RadialGradient(
+                colors: [.white.opacity(p.dark ? 0.06 : 0.14), .clear], center: .topLeading,
+                startRadius: 0, endRadius: 370))
+          }
+          if pointer != nil && !m.reduced {
+            shape.fill(
+              RadialGradient(
+                colors: [p.action.opacity(panel ? 0.075 : 0.10), .white.opacity(0.025), .clear],
+                center: local, startRadius: 0, endRadius: panel ? 360 : 230))
+          }
+          if hover {
+            shape.fill(.white.opacity(p.dark ? 0.025 : 0.13))
+          }
+          shape.stroke(
+            LinearGradient(
+              gradient: panel || control ? p.edge : p.cardEdge,
+              startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: 1
+          )
+          .opacity(quiet ? 0.30 : 1)
+          if (selected && !control) || contrast == .increased {
+            shape.stroke(
+              selected ? p.action : p.secondary, lineWidth: contrast == .increased ? 1.5 : 1)
+          }
+          if hover { shape.stroke(p.secondary.opacity(0.6), lineWidth: 1) }
+          if panel || control {
+            shape.inset(by: 1).stroke(
+              LinearGradient(
+                colors: [.white.opacity(p.dark ? 0.13 : 0.65), .clear, .clear], startPoint: .top,
+                endPoint: .bottom), lineWidth: 0.6)
+          }
+        }.shadow(color: .black.opacity(panel ? (p.dark ? 0.12 : 0.07) : 0), radius: 10, x: 0, y: 3)
+      }.allowsHitTesting(false)
     }
-    .overlay(
-      RoundedRectangle(cornerRadius: radius).stroke(
-        LinearGradient(colors: p.edge, startPoint: .topLeading, endPoint: .bottomTrailing),
-        lineWidth: selected ? 1.1 : 0.7
-      ).allowsHitTesting(false)
-    )
-    .shadow(color: .black.opacity(panel ? (p.dark ? 0.22 : 0.10) : 0), radius: 12, x: 0, y: 5)
-    .onContinuousHover { phase in
-      guard !m.capture else { return }
-      switch phase {
-      case .active(let location):
-        hover = true
-        if !m.reduced {
-          pointer = UnitPoint(
-            x: min(1, max(0, location.x / 240)), y: min(1, max(0, location.y / 160)))
-        }
-      case .ended: hover = false
-      }
-    }
+    .onHover { hover = $0 }
+    .animation(m.reduced ? nil : .easeOut(duration: 0.16), value: hover)
   }
 }
 extension View {
   func glass(
-    radius: CGFloat = 18, panel: Bool = false, control: Bool = false, selected: Bool = false
+    radius: CGFloat = 18, panel: Bool = false, control: Bool = false, selected: Bool = false,
+    quiet: Bool = false
   ) -> some View {
-    modifier(Glass(radius: radius, panel: panel, control: control, selected: selected))
+    modifier(
+      Glass(radius: radius, panel: panel, control: control, selected: selected, quiet: quiet))
   }
 }
 struct GlassButtonStyle: ButtonStyle {
@@ -106,17 +165,57 @@ struct GlassButtonStyle: ButtonStyle {
   var selected = false
   var compact = false
   func makeBody(configuration: Configuration) -> some View {
-    configuration.label.font(.system(size: 12, weight: prominent ? .medium : .regular)).padding(
-      .horizontal, compact ? 11 : 14
-    ).frame(minHeight: compact ? 34 : 36)
+    configuration.label.font(.system(size: compact ? 11 : 12, weight: .regular))
+      .padding(.horizontal, compact ? 11 : 14).frame(minHeight: compact ? 34 : 36)
       .foregroundStyle(prominent ? p.actionText : p.ink)
-      .background { if prominent { Capsule().fill(p.action.gradient) } }
+      .background {
+        if prominent {
+          Capsule().fill(p.action).overlay(
+            Capsule().stroke(.white.opacity(0.16), lineWidth: 1).padding(1))
+        }
+      }
       .glass(radius: 20, control: true, selected: selected)
       .opacity(enabled ? 1 : 0.45)
       .scaleEffect(configuration.isPressed && !m.reduced ? 0.975 : 1)
       .animation(
         m.reduced ? nil : .spring(response: 0.24, dampingFraction: 0.8),
         value: configuration.isPressed)
+  }
+}
+struct CardPressStyle: ButtonStyle {
+  @EnvironmentObject var m: AppModel
+  func makeBody(configuration: Configuration) -> some View {
+    configuration.label.scaleEffect(configuration.isPressed && !m.reduced ? 0.975 : 1)
+      .animation(
+        m.reduced ? nil : .spring(response: 0.22, dampingFraction: 0.7),
+        value: configuration.isPressed)
+  }
+}
+
+struct SelectionAnchors: PreferenceKey {
+  static let defaultValue: [String: Anchor<CGRect>] = [:]
+  static func reduce(
+    value: inout [String: Anchor<CGRect>], nextValue: () -> [String: Anchor<CGRect>]
+  ) {
+    value.merge(nextValue(), uniquingKeysWith: { _, new in new })
+  }
+}
+struct SelectionFlight: View {
+  let event: SelectionEvent
+  let start: CGPoint
+  let end: CGPoint
+  @Environment(\.palette) var p
+  @State private var arrived = false
+  var body: some View {
+    Text(event.app.name).font(.system(size: 11, weight: .medium)).lineLimit(1)
+      .padding(.horizontal, 13).padding(.vertical, 8)
+      .background(Capsule().fill(p.action)).foregroundStyle(p.actionText)
+      .shadow(color: p.action.opacity(0.20), radius: 14, y: 4)
+      .scaleEffect(arrived ? 0.70 : 1)
+      .opacity(arrived ? 0 : 0.96)
+      .position(arrived ? end : start)
+      .onAppear { withAnimation(.easeInOut(duration: 0.48)) { arrived = true } }
+      .allowsHitTesting(false).accessibilityHidden(true)
   }
 }
 struct Mark: Shape {

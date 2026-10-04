@@ -42,6 +42,22 @@ func requireValue<T>(_ value: T?) throws -> T {
     let c = CoreTests()
     let tests: [(String, () throws -> Void)] = [
       (
+        "testRemovalSelectionRequiresTheOwnedCopyToStillExist",
+        c.testRemovalSelectionRequiresTheOwnedCopyToStillExist
+      ),
+      (
+        "testLibraryCategoriesAndProfilesStayConnected",
+        c.testLibraryCategoriesAndProfilesStayConnected
+      ),
+      (
+        "testProfilesSkipInstalledBundlesAndUnknownIDs",
+        c.testProfilesSkipInstalledBundlesAndUnknownIDs
+      ),
+      (
+        "testQueueSummaryNeverCallsGuidedOrInterruptedSuccess",
+        c.testQueueSummaryNeverCallsGuidedOrInterruptedSuccess
+      ),
+      (
         "testInventoryFindsNestedFoldersButNotEmbeddedHelpers",
         c.testInventoryFindsNestedFoldersButNotEmbeddedHelpers
       ),

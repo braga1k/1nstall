@@ -22,9 +22,17 @@ import UniformTypeIdentifiers
   @Published var language: String { didSet { preference("language", language) } }
   @Published var lessMotion: Bool { didSet { preference("lessMotion", lessMotion) } }
   @Published var detailApp: CatalogApp?
+  @Published var installedDetail: InstalledApp?
+  @Published var profilePicker = false
+  @Published var expandedGroups: Set<String> = []
+  @Published var selectionEvent: SelectionEvent?
+  @Published var displayAccessibilityRevision = 0
+  private var accessibilityObserver: NSObjectProtocol?
+  private var pageFilters: [String: (String, String, Bool)] = [:]
   @Published var review = false
   @Published var leftoverApp: CatalogApp?
   @Published var leftoverReport = LeftoverReport()
+  @Published var leftoverScanning = false
   @Published var leftoverSelection: Set<String> = []
   @Published var leftoverResult = ""
   @Published var cleanupConfirm = false
@@ -59,6 +67,18 @@ import UniformTypeIdentifiers
       }
     }
     if capture { state.installSelection = ["rectangle"] }
+    accessibilityObserver = NSWorkspace.shared.notificationCenter.addObserver(
+      forName: NSWorkspace.accessibilityDisplayOptionsDidChangeNotification, object: nil,
+      queue: .main
+    ) { [weak self] _ in
+      Task { @MainActor in
+        self?.displayAccessibilityRevision += 1
+        if self?.reduced == true {
+          self?.successPulse = false
+          self?.selectionEvent = nil
+        }
+      }
+    }
   }
   func preference(_ key: String, _ value: Any) {
     if !capture { UserDefaults.standard.set(value, forKey: key) }
@@ -97,6 +117,13 @@ import UniformTypeIdentifiers
       let result = await Task.detached(priority: .utility) { Inventory.scan() }.value
       inventory = result
       scanning = false
+      if result.warnings.isEmpty && !busy {
+        state.installSelection = Library.selectable(
+          Array(state.installSelection), catalog: apps, installed: result.apps)
+        state.removalSelection = Library.removableSelection(
+          state.removalSelection, catalog: apps, installed: result.apps, receipts: state.receipts)
+        save()
+      }
       if !result.warnings.isEmpty {
         status = t(
           "Inventory is partial. See diagnostics.",
@@ -119,6 +146,7 @@ import UniformTypeIdentifiers
       if installed(app) && !state.installSelection.contains(app.id) { return }
       if !state.installSelection.insert(app.id).inserted { state.installSelection.remove(app.id) }
     }
+    selectionEvent = SelectionEvent(app: app, adding: selection.contains(app.id))
     status = t(
       "Selection updated. Review before continuing.", "Seleção atualizada. Revê antes de continuar."
     )
@@ -131,18 +159,51 @@ import UniformTypeIdentifiers
   }
   func profile(_ ids: [String]) {
     guard !busy else { return }
-    state.installSelection = Set(
-      ids.filter { id in apps.contains { $0.id == id && !installed($0) } })
+    state.installSelection = Library.selectable(ids, catalog: apps, installed: inventory.apps)
     save()
   }
   func categoryName(_ id: String) -> String {
-    switch id {
-    case "everyday": return t("Everyday", "Dia a dia")
-    case "create": return t("Create", "Criar")
-    case "files": return t("Files & Storage", "Ficheiros e armazenamento")
-    case "tools": return t("Mac & Tools", "Mac e ferramentas")
-    default: return t("All apps", "Todas as apps")
+    if let category = Library.categories.first(where: { $0.id == id }) {
+      return t(category.english, category.portuguese)
     }
+    if let group = Library.groups.first(where: { $0.id == id }) {
+      return t(group.english, group.portuguese)
+    }
+    return t("All apps", "Todas as apps")
+  }
+  func applyProfile(_ profile: LibraryProfile, adding: Bool) {
+    guard !busy else { return }
+    let eligible = Library.selectable(profile.apps, catalog: apps, installed: inventory.apps)
+    if adding {
+      state.installSelection.formUnion(eligible)
+    } else {
+      state.installSelection = eligible
+    }
+    status = t("Profile applied. Review your selection.", "Perfil aplicado. Revê a seleção.")
+    profilePicker = false
+    save()
+  }
+  func clearResults() {
+    guard !busy, state.queue.allSatisfy({ $0.stage.terminal }) else { return }
+    state.queue = []
+    status = t("Results kept in history.", "Resultados guardados no histórico.")
+    save()
+  }
+  func prepareRetry() {
+    guard !busy else { return }
+    let failed = state.queue.filter { [.failed, .stopped, .interrupted].contains($0.stage) }
+    guard let operation = failed.first?.operation else { return }
+    changePage(operation == "remove" ? "uninstall" : "install")
+    let ids = failed.filter { $0.operation == operation }.map(\.appID)
+    if operation == "remove" {
+      state.removalSelection = Set(ids.filter { state.receipts[$0] != nil })
+    } else {
+      state.installSelection = Library.selectable(ids, catalog: apps, installed: inventory.apps)
+    }
+    status = t(
+      "Retry prepared. Review before continuing.",
+      "Nova tentativa preparada. Revê antes de continuar.")
+    save()
   }
   func sourceName(_ app: CatalogApp) -> String {
     app.automatic
@@ -179,10 +240,13 @@ import UniformTypeIdentifiers
     }
   }
   func changePage(_ value: String) {
+    guard value != page else { return }
+    pageFilters[page] = (search, category, installedOnly)
     page = value
-    search = ""
-    category = "all"
-    installedOnly = false
+    let remembered = pageFilters[value] ?? ("", "all", false)
+    search = remembered.0
+    category = remembered.1
+    installedOnly = remembered.2
   }
   func saveProfile() {
     let snapshot = Array(selection).sorted()
@@ -234,6 +298,9 @@ import UniformTypeIdentifiers
     state.queue = batch.map { QueueEntry(app: $0, operation: removing ? "remove" : "install") }
     save()
     busy = true
+    status = t(
+      "Processing your selection. Results are verified app by app.",
+      "A processar a seleção. Os resultados são verificados app a app.")
     stopRequested = false
     review = false
     Task {
@@ -255,11 +322,15 @@ import UniformTypeIdentifiers
         do {
           let engine = brew
           let receipt = state.receipts[app.id]
+          let entryID = state.queue[i].id
           let path = try await Task.detached(priority: .userInitiated) { [weak self] () -> String in
             let stage: (QueueStage) -> Void = { s in
               DispatchQueue.main.async {
-                self?.state.queue[i].stage = s
-                self?.save()
+                guard let self, self.state.queue.indices.contains(i),
+                  self.state.queue[i].id == entryID, !self.state.queue[i].stage.terminal
+                else { return }
+                self.state.queue[i].stage = s
+                self.save()
               }
             }
             let log: (String) -> Void = { s in DispatchQueue.main.async { self?.appendLog(s) } }
@@ -276,8 +347,10 @@ import UniformTypeIdentifiers
           state.queue[i].stage = .succeeded
           if removing {
             state.receipts.removeValue(forKey: app.id)
+            state.removalSelection.remove(app.id)
           } else {
             state.receipts[app.id] = path
+            state.installSelection.remove(app.id)
           }
         } catch {
           state.queue[i].stage = .failed
@@ -307,11 +380,15 @@ import UniformTypeIdentifiers
     leftoverSelection = []
     leftoverResult = ""
     leftoverReport = LeftoverReport()
+    leftoverScanning = true
     cleanupConfirm = false
     leftoverApp = app
     Task {
       let report = await Task.detached(priority: .utility) { LeftoverScanner().scan(app) }.value
-      if leftoverApp?.id == app.id { leftoverReport = report }
+      if leftoverApp?.id == app.id {
+        leftoverReport = report
+        leftoverScanning = false
+      }
     }
   }
   func cleanup() {
@@ -353,4 +430,10 @@ import UniformTypeIdentifiers
       leftoverReport = await Task.detached(priority: .utility) { LeftoverScanner().scan(app) }.value
     }
   }
+}
+
+struct SelectionEvent: Equatable {
+  let id = UUID()
+  let app: CatalogApp
+  let adding: Bool
 }

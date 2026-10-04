@@ -61,6 +61,13 @@ public struct InstalledApp: Identifiable, Codable, Hashable, Sendable {
   public let path: String
   public let version: String
   public let store: Bool
+  public init(name: String, bundleID: String, path: String, version: String, store: Bool) {
+    self.name = name
+    self.bundleID = bundleID
+    self.path = path
+    self.version = version
+    self.store = store
+  }
 }
 public struct InventoryResult: Sendable {
   public init() {}

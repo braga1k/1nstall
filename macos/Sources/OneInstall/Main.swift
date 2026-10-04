@@ -17,7 +17,16 @@ import SwiftUI
   var model: AppModel!
   func applicationDidFinishLaunching(_ notification: Notification) {
     let args = CommandLine.arguments
-    model = AppModel(capture: args.contains("--capture"))
+    model = AppModel(capture: args.contains("--capture") || args.contains("--ui-checks"))
+    if args.contains("--ui-checks") {
+      do {
+        try PreviewChecks.run(model)
+        exit(0)
+      } catch {
+        print(error)
+        exit(1)
+      }
+    }
     if model.capture {
       window = NSPanel(
         contentRect: NSRect(x: 0, y: 0, width: 1240, height: 840),
@@ -85,6 +94,18 @@ import SwiftUI
     edit.addItem(
       withTitle: model.t("Find apps", "Pesquisar apps"), action: #selector(search),
       keyEquivalent: "f")
+    let viewItem = NSMenuItem(title: model.t("View", "Ver"), action: nil, keyEquivalent: "")
+    let view = NSMenu(title: viewItem.title)
+    viewItem.submenu = view
+    menu.addItem(viewItem)
+    for (title, action, key) in [
+      (model.t("Install", "Instalar"), #selector(installPage), "1"),
+      (model.t("Uninstall", "Desinstalar"), #selector(uninstallPage), "2"),
+      (model.t("History", "Histórico"), #selector(historyPage), "3"),
+      (model.t("Refresh inventory", "Atualizar inventário"), #selector(refreshInventory), "r"),
+    ] {
+      view.addItem(withTitle: title, action: action, keyEquivalent: key)
+    }
     let winItem = NSMenuItem(title: model.t("Window", "Janela"), action: nil, keyEquivalent: "")
     let win = NSMenu(title: winItem.title)
     winItem.submenu = win
@@ -101,6 +122,13 @@ import SwiftUI
     NSApp.mainMenu = menu
     NSApp.windowsMenu = win
   }
+  @objc func installPage() { model.changePage("install") }
+  @objc func uninstallPage() {
+    model.changePage("uninstall")
+    if !model.capture { model.refresh() }
+  }
+  @objc func historyPage() { model.changePage("history") }
+  @objc func refreshInventory() { if !model.busy && !model.capture { model.refresh() } }
   @objc func updateMenu() { createMenu() }
   @objc func settings() { model.changePage("settings") }
   @objc func search() {
@@ -128,21 +156,76 @@ import SwiftUI
   func capture(to directory: URL) async {
     do {
       try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+      var count = 0
       for (theme, accent) in [("dark", true), ("light", true), ("dark", false), ("light", false)] {
         model.theme = theme
         model.accent = accent
+        let suffix = "-\(theme)\(accent ? "":"-monochrome")"
+        model.state = SavedState()
+        model.state.installSelection = ["rectangle"]
+        model.inventory = InventoryResult()
+        model.page = "install"
+        model.category = "all"
+        model.expandedGroups = []
+        model.status = ""
         window.setContentSize(NSSize(width: 1240, height: 840))
-        try await Task.sleep(for: .milliseconds(700))
-        guard let view = window.contentView,
-          let bitmap = view.bitmapImageRepForCachingDisplay(in: view.bounds)
-        else { throw OperationError("Capture unavailable") }
-        view.cacheDisplay(in: view.bounds, to: bitmap)
-        let data = bitmap.representation(using: .png, properties: [:])!
-        try data.write(
-          to: directory.appendingPathComponent("install-\(theme)\(accent ? "":"-monochrome").png"))
+        try await captureFrame("install" + suffix, to: directory)
+        count += 1
+        model.page = "settings"
+        try await captureFrame("settings" + suffix, to: directory)
+        count += 1
+        model.page = "uninstall"
+        model.inventory.apps = model.apps.map { app in
+          InstalledApp(
+            name: app.name, bundleID: app.bundleID, path: "/Fixture Applications/" + app.appName,
+            version: app.version, store: app.source == "appstore")
+        }
+        model.state.receipts["iina"] = "/Fixture Applications/IINA.app"
+        model.state.removalSelection = ["iina"]
+        try await captureFrame("uninstall" + suffix, to: directory)
+        count += 1
+        if accent {
+          var entry = QueueEntry(app: model.apps.first { $0.id == "iina" }!, operation: "remove")
+          entry.stage = .succeeded
+          model.state.removalSelection = []
+          model.state.queue = [entry]
+          model.inventory.apps.removeAll { $0.bundleID == "com.colliderli.iina" }
+          model.status = "Removal verified. Results stay in history."
+          try await captureFrame("uninstall-queue" + suffix, to: directory)
+          count += 1
+          model.state = SavedState()
+          model.inventory = InventoryResult()
+          model.page = "install"
+          model.status = ""
+          model.expandedGroups = ["everyday"]
+          model.category = "players"
+          try await captureFrame("categories" + suffix, to: directory)
+          count += 1
+          model.expandedGroups = []
+          model.category = "all"
+          window.setContentSize(NSSize(width: 1040, height: 640))
+          try await captureFrame("minimum" + suffix, to: directory)
+          count += 1
+        }
       }
-      print("Captured four English appearances")
-    } catch { print("Capture failed: \(error)") }
+      print(
+        "Captured \(count) English appearances; uninstall uses explicit fixtures, without system inventory or operations"
+      )
+    } catch {
+      print("Capture failed: \(error)")
+      exit(1)
+    }
     NSApp.terminate(nil)
+  }
+  func captureFrame(_ name: String, to directory: URL) async throws {
+    try await Task.sleep(for: .milliseconds(450))
+    guard let view = window.contentView,
+      let bitmap = view.bitmapImageRepForCachingDisplay(in: view.bounds)
+    else { throw OperationError("Capture unavailable") }
+    view.cacheDisplay(in: view.bounds, to: bitmap)
+    guard let data = bitmap.representation(using: .png, properties: [:]) else {
+      throw OperationError("PNG unavailable")
+    }
+    try data.write(to: directory.appendingPathComponent(name + ".png"))
   }
 }

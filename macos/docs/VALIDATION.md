@@ -1,5 +1,34 @@
 # Validação — 04/10/2026
 
+## Iteração 0.2.0 — aproximação à experiência Windows
+
+Esta iteração parte do commit local `77142d85a797c14eda337162138a01ce277ff2dd`, com checkout limpo. `main` e `v3.5.0` remotos continuavam em `db4931e533aa951f7ff564555714ac38497ba20c`. O trabalho permanece apenas em `macos/`, sem publicar.
+
+### O que mudou e foi verificado
+
+- Painéis de 246 pontos e intervalos de 20: alinhamentos medidos nas referências Windows 1240×840. Separados os materiais de painel, cartão, controlo e grupo; contornos dos cartões e grupos mais discretos, gradientes com vários pontos, bevel interno e botões de detalhes com a largura da referência. A fonte continua San Francisco, sem alegar equivalência píxel a píxel.
+- Grelha Uninstall com cartões de 140 pontos, seleção da cópia efetivamente gerida e ficha de detalhes. As restantes instalações continuam num percurso guiado. Apps em `/System/` são identificadas como protegidas na ficha; não foi ampliada a autoridade de remoção.
+- Dez subcategorias dentro de quatro grupos expansíveis. Contagens calculadas sobre os dados reais, filtro pelo grupo/categoria, pesquisa e filtros independentes conservados na navegação. Atalhos ⌘1/2/3 e ⌘R acrescentados aos menus nativos.
+- Seis perfis com revisão da lista, contagem elegível e opção de acrescentar/substituir. Na interface real, o perfil Ficheiros reconheceu LocalSend/Keka já instalados e desativou Aplicar; o perfil Estúdio criativo acrescentou apenas Blender, preservando a seleção IINA existente. A seleção inicial foi reposta após o ensaio.
+- Entrada dos painéis, pressão dos cartões, expansão, transições e cápsula de seleção com percurso entre cartão e painel. Luz calculada a partir da posição global real do rato e das dimensões de cada superfície, em vez do divisor fixo 240×160 anterior. Atualização limitada a 60 eventos/s, sem temporizador de animação permanente. Redução de movimento corta trajetos, offsets e luz móvel; alterações de acessibilidade do sistema são observadas. Sem benchmark de FPS ou auditoria VoiceOver integral.
+- Resultados da fila com contador processado/total e indicação de etapa real. As operações confirmadas retiram a app da seleção, conservando a fila e o histórico. Limpar resultados não apaga o histórico; preparar nova tentativa não executa operações. Callbacks antigos não podem reverter uma entrada já concluída.
+- Corrigida seleção de remoção obsoleta, observada na interface: um inventário completo reconcilia seleções com identidade/caminho/recibo. Inventários parciais não apagam seleções. Resíduos apresentam estado de análise e total dos itens selecionados, sem anunciar análise vazia antes de acabar.
+
+### Testes desta iteração
+
+- **19 verificações do núcleo e 10 verificações do estado da interface, zero falhas.** Novos cenários cobrem ligações catálogo/categorias/perfis, exclusão por bundle mesmo com nome diferente, progresso sem falso sucesso, cópias geridas desaparecidas, filtros independentes, perfis aditivos, nova tentativa sem executar e histórico preservado. Os testes do estado usam modo isolado e confirmam que não sobrescrevem o ficheiro real.
+- **Novo ciclo nativo IINA 1.5.0:** revisão → instalação → verificação → seleção vazia; Uninstall → filtro Geridas → seleção → revisão → remoção → verificação → seleção vazia, grelha gerida vazia e fila conservada. Revisão de resíduos encontrou zero candidatos nos locais previstos; não foi executada limpeza. Bundle e comando IINA ausentes no fim; lista de casks igual à registada imediatamente antes do ensaio (LocalSend). Nenhuma app pessoal foi usada como alvo de teste.
+- Navegação pelos atalhos e regresso ao filtro Leitores multimédia confirmados na interface. Perfis foram testados sem iniciar operações. O teste posterior de IINA foi iniciado separadamente na revisão de instalação. Idioma inglês, tema Sistema e accent escolhidos no estado existente foram preservados.
+- **18 capturas inglesas:** Install, Uninstall e Definições nas quatro aparências; filas, subcategorias e janela mínima em claro/escuro. Uninstall usa fixtures explícitas; as imagens não expõem o inventário pessoal nem provam operações reais. Capturas de composição NSHostingView; os testes nativos são evidência separada.
+- Seis imagens monocromáticas verificadas em toda a superfície: diferença máxima RGB 1, zero píxeis acima de 1, zero falhas; a medição acompanha a entrega. Comparação Windows 3.5.0 → Mac 0.1.0 → Mac 0.2.0 em `images/comparison.png`.
+- Compilação release arm64 e assinatura ad hoc verificadas. Continua sem Developer ID/notarização. A suite de instalação Rectangle/IINA da primeira iteração não foi repetida integralmente; nesta iteração repetiu-se o ciclo nativo IINA.
+
+### Limites atuais
+
+O catálogo mantém 15 apps/5 casks automáticos; não foi fingida expansão do catálogo por acrescentar categorias ou perfis. Remoção de instalações anteriores, catálogos amplos, instaladores especiais, recuperação orientada e mais associações de resíduos continuam por implementar. A matriz em `PARITY.md` separa resultados atuais de trabalho futuro. Não foi incorporado código Mole, alterado o Windows ou publicado conteúdo.
+
+## Validação da primeira implementação 0.1.0 — histórico
+
 ## Base preservada e ambiente
 
 `main`, `HEAD` remoto e `v3.5.0` confirmados em `db4931e533aa951f7ff564555714ac38497ba20c` antes de clonar. Não existia um checkout local da 1nstall nos diretórios pesquisados. Criado `work/1nstall`, branch `macos/native-preview`. Todos os acrescentos ficam em `macos/`; nenhum ficheiro Windows foi modificado. Não houve push nem release.

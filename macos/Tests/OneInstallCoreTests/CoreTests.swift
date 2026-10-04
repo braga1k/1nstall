@@ -2,6 +2,73 @@ import Foundation
 import OneInstallCore
 
 final class CoreTests: CheckSuite {
+  func testRemovalSelectionRequiresTheOwnedCopyToStillExist() throws {
+    let catalog = try Catalog.load()
+    let app = catalog[0]
+    let owned = InstalledApp(
+      name: app.name, bundleID: app.bundleID, path: "/fixture/Owned.app", version: "1", store: false
+    )
+    let other = InstalledApp(
+      name: app.name, bundleID: app.bundleID, path: "/fixture/Other.app", version: "1", store: false
+    )
+    let receipts = [app.id: owned.path]
+    expectEqual(
+      Library.removableSelection(
+        [app.id], catalog: catalog, installed: [owned], receipts: receipts), Set([app.id]))
+    expectTrue(
+      Library.removableSelection([app.id], catalog: catalog, installed: [other], receipts: receipts)
+        .isEmpty)
+    expectTrue(
+      Library.removableSelection([app.id], catalog: catalog, installed: [], receipts: receipts)
+        .isEmpty)
+    expectTrue(
+      Library.removableSelection([app.id], catalog: catalog, installed: [owned], receipts: [:])
+        .isEmpty)
+  }
+  func testLibraryCategoriesAndProfilesStayConnected() throws {
+    let catalog = try Catalog.load()
+    expectEqual(Set(Library.categories.map(\.id)).count, Library.categories.count)
+    for app in catalog {
+      let category = try requireValue(Library.categories.first { $0.id == app.category })
+      expectTrue(Library.groups.contains { $0.id == category.group })
+      expectTrue(Library.matches(app.category, filter: category.group))
+      expectTrue(Library.matches(app.category, filter: "all"))
+      expectFalse(Library.matches(app.category, filter: "not-a-category"))
+    }
+    for profile in Library.profiles {
+      expectFalse(profile.apps.isEmpty)
+      for id in profile.apps {
+        expectTrue(catalog.contains { $0.id == id }, "Missing profile app: \(id)")
+      }
+    }
+  }
+  func testProfilesSkipInstalledBundlesAndUnknownIDs() throws {
+    let catalog = try Catalog.load()
+    let app = catalog[0]
+    let installed = InstalledApp(
+      name: "Renamed app", bundleID: app.bundleID, path: "/fixture/Renamed.app", version: "older",
+      store: false)
+    expectEqual(
+      Library.selectable([app.id, app.id, "unknown"], catalog: catalog, installed: []),
+      Set([app.id]))
+    expectTrue(
+      Library.selectable([app.id, "unknown"], catalog: catalog, installed: [installed]).isEmpty)
+  }
+  func testQueueSummaryNeverCallsGuidedOrInterruptedSuccess() throws {
+    var entries: [QueueEntry] = []
+    for stage in [QueueStage.succeeded, .guided, .interrupted, .failed, .waiting, .verifying] {
+      var entry = QueueEntry(app: app, operation: "install")
+      entry.stage = stage
+      entries.append(entry)
+    }
+    let summary = QueueSummary(entries)
+    expectEqual(summary.total, 6)
+    expectEqual(summary.completed, 4)
+    expectEqual(summary.verified, 1)
+    expectEqual(summary.attention, 2)
+    expectEqual(summary.guided, 1)
+    expectEqual(QueueSummary([]).fraction, 0)
+  }
   var root: URL!
   var app: CatalogApp!
   override func setUpWithError() throws {
