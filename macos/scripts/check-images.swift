@@ -51,8 +51,8 @@ NSRect(x: 0, y: 0, width: 620 * columns, height: 1800).fill()
 for (i, name) in names.enumerated() {
   let y = 1800 - (i + 1) * 450
   var sources = [("Windows 3.5.0", original)]
-  if let previous { sources.append(("macOS 0.2.0", previous)) }
-  sources.append(("macOS 0.2.1", base))
+  if let previous { sources.append(("macOS 0.2.1", previous)) }
+  sources.append(("macOS 0.2.2", base))
   for (col, source) in sources.enumerated() {
     NSImage(contentsOf: source.1.appendingPathComponent(name))!.draw(
       in: NSRect(x: col * 620, y: y, width: 620, height: 420))
@@ -73,7 +73,7 @@ NSGraphicsContext.saveGraphicsState()
 NSGraphicsContext.current = NSGraphicsContext(bitmapImageRep: removal)
 NSColor(calibratedWhite: 0.08, alpha: 1).setFill()
 NSRect(x: 0, y: 0, width: 1240, height: 450).fill()
-for (column, source) in [("Windows 3.5.0", original), ("macOS 0.2.1", base)].enumerated() {
+for (column, source) in [("Windows 3.5.0", original), ("macOS 0.2.2", base)].enumerated() {
   NSImage(contentsOf: source.1.appendingPathComponent("uninstall-dark.png"))!.draw(
     in: NSRect(x: column * 620, y: 0, width: 620, height: 420))
   (source.0 + " · Uninstall" as NSString).draw(

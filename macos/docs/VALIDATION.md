@@ -1,5 +1,20 @@
 # Validação — 04/10/2026
 
+## Iteração 0.2.2 — área de clique completa
+
+Base local limpa `bc7c1e9ad9dbc0fd4a4cb95befe65db8e6dc7651`. Alterações limitadas a `macos/`. Sem instalações, remoções ou publicação nesta iteração.
+
+- **Problema reproduzido nativamente:** Vitor voltou a relatar falta de resposta e identificou que só o texto recebia o clique. Na janela de 1240×840 pontos, captura Retina 2480×1680, clicar em Uninstall em (80,297) não mudou a página na 0.2.1; (270,297), sobre o texto, mudou. A amostra de cinco segundos do processo mostrava a thread principal sobretudo à espera de eventos; não demonstrou um bloqueio permanente nem exclui outras causas de lentidão.
+- **Correção:** `contentShape` depois das dimensões/padding nos estilos partilhados; cartão e linha com superfície completa dentro do botão; Details sobreposto como botão independente. Pesquisa com botão transparente de fundo para receber as margens numa janela arrastável, preservando o campo de texto nativo. Menu de perfis com estilo de botão glass. Botões pequenos e cabeçalho da atividade com área explícita. Animações e luz mantidas.
+- **Validação por coordenadas reais:** margem esquerda de Uninstall (80,297) e direita de Install (465,215); espaço vazio de Everyday (350,695); margem esquerda/inferior de Blender (565,380)/(780,550) seleciona/desseleciona; margem de Details (608,501) abre a ficha sem selecionar; margem Done fecha; Brave desativado não seleciona. Na lista, margem exterior de uma linha (563,360) e margem de Details (1875,351) abrem a ficha protegida. Deslocação da lista confirmada pela mudança das linhas e posição da barra.
+- **Outros controlos:** margem superior da pesquisa (1000,179) recebe foco e escrita, X na margem limpa; menu de perfis (1534,212) abre e Escape fecha; All profiles (1365,211), perfil Creative studio (400,355), Done, margem de Review & install (2022,1518) e Back funcionam. Foram abertas apenas revisões; nenhuma instalação iniciada. Área livre Activity & details (1200,1600) expande; margem de Settings (80,1496) abre; margens Dark/Light mudam tema. Coordenadas das folhas são relativas à respetiva captura. São cenários amostrados, não uma auditoria de cada píxel/controlo.
+- **Automático e visual:** compilação release arm64/assinatura ad hoc; 10 verificações de estado e 11 de composição/movimento, zero falhas. 20 capturas inglesas com fixtures, quatro aparências e variantes mínimas. Seis monocromáticas verificadas, diferença RGB máxima 1, zero píxeis acima de 1. Comparações com Windows 3.5.0 e macOS 0.2.1. Os 19 testes do núcleo de 0.2.1 não foram repetidos porque o núcleo não mudou.
+- **Preservação:** seleção existente, fila, histórico e recibos comparados semanticamente antes/depois, iguais. Tema claro, accent ligado, inglês e redução de movimento desligada repostos/conservados. Não se alteraram preferências globais de movimento nem apps/projetos pessoais. Versões anteriores preservadas.
+
+Os testes anteriores de composição e CPU não verificavam o clique nas margens: a melhoria do movimento do rato não corrigia este problema. A 0.2.2 não anuncia novo ganho de CPU/FPS; as medições em `PERFORMANCE.md` continuam a pertencer à 0.2.1. Catálogo de 15 apps/5 casks, remoção limitada, assinatura/notarização e restantes limites mantêm-se.
+
+Referência técnica: [Apple — contentShape de interação](https://developer.apple.com/documentation/swiftui/contentshapekinds/interaction). A evidência do comportamento acima vem dos ensaios locais.
+
 ## Iteração 0.2.1 — resposta imediata e Uninstall em lista
 
 Base local limpa `4955f33e76c7c09f4def93b0bc72b0c05cd8bb38`. `main` e `v3.5.0` remotos voltaram a ser confirmados em `db4931e533aa951f7ff564555714ac38497ba20c`. Apenas `macos/` alterado; sem push/release.

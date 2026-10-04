@@ -1,5 +1,7 @@
 # Desempenho — prévia 0.2.1
 
+Nota de 0.2.2: os cliques ignorados nas margens foram reproduzidos e corrigidos separadamente. As medições abaixo são da 0.2.1 e não medem a área de clique nem constituem uma nova medição da 0.2.2. Ver `VALIDATION.md`.
+
 04/10/2026, M4 Pro / 24 GiB / macOS 26.5.2. Pedido de Vitor: rapidez mantendo as animações; Install → Uninstall parecia esperar pelo fim da transição.
 
 ## Alterações

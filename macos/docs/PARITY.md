@@ -1,11 +1,11 @@
 # Aproximação à 1nstall Windows
 
-Estado local 0.2.1, 04/10/2026. A referência é Windows 3.5.0; a versão Mac ainda não tem paridade funcional ou visual completa.
+Estado local 0.2.2, 04/10/2026. A referência é Windows 3.5.0; a versão Mac ainda não tem paridade funcional ou visual completa.
 
 | Área | Estado Mac | Trabalho seguinte |
 |---|---|---|
 | Install e materiais | Estrutura, medidas, quatro aparências, materiais e reflexos revistos | Afinar composição, contraste e sensação lado a lado |
-| Navegação | Troca imediata com entrada interrompível; grupos, filtros independentes e atalhos | Memória de posição de deslocação e acessibilidade completa |
+| Navegação | Pills completos com cliques nas margens verificados; troca imediata com entrada interrompível, grupos, filtros independentes e atalhos | Memória de posição de deslocação e acessibilidade completa |
 | Movimento | Pressão, entrada, expansão, cápsula, luz Core Animation e sucesso; benchmark de CPU e interrupção | Medir compositor/GPU e afinar trajetos/tempos; continuar a respeitar movimento reduzido |
 | Catálogo | 15 apps Mac, cinco automáticas; 60 candidatos documentados | Verificar e integrar novas entradas, fontes e percursos por aplicação |
 | Perfis | Seis perfis revistos, adição/substituição, importação/exportação | Gestão de perfis locais com nomes, edição e duplicação |

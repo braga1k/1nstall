@@ -1,8 +1,14 @@
-# 1nstall para macOS — prévia 0.2.1
+# 1nstall para macOS — prévia 0.2.2
 
 Implementação nativa em desenvolvimento em SwiftUI e AppKit, desenvolvida num M4 Pro com 24 GB e macOS Tahoe 26.5.2. Conserva a estrutura visual da 1nstall Windows 3.5.0. A versão Windows e o seu processo de compilação não foram modificados.
 
-## Rapidez e movimento — 0.2.1
+## Cliques em toda a superfície — 0.2.2
+
+Corrigidas as áreas de clique dos pills, cartões, linhas e botões de detalhes. As margens e os espaços vazios pertencem agora ao controlo; os detalhes continuam independentes da seleção. A pesquisa recebe foco também ao clicar na cápsula e o menu de perfis tem a mesma área visível e interativa dos outros pills. A reprodução nativa confirmou que na 0.2.1 a margem de Uninstall era ignorada e o texto funcionava; na 0.2.2 ambos funcionam.
+
+A validação usa cliques por coordenadas fora dos textos, além dos testes de estado/composição. Estes últimos, isoladamente, não detetavam este problema. Mantidos as animações, a luz e o Uninstall em lista. Ver [validação](docs/VALIDATION.md).
+
+## Rapidez e movimento — base 0.2.1
 
 O Uninstall usa uma lista de linhas de 70 pontos, como na referência Windows: seleção/identificação à esquerda, nome, versão e tipo de remoção na mesma linha, com acesso aos detalhes. A troca Install/Uninstall aplica-se imediatamente. A página de destino conserva uma entrada suave de 200 ms, interrompível por nova navegação. A página anterior não permanece por cima dos novos controlos. Pressão, hover, cápsula da seleção, expansão e brilho após sucesso continuam presentes.
 
@@ -43,7 +49,7 @@ swift run --package-path macos 1nstall --ui-checks
 swift run --package-path macos 1nstall --render-checks
 ```
 
-As Command Line Tools locais não incluem XCTest. 19 verificações do núcleo, 10 de estado da interface e 11 de composição/movimento passaram nesta iteração. As verificações são executadas por um pequeno runner Swift autónomo, com falha do processo quando uma asserção falha. Incluem inventário, associação e medição dos resíduos, symlinks, revisão obsoleta, proteção de cópias/contentores, ida e recuperação do Lixo, persistência, argumentos de processos, timeout e casks alterados/privilegiados. Apenas criam fixtures próprias.
+As Command Line Tools locais não incluem XCTest. Na 0.2.2 passaram novamente 10 verificações de estado e 11 de composição/movimento. As 19 do núcleo passaram na 0.2.1; o núcleo não mudou e esse conjunto não foi repetido nesta correção da interface. As verificações são executadas por um pequeno runner Swift autónomo, com falha do processo quando uma asserção falha. Incluem inventário, associação e medição dos resíduos, symlinks, revisão obsoleta, proteção de cópias/contentores, ida e recuperação do Lixo, persistência, argumentos de processos, timeout e casks alterados/privilegiados. Apenas criam fixtures próprias.
 
 Ensaio real opcional, explicitamente delimitado a uma **pasta nova** em `work/`, com Rectangle e IINA ausentes do Mac:
 

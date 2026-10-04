@@ -200,7 +200,8 @@ struct ContentView: View {
     Button(action: action) {
       Image(systemName: symbol).font(.system(size: 7, weight: .medium)).frame(width: 13, height: 13)
         .background(Circle().fill(p.secondary.opacity(0.14))).overlay(
-          Circle().stroke(p.secondary.opacity(0.4), lineWidth: 0.6))
+          Circle().stroke(p.secondary.opacity(0.4), lineWidth: 0.6)
+        ).contentShape(Circle())
     }.buttonStyle(.plain).accessibilityLabel(label).help(label)
   }
   var library: some View {
@@ -245,6 +246,7 @@ struct ContentView: View {
             Spacer()
             Image(systemName: activity ? "chevron.down" : "chevron.right")
           }.foregroundStyle(p.secondary).padding(12).frame(height: 44)
+            .contentShape(Rectangle())
         }.buttonStyle(.plain)
         if activity {
           ScrollView {
@@ -263,17 +265,26 @@ struct ContentView: View {
     }
   }
   var searchField: some View {
-    HStack(spacing: 10) {
-      Image(systemName: "magnifyingglass").foregroundStyle(p.secondary)
-      TextField(m.t("Search apps · ⌘F", "Pesquisar apps · ⌘F"), text: $m.search).textFieldStyle(
-        .plain
-      ).focused($searchFocused).accessibilityLabel(m.t("Search apps", "Pesquisar apps"))
+    ZStack {
+      // A button also claims clicks in the padding of a draggable AppKit window.
       Button {
-        m.search = ""
+        searchFocused = true
       } label: {
-        Image(systemName: "xmark").font(.system(size: 10))
-      }.buttonStyle(.plain).accessibilityLabel(m.t("Clear search", "Limpar pesquisa"))
-    }.padding(.horizontal, 13).frame(height: 42).glass(radius: 22, control: true)
+        Color.clear.contentShape(Capsule())
+      }.buttonStyle(.plain).accessibilityHidden(true)
+      HStack(spacing: 10) {
+        Image(systemName: "magnifyingglass").foregroundStyle(p.secondary)
+        TextField(m.t("Search apps · ⌘F", "Pesquisar apps · ⌘F"), text: $m.search).textFieldStyle(
+          .plain
+        ).focused($searchFocused).accessibilityLabel(m.t("Search apps", "Pesquisar apps"))
+        Button {
+          m.search = ""
+        } label: {
+          Image(systemName: "xmark").font(.system(size: 10))
+            .frame(width: 22, height: 24).contentShape(Rectangle())
+        }.buttonStyle(.plain).accessibilityLabel(m.t("Clear search", "Limpar pesquisa"))
+      }.padding(.horizontal, 13)
+    }.frame(height: 42).glass(radius: 22, control: true)
   }
   @ViewBuilder var profileTools: some View {
     if m.page == "install" {
@@ -284,9 +295,8 @@ struct ContentView: View {
         Button(m.t("Load profile…", "Carregar perfil…")) { m.loadProfile() }
       } label: {
         Text(m.t("User profiles", "Os meus perfis")).foregroundStyle(p.ink)
-      }.menuStyle(.borderlessButton).fixedSize().padding(.horizontal, 10).frame(height: 35).glass(
-        control: true
-      ).disabled(m.busy)
+      }.menuStyle(.button).buttonStyle(GlassButtonStyle(compact: true))
+        .fixedSize().disabled(m.busy)
     }
     Button(m.t("Clear selection", "Limpar seleção")) { m.clear() }.buttonStyle(
       GlassButtonStyle(compact: true)
@@ -323,7 +333,7 @@ struct ContentView: View {
   func card(_ app: CatalogApp) -> some View {
     let selected = m.state.installSelection.contains(app.id)
     let installed = m.installed(app)
-    return VStack(alignment: .leading, spacing: 7) {
+    return ZStack(alignment: .bottomLeading) {
       Button {
         m.toggle(app)
       } label: {
@@ -351,8 +361,10 @@ struct ContentView: View {
                 ? m.t("Installed · detected on this Mac", "Instalada · detetada neste Mac")
                 : m.sourceName(app))
           }.font(.system(size: 10.5)).tracking(0.2).foregroundStyle(p.secondary).lineLimit(1)
-        }.frame(maxWidth: .infinity, alignment: .leading).frame(height: 72).contentShape(
-          Rectangle())
+        }.frame(maxWidth: .infinity, alignment: .leading).frame(height: 72)
+          .padding(.horizontal, 13).padding(.top, 17)
+          .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+          .contentShape(RoundedRectangle(cornerRadius: 18))
       }.buttonStyle(CardPressStyle()).disabled(installed || m.busy).accessibilityLabel(app.name)
         .accessibilityValue(
           installed
@@ -363,8 +375,9 @@ struct ContentView: View {
       } label: {
         Text(m.t("Details", "Detalhes")).font(.system(size: 11)).frame(maxWidth: .infinity).frame(
           height: 27)
-      }.buttonStyle(CardPressStyle()).glass(radius: 16, control: true).padding(.trailing, 22)
-    }.padding(13).frame(height: 140).glass(radius: 18, selected: selected)
+      }.buttonStyle(CardPressStyle()).glass(radius: 16, control: true)
+        .padding(.horizontal, 13).padding(.trailing, 22).padding(.bottom, 17)
+    }.frame(height: 140).glass(radius: 18, selected: selected)
       .saturation(installed ? 0 : 1).opacity(installed ? 0.62 : 1)
       .anchorPreference(key: SelectionAnchors.self, value: .bounds) { ["card-" + app.id: $0] }
   }
@@ -401,6 +414,7 @@ struct ContentView: View {
                 m.toggle(app)
               } label: {
                 Image(systemName: "xmark").font(.system(size: 10))
+                  .frame(width: 22, height: 22).contentShape(Rectangle())
               }.buttonStyle(.plain).disabled(m.busy).accessibilityLabel(
                 m.t("Remove ", "Retirar ") + app.name)
             }.padding(.vertical, 12).transition(
@@ -454,6 +468,7 @@ struct ContentView: View {
         m.changePage("history")
       } label: {
         Text(m.t("Open logs", "Abrir registos")).frame(maxWidth: .infinity).padding(.top, 14)
+          .contentShape(Rectangle())
       }.buttonStyle(.plain).font(.system(size: 12))
     }.padding(.horizontal, 18).padding(.top, 25).padding(.bottom, 22).glass(radius: 26, panel: true)
       .anchorPreference(key: SelectionAnchors.self, value: .bounds) { ["selection": $0] }
@@ -504,7 +519,7 @@ struct ContentView: View {
           }
         }
         settingsCard(m.t("About this preview", "Sobre esta prévia")) {
-          Text("1nstall for Mac · 0.2.1 · Apple Silicon").fontWeight(.medium)
+          Text("1nstall for Mac · 0.2.2 · Apple Silicon").fontWeight(.medium)
           Text(
             m.t(
               "15 curated entries · 5 reviewed Homebrew installers. Other apps continue on their official website or App Store.",

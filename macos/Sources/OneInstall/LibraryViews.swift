@@ -56,7 +56,7 @@ extension ContentView {
     let catalog = m.apps.first { $0.bundleID == installed.bundleID }
     let managed = catalog.map { m.state.receipts[$0.id] == installed.path } ?? false
     let selected = catalog.map { m.state.removalSelection.contains($0.id) } ?? false
-    return HStack(spacing: 12) {
+    return ZStack(alignment: .trailing) {
       Button {
         if managed, let catalog { m.toggle(catalog) } else { m.installedDetail = installed }
       } label: {
@@ -83,8 +83,9 @@ extension ContentView {
                     : m.t("Installed · guided removal", "Instalada · remoção guiada"))
             ).font(.system(size: 10.5)).foregroundStyle(p.secondary).lineLimit(1)
           }.frame(maxWidth: .infinity, alignment: .leading)
-        }.frame(maxWidth: .infinity, minHeight: 70, alignment: .leading)
-          .contentShape(Rectangle())
+        }.padding(.leading, 16).padding(.trailing, 102)
+          .frame(maxWidth: .infinity, minHeight: 70, alignment: .leading)
+          .contentShape(RoundedRectangle(cornerRadius: 18))
       }.buttonStyle(CardPressStyle()).disabled(m.busy)
         .accessibilityLabel(installed.name).accessibilityValue(
           managed
@@ -94,8 +95,8 @@ extension ContentView {
         m.installedDetail = installed
       } label: {
         Text(m.t("Details", "Detalhes")).font(.system(size: 11)).frame(width: 74, height: 30)
-      }.buttonStyle(CardPressStyle()).glass(radius: 16, control: true)
-    }.padding(.horizontal, 16).frame(height: 70).glass(radius: 18, selected: selected)
+      }.buttonStyle(CardPressStyle()).glass(radius: 16, control: true).padding(.trailing, 16)
+    }.frame(height: 70).glass(radius: 18, selected: selected)
       .anchorPreference(key: SelectionAnchors.self, value: .bounds) { anchor in
         guard let catalog else { return [:] }
         return ["card-" + catalog.id: anchor]

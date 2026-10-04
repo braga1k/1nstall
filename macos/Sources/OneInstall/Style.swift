@@ -165,6 +165,8 @@ struct GlassButtonStyle: ButtonStyle {
   func makeBody(configuration: Configuration) -> some View {
     configuration.label.font(.system(size: compact ? 11 : 12, weight: .regular))
       .padding(.horizontal, compact ? 11 : 14).frame(minHeight: compact ? 34 : 36)
+      // Include padding and the full visible pill in the button hit area.
+      .contentShape(Capsule())
       .foregroundStyle(prominent ? p.actionText : p.ink)
       .background {
         if prominent {
@@ -184,7 +186,8 @@ struct GlassButtonStyle: ButtonStyle {
 struct CardPressStyle: ButtonStyle {
   @Environment(\.motionReduced) var reduced
   func makeBody(configuration: Configuration) -> some View {
-    configuration.label.scaleEffect(configuration.isPressed && !reduced ? 0.975 : 1)
+    configuration.label.contentShape(Rectangle())
+      .scaleEffect(configuration.isPressed && !reduced ? 0.975 : 1)
       .animation(
         reduced ? nil : .spring(response: 0.22, dampingFraction: 0.7),
         value: configuration.isPressed)
