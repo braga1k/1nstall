@@ -562,8 +562,10 @@ try {
             $ui.Cards.Children.Clear()
             foreach ($card in $visible) { $ui.Cards.Children.Add($card) | Out-Null }
         }
-        Set-UiValue ($ui.ResultCount) 'Text' $("$category · $count apps")
-        if ($script:libraryView -ne 'All apps' -and $query -eq '') { Set-UiValue ($ui.ResultCount) 'Text' $($script:libraryView+' · '+$count+' apps') }
+        if ($ui.UninstallPage.Visibility -ne 'Visible') {
+            Set-UiValue ($ui.ResultCount) 'Text' $("$category · $count apps")
+            if ($script:libraryView -ne 'All apps' -and $query -eq '') { Set-UiValue ($ui.ResultCount) 'Text' $($script:libraryView+' · '+$count+' apps') }
+        }
         foreach ($view in $script:viewButtons.Keys) {
             if ($view -eq $script:libraryView) { $script:viewButtons[$view].SetResourceReference([Windows.Controls.Control]::BackgroundProperty,'AccentSurfaceBrush'); $script:viewButtons[$view].SetResourceReference([Windows.Controls.Control]::ForegroundProperty,'AccentTextBrush') }
             else { $script:viewButtons[$view].SetResourceReference([Windows.Controls.Control]::BackgroundProperty,'GlassControlFill'); $script:viewButtons[$view].SetResourceReference([Windows.Controls.Control]::ForegroundProperty,'TextPrimaryBrush') }
@@ -1006,6 +1008,9 @@ try {
     $script:uninstallTask=$null
     $script:uninstallOperation=''
     $script:uninstallOutcome=''
+    $script:uninstallQueue=@()
+    $script:uninstallStates=@{}
+    $script:uninstallLabels=@{}
     $script:uninstallTargets=@([OneInstallUninstall]::LoadHistory())
     $script:removalDialog=$null
     $uninstallTimer=New-Object Windows.Threading.DispatcherTimer
@@ -1016,9 +1021,11 @@ try {
         try { Add-Content -LiteralPath $logPath -Value $line -Encoding UTF8 } catch { }
     }
     function Update-UninstallSelection {
-        if ($script:syncingUninstallSelection) { return }
-        $chosen=@($script:installedApps | Where-Object { $_.Selected -and $_.CanRemove })
+        if ($script:syncingUninstallSelection -or $script:uninstallTask) { return }
+        $queueIds=@($script:uninstallQueue | ForEach-Object Id)
+        $chosen=@($script:uninstallQueue | Where-Object Selected)+@($script:installedApps | Where-Object { $_.Selected -and $_.CanRemove -and $_.Id -notin $queueIds })
         $count=$chosen.Count
+        $script:uninstallLabels=@{}
         $ui.UninstallQueuePanel.Children.Clear()
         $ui.UninstallQueuePanel.IsEnabled=-not $script:uninstallTask
         if ($count -eq 0) {
@@ -1027,17 +1034,41 @@ try {
         }
         foreach ($app in $chosen) {
             $detail=(@($app.Kind,$app.Version) | Where-Object { $_ }) -join ' · '
+            if ($script:uninstallStates.ContainsKey($app.Id)) { $detail=$script:uninstallStates[$app.Id] }
             $row=New-SelectionRow $app $app.Name $detail {
                 param($sender,$eventArgs)
                 if ($script:uninstallTask) { return }
-                $sender.Tag.Selected=$false; Update-UninstallSelection
+                $id=$sender.Tag.Id
+                foreach ($entry in @($script:installedApps)+@($script:uninstallQueue)) { if ($entry.Id -eq $id) { $entry.Selected=$false } }
+                Update-UninstallSelection
             } (-not $script:uninstallTask)
             $ui.UninstallQueuePanel.Children.Add($row) | Out-Null
+            $script:uninstallLabels[$app.Id]=$row.Children[1]
+            [OneInstall.Motion]::Phase($row.Children[1],$detail)
         }
         Set-UiValue ($ui.UninstallSelectedCount) 'Text' $("$count $(if ($count -eq 1) { 'app' } else { 'apps' }) selected")
-        $ui.ReviewUninstall.IsEnabled=($count -gt 0 -and -not $script:uninstallTask)
+        $ready=@($script:installedApps | Where-Object { $_.Selected -and $_.CanRemove -and $script:uninstallStates[$_.Id] -ne 'Success' }).Count
+        $ui.ReviewUninstall.IsEnabled=($ready -gt 0 -and -not $script:uninstallTask)
         $ui.ClearUninstallSelection.IsEnabled=($count -gt 0 -and -not $script:uninstallTask)
         $ui.CheckLeftovers.IsEnabled=($script:uninstallTargets.Count -gt 0 -and -not $script:uninstallTask)
+    }
+    function Set-UninstallStage([string]$Id,[string]$State) {
+        if (@($script:uninstallQueue | Where-Object Id -eq $Id).Count -eq 0) { return }
+        $script:uninstallStates[$Id]=$State
+        if ($script:uninstallLabels[$Id]) {
+            Set-UiValue $script:uninstallLabels[$Id] 'Text' $State
+            [OneInstall.Motion]::Phase($script:uninstallLabels[$Id],$State)
+        }
+        $done=@($script:uninstallQueue | Where-Object { $script:uninstallStates[$_.Id] -notin @('Queued','Preparing…','Removing…','Verifying…') }).Count
+        if ($script:uninstallProgress) { Animate-Value $script:uninstallProgress ([Windows.Controls.Primitives.RangeBase]::ValueProperty) $script:uninstallProgress.Value (100*$done/$script:uninstallQueue.Count) 200 }
+    }
+    function Start-UninstallQueue([InstalledApp[]]$Plan) {
+        $script:uninstallQueue=@($Plan); $script:uninstallStates.Clear()
+        foreach ($app in $Plan) { $script:uninstallStates[$app.Id]='Queued' }
+        $script:uninstallProgress.BeginAnimation([Windows.Controls.Primitives.RangeBase]::ValueProperty,$null); $script:uninstallProgress.Value=0
+        $script:uninstallProgressPanel.Visibility='Visible'; $script:cleanupSummary.Visibility='Collapsed'
+        $script:uninstallOutcome=''; Update-UninstallSelection
+        Set-UninstallTask ([OneInstallUninstall]::RemoveAsync($Plan)) 'Remove'
     }
     function Update-InstalledFilter {
         $query=$ui.InstalledSearch.Text.Trim()
@@ -1046,7 +1077,9 @@ try {
             ($_.Name+' '+$_.Publisher).IndexOf($query,[StringComparison]::OrdinalIgnoreCase) -ge 0
         })
         # Give WPF native models, not pipeline PSObject wrappers, so INotifyPropertyChanged reaches checkboxes.
-        $ui.InstalledList.ItemsSource=[InstalledApp[]]$matches
+        $script:syncingUninstallSelection=$true
+        try { $ui.InstalledList.ItemsSource=[InstalledApp[]]$matches }
+        finally { $script:syncingUninstallSelection=$false }
         if ($window.IsVisible) { Animate-Appearance $ui.InstalledList 7 }
         Set-UiValue ($ui.InstalledEmpty) 'Text' $(if ($script:uninstallTask -and $script:uninstallOperation -eq 'Inventory') { 'Reading installed apps…' } else { 'No apps found. Try another search or choose Refresh.' })
         $ui.InstalledEmpty.Visibility=if ($matches.Count -eq 0) { 'Visible' } else { 'Collapsed' }
@@ -1071,8 +1104,32 @@ try {
         Update-InstalledFilter
     }
     function Start-LeftoverScan {
+        if ($script:cleanupSummary) { $script:cleanupSummary.Visibility='Collapsed' }
         Set-UiValue ($ui.UninstallStatus) 'Text' $('Checking removed apps and protecting shared folders...')
         Set-UninstallTask ([OneInstallUninstall]::ScanAsync([InstalledApp[]]$script:uninstallTargets)) 'Scan'
+    }
+    $script:cleanupSummary=New-Object Windows.Controls.Border
+    $script:cleanupSummary.Background=$window.Resources['ContentFill']; $script:cleanupSummary.BorderBrush=$window.Resources['CardEdge']
+    $script:cleanupSummary.BorderThickness='1'; $script:cleanupSummary.CornerRadius='16'; $script:cleanupSummary.Padding='14,10'; $script:cleanupSummary.Margin='0,0,0,10'; $script:cleanupSummary.Visibility='Collapsed'
+    $cleanupLabels=New-Object Windows.Controls.StackPanel; $script:cleanupSummary.Child=$cleanupLabels
+    $script:cleanupHeading=New-Label '' '#F3F5F7' 16; $script:cleanupHeading.FontWeight='SemiBold'; $cleanupLabels.Children.Add($script:cleanupHeading) | Out-Null
+    $script:cleanupDetail=New-Label '' '#C2CADE' 12; $script:cleanupDetail.Margin='0,4,0,0'; $cleanupLabels.Children.Add($script:cleanupDetail) | Out-Null
+    $ui.UninstallStatus.Parent.Children.Insert(0,$script:cleanupSummary)
+    $script:uninstallProgressPanel=New-Object Windows.Controls.StackPanel; $script:uninstallProgressPanel.Visibility='Collapsed'
+    $progressCaption=New-Label 'Queue progress · apps processed' '#C2CADE' 12; $progressCaption.Margin='0,0,0,6'
+    $script:uninstallProgressPanel.Children.Add($progressCaption) | Out-Null
+    $script:uninstallProgress=New-Object Windows.Controls.ProgressBar; $script:uninstallProgress.Minimum=0; $script:uninstallProgress.Maximum=100
+    $script:uninstallProgress.Height=5; $script:uninstallProgress.BorderThickness='0'; $script:uninstallProgress.Margin='0,0,0,14'
+    $script:uninstallProgress.SetResourceReference([Windows.Controls.Control]::BackgroundProperty,'SeparatorBrush')
+    $script:uninstallProgress.SetResourceReference([Windows.Controls.Control]::ForegroundProperty,'AccentTextBrush')
+    [Windows.Automation.AutomationProperties]::SetName($script:uninstallProgress,'App queue progress')
+    $script:uninstallProgressPanel.Children.Add($script:uninstallProgress) | Out-Null
+    $guidance=$window.FindName('RemovalGuidance'); $guidance.Parent.Children.Insert(1,$script:uninstallProgressPanel)
+    function Show-CleanupSummary([string]$Heading,[string]$Detail) {
+        Set-UiValue $script:cleanupHeading 'Text' $Heading; Set-UiValue $script:cleanupDetail 'Text' $Detail
+        $script:cleanupSummary.SetResourceReference([Windows.Controls.Border]::BackgroundProperty,'ContentFill')
+        $script:cleanupSummary.SetResourceReference([Windows.Controls.Border]::BorderBrushProperty,'CardEdge')
+        $script:cleanupSummary.Visibility='Visible'; [OneInstall.Motion]::Enter($script:cleanupSummary,0,7,0)
     }
     function Set-AppMode([string]$Mode) {
         if ($script:busy -or $script:uninstallTask) { return }
@@ -1108,7 +1165,7 @@ try {
         $dialog=New-Object Windows.Window; $dialog.FlowDirection=$window.FindName('AppPanes').FlowDirection; $dialog.Language=$window.Language; $script:removalDialog=$dialog
         Set-UiValue ($dialog) 'Title' $(if ($Leftovers) { 'Review leftovers · 1nstall' } else { 'Review removal · 1nstall' })
         $dialog.Width=760; $dialog.Height=[Math]::Min(660,[Windows.SystemParameters]::WorkArea.Height-40)
-        $dialog.MinWidth=560; $dialog.MinHeight=450; $dialog.Owner=$window; $dialog.Icon=$window.Icon
+        $dialog.MinWidth=560; $dialog.MinHeight=if ($Leftovers) { 520 } else { 450 }; $dialog.Owner=$window; $dialog.Icon=$window.Icon
         $dialog.WindowStartupLocation='CenterOwner'; $dialog.FontFamily=$window.FontFamily; $dialog.FontSize=13
         $chrome=New-Object Windows.Shell.WindowChrome; $chrome.CaptionHeight=24; $chrome.ResizeBorderThickness='6'; $chrome.GlassFrameThickness='0'; $chrome.UseAeroCaptionButtons=$false
         [Windows.Shell.WindowChrome]::SetWindowChrome($dialog,$chrome); $dialog.ShowInTaskbar=$false
@@ -1118,14 +1175,18 @@ try {
         $head=New-Object Windows.Controls.StackPanel
         $head.Children.Add((New-Label $(if ($Leftovers) { 'Keep what matters' } else { 'Ready to make some room?' }) '#F3F5F7' 27)) | Out-Null
         $copy=if ($Leftovers) { 'Possible leftovers need your judgment. Product folders can contain settings, saves or personal app data. Choose only what you want to remove. Files go to the Recycle Bin; registry keys are backed up first.' } else { 'These apps will be removed one at a time using their own uninstallers. Finish any dialogs they open. Microsoft Store removal affects your current Windows account. Back up app data you want to keep.' }
-        $note=New-Label $copy '#C2CADE' 13; $note.Margin='0,10,0,18'; $head.Children.Add($note) | Out-Null
+        $note=New-Label $copy '#C2CADE' 13; $note.Margin='0,10,0,18'
+        if ($Leftovers) {
+            $explanation=New-Object Windows.Controls.Expander; $explanation.Style=$window.Resources['CategoryGroup']; Set-UiValue $explanation 'Header' 'Details'; $explanation.Margin='0,6,8,10'
+            $explanation.Content=$note; $head.Children.Add($explanation) | Out-Null
+        } else { $head.Children.Add($note) | Out-Null }
         [Windows.Controls.DockPanel]::SetDock($head,'Top'); $dock.Children.Add($head) | Out-Null
         $bottom=New-Object Windows.Controls.StackPanel
         [Windows.Controls.DockPanel]::SetDock($bottom,'Bottom'); $dock.Children.Add($bottom) | Out-Null
         $agree=New-Object Windows.Controls.CheckBox; $agree.Style=$window.Resources['InstalledCheck']
         Set-UiValue ($agree) 'Content' $(New-Label $(if ($Leftovers) { 'I reviewed the selected paths and want to remove their contents.' } else { 'I reviewed this list and want to remove these apps and their app data.' }))
         $agree.Margin='0,18,0,16'; $bottom.Children.Add($agree) | Out-Null
-        $actions=New-Object Windows.Controls.StackPanel; $actions.Orientation='Horizontal'; $actions.HorizontalAlignment='Right'; $bottom.Children.Add($actions) | Out-Null
+        $actions=New-Object Windows.Controls.WrapPanel; $actions.HorizontalAlignment='Right'; $bottom.Children.Add($actions) | Out-Null
         $back=New-Object Windows.Controls.Button; Set-UiValue ($back) 'Content' $('Keep / go back'); $back.IsCancel=$true; $back.Add_Click({ $dialog.DialogResult=$false }); $actions.Children.Add($back) | Out-Null
         $go=New-Object Windows.Controls.Button; Set-UiValue ($go) 'Content' $(if ($Leftovers) { 'Remove selected leftovers' } else { 'Remove '+$Items.Count+' apps' })
         $go.IsEnabled=$false; $go.Margin='0'; $go.SetResourceReference([Windows.Controls.Control]::BackgroundProperty,'AccentActionBrush'); $go.SetResourceReference([Windows.Controls.Control]::ForegroundProperty,'AccentForegroundBrush')
@@ -1133,21 +1194,41 @@ try {
         $scroll=New-Object Windows.Controls.ScrollViewer; $scroll.VerticalScrollBarVisibility='Auto'; $scroll.HorizontalScrollBarVisibility='Disabled'
         $list=New-Object Windows.Controls.StackPanel; Set-UiValue ($scroll) 'Content' $($list); $dock.Children.Add($scroll) | Out-Null
         if ($Leftovers) {
-            $selectionBar=New-Object Windows.Controls.StackPanel; $selectionBar.Orientation='Horizontal'; $selectionBar.Margin='0,0,0,12'
+            $summary=New-Object Windows.Controls.Primitives.UniformGrid; $summary.Columns=2; $summary.Margin='0,0,0,12'
+            $folders=@($Items | Where-Object Kind -eq 'Folder'); $keys=@($Items | Where-Object Kind -eq 'Registry')
+            $bytes=0L; foreach ($folder in $folders) { $bytes+=$folder.Bytes }
+            foreach ($stat in @(@('Disk',($folders.Count.ToString()+' folders · '+[OneInstallUninstall]::FormatBytes($bytes))),@('Registry',($keys.Count.ToString()+' keys / values')))) {
+                if ($script:language -eq 'en') { $stat[1]=$stat[1] -replace '^1 folders','1 folder' -replace '^1 keys / values$','1 key / value' }
+                $tile=New-Object Windows.Controls.Border; $tile.Background=$window.Resources['ContentFill']; $tile.BorderBrush=$window.Resources['CardEdge']; $tile.BorderThickness='1'; $tile.CornerRadius='16'; $tile.Padding='14'; $tile.Margin='0,0,8,0'
+                $stack=New-Object Windows.Controls.StackPanel; $tile.Child=$stack
+                $stack.Children.Add((New-Label $stat[0] '#C2CADE' 12)) | Out-Null
+                $value=New-Label $stat[1] '#F3F5F7' 18; $value.FontWeight='SemiBold'; $stack.Children.Add($value) | Out-Null
+                $summary.Children.Add($tile) | Out-Null
+            }
+            $head.Children.Add($summary) | Out-Null
+            $selectionBar=New-Object Windows.Controls.WrapPanel; $selectionBar.Margin='0,0,0,12'
+            $linkedOnly=New-Object Windows.Controls.Button; Set-UiValue $linkedOnly 'Content' 'Select linked paths'; $linkedOnly.Padding='12,6'
+            $linkedOnly.Add_Click({ foreach ($row in $list.Children) { $row.Child.IsChecked=$row.Child.Tag.Confidence -eq 'Linked path' } })
             $selectAll=New-Object Windows.Controls.Button; Set-UiValue ($selectAll) 'Content' $('Select all'); $selectAll.Padding='12,6'
             $clearAll=New-Object Windows.Controls.Button; Set-UiValue ($clearAll) 'Content' $('Clear selection'); $clearAll.Padding='12,6'
             $selectAll.Add_Click({ foreach ($row in $list.Children) { $row.Child.IsChecked=$true } })
             $clearAll.Add_Click({ foreach ($row in $list.Children) { $row.Child.IsChecked=$false } })
-            $selectionBar.Children.Add($selectAll) | Out-Null; $selectionBar.Children.Add($clearAll) | Out-Null
+            $selectionBar.Children.Add($linkedOnly) | Out-Null; $selectionBar.Children.Add($selectAll) | Out-Null; $selectionBar.Children.Add($clearAll) | Out-Null
             $head.Children.Add($selectionBar) | Out-Null
         }
         foreach ($entry in $Items) {
             $surface=New-Object Windows.Controls.Border; $surface.Background=$window.Resources['ContentFill']; $surface.BorderBrush=$window.Resources['CardEdge']; $surface.BorderThickness='1'; $surface.CornerRadius='16'; $surface.Padding='16'; $surface.Margin='0,0,8,10'
             $labels=New-Object Windows.Controls.StackPanel; $surface.Child=$labels
-            $name=if ($Leftovers) { $entry.AppName+' · '+$entry.Kind } else { $entry.Name }
+            $name=if ($Leftovers) { $entry.AppName+' · '+(Convert-UiText $(if ($entry.Kind -eq 'Folder') { 'Disk' } else { 'Registry' })) } else { $entry.Name }
             $title=New-Label $name '#F3F5F7' 15; $title.FontWeight='SemiBold'; $labels.Children.Add($title) | Out-Null
-            $detail=if ($Leftovers) { $(if ($entry.Kind -eq 'Registry') { $(if ($entry.Machine) { 'HKLM' } else { 'HKCU' })+' · '+$(if ($entry.View32) { '32-bit' } else { '64-bit' })+' · ' } else { '' })+$entry.Detail } else { $entry.Detail }
+            if ($Leftovers) {
+                $evidence=(Convert-UiText $(if ($entry.Confidence) { $entry.Confidence } else { 'Name match' }))+' · '+(Convert-UiText $entry.Reason)
+                if ($entry.Kind -eq 'Folder') { $evidence+=' · '+[OneInstallUninstall]::FormatBytes($entry.Bytes) }
+                $badge=New-Label $evidence '#C2CADE' 12; $badge.Margin='0,6,0,0'; $labels.Children.Add($badge) | Out-Null
+            }
+            $detail=if ($Leftovers) { $(if ($entry.Kind -eq 'Registry') { $(if ($entry.Machine) { 'HKLM' } else { 'HKCU' })+' · '+$(if ($entry.View32) { '32-bit' } else { '64-bit' })+' · ' } else { '' })+$entry.Path+$(if ($entry.ValueName) { ' → '+$entry.DisplayValueName }) } else { $entry.Detail }
             $subtitle=New-Label $detail '#C2CADE' 12; $subtitle.Margin='0,7,0,0'; $labels.Children.Add($subtitle) | Out-Null
+            if ($Leftovers) { $subtitle.FlowDirection='LeftToRight' }
             if ($Leftovers) {
                 $check=New-Object Windows.Controls.CheckBox; $check.Style=$window.Resources['InstalledCheck']; Set-UiValue ($check) 'Content' $($labels); $check.Tag=$entry; $surface.Child=$check
                 $entry.Selected=$false
@@ -1156,6 +1237,7 @@ try {
             }
             $list.Children.Add($surface) | Out-Null
         }
+        $dialog.Add_ContentRendered({ [OneInstall.Motion]::Enter($dock,0,10,0) })
         $agree.Add_Checked({ $go.IsEnabled=(-not $Leftovers -or @($Items | Where-Object Selected).Count -gt 0) })
         $agree.Add_Unchecked({ $go.IsEnabled=$false })
         if ($SmokeTest) {
@@ -1190,6 +1272,8 @@ try {
     $uninstallTimer.Add_Tick({
         $message=''
         while ([OneInstallUninstall]::Progress.TryDequeue([ref]$message)) { Set-UiValue ($ui.UninstallStatus) 'Text' $($message); Add-UninstallLog $message }
+        $stage=$null
+        while ([OneInstallUninstall]::Stages.TryDequeue([ref]$stage)) { Set-UninstallStage $stage.Id $stage.Outcome }
         while ([OneInstallUninstall]::VerifiedRemovals.TryDequeue([ref]$message)) { [OneInstall.Motion]::Result($ui.UninstallSelectedCount,$true) }
         if (-not $script:uninstallTask -or -not $script:uninstallTask.IsCompleted) { return }
         $uninstallTimer.Stop()
@@ -1201,6 +1285,11 @@ try {
             if ($task.IsFaulted) { throw $task.Exception.GetBaseException().Message }
             $result=$task.Result
             if ($operation -eq 'Inventory') {
+                $selectedIds=@(@($script:installedApps)+@($script:uninstallQueue) | Where-Object Selected | ForEach-Object Id)
+                foreach ($app in $result.Apps) {
+                    $app.Selected=$app.Id -in $selectedIds
+                    if ($script:uninstallStates[$app.Id] -eq 'Success') { Set-UninstallStage $app.Id 'Manual action required' }
+                }
                 $script:installedApps=@($result.Apps)
                 foreach ($message in $result.Warnings) { Add-UninstallLog $message }
                 Set-UiValue ($ui.UninstallStatus) 'Text' $(if ($script:uninstallOutcome) { $script:uninstallOutcome } else { $installedApps.Count.ToString()+' installed apps · '+$result.Warnings.Count+' scan warnings. Review details in Removal activity.' })
@@ -1212,18 +1301,25 @@ try {
                 }
                 if ($operation -eq 'Remove') {
                     foreach ($item in $result.Results) {
+                        Set-UninstallStage $item.Id $item.Outcome
                         [OneInstallPackages]::Record('Remove',$item.Id,'Windows registration',$item.Name,$item.Outcome,$item.Message,$item.ExitCode,$logPath) | Out-Null
                     }
                     Refresh-LibraryInventory
                     $script:uninstallTargets=@([OneInstallUninstall]::LoadHistory())
                     Start-LeftoverScan
                 } elseif ($operation -eq 'Scan') {
+                    foreach ($item in $result.Results) { Set-UninstallStage $item.Id $item.Outcome; [OneInstallPackages]::Record('Remove',$item.Id,'Windows registration',$item.Name,$item.Outcome,$item.Message,$item.ExitCode,$logPath) | Out-Null }
+                    if ($result.ScannedApps -gt 0) { Refresh-LibraryInventory }
                     $items=@($result.Leftovers)
                     $diskCount=@($items | Where-Object Kind -eq 'Folder').Count
                     $registryCount=@($items | Where-Object Kind -eq 'Registry').Count
-                    $script:uninstallOutcome=if ($items.Count -gt 0) { $items.Count.ToString()+" verified cleanup candidates ($diskCount disk / $registryCount registry). Review paths before removal." } else { 'No cleanup candidates offered (0 disk / 0 registry). Removal or ownership may be unverified; see Removal activity for reasons.' }
+                    $bytes=0L; foreach ($entry in $items) { $bytes+=$entry.Bytes }
+                    $size=[OneInstallUninstall]::FormatBytes($bytes)
+                    $script:uninstallOutcome=if ($items.Count -gt 0) { "$diskCount disk · $registryCount registry · $size" } elseif ($result.ScannedApps -gt 0) { 'No leftovers found in the checked locations.' } else { 'No verified removals to check. See Removal activity.' }
+                    if ($result.IncompleteChecks -gt 0) { $script:uninstallOutcome+="`n"+$result.IncompleteChecks.ToString()+' checks incomplete. See Removal activity.' }
                     Set-UiValue ($ui.UninstallStatus) 'Text' $($script:uninstallOutcome)
                     Add-UninstallLog $script:uninstallOutcome
+                    if ($items.Count -gt 0) { Show-CleanupSummary 'Review what was found' $script:uninstallOutcome }
                     if ($items.Count -gt 0 -and (Show-RemovalReview $items $true)) {
                         $chosen=[LeftoverItem[]]@($items | Where-Object Selected)
                         if ($chosen.Count -gt 0) { Set-UninstallTask ([OneInstallUninstall]::CleanAsync($chosen)) 'Clean' }
@@ -1231,12 +1327,22 @@ try {
                     if (-not $script:uninstallTask) { Refresh-InstalledApps }
                 } elseif ($operation -eq 'Clean') {
                     Add-UninstallLog ('Backups and item record: '+$result.BackupFolder)
-                    $script:uninstallOutcome='Cleanup finished. Review item results in Removal activity. Registry backups are available in Open backups.'
+                    $recycled=@($result.Results | Where-Object { $_.Outcome -eq 'Success' -and $_.Kind -eq 'Folder' }).Count
+                    $removed=@($result.Results | Where-Object { $_.Outcome -eq 'Success' -and $_.Kind -eq 'Registry' }).Count
+                    $failed=@($result.Results | Where-Object Outcome -ne 'Success').Count
+                    $script:uninstallOutcome="$recycled recycled · $removed registry removed · $failed not completed · "+[OneInstallUninstall]::FormatBytes($result.RecycledBytes)
+                    Show-CleanupSummary $(if ($failed -eq 0) { 'Cleanup complete' } else { 'Cleanup needs attention' }) 'Recycled files remain recoverable. Registry backups are in Open backups.'
+                    if ($recycled+$removed -gt 0 -and $failed -eq 0) { [OneInstall.Motion]::Result($script:cleanupHeading,$true) }
                     Set-UiValue ($ui.UninstallStatus) 'Text' $($script:uninstallOutcome)
                     Refresh-InstalledApps
                 }
             }
-        } catch { Add-UninstallLog $_.Exception.Message; Set-UiValue ($ui.UninstallStatus) 'Text' $('Could not complete this step. Review Removal activity and try again.') }
+        } catch {
+            if ($operation -eq 'Remove') {
+                foreach ($app in $script:uninstallQueue) { if ($script:uninstallStates[$app.Id] -in @('Queued','Preparing…','Removing…','Verifying…')) { Set-UninstallStage $app.Id 'Unknown' } }
+            }
+            Add-UninstallLog $_.Exception.Message; Set-UiValue ($ui.UninstallStatus) 'Text' $('Could not complete this step. Review Removal activity and try again.')
+        }
         Update-UninstallSelection
     })
     $ui.InstallMode.Add_Click({ Set-AppMode 'Install' })
@@ -1250,9 +1356,11 @@ try {
     }
     $removalSelectionMotion=[Windows.RoutedEventHandler]{
         param($sender,$e)
-        Update-UninstallSelection
+        if ($script:uninstallTask) { return }
         $check=$e.OriginalSource
         if ($check -is [Windows.Controls.CheckBox] -and $check.DataContext -is [InstalledApp] -and -not $script:syncingUninstallSelection) {
+            foreach ($entry in $script:uninstallQueue) { if ($entry.Id -eq $check.DataContext.Id) { $entry.Selected=[bool]$check.IsChecked } }
+            Update-UninstallSelection
             if ($check.IsChecked) { [OneInstall.Motion]::Fly($check,$ui.UninstallSelectedCount,$check.DataContext.Name) }
             else { [OneInstall.Motion]::Fly($ui.UninstallSelectedCount,$check,$check.DataContext.Name) }
             [OneInstall.Motion]::Pop($ui.UninstallSelectedCount)
@@ -1263,14 +1371,14 @@ try {
     $ui.ClearUninstallSelection.Add_Click({
         if ($script:uninstallTask) { return }
         $script:syncingUninstallSelection=$true
-        try { foreach ($app in $script:installedApps) { if ($app.Selected) { $app.Selected=$false } } }
+        try { foreach ($app in @($script:installedApps)+@($script:uninstallQueue)) { if ($app.Selected) { $app.Selected=$false } }; $script:uninstallQueue=@(); $script:uninstallStates.Clear(); $script:uninstallProgressPanel.Visibility='Collapsed' }
         finally { $script:syncingUninstallSelection=$false }
         Update-UninstallSelection
     })
     $ui.ReviewUninstall.Add_Click({
         if ($script:uninstallTask -or $SmokeTest) { return }
-        $plan=[InstalledApp[]]@($script:installedApps | Where-Object { $_.Selected -and $_.CanRemove })
-        if ($plan.Count -gt 0 -and (Show-RemovalReview $plan)) { $script:uninstallOutcome=''; Set-UninstallTask ([OneInstallUninstall]::RemoveAsync($plan)) 'Remove' }
+        $plan=[InstalledApp[]]@($script:installedApps | Where-Object { $_.Selected -and $_.CanRemove -and $script:uninstallStates[$_.Id] -ne 'Success' })
+        if ($plan.Count -gt 0 -and (Show-RemovalReview $plan)) { Start-UninstallQueue $plan }
     })
     $ui.StopUninstall.Add_Click({ [OneInstallUninstall]::StopRequested=$true; $ui.StopUninstall.IsEnabled=$false; Set-UiValue ($ui.UninstallStatus) 'Text' $('Waiting for the current uninstaller. The next app will be kept.') })
     $ui.CheckLeftovers.Add_Click({
@@ -1731,7 +1839,7 @@ try {
                 $scanResult=New-Object RemovalResult; $scanResult.Leftovers.Add($leftover); $scanResult.Leftovers.Add($registryLeftover)
                 $script:scanCompletion.SetResult($scanResult)
                 for ($i=0;$i -lt 8 -and $script:uninstallTask;$i++) { Wait-WindowMessages }
-                if ($script:uninstallTask -or $ui.UninstallStatus.Text -notlike '2 verified cleanup candidates (1 disk / 1 registry)*') { throw 'Mixed disk/registry scan did not open review or started cleanup without consent.' }
+                if ($script:uninstallTask -or $ui.UninstallStatus.Text -notlike '1 disk · 1 registry*') { throw 'Mixed disk/registry scan did not open review or started cleanup without consent.' }
                 $refreshed=New-Object 'System.Threading.Tasks.TaskCompletionSource[AppInventory]'
                 Set-UninstallTask $refreshed.Task 'Inventory'; $refreshed.SetResult($inventoryFixture)
                 Wait-WindowMessages; Wait-WindowMessages; Wait-WindowMessages

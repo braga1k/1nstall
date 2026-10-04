@@ -67,7 +67,7 @@ if (Get-Command git -ErrorAction SilentlyContinue) {
     } catch { } # Git is optional for source-ZIP builds; unavailable provenance remains null.
 }
 $metadata=[ordered]@{
-    Product='1nstall'; Version='3.4.0'; BuiltAtUtc=[DateTime]::UtcNow.ToString('o');
+    Product='1nstall'; Version='3.5.0'; BuiltAtUtc=[DateTime]::UtcNow.ToString('o');
     UpstreamBase='d158884bb63bc0b11de5de84ee15189e3b334d22'; SourceCommit=$commit; SourceDirty=$sourceDirty;
     Windows=[Environment]::OSVersion.Version.ToString(); PowerShell=$PSVersionTable.PSVersion.ToString();
     Compiler=$compiler; CompilerSHA256=(Get-FileHash $compiler -Algorithm SHA256).Hash.ToLowerInvariant();

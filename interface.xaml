@@ -164,11 +164,19 @@
    <Setter Property="BorderThickness" Value="0"/><Setter Property="Padding" Value="0"/>
    <Setter Property="ToolTipService.ShowDuration" Value="3000"/>
    <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button">
-    <Border x:Name="Surface" Background="{TemplateBinding Background}"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+    <Grid>
+     <Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="Transparent" BorderThickness="1" CornerRadius="9"/>
+     <Grid x:Name="Highlights" IsHitTestVisible="False" Visibility="Collapsed" Opacity="{DynamicResource GlassHighlightsOpacity}">
+      <Border CornerRadius="8" Margin="1" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource BevelBrush}"/>
+      <Border x:Name="HoverLight" CornerRadius="9"><Border.Background><RadialGradientBrush Center="0.3,0" GradientOrigin="0.3,0" RadiusX="0.8" RadiusY="1.4"><GradientStop Color="{DynamicResource ButtonLightColor}" Offset="0"/><GradientStop Color="#00FFFFFF" Offset="1"/></RadialGradientBrush></Border.Background></Border>
+     </Grid>
+     <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" IsHitTestVisible="False"/>
+    </Grid>
     <ControlTemplate.Triggers>
-     <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Background" Value="{DynamicResource AccentSurfaceBrush}"/><Setter Property="Foreground" Value="{DynamicResource AccentTextBrush}"/></Trigger>
-     <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="Surface" Property="Background" Value="{DynamicResource AccentSurfaceBrush}"/><Setter Property="Foreground" Value="{DynamicResource AccentTextBrush}"/></Trigger>
-     <Trigger Property="IsPressed" Value="True"><Setter TargetName="Surface" Property="Background" Value="{DynamicResource AccentMutedBrush}"/></Trigger>
+     <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Background" Value="{DynamicResource GlassControlFill}"/><Setter TargetName="Surface" Property="BorderBrush" Value="{DynamicResource HoverEdgeBrush}"/><Setter TargetName="Highlights" Property="Visibility" Value="Visible"/><Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/></Trigger>
+     <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="Surface" Property="Background" Value="{DynamicResource GlassControlFill}"/><Setter TargetName="Surface" Property="BorderBrush" Value="{DynamicResource FocusBrush}"/><Setter TargetName="Highlights" Property="Visibility" Value="Visible"/><Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/></Trigger>
+     <Trigger Property="IsPressed" Value="True"><Setter TargetName="Surface" Property="BorderThickness" Value="2"/></Trigger>
+     <Trigger Property="IsEnabled" Value="False"><Setter Property="Opacity" Value="0.45"/></Trigger>
     </ControlTemplate.Triggers>
    </ControlTemplate></Setter.Value></Setter>
   </Style>

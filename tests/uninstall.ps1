@@ -10,7 +10,7 @@ function Wait-Check($Task) {
     return $Task.Result
 }
 $inventory=Wait-Check ([OneInstallUninstall]::InventoryAsync())
-if ($inventory.Apps.Count -eq 0 -or @($inventory.Apps | Where-Object { -not $_.Name -or -not $_.Id }).Count -gt 0) { throw 'Installed inventory is empty or invalid.' }
+if (@($inventory.Apps | Where-Object { -not $_.Name -or -not $_.Id }).Count -gt 0) { throw 'Installed inventory is invalid.' }
 Write-Output ('Inventory: {0} desktop, {1} Store, {2} warnings.' -f @($inventory.Apps | Where-Object Kind -eq 'Desktop').Count,@($inventory.Apps | Where-Object Kind -eq 'Microsoft Store').Count,$inventory.Warnings.Count)
 foreach ($warning in $inventory.Warnings) { Write-Output $warning }
 $name='1nstallFixture_'+[Guid]::NewGuid().ToString('N')
@@ -34,7 +34,7 @@ New-Item -ItemType Directory -Path $dataFolder -Force | Out-Null
 [IO.File]::WriteAllText((Join-Path $dataFolder 'settings.ini'),'Disposable nested product fixture.')
 New-Item -Path ('HKCU:\'+$nestedKey) -Force | Out-Null
 New-ItemProperty -Path ('HKCU:\'+$nestedKey) -Name Fixture -Value 'nested-backup' -Force | Out-Null
-$trace=[Microsoft.Win32.Registry]::CurrentUser.OpenSubKey($traceKey,$true)
+$trace=[Microsoft.Win32.Registry]::CurrentUser.CreateSubKey($traceKey)
 $sentinel=Join-Path ($folder+'Sibling') 'application.exe'
 if ($trace) { $trace.SetValue($traceValue,42); $trace.SetValue($sentinel,7) }
 try {
@@ -46,22 +46,50 @@ try {
     $app.RemovalVerified=$true; $app.OwnershipVerified=$true
     $scan=Wait-Check ([OneInstallUninstall]::ScanAsync([InstalledApp[]]@($app)))
     $items=[LeftoverItem[]]@($scan.Leftovers | Where-Object { $_.Path -eq $folder -or ($_.Path -eq $key -and -not $_.Machine) })
-    if ($items.Count -ne 1) { throw ('Fixture scan missed the owned folder or accepted a name-only key: '+($scan.Messages -join ', ')) }
+    if ($items.Count -ne 2) { throw ('Fixture scan missed install folder or product key: '+($scan.Messages -join ', ')) }
     $nested=[LeftoverItem[]]@($scan.Leftovers | Where-Object { $_.Path -eq $dataFolder -or ($_.Path -eq $nestedKey -and -not $_.Machine) })
-    if ($nested.Count -ne 0) { throw 'Name-only AppData/product-key ownership was accepted.' }
+    if ($nested.Count -ne 2 -or @($nested | Where-Object Confidence -ne 'Name match').Count -gt 0) { throw 'Nested data/key candidates are missing or name matches are misrepresented.' }
+    if (@($scan.Leftovers | Where-Object Selected).Count -gt 0) { throw 'Scanner preselected personal data.' }
+    $linked=@($items | Where-Object Kind -eq 'Folder')[0]
+    if ($linked.Confidence -ne 'Linked path' -or $linked.Bytes -le 0 -or $linked.Files -ne 1) { throw 'Linked path evidence or real disk measurements missing.' }
+    # Identity-only removal (no InstallLocation) must still find product data and keys.
+    $app.OwnershipVerified=$false; $app.IdentityVerified=$true
+    $noLocation=$app.Location; $app.Location=''
+    $named=Wait-Check ([OneInstallUninstall]::ScanAsync([InstalledApp[]]@($app)))
+    if (@($named.Leftovers | Where-Object Path -eq $dataFolder).Count -ne 1) { throw 'Missing InstallLocation suppressed AppData discovery.' }
+    $app.Location=$noLocation; $app.OwnershipVerified=$true
+    $items=[LeftoverItem[]]@($items+$nested)
     if ($trace) {
         $traceItems=[LeftoverItem[]]@($scan.Leftovers | Where-Object { $_.Path -eq $traceKey -and $_.ValueName -eq $traceValue -and -not $_.Machine })
         if ($traceItems.Count -ne 1 -or [OneInstallUninstall]::SafeRegistryValue($traceKey,$sentinel,$app,[InstalledApp[]]@())) { throw 'Exact registry-value path boundary failed.' }
         if ([OneInstallUninstall]::SafeRegistryValue($traceKey,$traceValue,$app,[InstalledApp[]]@($app))) { throw 'Registered/shared product trace was accepted.' }
         $items=[LeftoverItem[]]@($items+$traceItems)
     }
+    # Reinstallation between review and cleanup must invalidate the whole selection.
+    $arpFixture='HKCU:\'+$app.RegistryPath
+    New-Item -Path $arpFixture -Force | Out-Null
+    try {
+        $blocked=Wait-Check ([OneInstallUninstall]::CleanAsync($items))
+        if (@($blocked.Results | Where-Object Outcome -eq 'Success').Count -gt 0 -or -not (Test-Path -LiteralPath $folder)) { throw 'Re-registered app data was removed after review.' }
+    } finally { Remove-Item -LiteralPath $arpFixture -Force }
+    # A publisher child can finish after its original process exits. The next scan
+    # must verify the captured registration again instead of remaining blocked forever.
+    $app.RemovalVerified=$false
+    $completed=Wait-Check ([OneInstallUninstall]::ScanAsync([InstalledApp[]]@($app)))
+    if (-not $app.RemovalVerified -or $completed.ScannedApps -ne 1) { throw 'Delayed publisher completion was not reverified.' }
     $cleanup=Wait-Check ([OneInstallUninstall]::CleanAsync($items))
     $backupFolder=$cleanup.BackupFolder
-    if ((Test-Path -LiteralPath $folder) -or -not (Test-Path -LiteralPath $registryFixture) -or -not (Test-Path -LiteralPath $dataFolder)) { throw ('Fixture cleanup removed uncertain data or failed: '+($cleanup.Messages -join ', ')) }
+    if ((Test-Path -LiteralPath $folder) -or (Test-Path -LiteralPath $registryFixture) -or (Test-Path -LiteralPath $dataFolder) -or (Test-Path -LiteralPath ('HKCU:\'+$nestedKey))) { throw ('Reviewed cleanup failed: '+($cleanup.Messages -join ', ')) }
+    if ($cleanup.RecycledBytes -le 0 -or @($cleanup.Results | Where-Object Outcome -ne 'Success').Count -gt 0) { throw 'Actual cleanup result accounting failed.' }
     $exports=@(Get-ChildItem -LiteralPath $backupFolder -Filter *.reg)
-    if ($exports.Count -ne $(if ($trace) { 1 } else { 0 })) { throw 'Registry trace export missing or name-only key touched.' }
+    if ($exports.Count -ne 3) { throw 'Registry exports are missing.' }
     if ($trace -and ($trace.GetValue($traceValue) -ne $null -or $trace.GetValue($sentinel) -ne 7)) { throw 'Value cleanup did not preserve the shared key and sibling value.' }
     if ($trace -and -not (Test-Path -LiteralPath (Join-Path $backupFolder 'RESTORE.txt'))) { throw 'Registry restore/view instructions are missing.' }
+    foreach ($export in $exports) {
+        $restore=Start-Process -FilePath reg.exe -ArgumentList ('import "'+$export.FullName+'" /reg:64') -WindowStyle Hidden -Wait -PassThru
+        if ($restore.ExitCode -ne 0) { throw 'Registry restore failed.' }
+    }
+    if ((Get-ItemPropertyValue -LiteralPath $registryFixture -Name Fixture) -ne 'backup-me' -or (Get-ItemPropertyValue -LiteralPath ('HKCU:\'+$nestedKey) -Name Fixture) -ne 'nested-backup') { throw 'Restored registry contents differ.' }
     # Recycle Bin must contain this exact fixture; no permanent deletion fallback.
     $shell=New-Object -ComObject Shell.Application
     $recycled=@($shell.Namespace(10).Items() | Where-Object { $_.Name -eq $name })
@@ -70,7 +98,7 @@ try {
     $shell.Namespace($fixtureRoot).MoveHere($recycled[0],20)
     for ($i=0;$i -lt 20 -and -not (Test-Path -LiteralPath $folder);$i++) { Start-Sleep -Milliseconds 100 }
     if (-not (Test-Path -LiteralPath (Join-Path $folder 'fixture.txt'))) { throw 'Recycle Bin restore failed.' }
-    Write-Output 'PASS: native inventory, protected/shared locations, withheld name-only ownership, exact path trace cleanup preserving siblings, registry backups and Recycle Bin round trip. Simulated removal evidence for disposable fixtures; no publisher app removed.'
+    Write-Output 'PASS: native inventory, linked paths, named AppData/product-key candidates, missing InstallLocation, real sizes, reviewed cleanup, trace siblings preserved, registry backup/restore and Recycle Bin round trip. Disposable fixtures; no publisher app removed.'
 } finally {
     # Verify resolved targets are inside the explicitly created fixture and backup roots before removal.
     $resolved=[IO.Path]::GetFullPath($fixtureRoot)

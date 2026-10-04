@@ -1,5 +1,15 @@
 # Changelog
 
+## 3.5.0 - 2026-10-04
+
+- Keep Uninstall selections visible as a queue through publisher dialogs, verification, leftover review and inventory refresh, with per-app phases and processed-app progress.
+- Wait for observed publisher child processes before verifying removal or starting the next app; preserve stop-after-current behavior and manual/restart outcomes.
+- Expand bounded leftover discovery across product folders, AppData, ProgramData and product registry keys, with linked-path/name-match evidence and measured file counts and sizes.
+- Add a themed leftover review with separate disk/registry totals, explicit selection and consent, registry backups and folder recycling. Keep the cleanup result visible and celebrate complete success with the whole-window glow.
+- Recheck captured removal identities and protect reinstalled/shared apps; distinguish incomplete scans from an empty result. Exclude hidden sparse Store shell-integration packages from the installed-app list.
+- Give minimize, maximize/restore, close and dialog dismiss buttons the same rounded glass, reflections and pointer light as the rest of the app.
+- Expand all 51 locale packs to 239 interface strings and add queue, process-completion and cleanup UI regression checks.
+
 ## 3.4.0 - 2026-10-04
 
 - Add coordinated entrances, hover/press feedback, selection motion and a whole-window glow after verified installation/removal success, respecting Windows motion preferences.

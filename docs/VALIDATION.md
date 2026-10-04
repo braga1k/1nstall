@@ -1,4 +1,14 @@
-# 3.4.0 validation — 2026-10-04
+# 3.5.0 validation — 2026-10-04
+
+The owner authorized this release on 2026-10-04. Local packaged self-test, smoke and manager suites pass, together with catalog checks, 56 reliability checks and 51 locale packs containing 239 strings each.
+
+Native Windows Sandbox checks cover actual 7-Zip and Notepad++ EXE removals, product registry keys, retained AppData, delayed publisher-child completion, registry backup/restore, recycling/restore, and re-registration protection. The final queue/glass development executable retained the checked selection through the real 7-Zip child dialog and kept its Success row through leftover review and empty-inventory refresh. Detailed cases and limits are in [UNINSTALL.md](UNINSTALL.md).
+
+The cleanup WPF suite checks 51 locales, 560 × 520 action bounds, linked-path selection with separate consent, scroll endpoints, four appearances, disk-only/registry-only cases and complete versus partial results. The queue WPF suite covers stable rows, phase/progress updates, inventory refresh, manual/reverified results, retry, clearing, task faults and the minimum window. Native process fixtures cover launcher/child/grandchild lifetime, cancellation, sequential execution and live selection versus persisted history. These tests do not install or remove personal host applications.
+
+Current English renders are in `images/3.5/`, including a fictional Uninstall queue. Native translation proofreading, broader MSI/Store/elevation/restart coverage and the Explorer foreground check remain pending. The previous baseline and its measurement limits follow below.
+
+# Published 3.4.0 validation — 2026-10-04
 
 The owner authorized publication of the current implementation on 2026-10-04. Publication does not extend the coverage below. UI checks use fictional applications and do not install or remove personal software.
 
@@ -30,7 +40,7 @@ The final development build measured first-frame samples of 1217, 1138 and 1120 
 
 Windows CI runs catalog and locale checks, headless reliability, the build and packaged self-test from the release commit. Packaging requires a clean source build, verifies every archived build-input hash and generates asset checksums. Publication verifies uploaded names and SHA-256 digests before making the release stable. CI logs and BUILD-INFO.json accompany the release.
 
-Current English UI renders are in `images/3.4/`. Uninstall examples are fictional. Earlier evidence under `images/3.2/`, `images/3.3/` and `validation/3.2/` belongs to those releases. Historical 3.3 screenshots were recaptured in English using that release's own source and assemblies.
+The 3.4 English UI renders are in `images/3.4/`. Uninstall examples are fictional. Earlier evidence under `images/3.2/`, `images/3.3/` and `validation/3.2/` belongs to those releases. Historical 3.3 screenshots were recaptured in English using that release's own source and assemblies.
 
 Public GitHub screenshots always use English. Run `tests/screenshots.ps1 -PreviewDirectory <folder>` and review the images. For an older release, pass its source with `-SourceDirectory` and use matching compiled assemblies. Language-specific captures remain local test evidence.
 

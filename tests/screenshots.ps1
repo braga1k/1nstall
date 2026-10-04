@@ -1,4 +1,4 @@
-# Public GitHub screenshots always use English, regardless of the host's language.
+﻿# Public GitHub screenshots always use English, regardless of the host's language.
 # SourceDirectory can point to an extracted release so documentation matches that release.
 param([string]$SourceDirectory='', [Parameter(Mandatory=$true)][string]$PreviewDirectory)
 $ErrorActionPreference='Stop'
@@ -42,6 +42,17 @@ $probe={
             Set-AppMode 'Uninstall'; Update-InstalledFilter; Update-UninstallSelection
             Set-UiValue $ui.UninstallStatus 'Text' 'Preview with fictional apps - no installed application has been removed.'
             Capture 'uninstall-dark'
+            # Show the real queue UI using only fictional state; never start a removal.
+            $script:uninstallQueue=@($script:installedApps | Where-Object Selected)
+            foreach ($app in $script:uninstallQueue) { $script:uninstallStates[$app.Id]='Queued' }
+            $script:uninstallProgressPanel.Visibility='Visible'; Update-UninstallSelection
+            Set-UninstallStage $script:uninstallQueue[0].Id 'Success'
+            Set-UninstallStage $script:uninstallQueue[1].Id 'Removing…'
+            foreach ($name in @('RefreshInstalled','InstalledList','UninstallQueuePanel','InstallMode','ReviewUninstall','CheckLeftovers','ClearUninstallSelection')) { $ui[$name].IsEnabled=$false }
+            $ui.StopUninstall.Visibility='Visible'
+            Paint
+            if ($script:uninstallProgress.Value -ne 50) { throw 'Fictional queue must show one completed app out of two.' }
+            Capture 'uninstall-queue-dark'
         } finally { $window.Close() }
     })
 }

@@ -34,12 +34,13 @@ public sealed class InstalledApp : INotifyPropertyChanged
     public bool Msi { get; set; }
     public bool RemovalVerified { get; set; }
     public bool OwnershipVerified { get; set; }
+    public bool IdentityVerified { get; set; }
     public long RestartRequestedAt { get; set; }
     public bool CanRemove { get; set; }
     public long SizeKB { get; set; }
     public string Detail { get { return (Publisher ?? "Unknown publisher") + "  ·  " + Version + "  ·  " + Kind + (SizeKB > 0 ? "  ·  " + (SizeKB / 1024.0).ToString("0.#") + " MB" : ""); } }
     bool selected;
-    public bool Selected { get { return selected; } set { selected = value; if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("Selected")); } }
+    [ScriptIgnore] public bool Selected { get { return selected; } set { selected = value; if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("Selected")); } }
     public event PropertyChangedEventHandler PropertyChanged;
 }
 public sealed class LeftoverItem
@@ -54,6 +55,9 @@ public sealed class LeftoverItem
     public bool Machine { get; set; }
     public bool View32 { get; set; }
     public bool Selected { get; set; }
+    public string Confidence { get; set; }
+    public long Bytes { get; set; }
+    public int Files { get; set; }
     public string Detail { get { return Reason + "  ·  " + Path + (ValueName == null ? "" : "  →  " + (DisplayValueName ?? ValueName)); } }
 }
 public sealed class AppInventory
@@ -66,6 +70,9 @@ public sealed class RemovalResult
     public List<LeftoverItem> Leftovers = new List<LeftoverItem>();
     public List<string> Messages = new List<string>();
     public string BackupFolder;
+    public int ScannedApps;
+    public int IncompleteChecks;
+    public long RecycledBytes;
     public List<RemovalOutcome> Results = new List<RemovalOutcome>();
 }
 public sealed class RemovalOutcome
@@ -75,6 +82,8 @@ public sealed class RemovalOutcome
     public string Outcome;
     public string Message;
     public int ExitCode;
+    public string Kind;
+    public string Path;
 }
 public static class OneInstallUninstall
 {
@@ -83,6 +92,7 @@ public static class OneInstallUninstall
     static readonly string RegExe = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), "reg.exe");
     public static readonly ConcurrentQueue<string> Progress = new ConcurrentQueue<string>();
     public static readonly ConcurrentQueue<string> VerifiedRemovals = new ConcurrentQueue<string>();
+    public static readonly ConcurrentQueue<RemovalOutcome> Stages = new ConcurrentQueue<RemovalOutcome>();
     public static volatile bool StopRequested;
     public static string HistoryFile { get { return System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"1nstall\uninstall-history.json"); } }
     static JavaScriptSerializer Json() { return new JavaScriptSerializer { MaxJsonLength = 4194304 }; }
@@ -141,6 +151,14 @@ public static class OneInstallUninstall
                             var app = new InstalledApp { Id = (machine ? "HKLM" : "HKCU") + (view32 ? "32:" : "64:") + child, RegistryPath = Arp + "\\" + child,
                                 Name = Text(key, "DisplayName"), Publisher = Text(key, "Publisher"), Version = Text(key, "DisplayVersion"), Kind = "Desktop",
                                 Location = Text(key, "InstallLocation"), Command = Text(key, "UninstallString"), Machine = machine, View32 = view32, Msi = Flag(key, "WindowsInstaller"), SizeKB = size };
+                            if (String.IsNullOrWhiteSpace(app.Location))
+                            {
+                                // ARP often omits InstallLocation. Recover path evidence from the icon
+                                // or publisher uninstaller; protected roots are still excluded at scan time.
+                                string icon = Regex.Replace(Text(key, "DisplayIcon").Trim(), @",\s*-?\d+$", "").Trim('"');
+                                try { if (File.Exists(icon)) app.Location = System.IO.Path.GetDirectoryName(Full(icon)); } catch { }
+                                try { if (String.IsNullOrWhiteSpace(app.Location) && !app.Msi) app.Location = System.IO.Path.GetDirectoryName(GetCommand(app).FileName); } catch { }
+                            }
                             try { GetCommand(app); app.CanRemove = true; } catch { app.CanRemove = false; }
                             apps.Add(app);
                         }
@@ -157,10 +175,13 @@ public static class OneInstallUninstall
         var result = new AppInventory(); result.Apps = Desktop(result, false);
         try
         {
-            string data = RunPowerShell("ConvertTo-Json -Compress -InputObject @(Get-AppxPackage | Where-Object { -not $_.IsFramework -and -not $_.IsResourcePackage -and -not $_.NonRemovable } | ForEach-Object { $label=''; try { $manifest=Get-AppxPackageManifest $_; $label=[string]$manifest.Package.Properties.DisplayName } catch {}; [pscustomobject]@{Name=$label; Identity=$_.Name; Id=$_.PackageFullName; Family=$_.PackageFamilyName; Publisher=$_.Publisher; Version=[string]$_.Version} })", 60000);
+            string data = RunPowerShell("ConvertTo-Json -Compress -InputObject @(Get-AppxPackage | Where-Object { -not $_.IsFramework -and -not $_.IsResourcePackage -and -not $_.NonRemovable } | ForEach-Object { $label=''; $shell=$false; try { $manifest=Get-AppxPackageManifest $_; $label=[string]$manifest.Package.Properties.DisplayName; $shell=([string]$manifest.Package.Properties.AllowExternalContent -eq 'true' -and @($manifest.Package.Applications.Application | Where-Object { $_.VisualElements.AppListEntry -ne 'none' }).Count -eq 0) } catch {}; [pscustomobject]@{Name=$label; Identity=$_.Name; Id=$_.PackageFullName; Family=$_.PackageFamilyName; Publisher=$_.Publisher; Version=[string]$_.Version; ShellComponent=$shell} })", 60000);
             var rows = Json().Deserialize<List<Dictionary<string, object>>>(data);
             foreach (var row in rows ?? new List<Dictionary<string, object>>())
             {
+                // Sparse packages with no app-list entry can provide desktop shell integration
+                // (for example Notepad++). Removing that package alone does not remove the app.
+                if (row.ContainsKey("ShellComponent") && Convert.ToBoolean(row["ShellComponent"])) continue;
                 string id = Convert.ToString(row["Id"]), family = Convert.ToString(row["Family"]);
                 if (!Regex.IsMatch(id, @"^[A-Za-z0-9._-]+$") || !Regex.IsMatch(family, @"^[A-Za-z0-9._-]+$")) continue;
                 string publisher = Convert.ToString(row["Publisher"]); var cn = Regex.Match(publisher, @"(?:^|,\s*)CN=([^,]+)");
@@ -180,7 +201,7 @@ public static class OneInstallUninstall
     static void Remember(IEnumerable<InstalledApp> apps)
     {
         var history = LoadHistory();
-        foreach (var app in apps) { history.RemoveAll(a => a.Id == app.Id); app.Selected = false; history.Add(app); }
+        foreach (var app in apps) { history.RemoveAll(a => a.Id == app.Id); history.Add(app); }
         Directory.CreateDirectory(System.IO.Path.GetDirectoryName(HistoryFile));
         File.WriteAllText(HistoryFile, Json().Serialize(history.Skip(Math.Max(0, history.Count - 100)).ToList()));
     }
@@ -231,6 +252,71 @@ public static class OneInstallUninstall
         using (var hive = RegistryKey.OpenBaseKey(app.Machine ? RegistryHive.LocalMachine : RegistryHive.CurrentUser, app.View32 ? RegistryView.Registry32 : RegistryView.Registry64))
         using (var key = hive.OpenSubKey(app.RegistryPath)) return key != null;
     }
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+    struct ProcessEntry
+    {
+        public uint Size, Usage, Id; public UIntPtr Heap; public uint Module, Threads, Parent;
+        public int Priority; public uint Flags;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)] public string Exe;
+    }
+    [DllImport("kernel32.dll", SetLastError = true)] static extern IntPtr CreateToolhelp32Snapshot(uint flags, uint id);
+    [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)] static extern bool Process32FirstW(IntPtr snapshot, ref ProcessEntry entry);
+    [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)] static extern bool Process32NextW(IntPtr snapshot, ref ProcessEntry entry);
+    [DllImport("kernel32.dll")] static extern bool CloseHandle(IntPtr handle);
+    // Publisher launchers (including NSIS) can exit before their actual uninstaller.
+    // Observe only descendants born during this launch; never kill publisher processes.
+    public static void WaitForUninstaller(Process root, DateTime launchedAt)
+    {
+        var tracked = new Dictionary<int, Process>(); tracked.Add(root.Id, root);
+        var parents = new Dictionary<int, DateTime>(); parents.Add(root.Id, launchedAt);
+        try
+        {
+            while (true)
+            {
+                var snapshot = CreateToolhelp32Snapshot(2, 0);
+                if (snapshot == new IntPtr(-1)) throw new Win32Exception(Marshal.GetLastWin32Error(), "Cannot track the publisher uninstaller; verify removal manually.");
+                var entries = new List<ProcessEntry>();
+                try
+                {
+                    var entry = new ProcessEntry { Size = (uint)Marshal.SizeOf(typeof(ProcessEntry)) };
+                    if (!Process32FirstW(snapshot, ref entry)) throw new Win32Exception(Marshal.GetLastWin32Error());
+                    do { entries.Add(entry); } while (Process32NextW(snapshot, ref entry));
+                }
+                finally { CloseHandle(snapshot); }
+                bool added;
+                do
+                {
+                    added = false;
+                    foreach (var entry in entries)
+                    {
+                        if (parents.ContainsKey((int)entry.Id) || !parents.ContainsKey((int)entry.Parent)) continue;
+                        Process child = null;
+                        try
+                        {
+                            child = Process.GetProcessById((int)entry.Id);
+                            DateTime born = child.StartTime.ToUniversalTime();
+                            if (born < parents[(int)entry.Parent]) continue;
+                            var parent = tracked[(int)entry.Parent];
+                            if (parent.HasExited && born > parent.ExitTime.ToUniversalTime()) continue;
+                            // Open and retain a handle now, so PID reuse cannot change the process we await.
+                            IntPtr handle = child.Handle;
+                            parents.Add(child.Id, born); tracked.Add(child.Id, child); child = null; added = true;
+                        }
+                        catch (ArgumentException) { } // Already gone between snapshot and handle acquisition.
+                        catch (InvalidOperationException) { }
+                        finally { if (child != null) child.Dispose(); }
+                    }
+                } while (added);
+                if (tracked.Values.All(p => p.HasExited)) return;
+                Thread.Sleep(100);
+            }
+        }
+        finally { foreach (var child in tracked.Values) if (!Object.ReferenceEquals(child, root)) child.Dispose(); }
+    }
+    static void Stage(InstalledApp app, string state)
+    {
+        Stages.Enqueue(new RemovalOutcome { Id = app.Id, Name = app.Name, Outcome = state });
+    }
     public static Task<RemovalResult> RemoveAsync(InstalledApp[] apps)
     {
         StopRequested = false;
@@ -240,13 +326,15 @@ public static class OneInstallUninstall
             {
                 var item = new RemovalOutcome { Id = app.Id, Name = app.Name, Outcome = "Unknown" }; result.Results.Add(item);
                 app.RemovalVerified = false;
-                if (StopRequested) { item.Outcome = "Cancelled"; item.Message = "Not started: stop after current requested."; result.Messages.Add(app.Name + ": " + item.Message); continue; }
+                if (StopRequested) { item.Outcome = "Cancelled"; item.Message = "Not started: stop after current requested."; result.Messages.Add(app.Name + ": " + item.Message); Stage(app, item.Outcome); continue; }
+                Stage(app, "Preparing…");
                 Progress.Enqueue("Removing " + app.Name + "… Finish any publisher dialog that opens.");
                 try
                 {
                     if (app.Kind == "Microsoft Store")
                     {
                         if (!Regex.IsMatch(app.Id ?? "", @"^[A-Za-z0-9._-]+$")) throw new InvalidOperationException("Invalid package identity.");
+                        Stage(app, "Removing…");
                         RunPowerShell("Get-AppxPackage | Where-Object { $_.PackageFullName -eq " + Literal(app.Id) + " -and -not $_.NonRemovable -and -not $_.IsFramework } | Remove-AppxPackage -ErrorAction Stop", 180000);
                     }
                     else
@@ -256,17 +344,22 @@ public static class OneInstallUninstall
                         if (current == null) { item.Outcome = "Success"; item.Message = "Exact registration already absent; ownership cannot be established for cleanup."; result.Messages.Add(app.Name + ": " + item.Message); continue; }
                         // Capture ownership from the fresh registration, never from stale history/display names.
                         app.Location = current.Location; app.Name = current.Name; app.Publisher = current.Publisher;
+                        app.IdentityVerified = true;
                         app.OwnershipVerified = !String.IsNullOrWhiteSpace(current.Location) && Directory.Exists(current.Location);
                         var start = GetCommand(current); start.UseShellExecute = true;
                         if (app.Machine) start.Verb = "runas";
+                        Stage(app, "Removing…");
+                        DateTime launchedAt = DateTime.UtcNow;
                         using (var process = Process.Start(start))
                         {
-                            process.WaitForExit();
+                            if (process == null) throw new InvalidOperationException("Publisher process unavailable; verify removal manually.");
+                            WaitForUninstaller(process, launchedAt);
                             item.ExitCode = process.ExitCode;
                             if (process.ExitCode == 3010 || process.ExitCode == 1641) { app.RestartRequestedAt = BootTime; item.Outcome = "Restart required"; item.Message = "Restart required. Cleanup withheld until Windows restarts and removal is verified."; result.Messages.Add(app.Name + ": " + item.Message); continue; }
                             if (process.ExitCode != 0) { item.Outcome = process.ExitCode == 1602 || process.ExitCode == 1223 ? "Cancelled" : "Failed"; item.Message = "Uninstaller returned " + process.ExitCode + ". No cleanup was started."; result.Messages.Add(app.Name + ": " + item.Message); continue; }
                         }
                     }
+                    Stage(app, "Verifying…");
                     var after = Inventory();
                     if (app.Kind == "Microsoft Store" && after.Warnings.Count > 0) { item.Message = "Store inventory unavailable; removal cannot be verified. Cleanup withheld."; }
                     else if (Registered(app, after)) { item.Outcome = "Manual action required"; item.Message = "Still registered after the uninstaller finished. Finish publisher steps or restart, then refresh. Cleanup withheld."; }
@@ -274,6 +367,7 @@ public static class OneInstallUninstall
                     result.Messages.Add(app.Name + ": " + item.Outcome + " · " + item.Message);
                 }
                 catch (Exception e) { item.Outcome = e is Win32Exception && ((Win32Exception)e).NativeErrorCode == 1223 ? "Cancelled" : e is TimeoutException ? "Unknown" : "Failed"; item.Message = e.Message; result.Messages.Add(app.Name + ": " + item.Outcome + " · " + e.Message); }
+                finally { Stage(app, item.Outcome); }
             }
             // Cleanup is always a separate user action, including for zero-exit uninstallers.
             Remember(apps);
@@ -282,12 +376,13 @@ public static class OneInstallUninstall
     }
     static string Full(string path) { return System.IO.Path.GetFullPath(Environment.ExpandEnvironmentVariables(path.Trim().Trim('"'))).TrimEnd('\\'); }
     static bool Inside(string path, string root) { return path.Equals(root, StringComparison.OrdinalIgnoreCase) || path.StartsWith(root + "\\", StringComparison.OrdinalIgnoreCase); }
-    static string Token(string name) { return Regex.Replace(name ?? "", "[^A-Za-z0-9]", "").ToLowerInvariant(); }
-    static bool Product(string name) { return Token(name).Length >= 4 && !Regex.IsMatch(Token(name), @"^(application|applications|app|apps|bin|current|x64|x86|software|microsoft|windows|programs|commonfiles|packages|data|cache|temp|1nstall)$"); }
+    static string Token(string name) { return Regex.Replace(name ?? "", @"[^\p{L}\p{N}]", "").ToLowerInvariant(); }
+    static bool Product(string name) { return Token(name).Length >= 3 && !Regex.IsMatch(Token(name), @"^(application|applications|app|apps|bin|current|x64|x86|software|microsoft|windows|programs|commonfiles|packages|data|cache|temp|1nstall|launcher|update|uninstall|installer|install|setup|client|public|user|users)$"); }
     static List<string> Names(InstalledApp app)
     {
         var names = new List<string>();
-        string name = Regex.Replace(app.Name ?? "", @"\s+(?:v?\d+(?:\.\d+)*.*|\(?(?:x64|x86|64-bit|32-bit)\)?)$", "", RegexOptions.IgnoreCase).Trim();
+        string name = Regex.Replace(app.Name ?? "", @"\s*\((?:(?:x64|x86|64[ -]?bit|32[ -]?bit|arm64)[\s,/-]*)+\)\s*$", "", RegexOptions.IgnoreCase);
+        name = Regex.Replace(name, @"\s+(?:v?\d+(?:\.\d+)*.*|\(?(?:x64|x86|64-bit|32-bit)\)?)$", "", RegexOptions.IgnoreCase).Trim();
         if (Product(name) && !Regex.IsMatch(name, @"[\\/:*?""<>|]")) names.Add(name);
         if (!String.IsNullOrEmpty(app.Location))
         {
@@ -295,7 +390,7 @@ public static class OneInstallUninstall
             {
                 string leaf = System.IO.Path.GetFileName(Full(app.Location));
                 // Never infer ownership of a vendor root from a partial product name.
-                if (Product(leaf) && (Token(name) == Token(leaf) || (Token(leaf).Length >= 6 && Token(name).Contains(Token(leaf)) && !Token(app.Publisher).Contains(Token(leaf))))) names.Add(leaf);
+                if (Product(leaf) && (Token(name) == Token(leaf) || ((app.IdentityVerified || app.OwnershipVerified || Token(leaf).Length >= 6 && Token(name).Contains(Token(leaf))) && !Token(app.Publisher).Contains(Token(leaf))))) names.Add(leaf);
             }
             catch { }
         }
@@ -336,7 +431,12 @@ public static class OneInstallUninstall
     }
     static bool NoLinks(string root)
     {
-        // ponytail: 20k-entry scan cap; add cancellable large-tree scanning when big app profiles need review.
+        long bytes; int files;
+        return MeasureFolder(root, out bytes, out files);
+    }
+    static bool MeasureFolder(string root, out long bytes, out int files)
+    {
+        bytes = 0; files = 0;
         var pending = new Stack<string>(); pending.Push(root); int seen = 0;
         while (pending.Count > 0)
         {
@@ -345,9 +445,41 @@ public static class OneInstallUninstall
                 if (++seen > 20000) return false;
                 var flags = File.GetAttributes(entry); if ((flags & FileAttributes.ReparsePoint) != 0) return false;
                 if ((flags & FileAttributes.Directory) != 0) pending.Push(entry);
+                else { bytes += new FileInfo(entry).Length; files++; }
             }
         }
         return true;
+    }
+    public static string FormatBytes(long bytes)
+    {
+        if (bytes < 1024) return bytes + " B";
+        if (bytes < 1048576) return (bytes / 1024.0).ToString("0.#") + " KB";
+        if (bytes < 1073741824) return (bytes / 1048576.0).ToString("0.#") + " MB";
+        return (bytes / 1073741824.0).ToString("0.##") + " GB";
+    }
+    static string[] DataRoots()
+    {
+        return new[] { Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), @"AppData\LocalLow"),
+            Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
+            Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
+            Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86) }.Where(p => !String.IsNullOrWhiteSpace(p)).Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
+    }
+    static bool DiscoveryFolder(string path, InstalledApp owner)
+    {
+        path = Full(path);
+        if (owner.OwnershipVerified && !String.IsNullOrWhiteSpace(owner.Location) && path.Equals(Full(owner.Location), StringComparison.OrdinalIgnoreCase)) return true;
+        return DataRoots().Any(r => Inside(path, Full(r)) && path.Substring(Full(r).Length).Split(new[] { '\\' }, StringSplitOptions.RemoveEmptyEntries).Length <= 3);
+    }
+    static void AddFolder(string folder, InstalledApp app, RemovalResult result, HashSet<string> seen)
+    {
+        long bytes; int files;
+        if (!MeasureFolder(folder, out bytes, out files)) { result.IncompleteChecks++; result.Messages.Add(folder + ": linked files or scan limit; folder kept."); return; }
+        bool recorded = app.OwnershipVerified && !String.IsNullOrWhiteSpace(app.Location) && Full(folder).Equals(Full(app.Location), StringComparison.OrdinalIgnoreCase);
+        if (seen.Add(Full(folder))) result.Leftovers.Add(new LeftoverItem { Kind = "Folder", Path = folder, Owner = app, AppName = app.Name,
+            Bytes = bytes, Files = files, Confidence = recorded ? "Linked path" : "Name match",
+            Reason = recorded ? "Recorded installation folder" : "Exact product name; may contain settings or saved data" });
     }
     public static bool SafeRegistry(string path, InstalledApp owner, IEnumerable<InstalledApp> active)
     {
@@ -426,22 +558,23 @@ public static class OneInstallUninstall
     // Extend with additional evidence-based providers if deeper app layouts require them.
     static void DiscoverFolders(string root, int depth, InstalledApp app, List<InstalledApp> active, RemovalResult result, HashSet<string> seen, ref int count)
     {
+        if (!Directory.Exists(root)) return;
         try
         {
             foreach (string folder in Directory.EnumerateDirectories(root))
             {
-                if (++count > 20000) { result.Messages.Add(app.Name + ": folder discovery limit reached; results may be incomplete."); return; }
+                if (++count > 20000) { result.IncompleteChecks++; result.Messages.Add(app.Name + ": folder discovery limit reached; results may be incomplete."); return; }
                 if ((File.GetAttributes(folder) & FileAttributes.ReparsePoint) != 0) continue;
-                if (SafeDirectory(folder, app, active) && NoLinks(folder))
+                if (SafeDirectory(folder, app, active))
                 {
-                    if (seen.Add(folder)) result.Leftovers.Add(new LeftoverItem { Kind = "Folder", Path = folder, Owner = app, AppName = app.Name, Reason = "Exact product name · may include settings or personal app data" });
+                    AddFolder(folder, app, result, seen);
                 }
-                else if (depth < 2 && !Regex.IsMatch(System.IO.Path.GetFileName(folder), @"^(Microsoft|Windows|WindowsApps|Packages|Common Files|1nstall)$", RegexOptions.IgnoreCase))
+                else if (depth < 2 && !active.Any(a => !String.IsNullOrWhiteSpace(a.Location) && Inside(Full(folder), Full(a.Location))) && !Regex.IsMatch(System.IO.Path.GetFileName(folder), @"^(Microsoft|Windows|WindowsApps|Packages|Common Files|1nstall)$", RegexOptions.IgnoreCase))
                     DiscoverFolders(folder, depth + 1, app, active, result, seen, ref count);
                 if (count > 20000) return;
             }
         }
-        catch (Exception e) { result.Messages.Add(app.Name + ": folder discovery skipped " + root + ": " + e.Message); }
+        catch (Exception e) { result.IncompleteChecks++; result.Messages.Add(app.Name + ": folder discovery skipped " + root + ": " + e.Message); }
     }
     static void DiscoverKeys(RegistryKey root, string path, int depth, bool machine, bool view32, InstalledApp app, List<InstalledApp> active, RemovalResult result, HashSet<string> seen, ref int count)
     {
@@ -449,7 +582,7 @@ public static class OneInstallUninstall
         {
             foreach (string name in root.GetSubKeyNames())
             {
-                if (++count > 20000) { result.Messages.Add(app.Name + ": registry discovery limit reached; results may be incomplete."); return; }
+                if (++count > 20000) { result.IncompleteChecks++; result.Messages.Add(app.Name + ": registry discovery limit reached; results may be incomplete."); return; }
                 if (ReservedRegistryName(name)) continue;
                 string key = path + "\\" + name;
                 using (var child = root.OpenSubKey(name))
@@ -457,14 +590,14 @@ public static class OneInstallUninstall
                     if (child == null) continue;
                     if (SafeRegistry(key, app, active))
                     {
-                        if (seen.Add((machine ? "HKLM" + view32 : "HKCU") + key)) result.Leftovers.Add(new LeftoverItem { Kind = "Registry", Path = key, Owner = app, AppName = app.Name, Machine = machine, View32 = view32, Reason = "Exact product key · backup before removal" });
+                        if (seen.Add((machine ? "HKLM" + view32 : "HKCU") + key)) result.Leftovers.Add(new LeftoverItem { Kind = "Registry", Path = key, Owner = app, AppName = app.Name, Machine = machine, View32 = view32, Confidence = "Name match", Reason = "Exact product key; registry backup before removal" });
                     }
                     else if (depth < 2) DiscoverKeys(child, key, depth + 1, machine, view32, app, active, result, seen, ref count);
                 }
                 if (count > 20000) return;
             }
         }
-        catch (Exception e) { result.Messages.Add(app.Name + ": registry discovery skipped " + path + ": " + e.Message); }
+        catch (Exception e) { result.IncompleteChecks++; result.Messages.Add(app.Name + ": registry discovery skipped " + path + ": " + e.Message); }
     }
     public static Task<RemovalResult> ScanAsync(InstalledApp[] owners)
     {
@@ -481,15 +614,35 @@ public static class OneInstallUninstall
                 if (Registered(app, inventory)) { result.Messages.Add(app.Name + ": still registered. Finish removal or restart, then check again."); continue; }
                 // Store package data is intentionally managed by Windows; no manual WindowsApps/Packages cleanup.
                 if (app.Kind == "Microsoft Store") { result.Messages.Add(app.Name + ": removed; Windows manages its package data."); continue; }
-                if (app.RestartRequestedAt > 0 && !WaitingForRestart(app)) app.RemovalVerified = true;
-                if (!app.RemovalVerified || !app.OwnershipVerified) { result.Messages.Add(app.Name + ": removal or ownership evidence is unavailable. Cleanup withheld; names alone are insufficient."); continue; }
-                // Display-name matches under AppData are not evidence of ownership. Only the
-                // freshly registered install directory and exact executable-path traces are offered.
-                result.Messages.Add(app.Name + ": name-only AppData folders and product settings keys withheld because ownership cannot be established.");
+                // Bootstrap uninstallers may exit while a child still shows publisher UI.
+                // A later explicit check can finish verification from the captured identity.
+                if (!app.RemovalVerified && (app.IdentityVerified || app.OwnershipVerified))
+                {
+                    app.RemovalVerified = true;
+                    VerifiedRemovals.Enqueue(app.Id);
+                    Remember(new[] { app });
+                    result.Results.Add(new RemovalOutcome { Id = app.Id, Name = app.Name, Outcome = "Success", Message = "Removal verified on recheck: recorded registration is absent." });
+                    result.Messages.Add(app.Name + ": removal now verified; the recorded registration is absent.");
+                }
+                if (!app.RemovalVerified || !(app.IdentityVerified || app.OwnershipVerified)) { result.Messages.Add(app.Name + ": removal evidence is unavailable. Cleanup withheld."); continue; }
+                result.ScannedApps++;
+                if (!String.IsNullOrWhiteSpace(app.Location))
+                {
+                    try { string full = Full(app.Location); if (app.OwnershipVerified && SafeDirectory(full, app, active)) AddFolder(full, app, result, seen); }
+                    catch (Exception e) { result.IncompleteChecks++; result.Messages.Add(app.Name + ": installation folder check skipped: " + e.Message); }
+                }
+                foreach (string root in DataRoots())
+                {
+                    Progress.Enqueue(app.Name + " · Disk · " + root);
+                    int count = 0; DiscoverFolders(root, 0, app, active, result, seen, ref count);
+                }
                 foreach (bool machine in new[] { false, true }) foreach (bool view32 in new[] { false, true })
                 {
                     using (var hive = RegistryKey.OpenBaseKey(machine ? RegistryHive.LocalMachine : RegistryHive.CurrentUser, view32 ? RegistryView.Registry32 : RegistryView.Registry64))
                     {
+                        Progress.Enqueue(app.Name + " · Registry · " + (machine ? "HKLM" : "HKCU") + (view32 ? " 32-bit" : " 64-bit"));
+                        using (var software = hive.OpenSubKey("Software"))
+                            if (software != null) { int count = 0; DiscoverKeys(software, "Software", 0, machine, view32, app, active, result, seen, ref count); }
                         foreach (string key in TraceKeys)
                         {
                             try
@@ -498,25 +651,17 @@ public static class OneInstallUninstall
                                 {
                                     if (trace == null) continue;
                                     foreach (string value in trace.GetValueNames())
-                                        if (SafeRegistryValue(key, value, app, active) && seen.Add((machine ? "HKLM" + view32 : "HKCU") + key + "::" + value))
-                                            result.Leftovers.Add(new LeftoverItem { Kind = "Registry", Path = key, ValueName = value, DisplayValueName = TracePath(key, value), Owner = app, AppName = app.Name, Machine = machine, View32 = view32, Reason = "Windows app trace · only this value is removed; key is retained" });
+                                        if (app.OwnershipVerified && SafeRegistryValue(key, value, app, active) && seen.Add((machine ? "HKLM" + view32 : "HKCU") + key + "::" + value))
+                                            result.Leftovers.Add(new LeftoverItem { Kind = "Registry", Path = key, ValueName = value, DisplayValueName = TracePath(key, value), Owner = app, AppName = app.Name, Machine = machine, View32 = view32, Confidence = "Linked path", Reason = "Windows executable trace; only this value is removed" });
                                 }
                             }
-                            catch (Exception e) { result.Messages.Add(app.Name + ": Windows trace check skipped: " + e.Message); }
+                            catch (Exception e) { result.IncompleteChecks++; result.Messages.Add(app.Name + ": Windows trace check skipped: " + e.Message); }
                         }
                     }
                 }
-                if (!String.IsNullOrWhiteSpace(app.Location))
-                {
-                    try
-                    {
-                        string full = Full(app.Location);
-                        if (SafeDirectory(full, app, active) && NoLinks(full) && seen.Add(full)) result.Leftovers.Add(new LeftoverItem { Kind = "Folder", Path = full, Owner = app, AppName = app.Name, Reason = "Product folder · may include settings or personal app data" });
-                    }
-                    catch (Exception e) { result.Messages.Add(app.Name + ": folder check skipped: " + e.Message); }
-                }
-                result.Messages.Add(app.Name + ": checked the verified installation directory and exact Windows executable-path traces. Only verified candidates are shown; no matches does not prove every residue is absent.");
+                result.Messages.Add(app.Name + ": checked installation folder, Roaming/Local/LocalLow AppData, ProgramData, Program Files, product registry keys and Windows executable traces. Name matches require your review; no matches does not prove every residue is absent.");
             }
+            result.Leftovers = result.Leftovers.OrderBy(i => i.Kind).ThenBy(i => i.AppName).ThenBy(i => i.Path).ToList();
             return result;
         });
     }
@@ -531,7 +676,7 @@ public static class OneInstallUninstall
             File.WriteAllText(System.IO.Path.Combine(result.BackupFolder, "items.json"), Json().Serialize(items));
             foreach (var item in items)
             {
-                var outcome = new RemovalOutcome { Id = item.Owner.Id, Name = item.AppName, Outcome = "Unknown" }; result.Results.Add(outcome);
+                var outcome = new RemovalOutcome { Id = item.Owner.Id, Name = item.AppName, Kind = item.Kind, Path = item.Path, Outcome = "Unknown" }; result.Results.Add(outcome);
                 Progress.Enqueue("Removing reviewed leftover: " + item.Path);
                 try
                 {
@@ -539,36 +684,39 @@ public static class OneInstallUninstall
                     var currentProtection = new AppInventory(); active = Desktop(currentProtection, true);
                     if (currentProtection.Warnings.Count > 0) throw new InvalidOperationException("Shared-app protection could not be refreshed.");
                     active.AddRange(inventory.Apps.Where(a => a.Kind == "Microsoft Store"));
-                    if (!item.Owner.RemovalVerified || !item.Owner.OwnershipVerified || WaitingForRestart(item.Owner) || Registered(item.Owner, inventory)) throw new InvalidOperationException("Removal/ownership is unverified, the app is registered or waiting for a restart; cleanup was blocked.");
+                    if (!item.Owner.RemovalVerified || !(item.Owner.IdentityVerified || item.Owner.OwnershipVerified) || WaitingForRestart(item.Owner) || Registered(item.Owner, inventory)) throw new InvalidOperationException("Removal is unverified, the app is registered or waiting for a restart; cleanup was blocked.");
                     if (item.Kind == "Folder")
                     {
-                        if (!Full(item.Path).Equals(Full(item.Owner.Location), StringComparison.OrdinalIgnoreCase) || !SafeDirectory(item.Path, item.Owner, active) || !NoLinks(item.Path)) throw new InvalidOperationException("Folder ownership/protection changed; cleanup was blocked.");
+                        long bytes; int files;
+                        if (!DiscoveryFolder(item.Path, item.Owner) || !SafeDirectory(item.Path, item.Owner, active) || !MeasureFolder(item.Path, out bytes, out files)) throw new InvalidOperationException("Folder scope/protection changed; cleanup was blocked.");
                         RecycleFolder(item.Path);
+                        result.RecycledBytes += bytes;
                         outcome.Outcome = "Success"; outcome.Message = "Reviewed folder recycled; original location absence verified.";
                         result.Messages.Add(item.Path + ": sent to Recycle Bin.");
                     }
                     else if (item.Kind == "Registry")
                     {
-                        if (item.ValueName == null || !SafeRegistryValue(item.Path, item.ValueName, item.Owner, active)) throw new InvalidOperationException("Registry ownership/protection is uncertain; cleanup was blocked.");
+                        if (item.ValueName == null ? !SafeRegistry(item.Path, item.Owner, active) : !item.Owner.OwnershipVerified || !SafeRegistryValue(item.Path, item.ValueName, item.Owner, active)) throw new InvalidOperationException("Registry scope/protection changed; cleanup was blocked.");
                         string key = (item.Machine ? "HKLM\\" : "HKCU\\") + item.Path;
                         string backup = System.IO.Path.Combine(result.BackupFolder, Guid.NewGuid().ToString("N") + ".reg");
                         var export = new ProcessStartInfo(RegExe, "export " + QuoteArgument(key) + " " + QuoteArgument(backup) + " /y /reg:" + (item.View32 ? "32" : "64"));
                         export.UseShellExecute = false; export.CreateNoWindow = true;
                         using (var process = Process.Start(export)) { process.WaitForExit(); if (process.ExitCode != 0 || !File.Exists(backup) || new FileInfo(backup).Length < 10) throw new IOException("Registry backup failed; key was kept."); }
                         File.AppendAllText(System.IO.Path.Combine(result.BackupFolder, "RESTORE.txt"), key + " (" + (item.View32 ? "32-bit" : "64-bit") + ")\r\nTo restore from Command Prompt" + (item.Machine ? " as administrator" : "") + ":\r\nreg.exe import \"" + backup + "\" /reg:" + (item.View32 ? "32" : "64") + "\r\n\r\n");
-                        var delete = new ProcessStartInfo(RegExe, "delete " + QuoteArgument(key) + " /v " + QuoteArgument(item.ValueName) + " /f /reg:" + (item.View32 ? "32" : "64"));
+                        var delete = new ProcessStartInfo(RegExe, "delete " + QuoteArgument(key) + (item.ValueName == null ? "" : " /v " + QuoteArgument(item.ValueName)) + " /f /reg:" + (item.View32 ? "32" : "64"));
                         delete.UseShellExecute = true; delete.WindowStyle = ProcessWindowStyle.Hidden;
                         if (item.Machine) delete.Verb = "runas";
                         using (var process = Process.Start(delete)) { process.WaitForExit(); if (process.ExitCode != 0) throw new IOException("Registry removal was cancelled or failed; backup is available."); }
                         using (var hive = RegistryKey.OpenBaseKey(item.Machine ? RegistryHive.LocalMachine : RegistryHive.CurrentUser, item.View32 ? RegistryView.Registry32 : RegistryView.Registry64))
                         using (var remaining = hive.OpenSubKey(item.Path))
-                            if (remaining != null && remaining.GetValueNames().Contains(item.ValueName, StringComparer.OrdinalIgnoreCase)) throw new IOException("Registry value remains; cleanup was not verified. Backup is available.");
-                        outcome.Outcome = "Success"; outcome.Message = "Reviewed trace value absence verified; registry backup saved.";
+                            if (remaining != null && (item.ValueName == null || remaining.GetValueNames().Contains(item.ValueName, StringComparer.OrdinalIgnoreCase))) throw new IOException("Registry item remains; cleanup was not verified. Backup is available.");
+                        outcome.Outcome = "Success"; outcome.Message = "Reviewed registry item absence verified; registry backup saved.";
                         result.Messages.Add(key + (item.ValueName == null ? "" : " :: " + item.ValueName) + ": removed; .reg backup saved.");
                     }
                 }
                 catch (Exception e) { outcome.Outcome = e is Win32Exception && ((Win32Exception)e).NativeErrorCode == 1223 ? "Cancelled" : "Failed"; outcome.Message = e.Message; result.Messages.Add(item.Path + ": not completed · " + e.Message); }
             }
+            File.WriteAllText(System.IO.Path.Combine(result.BackupFolder, "results.json"), Json().Serialize(result.Results));
             return result;
         });
     }
@@ -616,6 +764,7 @@ public static class OneInstallUninstall
     public static void SelfTest()
     {
         var app = new InstalledApp { Name = "Sample Editor 2.0 (x64)", Publisher = "Sample Company", Location = @"C:\Apps\Sample Editor" };
+        if (!Names(new InstalledApp { Name = "Notepad++ (64-bit x64)", Publisher = "Notepad++ Team" }).Contains("Notepad++") || !Names(new InstalledApp { Name = "VLC" }).Contains("VLC") || !Names(new InstalledApp { Name = "日本語エディター" }).Contains("日本語エディター")) throw new Exception("Product name/architecture normalization regression.");
         var others = new[] { new InstalledApp { Name = "Another Editor", Publisher = "Sample Company", Location = @"C:\Apps\Sample Editor\Plugin" } };
         if (!Names(app).Contains("Sample Editor") || SafeRegistry(@"Software\Sample Company", app, others) || SafeRegistry(@"Software\Microsoft\Windows", app, others) || !SafeRegistry(@"Software\Sample Company\Sample Editor", app, others)) throw new Exception("Registry ownership regression.");
         if (SafeRegistry(@"Software\Sample Editor", app, new[] { app }) || SafeRegistry("Software\\Sample Editor\" & bad", app, new InstalledApp[0])) throw new Exception("Shared registry / command boundary regression.");
@@ -627,7 +776,7 @@ public static class OneInstallUninstall
         if (!WaitingForRestart(app)) throw new Exception("Restart gate regression.");
         app.RestartRequestedAt = BootTime - TimeSpan.TicksPerDay; if (WaitingForRestart(app)) throw new Exception("Restart gate did not clear.");
         if (SafeDirectory(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), app, new InstalledApp[0]) || SafeDirectory(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), app, new InstalledApp[0])) throw new Exception("Protected root regression.");
-        string exe = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), "notepad.exe");
+        string exe = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), "msiexec.exe");
         app.Command = "\"" + exe + "\" /test \"quoted value\"";
         var parsed = GetCommand(app); if (parsed.FileName != exe || parsed.Arguments != "/test \"quoted value\"") throw new Exception("Quoted command regression.");
         app.Command = exe + " /test"; if (GetCommand(app).Arguments != "/test") throw new Exception("Unquoted command regression.");

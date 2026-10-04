@@ -6,11 +6,11 @@ Choose the apps you need, build a setup that fits your work, and keep every inst
 
 **325 apps · 24 categories · 20 profiles · 51 language choices**
 
-[**Download for Windows**](https://github.com/braga1k/1nstall/releases/latest/download/1nstall.exe) · [Portable ZIP](https://github.com/braga1k/1nstall/releases/download/v3.4.0/1nstall-3.4.0-Windows-x64.zip) · [What's new in 3.4](https://github.com/braga1k/1nstall/releases/tag/v3.4.0) · [Checksums](https://github.com/braga1k/1nstall/releases/download/v3.4.0/SHA256SUMS.txt)
+[**Download for Windows**](https://github.com/braga1k/1nstall/releases/latest/download/1nstall.exe) · [Portable ZIP](https://github.com/braga1k/1nstall/releases/download/v3.5.0/1nstall-3.5.0-Windows-x64.zip) · [What's new in 3.5](https://github.com/braga1k/1nstall/releases/tag/v3.5.0) · [Checksums](https://github.com/braga1k/1nstall/releases/download/v3.5.0/SHA256SUMS.txt)
 
 Windows 10 / 11 · x64 · Standalone executable
 
-![1nstall 3.4 — app library and selection in the dark appearance](docs/images/3.4/install-dark.png)
+![1nstall 3.5 — app library and selection in the dark appearance](docs/images/3.5/install-dark.png)
 
 ## A setup that feels like yours
 
@@ -19,11 +19,13 @@ Windows 10 / 11 · x64 · Standalone executable
 | Browse by task, search the library or start from one of 20 profiles. | Light, dark or system appearance. Your Windows accent, or pure monochrome. | Review each queue before it starts. See individual outcomes and open the details when you need them. |
 | Save a selection and take it to another PC. | 51 language choices, including Japanese and Portuguese from Portugal. | Remove apps through their original uninstallers and review supported leftovers separately. |
 
-**3.4 brings the interface to life.** A themed opening animation leads into the app while it loads. Panels, menus, cards and selections move with their actions. Verified installation and removal successes get a soft, whole-window glow. Windows reduced-motion and high-contrast preferences are respected.
+**3.5 keeps removal in view.** The Uninstall queue now follows each app through removal and verification, then keeps its outcome visible through cleanup and refresh. Glass window controls complete the same visual language.
+
+A themed opening animation leads into the app while it loads. Panels, menus, cards and selections move with their actions. Verified installation and removal successes get a soft, whole-window glow. Windows reduced-motion and high-contrast preferences are respected.
 
 The same gradients, reflective edges and pointer light run through Install, Uninstall and Settings. Turning off accent keeps that depth in black, white and grey.
 
-![Light appearance with Windows accent disabled](docs/images/3.4/install-light-monochrome.png)
+![Light appearance with Windows accent disabled](docs/images/3.5/install-light-monochrome.png)
 
 ## From a fresh PC to your own setup
 
@@ -40,11 +42,11 @@ Profiles and snapshots restore app selections. They do not transfer personal fil
 
 ## Remove with a clear view of the outcome
 
-Search registered desktop and current-user Microsoft Store apps, select what to remove, then choose **Review & remove**. Original uninstallers run in sequence. **Stop** lets the current operation finish before stopping the queue.
+Search registered desktop and current-user Microsoft Store apps, select what to remove, then choose **Review & remove**. Original uninstallers run in sequence. Follow Preparing, Removing and Verifying states in Selection; observed publisher child processes finish before verification and the next app. Completed rows remain visible after refresh. **Stop** lets the current operation finish before stopping the queue.
 
-![Uninstall view with fictional example applications](docs/images/3.4/uninstall-dark.png)
+![Uninstall queue with fictional example applications and progress](docs/images/3.5/uninstall-queue-dark.png)
 
-After a verified removal, review supported leftover folders and registry entries separately. Nothing is selected or deleted automatically. Folder cleanup uses Recycle Bin; registry changes require backups. Detection is bounded and excludes personal documents, protected locations, shared registrations and uncertain ownership.
+After a verified removal, review supported leftover folders and registry entries separately, with disk/registry totals, measured sizes and linked-path or name-match evidence. The cleanup result stays visible, and a complete successful cleanup receives the whole-window confirmation glow. Nothing is selected or deleted automatically. Folder cleanup uses Recycle Bin; registry changes require backups. Detection checks product folders, AppData, ProgramData and supported registry locations. It is bounded and protects personal folders, shared registrations and reinstalled apps. Name matches still require your review; app data may contain settings, saves or personal work.
 
 **Activity & details**, **Removal activity** and **History & diagnostics** keep results, logs and applicable retries accessible. Diagnostic exports show a preview before you save them.
 
@@ -52,7 +54,7 @@ After a verified removal, review supported leftover folders and registry entries
 
 ## Set the mood. Keep the depth.
 
-![Settings in the light appearance](docs/images/3.4/settings-light.png)
+![Settings in the light appearance](docs/images/3.5/settings-light.png)
 
 - **Appearance:** System, Light or Dark, with optional Windows accent. Changes apply immediately and preserve selections.
 - **Language:** 51 offline choices covering national official languages across Europe, Japanese and the original language set. Portuguese is exclusively **pt-PT**; Arabic and Urdu use right-to-left layout. Translations still need native-speaker review.
@@ -107,6 +109,8 @@ powershell.exe -NoProfile -STA -ExecutionPolicy Bypass -File .\tests\reliability
 powershell.exe -NoProfile -STA -ExecutionPolicy Bypass -File .\tests\scrolling.ps1
 powershell.exe -NoProfile -STA -ExecutionPolicy Bypass -File .\tests\appearance.ps1
 powershell.exe -NoProfile -STA -ExecutionPolicy Bypass -File .\tests\startup-opening.ps1
+powershell.exe -NoProfile -STA -ExecutionPolicy Bypass -File .\tests\cleanup-ui.ps1
+powershell.exe -NoProfile -STA -ExecutionPolicy Bypass -File .\tests\uninstall-queue.ps1
 ```
 
 The executable also accepts `--self-test`, `--smoke-test` and `--manager-test`. Windows CI checks the catalog, locale structure, headless regressions and packaged self-test, builds from a clean commit, then verifies uploaded release hashes before publication. Local WPF checks use fictional apps.

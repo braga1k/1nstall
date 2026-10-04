@@ -262,7 +262,7 @@ namespace OneInstall {
             var panel=label==null?null:label.Parent as StackPanel;
             if(panel==null) return;
             var stages=label.Tag as UniformGrid;
-            int phase=status.StartsWith("Preparing")?0:status.StartsWith("Installing")?1:status.StartsWith("Verifying")?2:status=="Success"?3:-1;
+            int phase=status.StartsWith("Preparing")?0:status.StartsWith("Installing")||status.StartsWith("Removing")?1:status.StartsWith("Verifying")?2:status=="Success"?3:-1;
             if(stages==null && phase>=0) {
                 stages=new UniformGrid { Columns=3,Width=72,Height=3,HorizontalAlignment=HorizontalAlignment.Left,Margin=new Thickness(0,7,0,0),IsHitTestVisible=false };
                 for(int i=0;i<3;i++) {
