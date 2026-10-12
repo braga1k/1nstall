@@ -1,3 +1,9 @@
+# Local elastic-motion preview — 2026-10-12
+
+Not a release. [Implementation and commands](ELASTIC-MOTION.md). Windows build, the focused elastic-motion suite, source-only smoke (without the compiled UI assembly), packaged smoke and scrolling checks pass. The manager suite also passed during this change. Focused checks cover every preset and successive interrupted flights, bounds, native UIA selection, press/cancel, live reduced motion, callback ownership and recycled templates. Install/Uninstall captures were reviewed across light/dark and monochrome appearances; generated previews are in `dist/elastic-preview`.
+
+No personal software was installed or removed. Physical pointer feel, busy-dispatcher/GPU smoothness and broader hardware/DPI coverage remain manual checks. The local build retains MSB3644: .NET Framework 4.8 reference assemblies are absent, so MSBuild uses the installed GAC assemblies. The executable remains unsigned.
+
 # 3.5.0 validation — 2026-10-04
 
 The owner authorized this release on 2026-10-04. Local packaged self-test, smoke and manager suites pass, together with catalog checks, 56 reliability checks and 51 locale packs containing 239 strings each.

@@ -129,18 +129,19 @@ if (-not ('OneInstallUpdate' -as [type])) {
 try {
     if ($env:OS -ne 'Windows_NT' -or -not [Environment]::Is64BitOperatingSystem) { throw 'Requires 64-bit Windows.' }
     if ([Threading.Thread]::CurrentThread.ApartmentState -ne 'STA') { throw 'Open the executable or use powershell.exe -STA -File vexan_installers.ps1.' }
-    if (Test-Path variable:NativeWindow) { $window=$NativeWindow }
-    else {
-        $compiledUI=Join-Path $ResourceRoot 'dist/1nstall.UI.dll'
-        if (Test-Path -LiteralPath $compiledUI) { Add-Type -Path $compiledUI; $window=New-Object OneInstall.MainWindow }
-        else { $reader=New-Object System.Xml.XmlNodeReader ([xml]$xamlText); $window=[Windows.Markup.XamlReader]::Load($reader) }
-    }
+    $compiledUI=Join-Path $ResourceRoot 'dist/1nstall.UI.dll'
+    if (-not ('OneInstall.Motion' -as [type]) -and (Test-Path -LiteralPath $compiledUI)) { Add-Type -Path $compiledUI }
     $motionCode=@'
 @@MOTION_HELPER@@
 '@
     if (-not ('OneInstall.Motion' -as [type])) {
         if ($motionCode.Trim().StartsWith('@@')) { $motionCode=[IO.File]::ReadAllText((Join-Path $ResourceRoot 'src/motion.cs')) }
         Add-Type -TypeDefinition $motionCode -ReferencedAssemblies @('System.dll','System.Core.dll','System.Xaml','WindowsBase','PresentationCore','PresentationFramework')
+    }
+    if (Test-Path variable:NativeWindow) { $window=$NativeWindow }
+    else {
+        if (Test-Path -LiteralPath $compiledUI) { $window=New-Object OneInstall.MainWindow }
+        else { $xamlText=$xamlText.Replace('clr-namespace:OneInstall',('clr-namespace:OneInstall;assembly='+[OneInstall.Motion].Assembly.GetName().Name)); $reader=New-Object System.Xml.XmlNodeReader ([xml]$xamlText); $window=[Windows.Markup.XamlReader]::Load($reader) }
     }
     [OneInstall.Motion]::Initialize($window)
     $nativeCards=('OneInstall.NativeUI' -as [type]) -ne $null
@@ -1808,8 +1809,8 @@ try {
             }
             $rowCheck=Find-RowCheck ($ui.InstalledList.ItemContainerGenerator.ContainerFromIndex(0))
             if (-not $rowCheck) { throw 'Installed-app row is not reachable.' }
-            $box=$rowCheck.Template.FindName('TickBox',$rowCheck)
-            $hit=$rowCheck.InputHitTest($box.TranslatePoint([Windows.Point]::new(9,9),$rowCheck))
+            $box=$rowCheck.Template.FindName('ElasticSwitch',$rowCheck)
+            $hit=$rowCheck.InputHitTest($box.TranslatePoint([Windows.Point]::new(19,11),$rowCheck))
             while ($hit -and $hit -ne $rowCheck) { $hit=[Windows.Media.VisualTreeHelper]::GetParent($hit) }
             if ($hit -ne $rowCheck) { throw 'Empty checkbox center does not route clicks to the checkbox.' }
             $rowCheck.IsChecked=$true; Wait-WindowMessages
