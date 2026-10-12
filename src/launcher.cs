@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -13,8 +13,8 @@ using System.Security.Cryptography;
 [assembly: AssemblyTitle("1nstall")]
 [assembly: AssemblyDescription("1nstall - Windows app manager")]
 [assembly: AssemblyProduct("1nstall")]
-[assembly: AssemblyVersion("3.5.0.0")]
-[assembly: AssemblyFileVersion("3.5.0.0")]
+[assembly: AssemblyVersion("3.6.0.0")]
+[assembly: AssemblyFileVersion("3.6.0.0")]
 
 internal static class Launcher
 {

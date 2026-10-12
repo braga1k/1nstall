@@ -1,8 +1,9 @@
-# Rebuild the icon from the exact vector contours supplied by the designer.
-param([string]$OutputDirectory=(Join-Path $PSScriptRoot 'assets'))
+﻿# Rebuild the icon from the exact vector contours supplied by the designer.
+param([string]$OutputDirectory=(Join-Path (Split-Path $PSScriptRoot) 'dist/brand'))
 $ErrorActionPreference='Stop'
+$root=Split-Path $PSScriptRoot
 Add-Type -AssemblyName PresentationCore,PresentationFramework,WindowsBase
-[xml]$svg=[IO.File]::ReadAllText((Join-Path $PSScriptRoot 'assets/brand-mark.svg'))
+[xml]$svg=[IO.File]::ReadAllText((Join-Path $root 'assets/brand-mark.svg'))
 $paths=@($svg.DocumentElement.ChildNodes | Where-Object LocalName -eq 'path')
 if ($paths.Count -ne 2) { throw 'The brand mark must contain both original contours.' }
 $main=[Windows.Media.Geometry]::Parse($paths[0].GetAttribute('d'))
@@ -63,7 +64,7 @@ for ($i=0;$i -lt $sizes.Count;$i++) {
     $offset+=$images[$i].Length
 }
 foreach ($bytes in $images) { $writer.Write([byte[]]$bytes) }
-$writer.Flush(); [IO.File]::WriteAllBytes((Join-Path $PSScriptRoot 'src/1nstall.ico'),$stream.ToArray()); $writer.Dispose()
+$writer.Flush(); [IO.File]::WriteAllBytes((Join-Path $root 'src/1nstall.ico'),$stream.ToArray()); $writer.Dispose()
 $tx=$matrix.OffsetX.ToString([Globalization.CultureInfo]::InvariantCulture); $ty=$matrix.OffsetY.ToString([Globalization.CultureInfo]::InvariantCulture)
 $s=$scale.ToString([Globalization.CultureInfo]::InvariantCulture)
 $iconSvg=@"

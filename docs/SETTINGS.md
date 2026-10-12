@@ -1,4 +1,4 @@
-# Settings — 1nstall 3.4
+# Settings
 
 Open **Settings** at the bottom of the navigation pane. Preferences are saved per Windows user in `%LOCALAPPDATA%\1nstall\settings.json`.
 
@@ -13,7 +13,7 @@ The compiled .NET executable checks the latest stable GitHub release in the back
 
 Downloaded versions and update workers are under `%LOCALAPPDATA%\1nstall\Updates`. A failed swap preserves the original executable and records `update-error.log`; the next launch reports the problem. A writable executable folder is required. Script and legacy Zig builds require manual application updates.
 
-Existing 3.3 installations can receive 3.4 through this updater. Versions before 3.3 require a manual download once.
+Existing 3.3 or newer installations can receive stable releases through this updater. Versions before 3.3 require a manual download once.
 
 ## Appearance and motion
 

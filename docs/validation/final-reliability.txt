@@ -1,1 +1,0 @@
-PASS: 66 headless regression checks. Simulated outcomes, disposable process/filesystem fixtures; no publisher installer or personal app modified.

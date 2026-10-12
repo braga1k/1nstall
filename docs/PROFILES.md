@@ -1,8 +1,8 @@
-# Built-in profiles - 1nstall 3.2.0
+# Built-in profiles
 
 All profiles opens a dropdown in the main app. Choosing a profile selects its apps; it never starts an installation. Hover a profile to see its purpose and full app list, then adjust the selection before Review & install. User profiles keeps the existing Save current selection / Load saved profile menu.
 
-The 14 existing profiles now contain 8-11 complementary apps each. Six new profiles cover remote work, illustration, RAW photography, home media, web development and game development. Existing profile keys and saved files remain compatible. These are curated starting points, not popularity rankings.
+The 20 profiles contain 8-11 complementary apps each and cover remote work, illustration, RAW photography, home media, web development and game development. Existing profile keys and saved files remain compatible. These are curated starting points, not popularity rankings.
 
 The selection follows practical workflows: [Zotero](https://www.zotero.org/) for research and citations, [NAPS2](https://www.naps2.com/) for scanning, [draw.io](https://www.drawio.com/) for diagrams, [Krita](https://krita.org/en/) for illustration, [Godot](https://godotengine.org/) for game development and [Playnite](https://playnite.link/) for combined game libraries. Publisher pages were reviewed on 2026-10-02.
 

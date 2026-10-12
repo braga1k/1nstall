@@ -210,7 +210,7 @@ function Start-AppUpdateCheck {
     }
     $script:updateStatus='Checking for updates…'
     if ($script:settingsStatus) { Set-UiValue $script:settingsStatus 'Text' $script:updateStatus }
-    $script:updateTask=[OneInstallUpdate]::CheckAsync('3.5.0',$script:updateRoot,$true)
+    $script:updateTask=[OneInstallUpdate]::CheckAsync('3.6.0',$script:updateRoot,$true)
     $script:updateTimer.Start()
 }
 function Add-SettingsRow($Panel,[string]$Title,[string]$Description,$Control) {
@@ -278,7 +278,7 @@ function Show-AppSettings {
         $button=New-Object Windows.Controls.Button; Set-UiValue $button 'Content' $spec[0]; $button.Tag=$spec[1]
         $button.Add_Click({ param($sender,$e) Start-Process ([string]$sender.Tag) }); Enable-HoverMotion $button; $about.Children.Add($button) | Out-Null
     }
-    Add-SettingsRow $script:settingsContent 'About' '1nstall 3.5.0' $about
+    Add-SettingsRow $script:settingsContent 'About' '1nstall 3.6.0' $about
     $index=0
     foreach ($row in $script:settingsContent.Children) { [OneInstall.Motion]::Enter($row,0,9,([Math]::Min(140,$index*28))); $index++ }
 }

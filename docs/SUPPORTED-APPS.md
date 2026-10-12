@@ -1,8 +1,8 @@
 # Supported applications
 
-325 apps in 1nstall 3.1: 277 automatic and 48 guided. Existing profile keys and installation methods are unchanged.
+325 apps: 277 automatic and 48 guided. Existing profile keys and installation methods are unchanged.
 
-Four expandable groups organize 24 task categories. Multi-purpose apps appear in meaningful secondary categories using the same selection and installer. [Review and boundaries](CATEGORY-REVIEW.md) · [Coverage comparison](CATEGORY-COVERAGE.csv).
+Four expandable groups organize 24 task categories. Multi-purpose apps appear in meaningful secondary categories using the same selection and installer. [Review and boundaries](catalog/CATEGORY-REVIEW.md) · [Coverage comparison](catalog/CATEGORY-COVERAGE.csv).
 
 | Application | Group / primary category | Also appears in | Method | Package ID / download |
 |---|---|---|---|---|

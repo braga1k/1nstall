@@ -1,6 +1,6 @@
 # Elastic selection and motion
 
-Local preview based on [Flowing: Adding fidelity to a toggle](https://flowing-v4.vercel.app/components/elastic-toggles-1/article) and the accompanying prompt supplied by Vitor. No new dependency.
+Native motion based on [Flowing: Adding fidelity to a toggle](https://flowing-v4.vercel.app/components/elastic-toggles-1/article) and the accompanying prompt supplied by Vitor. No new dependency.
 
 Install cards and Uninstall rows use the same 38 × 22 switch visual, with a 14-unit knob, 4-unit inset and 16-unit travel. The existing CheckBox owns the whole click target, keyboard interaction, bindings and UI Automation Toggle pattern. Toggling changes the selection immediately; installation/removal still requires review. Details remains a separate button. Consent and leftover checkboxes retain their existing meaning and appearance.
 

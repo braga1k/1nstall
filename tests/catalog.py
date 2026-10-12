@@ -11,7 +11,7 @@ profiles = json.loads((root / 'profiles.json').read_text(encoding='utf-8-sig'))
 by_key = {app['Key']: app for app in apps}
 by_name = {app['Name']: app for app in apps}
 assert apps and len(by_key) == len(apps) == len(by_name), 'Duplicate or empty catalog'
-taxonomy = json.loads((root / 'docs/CATEGORY-TAXONOMY.json').read_text())
+taxonomy = json.loads((root / 'docs/catalog/CATEGORY-TAXONOMY.json').read_text())
 categories = {category['Name'] for category in taxonomy['Categories']}
 assert len(categories) == 24 and len(taxonomy['Groups']) == 4
 ids = []
@@ -54,15 +54,15 @@ assert 'Audio Production' in by_name['Adobe Creative Cloud']['AlsoIn']
 for category in taxonomy['Categories']:
     assert category['PrimaryApps'] == sum(a['Category'] == category['Name'] for a in apps)
     assert category['VisibleApps'] == sum(a['Category'] == category['Name'] or category['Name'] in a['AlsoIn'] for a in apps)
-with (root / 'docs/CATEGORY-AUDIT.csv').open(encoding='utf-8-sig', newline='') as file:
+with (root / 'docs/catalog/CATEGORY-AUDIT.csv').open(encoding='utf-8-sig', newline='') as file:
     review = list(csv.DictReader(file))
 assert len(review) == len({r['CatalogKey'] for r in review}) == len(apps)
 for row in review:
     app = by_key[row['CatalogKey']]
     assert (row['Application'], row['Category'], row['Group']) == (app['Name'], app['Category'], app['CategoryGroup'])
-with (root / 'docs/CATEGORY-COVERAGE.csv').open(encoding='utf-8-sig', newline='') as file:
+with (root / 'docs/catalog/CATEGORY-COVERAGE.csv').open(encoding='utf-8-sig', newline='') as file:
     coverage = list(csv.DictReader(file))
-benchmark = json.loads((root / 'docs/CATEGORY-COVERAGE.json').read_text())
+benchmark = json.loads((root / 'docs/catalog/CATEGORY-COVERAGE.json').read_text())
 assert len(coverage) == benchmark['Rows']
 assert {r['Category'] for r in coverage} == categories
 for category in benchmark['Categories']:
@@ -78,7 +78,7 @@ for row in coverage:
     if row['EvidenceType'] == 'Publisher page reviewed':
         assert urlsplit(row['EvidenceURL']).scheme == 'https'
 
-with (root / 'docs/DAILY-USE-AUDIT.csv').open(encoding='utf-8-sig', newline='') as file:
+with (root / 'docs/catalog/DAILY-USE-AUDIT.csv').open(encoding='utf-8-sig', newline='') as file:
     audit = list(csv.DictReader(file))
 assert len(audit) == len({row['Application'] for row in audit}) == 200
 for row in audit:
@@ -91,7 +91,7 @@ for row in audit:
         assert row['Application'].removeprefix('Adobe ') in app['Description'], row['Application']
     else:
         assert row['Application'] == app['Name'], row['Application']
-summary = json.loads((root / 'docs/CATALOG-AUDIT.json').read_text())
+summary = json.loads((root / 'docs/catalog/CATALOG-AUDIT.json').read_text())
 assert summary['CatalogTotal'] == len(apps)
 assert summary['Automatic'] == sum(bool(app['Ids']) for app in apps)
 assert summary['Guided'] == sum(bool(app['Url']) for app in apps)

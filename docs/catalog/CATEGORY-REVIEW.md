@@ -4,8 +4,6 @@ Revisão de 1 de outubro de 2026. Público: utilizador comum, incluindo referên
 
 As 325 apps foram revistas. A navegação passa de 14 categorias genéricas para 24 categorias de tarefa, distribuídas por quatro grupos expansíveis. Existem 214 alterações de categoria principal, incluindo renomeações; isso não significa que 214 apps estivessem erradas. Treze associações secundárias permitem encontrar ferramentas multifunções sem duplicar a app nem a instalação. O catálogo mantém 277 entradas automáticas, 48 guiadas e os oito perfis.
 
-![Edição de vídeo com Resolve e Blender selecionados na interface atual](images/categories-video.png)
-
 ## O problema e a regra usada
 
 “Audio & Video” misturava ouvir música, editar filmes, gravar o ecrã e instalar codecs. “Internet” juntava acesso remoto, SSH e ferramentas de rede. “System” incluía ficheiros, drivers, personalização e runtimes. Estes nomes obrigavam o utilizador a conhecer a classificação técnica antes de encontrar uma ferramenta.

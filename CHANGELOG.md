@@ -1,5 +1,14 @@
 # Changelog
 
+## 3.6.0 - 2026-10-12
+
+- Add elastic app selection switches to Install and Uninstall, with continuous spring travel, speed-based capsule stretch, press feedback and jump-free reversals.
+- Preserve immediate selection, native keyboard/UIA toggling and live reduced-motion fallback; fade colours and selected-card highlights through opacity layers.
+- Use continuous spring feedback for buttons and transform/opacity-only expander reveals.
+- Add headless motion bounds/reversal checks to CI and distribute their log with release assets.
+- Refresh the README and current English screenshots; consolidate development and validation documentation.
+- Remove the legacy Python/Zig/C builder, unused icon exports, old screenshot/log copies and stale status/release notes. Keep history through Git tags and Releases, catalog provenance under docs/catalog, and required licence notices.
+
 ## 3.5.0 - 2026-10-04
 
 - Keep Uninstall selections visible as a queue through publisher dialogs, verification, leftover review and inventory refresh, with per-app phases and processed-app progress.

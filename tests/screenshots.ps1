@@ -20,7 +20,7 @@ $probe={
         }
         try {
             $window.Width=1240; $window.Height=[Math]::Min(840,[Windows.SystemParameters]::WorkArea.Height-24)
-            $script:settings.Language='en'; Apply-AppLanguage; Set-Selection @('extra_vlc')
+            $script:settings.Language='en'; Apply-AppLanguage; Set-Selection @('extra_7zip')
             foreach ($appearance in @('Light','Dark')) {
                 foreach ($accent in @($true,$false)) {
                     $script:settings.Theme=$appearance; $script:settings.WindowsAccent=$accent; $script:lastAccent=''; Update-WindowsAccent

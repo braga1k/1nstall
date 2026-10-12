@@ -1,4 +1,4 @@
-﻿param([string]$OutputDirectory='')
+﻿param([switch]$Headless,[string]$OutputDirectory='')
 $ErrorActionPreference='Stop'
 $repo=Split-Path $PSScriptRoot
 Add-Type -AssemblyName PresentationFramework,PresentationCore,WindowsBase,System.Xaml
@@ -28,7 +28,7 @@ public static class ElasticProbe {
         var last=poses[poses.Length-1]; Assert(last.X==target && last.Stretch==0 && last.Height==1,"Flight did not land round");
     }
     static ElasticSwitch Switch(CheckBox c) { return (ElasticSwitch)c.Template.FindName("ElasticSwitch",c); }
-    public static void Run(string directory) {
+    public static void Run(string directory,bool headless) {
         foreach(var feel in new[] { ElasticFeel.Balanced,ElasticFeel.Firm,ElasticFeel.Elastic }) {
             foreach(double target in new[] { 0.0,16.0 }) {
                 var initial=new ElasticMotion.Pose(16-target,0,1);
@@ -40,6 +40,7 @@ public static class ElasticProbe {
                 }
             }
         }
+        if(headless) return;
         var window=new MainWindow(); var panel=new StackPanel { Margin=new Thickness(24) }; window.Content=panel;
         Motion.Initialize(window); Motion.TestOverride=false;
         var card=NativeUI.Card(window,"fixture","Elastic selection","Test category","Test selection",true); card.ClearValue(Control.TemplateProperty); panel.Children.Add(card);
@@ -78,5 +79,6 @@ public static class ElasticProbe {
     }
 }
 '@
-[ElasticProbe]::Run($OutputDirectory)
-'PASS: all presets, track bounds, repeated reversals, native UIA, press/cancel, reduced motion, settle callbacks and virtualization.'
+[ElasticProbe]::Run($OutputDirectory,[bool]$Headless)
+if ($Headless) { 'PASS: all presets, track bounds and repeated reversals (headless).' }
+else { 'PASS: all presets, track bounds, repeated reversals, native UIA, press/cancel, reduced motion, settle callbacks and virtualization.' }
