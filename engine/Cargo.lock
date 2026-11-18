@@ -98,7 +98,7 @@ dependencies = [
 
 [[package]]
 name = "oneinstall-cli"
-version = "4.0.0-alpha.0"
+version = "4.0.0"
 dependencies = [
  "oneinstall-core",
  "oneinstall-platform",
@@ -107,7 +107,7 @@ dependencies = [
 
 [[package]]
 name = "oneinstall-core"
-version = "4.0.0-alpha.0"
+version = "4.0.0"
 dependencies = [
  "proptest",
  "regex",
@@ -116,7 +116,7 @@ dependencies = [
 
 [[package]]
 name = "oneinstall-ffi"
-version = "4.0.0-alpha.0"
+version = "4.0.0"
 dependencies = [
  "oneinstall-core",
  "oneinstall-platform",
@@ -125,7 +125,7 @@ dependencies = [
 
 [[package]]
 name = "oneinstall-harness"
-version = "4.0.0-alpha.0"
+version = "4.0.0"
 dependencies = [
  "oneinstall-core",
  "oneinstall-ffi",
@@ -136,7 +136,7 @@ dependencies = [
 
 [[package]]
 name = "oneinstall-platform"
-version = "4.0.0-alpha.0"
+version = "4.0.0"
 dependencies = [
  "oneinstall-core",
  "serde_json",

@@ -80,6 +80,15 @@ static class Program {
         Check(log,ref passed,"an idle queue reports nothing",Engine.QueueEvents().Length==0);
         foreach(string operation in new[]{"Remove","Scan","Clean"}) Check(log,ref passed,"the test modes refuse to "+operation.ToLowerInvariant(),Engine.UninstallStart(operation,"anything","").StartsWith("!",StringComparison.Ordinal));
         Check(log,ref passed,"the test modes read no removal history",Engine.UninstallTargets()==0);
+        string[] history=Engine.History(Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"test-logs")).Split('\u001E');
+        Check(log,ref passed,"the test modes start with an empty, readable history",history.Length==1 && history[0].Length==0);
+        string diagnostics=Engine.Diagnostics(Environment.OSVersion.Version.ToString());
+        Check(log,ref passed,"diagnostics name this Windows and nothing else yet",diagnostics=="1nstall diagnostics (review before sharing)\r\nWindows "+Environment.OSVersion.Version+" \u00B7 x64 True\r\n");
+        Check(log,ref passed,"licences and credits are embedded",Engine.Notices().Contains("1nstall") && Engine.Notices().Contains("regex"));
+        string failure="";
+        try { Engine.TestFailure(); } catch(EngineException error) { failure=error.Message; }
+        Check(log,ref passed,"an internal engine failure is reported, not fatal: "+failure,failure.StartsWith("Deliberate failure for the tests (",StringComparison.Ordinal));
+        Check(log,ref passed,"the engine still answers after failing",Engine.Plan("peace").Split('\u001E').Length==2);
         Check(log,ref passed,"test preferences are fixed: "+Engine.Settings(true).Replace('\u001F',' '),Engine.Settings(true)=="Dark\u001F1\u001Fen\u001F0");
         Check(log,ref passed,"every language is listed",Engine.Languages().Split('\u001E').Length==locales.Count);
         I18n.Load(Engine.Language("System","pt-BR"));
@@ -114,7 +123,11 @@ static class Program {
             Action isolate=delegate {
                 if(!test) return;
                 string standIn=args[0]=="--ui-test"?Environment.GetEnvironmentVariable("ONEINSTALL_TEST_WINGET") ?? "":"";
-                Engine.TestEnvironment(Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"test-data"),standIn);
+                // The self-test only reads, from a folder that does not exist, so that what an
+                // earlier interface test recorded cannot change its result.
+                string data=Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"test-data");
+                if(args[0]=="--self-test") data=Path.Combine(data,"self-test-"+Process.GetCurrentProcess().Id);
+                Engine.TestEnvironment(data,standIn);
             };
             if(test && args[0]=="--self-test") { Engine.Load(test); isolate(); passed=SelfTest(output); }
             else {

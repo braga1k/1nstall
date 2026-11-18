@@ -1,15 +1,16 @@
 //! The engine as `oneinstall_engine.dll`, with a C interface, for the WPF application.
 //!
 //! Text crosses the boundary as NUL-terminated UTF-16. Every pointer this library returns
-//! must be handed back to [`oi_free`]. No function panics across the boundary: a failure is
-//! reported inside the returned text.
+//! must be handed back to [`oi_free`]. An expected failure is reported inside the returned
+//! text, as "!" and the reason. An internal failure of the engine does not end the process:
+//! the function returns a null pointer and [`oi_last_error`] says what went wrong.
 //!
 //! Large, rarely read data is JSON. What the interface needs on every start and on every
 //! click is plain records instead, so the application does not have to load a JSON parser
 //! before its first frame: fields end with U+001F, records with U+001E, and the items of a
 //! list inside a field are separated by U+001D.
 
-use std::sync::OnceLock;
+use std::sync::{Mutex, MutexGuard, Once, OnceLock, PoisonError};
 
 use oneinstall_core::queue::{plan, CatalogApp};
 use oneinstall_core::settings::{resolve_language, Settings};
@@ -22,6 +23,7 @@ const CATALOG: &str = include_str!("../../../catalog.json");
 const PROFILES: &str = include_str!("../../../profiles.json");
 const LOCALES: &str = include_str!("../../../locales.json");
 
+pub mod history;
 pub mod library;
 pub mod queue;
 pub mod uninstall;
@@ -208,6 +210,65 @@ pub unsafe extern "C" fn oi_test_environment(data_root: *const u16, install_prog
     set_test_environment(&take(data_root), &take(install_program));
 }
 
+/// Shared state, also after a thread failed while holding it: every value kept here is
+/// replaced whole, so there is no half-written state to protect.
+pub(crate) fn held<T>(shared: &Mutex<T>) -> MutexGuard<'_, T> {
+    shared.lock().unwrap_or_else(PoisonError::into_inner)
+}
+
+static LAST_ERROR: Mutex<String> = Mutex::new(String::new());
+
+/// Keeps what an internal failure said, and where it happened, for [`oi_last_error`].
+fn watch_failures() {
+    static WATCHING: Once = Once::new();
+    WATCHING.call_once(|| {
+        let previous = std::panic::take_hook();
+        std::panic::set_hook(Box::new(move |failure| {
+            let payload = failure.payload();
+            let reason =
+                payload.downcast_ref::<&str>().map(|text| text.to_string()).or_else(|| payload.downcast_ref::<String>().cloned()).unwrap_or_else(|| "Unknown failure".to_string());
+            let place = failure
+                .location()
+                .map(|place| {
+                    format!(" ({}:{})", place.file().replace('\\', "/").rsplit('/').take(3).collect::<Vec<_>>().into_iter().rev().collect::<Vec<_>>().join("/"), place.line())
+                })
+                .unwrap_or_default();
+            *held(&LAST_ERROR) = format!("{reason}{place}");
+            previous(failure);
+        }));
+    });
+}
+
+/// Runs engine code for the interface. An internal failure stops that piece of work only,
+/// and comes back as its description.
+pub(crate) fn guarded<T>(work: impl FnOnce() -> T) -> Result<T, String> {
+    watch_failures();
+    std::panic::catch_unwind(std::panic::AssertUnwindSafe(work)).map_err(|_| held(&LAST_ERROR).clone())
+}
+
+/// The body of an exported function that returns text: null after an internal failure.
+pub(crate) fn guard(work: impl FnOnce() -> *mut u16) -> *mut u16 {
+    guarded(work).unwrap_or(std::ptr::null_mut())
+}
+
+/// What the last internal failure said. Empty when there was none.
+#[no_mangle]
+pub extern "C" fn oi_last_error() -> *mut u16 {
+    give(&held(&LAST_ERROR))
+}
+
+/// Fails on purpose, in the test modes only, so that the path above can be tested from the
+/// application. Outside the test modes it returns empty text.
+#[no_mangle]
+pub extern "C" fn oi_test_failure() -> *mut u16 {
+    guard(|| {
+        if TEST_ENVIRONMENT.lock().map(|environment| environment.is_some()).unwrap_or(false) {
+            panic!("Deliberate failure for the tests");
+        }
+        give("")
+    })
+}
+
 pub(crate) fn give(text: &str) -> *mut u16 {
     let wide: Box<[u16]> = text.encode_utf16().chain(std::iter::once(0)).collect();
     Box::into_raw(wide).cast()
@@ -234,29 +295,29 @@ pub(crate) unsafe fn take(text: *const u16) -> String {
 
 #[no_mangle]
 pub extern "C" fn oi_version() -> *mut u16 {
-    give(env!("CARGO_PKG_VERSION"))
+    guard(|| give(env!("CARGO_PKG_VERSION")))
 }
 
 /// The app catalog, as the JSON array the card builder reads.
 #[no_mangle]
 pub extern "C" fn oi_catalog() -> *mut u16 {
-    give(without_mark(CATALOG))
+    guard(|| give(without_mark(CATALOG)))
 }
 
 #[no_mangle]
 pub extern "C" fn oi_profiles() -> *mut u16 {
-    give(without_mark(PROFILES))
+    guard(|| give(without_mark(PROFILES)))
 }
 
 #[no_mangle]
 pub extern "C" fn oi_locales() -> *mut u16 {
-    give(without_mark(LOCALES))
+    guard(|| give(without_mark(LOCALES)))
 }
 
 /// The library cards, as records. See [`cards`].
 #[no_mangle]
 pub extern "C" fn oi_cards() -> *mut u16 {
-    give(&cards())
+    guard(|| give(&cards()))
 }
 
 /// The install order for app keys separated by U+001F, as records. See [`plan_records`].
@@ -265,16 +326,20 @@ pub extern "C" fn oi_cards() -> *mut u16 {
 /// `keys` must be null or point to a NUL-terminated UTF-16 string.
 #[no_mangle]
 pub unsafe extern "C" fn oi_plan(keys: *const u16) -> *mut u16 {
-    let keys: Vec<String> = take(keys).split(FIELD).filter(|key| !key.is_empty()).map(str::to_string).collect();
-    give(&plan_records(&keys))
+    guard(|| {
+        let keys: Vec<String> = take(keys).split(FIELD).filter(|key| !key.is_empty()).map(str::to_string).collect();
+        give(&plan_records(&keys))
+    })
 }
 
 /// The saved preferences, as [`settings_record`] gives them. With `test` non-zero, the fixed
 /// preferences of the test modes instead, and no file is read.
 #[no_mangle]
 pub extern "C" fn oi_settings(test: i32) -> *mut u16 {
-    let settings = if test != 0 { Settings::for_tests() } else { load(&settings_path(&WindowsHost::new()), &language_codes()) };
-    give(&settings_record(&settings))
+    guard(|| {
+        let settings = if test != 0 { Settings::for_tests() } else { load(&settings_path(&WindowsHost::new()), &language_codes()) };
+        give(&settings_record(&settings))
+    })
 }
 
 /// Saves preferences given as one record. Empty on success, or "!" followed by the reason.
@@ -283,17 +348,19 @@ pub extern "C" fn oi_settings(test: i32) -> *mut u16 {
 /// `record` must be null or point to a NUL-terminated UTF-16 string.
 #[no_mangle]
 pub unsafe extern "C" fn oi_save_settings(record: *const u16) -> *mut u16 {
-    let result = match settings_from_record(&take(record)) {
-        Some(settings) => save(&settings_path(&WindowsHost::new()), &settings),
-        None => Err("The settings are not valid.".to_string()),
-    };
-    give(&result.err().map(|reason| format!("!{reason}")).unwrap_or_default())
+    guard(|| {
+        let result = match settings_from_record(&take(record)) {
+            Some(settings) => save(&settings_path(&WindowsHost::new()), &settings),
+            None => Err("The settings are not valid.".to_string()),
+        };
+        give(&result.err().map(|reason| format!("!{reason}")).unwrap_or_default())
+    })
 }
 
 /// Every language, as records. See [`languages`].
 #[no_mangle]
 pub extern "C" fn oi_languages() -> *mut u16 {
-    give(&languages())
+    guard(|| give(&languages()))
 }
 
 /// The language for a choice and the Windows display language, as records. See [`language`].
@@ -302,7 +369,7 @@ pub extern "C" fn oi_languages() -> *mut u16 {
 /// `choice` and `ui_culture` must each be null or point to a NUL-terminated UTF-16 string.
 #[no_mangle]
 pub unsafe extern "C" fn oi_language(choice: *const u16, ui_culture: *const u16) -> *mut u16 {
-    give(&language(&take(choice), &take(ui_culture)))
+    guard(|| give(&language(&take(choice), &take(ui_culture))))
 }
 
 /// What Windows reports about appearance, as one record: the accent colour as "RRGGBB",
@@ -310,9 +377,11 @@ pub unsafe extern "C" fn oi_language(choice: *const u16, ui_culture: *const u16)
 /// empty when Windows cannot be asked. Call it on a thread with COM initialised.
 #[no_mangle]
 pub extern "C" fn oi_system_appearance() -> *mut u16 {
-    let appearance = system_appearance();
-    let accent = appearance.accent.map(|(red, green, blue)| format!("{red:02X}{green:02X}{blue:02X}")).unwrap_or_default();
-    give(&records(std::iter::once(vec![accent, appearance.advanced_effects.map(flag).unwrap_or_default(), flag(appearance.light)])))
+    guard(|| {
+        let appearance = system_appearance();
+        let accent = appearance.accent.map(|(red, green, blue)| format!("{red:02X}{green:02X}{blue:02X}")).unwrap_or_default();
+        give(&records(std::iter::once(vec![accent, appearance.advanced_effects.map(flag).unwrap_or_default(), flag(appearance.light)])))
+    })
 }
 
 /// # Safety
@@ -392,6 +461,33 @@ mod tests {
         for invalid in ["", "Neon\u{1f}1\u{1f}en\u{1f}1", "Dark\u{1f}yes\u{1f}en\u{1f}1", "Dark\u{1f}1\u{1f}xx\u{1f}1", "Dark\u{1f}1\u{1f}en"] {
             assert_eq!(settings_from_record(invalid), None, "{invalid:?}");
         }
+    }
+
+    #[test]
+    fn an_internal_failure_is_reported_and_the_engine_goes_on() {
+        let failure = guarded(|| -> usize { panic!("the reason {}", 7) }).unwrap_err();
+        assert!(failure.starts_with("the reason 7 (") && failure.contains("lib.rs:"), "{failure}");
+        // An exported function returns null, and the reason can be asked for afterwards.
+        assert!(guard(|| panic!("at the boundary")).is_null());
+        // SAFETY: the pointer was just returned by this library and is freed exactly once.
+        unsafe {
+            let reason = oi_last_error();
+            assert!(take(reason).starts_with("at the boundary ("));
+            oi_free(reason);
+        }
+        // Work that does not fail is untouched, and the engine still answers.
+        assert_eq!(guarded(|| 3), Ok(3));
+        assert_eq!(cards().split(RECORD).count(), catalog().len());
+        // Shared state is still usable after a thread failed while holding it.
+        static SHARED: Mutex<u32> = Mutex::new(1);
+        let _ = std::thread::spawn(|| {
+            let _held = SHARED.lock().unwrap();
+            panic!("while holding shared state");
+        })
+        .join();
+        assert!(SHARED.is_poisoned());
+        *held(&SHARED) += 1;
+        assert_eq!(*held(&SHARED), 2);
     }
 
     #[test]

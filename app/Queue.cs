@@ -129,6 +129,8 @@ static partial class Library {
                     try { Process.Start(fields[2]); } catch(Exception) { Shell.AddLog("Could not open: "+fields[2]); }
                     break;
                 case "progress": completed++; SetQueueProgress(100.0*completed/total); Shell.SetText("Status",completed+" of "+total+" processed"); break;
+                // The engine failed internally: the queue ended, and what was running counts as interrupted.
+                case "error": Shell.AddLog("1nstall could not finish the queue: "+fields[2]); break;
                 case "done": done=true; break;
             }
         }

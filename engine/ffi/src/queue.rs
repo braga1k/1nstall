@@ -10,16 +10,14 @@ use std::sync::Mutex;
 use oneinstall_core::queue::{plan, run_queue, CatalogApp, InstallReport, Installer, QueueEvent};
 use oneinstall_platform::packages::Packages;
 
-use crate::{catalog, give, install_packages, records, take, FIELD};
+use crate::{catalog, give, guard, guarded, held, install_packages, records, take, FIELD};
 
 static EVENTS: Mutex<VecDeque<Vec<String>>> = Mutex::new(VecDeque::new());
 static RUNNING: AtomicBool = AtomicBool::new(false);
 static STOP: AtomicBool = AtomicBool::new(false);
 
 fn emit(kind: &str, key: &str, text: &str) {
-    if let Ok(mut events) = EVENTS.lock() {
-        events.push_back(vec![kind.to_string(), key.to_string(), text.to_string()]);
-    }
+    held(&EVENTS).push_back(vec![kind.to_string(), key.to_string(), text.to_string()]);
 }
 
 /// Installs through WinGet and writes the operation history, as 3.6 does.
@@ -48,18 +46,22 @@ pub fn start(keys: &[String], logs: &str) -> Result<(), String> {
         return Err("A queue is already running.".to_string());
     }
     STOP.store(false, Ordering::SeqCst);
-    if let Ok(mut events) = EVENTS.lock() {
-        events.clear();
-    }
+    held(&EVENTS).clear();
     let mut installer = WinGetInstaller { packages, logs: logs.to_string() };
     let spawned = std::thread::Builder::new().name("install queue".to_string()).spawn(move || {
         let planned: Vec<&CatalogApp> = planned.iter().collect();
-        run_queue(&planned, &|| STOP.load(Ordering::SeqCst), &mut installer, &mut |event| match event {
-            QueueEvent::Status { key, text } => emit("status", &key, &text),
-            QueueEvent::Progress { key } => emit("progress", &key, ""),
-            QueueEvent::Url { key, url } => emit("url", &key, &url),
-            QueueEvent::Log { key, text } => emit("log", &key, &text),
+        let finished = guarded(|| {
+            run_queue(&planned, &|| STOP.load(Ordering::SeqCst), &mut installer, &mut |event| match event {
+                QueueEvent::Status { key, text } => emit("status", &key, &text),
+                QueueEvent::Progress { key } => emit("progress", &key, ""),
+                QueueEvent::Url { key, url } => emit("url", &key, &url),
+                QueueEvent::Log { key, text } => emit("log", &key, &text),
+            });
         });
+        // An internal failure ends the queue; the interface marks what was running as interrupted.
+        if let Err(failure) = finished {
+            emit("error", "", &failure);
+        }
         emit("done", "", "");
         RUNNING.store(false, Ordering::SeqCst);
     });
@@ -76,9 +78,10 @@ pub fn stop() {
 }
 
 /// What happened since the last call, oldest first, one record each: kind, app key, text.
-/// The kinds are `status`, `progress`, `url`, `log` and, once, `done`.
+/// The kinds are `status`, `progress`, `url`, `log`, `error` after an internal failure, and,
+/// once, `done`.
 pub fn drain() -> String {
-    let events: Vec<Vec<String>> = EVENTS.lock().map(|mut events| events.drain(..).collect()).unwrap_or_default();
+    let events: Vec<Vec<String>> = held(&EVENTS).drain(..).collect();
     records(events.into_iter())
 }
 
@@ -92,8 +95,10 @@ pub fn running() -> bool {
 /// Both arguments must be null or point to NUL-terminated UTF-16 strings.
 #[no_mangle]
 pub unsafe extern "C" fn oi_queue_start(keys: *const u16, logs: *const u16) -> *mut u16 {
-    let keys: Vec<String> = take(keys).split(FIELD).filter(|key| !key.is_empty()).map(str::to_string).collect();
-    give(&start(&keys, &take(logs)).err().map(|reason| format!("!{reason}")).unwrap_or_default())
+    guard(|| {
+        let keys: Vec<String> = take(keys).split(FIELD).filter(|key| !key.is_empty()).map(str::to_string).collect();
+        give(&start(&keys, &take(logs)).err().map(|reason| format!("!{reason}")).unwrap_or_default())
+    })
 }
 
 /// See [`stop`].
@@ -105,5 +110,5 @@ pub extern "C" fn oi_queue_stop() {
 /// See [`drain`].
 #[no_mangle]
 pub extern "C" fn oi_queue_events() -> *mut u16 {
-    give(&drain())
+    guard(|| give(&drain()))
 }

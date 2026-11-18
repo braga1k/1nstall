@@ -11,6 +11,7 @@ This is work in progress. `Shell.cs` lists what is ported and what is not; the 3
 | `Shell.cs` | The main window, wired to the engine. |
 | `Library.cs` | The install library: selection, filters, views, installed states, details, profiles and saved selections. |
 | `Queue.cs` | The install queue: review, start, progress, per-app status, stopping and the end of the run. |
+| `History.cs` | The History & diagnostics page: the operations on record, the diagnostics text to review, licences and credits. |
 | `Uninstall.cs` | The Uninstall pages: installed apps, the removal queue and its review, the leftover scan and the cleanup. |
 | `Cards.cs` | The library cards: the 3.6 card builder, reading engine records and filling a card only when it nears the viewport. |
 | `I18n.cs` | Interface language: every label remembers its English text and the window is re-translated in place. |
@@ -21,6 +22,7 @@ This is work in progress. `Shell.cs` lists what is ported and what is not; the 3
 | `tests/update-bridge.ps1` | Proves the 3.6 updater accepts and applies the 4.0 executable. |
 | `tests/library-ui.ps1` | Drives the install library through UI Automation and checks what a 3.6 user relies on. Needs an interactive desktop; its last part runs `winget export`, which only reads. |
 | `tests/queue-ui.ps1` | Drives an install from review to result with a stand-in for WinGet that installs nothing. Needs an interactive desktop. |
+| `tests/history-ui.ps1` | Drives the History & diagnostics page with a made-up history, and makes the engine fail on purpose to check that the application reports it and goes on. Needs an interactive desktop. |
 | `tests/uninstall-ui.ps1` | Drives the Uninstall page, reading only: lists, filters, selects and opens the review, then always goes back. Needs an interactive desktop. |
 | `tests/settings-ui.ps1` | Drives the Settings page: languages, right-to-left layout, theme and accent. Needs an interactive desktop. |
 

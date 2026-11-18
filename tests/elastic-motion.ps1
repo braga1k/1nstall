@@ -2,7 +2,12 @@
 $ErrorActionPreference='Stop'
 $repo=Split-Path $PSScriptRoot
 Add-Type -AssemblyName PresentationFramework,PresentationCore,WindowsBase,System.Xaml
-$ui=Join-Path $repo 'dist/1nstall.UI.dll'
+# 4.0 carries the interface and the motion code in the executable itself.
+# PowerShell only references assemblies named .dll, so the test works on a copy with that name.
+$copy=Join-Path $repo 'dist/motion-test'
+New-Item -ItemType Directory -Path $copy -Force | Out-Null
+$ui=Join-Path $copy '1nstall.dll'
+Copy-Item -LiteralPath (Join-Path $repo 'dist/1nstall.exe') -Destination $ui -Force
 Add-Type -Path $ui
 Add-Type -ReferencedAssemblies @('System.dll','System.Core.dll','System.Xaml','WindowsBase','PresentationCore','PresentationFramework','UIAutomationProvider','UIAutomationTypes',$ui) -TypeDefinition @'
 using System;
@@ -43,7 +48,7 @@ public static class ElasticProbe {
         if(headless) return;
         var window=new MainWindow(); var panel=new StackPanel { Margin=new Thickness(24) }; window.Content=panel;
         Motion.Initialize(window); Motion.TestOverride=false;
-        var card=NativeUI.Card(window,"fixture","Elastic selection","Test category","Test selection",true); card.ClearValue(Control.TemplateProperty); panel.Children.Add(card);
+        var card=new CheckBox { Content="Elastic selection",Style=(Style)window.Resources["AppSwitch"] }; panel.Children.Add(card);
         var row=new CheckBox { Content="Installed app",Style=(Style)window.Resources["AppSwitch"] }; panel.Children.Add(row);
         window.Show(); Pump(100);
         try {

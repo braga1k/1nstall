@@ -11,12 +11,12 @@ use oneinstall_core::queue::{deselect, plan, select};
 use oneinstall_platform::packages::{read_setup, save_setup, SetupDraft};
 use serde_json::{json, Value};
 
-use crate::{catalog, catalog_rows, flag, give, packages, profile_rows, records, take, FIELD, ITEM};
+use crate::{catalog, catalog_rows, flag, give, guard, packages, profile_rows, records, take, FIELD, ITEM};
 
 /// The last inventory WinGet reported. Empty until [`refresh_inventory`] has run.
 static INVENTORY: Mutex<PackageInventory> = Mutex::new(PackageInventory { complete: false, partial: false, packages: Vec::new(), message: None });
 
-fn inventory() -> PackageInventory {
+pub(crate) fn inventory() -> PackageInventory {
     INVENTORY.lock().map(|inventory| inventory.clone()).unwrap_or_default()
 }
 
@@ -256,7 +256,7 @@ fn answer(result: Result<(), String>) -> *mut u16 {
 /// Both arguments must be null or point to NUL-terminated UTF-16 strings.
 #[no_mangle]
 pub unsafe extern "C" fn oi_selection_add(selected: *const u16, key: *const u16) -> *mut u16 {
-    give(&selection_add(&keys_of(&take(selected)), &take(key)))
+    guard(|| give(&selection_add(&keys_of(&take(selected)), &take(key))))
 }
 
 /// The selection after `key` is removed.
@@ -265,19 +265,19 @@ pub unsafe extern "C" fn oi_selection_add(selected: *const u16, key: *const u16)
 /// Both arguments must be null or point to NUL-terminated UTF-16 strings.
 #[no_mangle]
 pub unsafe extern "C" fn oi_selection_remove(selected: *const u16, key: *const u16) -> *mut u16 {
-    give(&selection_remove(&keys_of(&take(selected)), &take(key)))
+    guard(|| give(&selection_remove(&keys_of(&take(selected)), &take(key))))
 }
 
 /// See [`refresh_inventory`]. Call it off the interface thread.
 #[no_mangle]
 pub extern "C" fn oi_refresh_inventory() -> *mut u16 {
-    give(&refresh_inventory())
+    guard(|| give(&refresh_inventory()))
 }
 
 /// See [`states`].
 #[no_mangle]
 pub extern "C" fn oi_states() -> *mut u16 {
-    give(&states())
+    guard(|| give(&states()))
 }
 
 /// See [`details`].
@@ -286,25 +286,25 @@ pub extern "C" fn oi_states() -> *mut u16 {
 /// `key` must be null or point to a NUL-terminated UTF-16 string.
 #[no_mangle]
 pub unsafe extern "C" fn oi_details(key: *const u16) -> *mut u16 {
-    give(&details(&take(key)))
+    guard(|| give(&details(&take(key))))
 }
 
 /// See [`profiles_menu`].
 #[no_mangle]
 pub extern "C" fn oi_profiles_menu() -> *mut u16 {
-    give(&profiles_menu())
+    guard(|| give(&profiles_menu()))
 }
 
 /// See [`winget_path`].
 #[no_mangle]
 pub extern "C" fn oi_winget() -> *mut u16 {
-    give(&winget_path())
+    guard(|| give(&winget_path()))
 }
 
 /// The remembered library view. With `test` non-zero nothing is read.
 #[no_mangle]
 pub extern "C" fn oi_library_view(test: i32) -> *mut u16 {
-    give(&if test != 0 { VIEWS[0].to_string() } else { library_view_from(&view_path()) })
+    guard(|| give(&if test != 0 { VIEWS[0].to_string() } else { library_view_from(&view_path()) }))
 }
 
 /// Remembers the library view. Empty on success, or "!" and the reason.
@@ -313,7 +313,7 @@ pub extern "C" fn oi_library_view(test: i32) -> *mut u16 {
 /// `view` must be null or point to a NUL-terminated UTF-16 string.
 #[no_mangle]
 pub unsafe extern "C" fn oi_save_library_view(view: *const u16) -> *mut u16 {
-    answer(save_library_view_to(&view_path(), &take(view)))
+    guard(|| answer(save_library_view_to(&view_path(), &take(view))))
 }
 
 /// See [`save_selection`]. Empty on success, or "!" and the reason.
@@ -322,7 +322,7 @@ pub unsafe extern "C" fn oi_save_library_view(view: *const u16) -> *mut u16 {
 /// Both arguments must be null or point to NUL-terminated UTF-16 strings.
 #[no_mangle]
 pub unsafe extern "C" fn oi_save_selection(path: *const u16, keys: *const u16) -> *mut u16 {
-    answer(save_selection(&take(path), &keys_of(&take(keys))))
+    guard(|| answer(save_selection(&take(path), &keys_of(&take(keys)))))
 }
 
 /// See [`setup_rows`]. Records, or "!" and the reason.
@@ -331,18 +331,22 @@ pub unsafe extern "C" fn oi_save_selection(path: *const u16, keys: *const u16) -
 /// `path` must be null or point to a NUL-terminated UTF-16 string.
 #[no_mangle]
 pub unsafe extern "C" fn oi_read_setup(path: *const u16) -> *mut u16 {
-    give(&match setup_rows(&take(path), &inventory()) {
-        Ok(rows) => records(rows.into_iter()),
-        Err(reason) => refused(reason),
+    guard(|| {
+        give(&match setup_rows(&take(path), &inventory()) {
+            Ok(rows) => records(rows.into_iter()),
+            Err(reason) => refused(reason),
+        })
     })
 }
 
 /// See [`snapshot_rows`]. Records, or "!" then a title and a message separated by U+001F.
 #[no_mangle]
 pub extern "C" fn oi_snapshot_rows() -> *mut u16 {
-    give(&match snapshot_rows(&inventory()) {
-        Ok(rows) => records(rows.into_iter()),
-        Err((title, message)) => refused(format!("{title}{FIELD}{message}")),
+    guard(|| {
+        give(&match snapshot_rows(&inventory()) {
+            Ok(rows) => records(rows.into_iter()),
+            Err((title, message)) => refused(format!("{title}{FIELD}{message}")),
+        })
     })
 }
 
@@ -352,7 +356,7 @@ pub extern "C" fn oi_snapshot_rows() -> *mut u16 {
 /// Both arguments must be null or point to NUL-terminated UTF-16 strings.
 #[no_mangle]
 pub unsafe extern "C" fn oi_save_snapshot(path: *const u16, keys: *const u16) -> *mut u16 {
-    answer(save_snapshot(&take(path), &keys_of(&take(keys)), &inventory()))
+    guard(|| answer(save_snapshot(&take(path), &keys_of(&take(keys)), &inventory())))
 }
 
 #[cfg(test)]

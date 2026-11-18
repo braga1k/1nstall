@@ -1,9 +1,8 @@
 // The main window: the compiled 3.6 interface, started and wired in C# over the Rust engine.
 //
-// Ported so far: the install library (Library.cs), the install queue (Queue.cs), the
-// Uninstall pages (Uninstall.cs), appearance (Theme.cs), languages (I18n.cs)
-// and the Settings page (SettingsPage.cs).
-// Still to port from src/manager-ui.ps1: history and diagnostics.
+// The pages are in their own files: the install library (Library.cs), the install queue
+// (Queue.cs), the Uninstall pages (Uninstall.cs), history and diagnostics (History.cs),
+// appearance (Theme.cs), languages (I18n.cs) and the Settings page (SettingsPage.cs).
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -28,7 +27,7 @@ sealed class StartupData {
 static class Shell {
     static Window window;
     static string logDirectory, logPath;
-    // "Install", "Uninstall" or "Settings".
+    // "Install", "Uninstall", "History" or "Settings".
     public static string Mode="Install";
 
     static T Find<T>(string name) where T:class { return window.FindName(name) as T; }
@@ -57,7 +56,7 @@ static class Shell {
     // Set-AppMode: the Install library or the Uninstall page.
     public static void SetMode(string mode) {
         if(Library.Busy || Uninstall.Busy) return;
-        SettingsPage.Hide();
+        SettingsPage.Hide(); History.Hide();
         bool changed=Mode!=mode;
         if(changed) Motion.ClearDecorations();
         Mode=mode; bool uninstall=mode=="Uninstall";
@@ -76,6 +75,19 @@ static class Shell {
         }
     }
 
+    // An internal failure of the engine ends the action that asked, not the application: it is
+    // logged and shown once. Any other unhandled error still closes the application with a message.
+    static bool reporting;
+    static void EngineFailed(object sender,DispatcherUnhandledExceptionEventArgs e) {
+        if(!(e.Exception is EngineException)) return;
+        e.Handled=true;
+        AddLog("Internal error: "+e.Exception.Message);
+        if(reporting) return;
+        reporting=true;
+        try { MessageBox.Show(window,"1nstall could not finish that action because of an internal error. Nothing else was stopped.\n\n"+e.Exception.Message+"\n\nThe details are in this session's log (Open logs).","1nstall",MessageBoxButton.OK,MessageBoxImage.Error); }
+        finally { reporting=false; }
+    }
+
     // Apply-AppLanguage: ask the engine for the language, then re-translate the window in place.
     public static void ApplyLanguage() {
         I18n.Load(Engine.Language(Preferences.Language,I18n.UiCulture));
@@ -91,6 +103,7 @@ static class Shell {
     public static void Run(string mode,StartupTimer clock,StringBuilder output,Task<StartupData> loading) {
         bool test=mode.Length>0, startupTest=mode=="--startup-test";
         var application=new Application { ShutdownMode=ShutdownMode.OnMainWindowClose };
+        application.DispatcherUnhandledException+=EngineFailed;
         Program.Mark("application");
         window=new MainWindow { Title="1nstall 4.0" };
         Motion.Initialize(window);
@@ -145,6 +158,14 @@ static class Shell {
         var uninstallMode=Find<Button>("UninstallMode"); if(uninstallMode!=null) uninstallMode.Click+=delegate { SetMode("Uninstall"); };
         // Test modes keep registry backups beside the executable too.
         Uninstall.Initialize(window,logPath,test?System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"test-data","Backups"):System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"1nstall","Backups"));
+        History.Initialize(window,logDirectory);
+        if(mode=="--ui-test") {
+            // Only in the interface test mode: an invisible button that makes the engine fail on purpose.
+            var failure=new Button { Width=1, Height=1, MinHeight=1, Opacity=0, Focusable=false, IsTabStop=false, Margin=new Thickness(0), Padding=new Thickness(0) };
+            AutomationProperties.SetAutomationId(failure,"TestFailure");
+            failure.Click+=delegate { Engine.TestFailure(); };
+            ((Panel)installMode.Parent).Children.Add(failure);
+        }
         // The named buttons of the window follow the pointer with a light, as in 3.6.
         foreach(string name in new[]{"ClearSearch","UserProfiles","Profiles","ClearSelection","SaveSetup","Install","Cancel","OpenLogs","MinimizeWindow","MaximizeWindow","CloseWindow","InstallMode","UninstallMode","RefreshInstalled","WindowsAppsSettings","ClearUninstallSelection","CheckLeftovers","OpenUninstallBackups","ReviewUninstall","StopUninstall","Donate"}) {
             var button=Find<Button>(name); if(button!=null) Theme.EnableHoverMotion(button);

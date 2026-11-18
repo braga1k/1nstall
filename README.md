@@ -6,11 +6,11 @@ Choose the apps you need, build a setup that fits your work, and keep every inst
 
 **325 apps · 24 categories · 20 profiles · 51 language choices**
 
-[**Download for Windows**](https://github.com/braga1k/1nstall/releases/latest/download/1nstall.exe) · [Portable ZIP](https://github.com/braga1k/1nstall/releases/download/v3.6.0/1nstall-3.6.0-Windows-x64.zip) · [What's new in 3.6](https://github.com/braga1k/1nstall/releases/tag/v3.6.0) · [Checksums](https://github.com/braga1k/1nstall/releases/download/v3.6.0/SHA256SUMS.txt)
+[**Download for Windows**](https://github.com/braga1k/1nstall/releases/latest/download/1nstall.exe) · [Portable ZIP](https://github.com/braga1k/1nstall/releases/download/v4.0.0/1nstall-4.0.0-Windows-x64.zip) · [What's new in 4.0](https://github.com/braga1k/1nstall/releases/tag/v4.0.0) · [Checksums](https://github.com/braga1k/1nstall/releases/download/v4.0.0/SHA256SUMS.txt)
 
 Windows 10 / 11 · x64 · Standalone executable
 
-![1nstall 3.6 — app library with elastic selection toggles](docs/images/install-dark.png)
+![1nstall — app library with elastic selection toggles](docs/images/install-dark.png)
 
 ## A setup that feels like yours
 
@@ -19,7 +19,7 @@ Windows 10 / 11 · x64 · Standalone executable
 | Browse by task, search the library or start from one of 20 profiles. | Light, dark or system appearance. Your Windows accent, or monochrome. | Review each queue before it starts and see individual outcomes. |
 | Save a selection and take it to another PC. | 51 language choices, including Japanese and Portuguese from Portugal. | Use original uninstallers and review supported leftovers separately. |
 
-**3.6 makes selection feel more responsive.** Switches in Install and Uninstall lean as you press, stretch as they travel and settle softly. A second click reverses the motion smoothly. Your selection changes immediately; installation and removal still wait for your review.
+**4.0 is the same app on a new engine.** The rules moved to Rust and the window no longer runs inside PowerShell, so it opens in about a quarter of the time and uses less than half the memory. What you see and how it moves are unchanged: switches lean as you press, stretch as they travel and settle softly, and installation and removal still wait for your review.
 
 The same gradients, reflective edges and pointer light run through Install, Uninstall and Settings. Buttons spring back on release, panels reveal their content smoothly, and verified successes receive a soft, whole-window glow. Windows reduced-motion and high-contrast preferences are respected.
 
@@ -62,9 +62,9 @@ After a verified removal, review supported leftover folders and registry entries
 
 ## Before you start
 
-- **Windows 10 or 11, 64-bit**, Windows PowerShell 5.1 and **.NET Framework 4.8 / WPF**.
+- **Windows 10 or 11, 64-bit**, with the **.NET Framework 4.8 / WPF** that Windows includes. Windows PowerShell is only used to list Microsoft Store apps on the Uninstall page.
 - **WinGet**, supplied through Windows App Installer, and internet access for automatic app downloads.
-- Full installed-package awareness uses **PowerShell 7** in its standard Program Files location and **Microsoft.WinGet.Client 1.7+**. Without them, WinGet export can confirm some identities; omitted apps remain Unknown. Automatic installation still uses WinGet.
+- Installed-package awareness comes from WinGet export: apps it lists are confirmed, and omitted apps remain Unknown. Automatic installation uses WinGet.
 - Some installers and machine-level removals request administrator access. Updating 1nstall requires a writable executable folder.
 
 The executable includes the interface, catalog, helpers and licence notices. The release is **unsigned**; SHA-256 checksums accompany the downloads. Native Desktop Acrylic requires a supported Windows 11 build; other systems and disabled transparency use a fallback. The minimum window size is 1040 × 540 DIP.

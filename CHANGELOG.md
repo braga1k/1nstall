@@ -1,8 +1,18 @@
 # Changelog
 
-## Unreleased
+## 4.0.0 - not released yet
 
+- Rebuild the app as a native C# window over a Rust engine. The PowerShell host is gone; the interface, motion, languages and catalog are those of 3.6. The rules were ported from the 3.6 code and compared with it by a recorded oracle.
+- Open in about a quarter of the time and use less than half the memory, as measured on the development PC.
+- Report an internal engine error in a message and in the session log instead of closing.
+- Refuse a package identifier or registry path that ends in a line break.
+- Stop taking the folder of an uninstaller or icon as an install folder to recycle.
 - Fix removals reported as Failed with "Access is denied" when an uninstaller elevated through UAC starts a child process. The queue no longer moves to the next app while that uninstaller is still running.
+- Accept the WinGet source agreements when verifying an install the user already agreed to.
+- Write the removal history through a temporary file.
+- Remove the opening splash.
+- Read the installed packages from `winget export` only. The complete inventory that 3.6 obtained through PowerShell 7 and Microsoft.WinGet.Client is not available, so apps WinGet does not list stay Unknown and a failed install is never offered for retry.
+- List the Rust components under Licenses & credits; build with `build-windows.ps1`, which now needs a Rust toolchain.
 
 ## 3.6.0 - 2026-10-12
 

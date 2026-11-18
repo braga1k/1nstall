@@ -1,45 +1,37 @@
-﻿# Build with the .NET Framework compiler included in Windows.
+﻿# Builds the 1nstall release: the Rust engine, then one .NET Framework executable that carries
+# it, with the notices, the build metadata and the checksums beside it in dist\.
+# Needs a Rust toolchain (see engine\Cargo.toml for the version). The C# side uses only the
+# compiler and MSBuild that ship with Windows.
 param([string]$CertificateThumbprint='', [string]$TimestampServer='')
 $ErrorActionPreference = 'Stop'
 $root = $PSScriptRoot
 $dist = Join-Path $root 'dist'
 New-Item -ItemType Directory -Path $dist -Force | Out-Null
-$source = [IO.File]::ReadAllText((Join-Path $root 'vexan_installers.ps1'))
-$source = $source.Replace('@@CATALOG@@', [IO.File]::ReadAllText((Join-Path $root 'catalog.json')))
-$source = $source.Replace('@@XAML@@', [IO.File]::ReadAllText((Join-Path $root 'interface.xaml')))
-$source = $source.Replace('@@ICON@@', [Convert]::ToBase64String([IO.File]::ReadAllBytes((Join-Path $root 'src\1nstall.ico'))))
-$source = $source.Replace('@@WINDOW_HELPER@@', '')
-$source = $source.Replace('@@MOTION_HELPER@@', '')
-$source = $source.Replace('@@APPEARANCE_HELPER@@', '')
-$source = $source.Replace('@@PROFILES@@', [IO.File]::ReadAllText((Join-Path $root 'profiles.json')))
-$source = $source.Replace('@@UNINSTALL_HELPER@@', '')
-$source = $source.Replace('@@THIRD_PARTY_NOTICES@@', [IO.File]::ReadAllText((Join-Path $root 'licenses\THIRD-PARTY-NOTICES.txt')))
-$source = $source.Replace('@@PACKAGE_HELPER@@', '')
-$settings=[IO.File]::ReadAllText((Join-Path $root 'src\settings.ps1')).Replace('@@LOCALES@@',[IO.File]::ReadAllText((Join-Path $root 'locales.json')))
-$source = $source.Replace('@@SETTINGS@@', [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($settings)))
-$source = $source.Replace('@@UPDATE_HELPER@@', [IO.File]::ReadAllText((Join-Path $root 'src\update-helper.cs')))
-$source = $source.Replace('@@MANAGER_UI@@', [IO.File]::ReadAllText((Join-Path $root 'src\manager-ui.ps1')))
-$source = $source.Replace('@@MANAGER_TEST@@', [IO.File]::ReadAllText((Join-Path $root 'tests\manager-ui.ps1')))
-$payload = Join-Path $dist '1nstall.embedded.ps1'
-[IO.File]::WriteAllText($payload, $source, [Text.UTF8Encoding]::new($true))
-$compiler = Join-Path $env:WINDIR 'Microsoft.NET\Framework64\v4.0.30319\csc.exe'
-$helpers=Join-Path $dist '1nstall.Helpers.dll'
-& $compiler /nologo /target:library /platform:x64 /optimize+ /warnaserror+ /reference:System.Web.Extensions.dll "/out:$helpers" "$root\src\package-helper.cs" "$root\src\uninstall-helper.cs" "$root\src\window-helper.cs" "$root\src\update-helper.cs"
-if ($LASTEXITCODE -ne 0) { throw 'Helper build failed.' }
-$compiledXaml=[IO.File]::ReadAllText((Join-Path $root 'interface.xaml')).Replace('<Window xmlns=', '<Window x:Class="OneInstall.MainWindow" xmlns=')
-[IO.File]::WriteAllText((Join-Path $dist 'interface.xaml'),$compiledXaml)
-& "$env:WINDIR/Microsoft.NET/Framework64/v4.0.30319/MSBuild.exe" "$root\src\ui.csproj" /nologo /verbosity:minimal
-if ($LASTEXITCODE -ne 0) { throw 'Compiled interface build failed.' }
-# Reuse the app's vector symbol, rather than maintain a second splash logo.
-$document=[xml][IO.File]::ReadAllText((Join-Path $root 'interface.xaml'))
-$symbol=$document.SelectSingleNode("//*[local-name()='DrawingImage']")
-$symbol.RemoveAttribute('Key','http://schemas.microsoft.com/winfx/2006/xaml')
-[IO.File]::WriteAllText((Join-Path $dist 'symbol.xaml'),$symbol.OuterXml)
-$sma=(Get-ChildItem "$env:WINDIR/Microsoft.NET/assembly/GAC_MSIL/System.Management.Automation" -Recurse -Filter System.Management.Automation.dll | Select-Object -First 1).FullName
-$wpf=Join-Path $env:WINDIR 'Microsoft.NET/Framework64/v4.0.30319/WPF'
-& $compiler /nologo /target:winexe /platform:x64 /optimize+ /warnaserror+ "/reference:$sma" /reference:System.Core.dll /reference:System.Web.Extensions.dll /reference:System.Xaml.dll "/reference:$wpf\PresentationFramework.dll" "/reference:$wpf\PresentationCore.dll" "/reference:$wpf\WindowsBase.dll" "/win32manifest:$root\src\app.manifest" "/win32icon:$root\src\1nstall.ico" "/resource:$payload,1nstall.Payload" "/resource:$dist\symbol.xaml,1nstall.Symbol" "/resource:$root\catalog.json,1nstall.Catalog" "/resource:$helpers,1nstall.Helpers" "/resource:$dist\1nstall.UI.dll,1nstall.UI" "/out:$dist\1nstall.exe" "$root\src\launcher.cs" "$root\src\startup.cs" "$root\src\appearance.cs"
-if ($LASTEXITCODE -ne 0) { throw 'Build failed.' }
-$exe=Join-Path $dist '1nstall.exe'
+
+# Every Rust component linked into the engine must be named, with its version, in the notices
+# shown under Licenses & credits. A dependency that changed stops the build until they agree.
+$noticesPath = Join-Path $root 'licenses\THIRD-PARTY-NOTICES.txt'
+$notices = [IO.File]::ReadAllText($noticesPath)
+$buildOnly = @()
+if ($notices -match '(?m)^Used only while building, and not part of 1nstall\.exe:\r?\n\s+(.+)\.\r?$') { $buildOnly = @($Matches[1] -split ',\s*') }
+Push-Location (Join-Path $root 'engine')
+try {
+    $ErrorActionPreference = 'Continue'
+    $tree = @(& cargo tree --locked -p oneinstall-ffi --edges normal --prefix none 2>$null)
+    $ErrorActionPreference = 'Stop'
+    if ($LASTEXITCODE -ne 0 -or -not $tree.Count) { throw 'Could not list the engine dependencies.' }
+} finally { Pop-Location }
+$unnamed = @($tree | ForEach-Object { if ($_ -match '^(\S+) v(\S+)') { [pscustomobject]@{Name=$Matches[1];Version=$Matches[2]} } } |
+    Where-Object { $_.Name -notlike 'oneinstall-*' -and $buildOnly -notcontains $_.Name -and -not $notices.Contains($_.Name+' '+$_.Version+' - ') } |
+    ForEach-Object { $_.Name+' '+$_.Version } | Sort-Object -Unique)
+if ($unnamed.Count) { throw ('licenses\THIRD-PARTY-NOTICES.txt does not name: '+($unnamed -join ', ')) }
+
+$line = & (Join-Path $root 'app\build.ps1') -Out $dist | Select-Object -Last 1
+$exe = Join-Path $dist '1nstall.exe'
+if (-not (Test-Path -LiteralPath $exe)) { throw 'Build failed.' }
+$target = if ($env:CARGO_TARGET_DIR) { $env:CARGO_TARGET_DIR } else { Join-Path $root 'engine\target' }
+$engine = Join-Path $target 'release\oneinstall_engine.dll'
+
 if ($CertificateThumbprint) {
     if ($TimestampServer -notmatch '^https://[^\s]+$') { throw 'An HTTPS timestamp server is required for signing.' }
     $certificate=Get-Item -LiteralPath ('Cert:\CurrentUser\My\'+$CertificateThumbprint) -ErrorAction Stop
@@ -47,10 +39,21 @@ if ($CertificateThumbprint) {
     $signed=Set-AuthenticodeSignature -LiteralPath $exe -Certificate $certificate -TimestampServer $TimestampServer -HashAlgorithm SHA256
     if ($signed.Status -ne 'Valid') { throw ('Signing could not be verified: '+$signed.StatusMessage) }
 }
-Copy-Item -LiteralPath (Join-Path $root 'licenses\THIRD-PARTY-NOTICES.txt') -Destination (Join-Path $dist 'THIRD-PARTY-NOTICES.txt')
-$inputs=@('vexan_installers.ps1','catalog.json','profiles.json','interface.xaml','src/1nstall.ico','src/package-helper.cs','src/manager-ui.ps1','src/uninstall-helper.cs','src/window-helper.cs','src/launcher.cs','src/ui-helper.cs','src/motion.cs','src/startup.cs','src/appearance.cs','src/ui.csproj','src/settings.ps1','src/update-helper.cs','locales.json','src/app.manifest','tests/manager-ui.ps1','licenses/THIRD-PARTY-NOTICES.txt','build-windows.ps1')
+Copy-Item -LiteralPath $noticesPath -Destination (Join-Path $dist 'THIRD-PARTY-NOTICES.txt') -Force
+
+# What the executable is built from. Build outputs inside the engine folders are not inputs.
+$inputs = New-Object 'System.Collections.Generic.List[string]'
+foreach ($name in @('catalog.json','profiles.json','locales.json','interface.xaml','src/1nstall.ico','src/app.manifest','src/motion.cs','src/appearance.cs','src/window-helper.cs','src/update-helper.cs','licenses/THIRD-PARTY-NOTICES.txt','build-windows.ps1','app/build.ps1','app/1nstall.csproj','engine/Cargo.toml','engine/Cargo.lock')) { $inputs.Add($name) }
+foreach ($file in (Get-ChildItem -LiteralPath (Join-Path $root 'app') -Filter '*.cs' -File)) { $inputs.Add('app/'+$file.Name) }
+foreach ($crate in @('core','platform','ffi')) {
+    $folder = Join-Path $root ('engine\'+$crate)
+    foreach ($file in (Get-ChildItem -LiteralPath $folder -Recurse -File | Where-Object { $_.FullName -notmatch '\\target\\' })) {
+        $inputs.Add(('engine/'+$crate+'/'+$file.FullName.Substring($folder.Length+1)).Replace('\','/'))
+    }
+}
 $hashes=[ordered]@{}
-foreach ($inputPath in $inputs) { $hashes[$inputPath]=(Get-FileHash -Algorithm SHA256 -LiteralPath (Join-Path $root $inputPath)).Hash.ToLowerInvariant() }
+foreach ($inputPath in ($inputs | Sort-Object -Unique)) { $hashes[$inputPath]=(Get-FileHash -Algorithm SHA256 -LiteralPath (Join-Path $root $inputPath)).Hash.ToLowerInvariant() }
+
 $commit=$null; $sourceDirty=$null
 if (Get-Command git -ErrorAction SilentlyContinue) {
     try {
@@ -66,15 +69,19 @@ if (Get-Command git -ErrorAction SilentlyContinue) {
         }
     } catch { } # Git is optional for source-ZIP builds; unavailable provenance remains null.
 }
+$compiler = Join-Path $env:WINDIR 'Microsoft.NET\Framework64\v4.0.30319\csc.exe'
 $metadata=[ordered]@{
-    Product='1nstall'; Version=([Version](Get-Item -LiteralPath $exe).VersionInfo.ProductVersion).ToString(3); BuiltAtUtc=[DateTime]::UtcNow.ToString('o');
+    Product='1nstall'; Version=([Reflection.AssemblyName]::GetAssemblyName($exe).Version).ToString(3); BuiltAtUtc=[DateTime]::UtcNow.ToString('o');
     UpstreamBase='d158884bb63bc0b11de5de84ee15189e3b334d22'; SourceCommit=$commit; SourceDirty=$sourceDirty;
     Windows=[Environment]::OSVersion.Version.ToString(); PowerShell=$PSVersionTable.PSVersion.ToString();
     Compiler=$compiler; CompilerSHA256=(Get-FileHash $compiler -Algorithm SHA256).Hash.ToLowerInvariant();
+    Rust=((& rustc --version | Out-String).Trim()); Cargo=((& cargo --version | Out-String).Trim());
     Signed=([bool]$CertificateThumbprint); ExeSHA256=(Get-FileHash $exe -Algorithm SHA256).Hash.ToLowerInvariant();
+    EngineSHA256=(Get-FileHash $engine -Algorithm SHA256).Hash.ToLowerInvariant();
     Inputs=$hashes
 }
 $metadata | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $dist 'BUILD-INFO.json') -Encoding UTF8
 $sums=@('1nstall.exe','BUILD-INFO.json','THIRD-PARTY-NOTICES.txt') | ForEach-Object { (Get-FileHash -LiteralPath (Join-Path $dist $_) -Algorithm SHA256).Hash.ToLowerInvariant()+'  '+$_ }
 [IO.File]::WriteAllLines((Join-Path $dist 'SHA256SUMS.txt'),[string[]]$sums,[Text.UTF8Encoding]::new($false))
+Write-Output $line
 Write-Output "$dist\1nstall.exe"

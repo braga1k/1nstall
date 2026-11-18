@@ -1,27 +1,36 @@
 # Fase 4 — Interface, migração e release
 
-Estado em 2026-11-18, depois de cinco dos seis passos e de uma ronda de otimização do arranque. O código está no ramo `v4/app`, nas pastas `app/` e `engine/ffi/`. A 3.6 na raiz do repositório continua intocada e a compilar.
+Estado em 2026-11-18, depois dos seis passos e de uma ronda de otimização do arranque. O código está no ramo `v4/app`, nas pastas `app/` e `engine/`. As fontes da 3.6 continuam na raiz, como referência do oráculo; `build-windows.ps1` passou a construir a 4.0.
 
 ## Resumo
 
-Escolheste a interface WPF sobre o motor Rust. Existe um `1nstall.exe` 4.0 num único ficheiro, sem PowerShell, e está provado que a 3.6 se atualiza para ele sem release intermédia. Com a biblioteca, a fila de instalação, a desinstalação, as definições, o tema e os 51 idiomas já incluídos, fica pronto em 473 ms, abaixo do limite de 500 ms, com o aspeto e as animações intactos. O limite de memória de 80 MB não é atingido: fica em 113 MB.
+Escolheste a interface WPF sobre o motor Rust. Existe um `1nstall.exe` 4.0 num único ficheiro, sem PowerShell, e está provado que a 3.6 se atualiza para ele sem release intermédia. Com todas as páginas da 3.6 incluídas, fica pronto em 473 ms, abaixo do limite de 500 ms, com o aspeto e as animações intactos. O limite de memória de 80 MB não é atingido: fica em 113 MB.
 
-A fase não está concluída: a 4.0 já instala e desinstala, e faltam o histórico, os diagnósticos e a release.
+Os seis passos estão feitos e a release está preparada, mas não publicada: publicar é um push teu. Antes disso há uma decisão a tomar, descrita no passo 6: nesta versão o inventário do WinGet é sempre parcial, e por isso o botão de repetir uma instalação falhada nunca aparece.
 
 ## O executável da 4.0
 
-| Medida | 3.6.0 | Passo 1, antes de otimizar | Passo 1, otimizado | Passo 2 | Passo 3 | Passo 4 | Passo 5 |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| Tamanho | 2 699 264 bytes | 3 098 624 bytes | 3 064 320 bytes | 3 130 880 bytes | 3 231 744 bytes | 3 277 312 bytes | 3 513 856 bytes |
-| Pronta e ociosa, a quente | 1 996 ms | 594 ms | 444 ms | 467 ms | 479 ms | 473 ms | 473 ms |
-| Primeira execução, com extração do motor | 2 425 ms | 763 ms | 501 ms | 563 ms | 569 ms | 559 ms | 567 ms |
-| Pico de working set | 242 MB | 105 MB | 101 MB | 110 MB | 113 MB | 116 MB | 113 MB |
-| Em repouso após 8 s (working set / privada) | não medido | não medido | 101 / 104 MB | 113 / 124 MB | 116 / 129 MB | 109 / 125 MB | 112 / 130 MB |
-| Precisa, além do Windows | .NET Framework 4.8, PowerShell 5.1 | .NET Framework 4.8 | .NET Framework 4.8 | .NET Framework 4.8 | .NET Framework 4.8 | .NET Framework 4.8 | .NET Framework 4.8 |
+| Medida | 3.6.0 | Passo 1, antes de otimizar | Passo 1, otimizado | Passo 2 | Passo 3 | Passo 4 | Passo 5 | Passo 6 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Tamanho | 2 699 264 bytes | 3 098 624 bytes | 3 064 320 bytes | 3 130 880 bytes | 3 231 744 bytes | 3 277 312 bytes | 3 513 856 bytes | 3 942 912 bytes |
+| Pronta e ociosa, a quente | 1 996 ms | 594 ms | 444 ms | 467 ms | 479 ms | 473 ms | 473 ms | 390 ms* |
+| Primeira execução, com extração do motor | 2 425 ms | 763 ms | 501 ms | 563 ms | 569 ms | 559 ms | 567 ms | 482 ms* |
+| Pico de working set | 242 MB | 105 MB | 101 MB | 110 MB | 113 MB | 116 MB | 113 MB | 87 MB* |
+| Em repouso após 8 s (working set / privada) | não medido | não medido | 101 / 104 MB | 113 / 124 MB | 116 / 129 MB | 109 / 125 MB | 112 / 130 MB | 82 / 53 MB* |
+| Precisa, além do Windows | .NET Framework 4.8, PowerShell 5.1 | .NET Framework 4.8 | .NET Framework 4.8 | .NET Framework 4.8 | .NET Framework 4.8 | .NET Framework 4.8 | .NET Framework 4.8 | .NET Framework 4.8 |
 
 Medido neste PC com a régua da Fase 0, mediana de 10 arranques a quente. No passo 5 os 10 arranques ficaram entre 453 e 496 ms.
 
-**A margem para os 500 ms é de 27 ms na mediana, e o arranque mais lento da série ficou a 4 ms do limite.** Falta a página de histórico. A partir do passo 3 a app pergunta ao WinGet o que está instalado logo que a janela abre, como a 3.6 faz; isso corre noutro processo e não entra no pico de memória acima.
+**\* Os valores do passo 6 não se comparam com as outras colunas.** Entre as duas medições a configuração de ecrã do PC mudou (o ecrã ativo passou a ser um adaptador virtual), e nela tudo desenha mais depressa e com menos memória. Medi por isso as três versões de novo, nas mesmas condições:
+
+| Nas condições do passo 6 | 3.6.0 | Passo 5 | Passo 6 |
+| --- | --- | --- | --- |
+| Pronta e ociosa, a quente | 2 073 ms | 395 ms | 390 ms |
+| Pico de working set | 210 MB | 86 MB | 87 MB |
+
+O passo 6 não alterou o arranque nem a memória. Acrescentou 429 KB ao executável: o motor deixou de abortar em caso de erro interno, e o código que o permite ocupa espaço.
+
+**Nas condições das colunas anteriores, a margem para os 500 ms era de 27 ms na mediana, e o arranque mais lento da série ficou a 4 ms do limite.** Não voltei a medir nessas condições depois do passo 6. A partir do passo 3 a app pergunta ao WinGet o que está instalado logo que a janela abre, como a 3.6 faz; isso corre noutro processo e não entra no pico de memória acima.
 
 Como é construído:
 
@@ -143,6 +152,97 @@ Resultado no Actions, commit `d9c38b4`, igual nas duas imagens (Windows Server 2
 
 Neste PC a página leu 210 apps instaladas, 165 de ambiente de trabalho e 45 da Store: o mesmo número que o motor tinha contado na Fase 2 e que coincidia com a 3.6.
 
+## Passo 6: histórico, diagnósticos, erros internos e release
+
+### A página de histórico e diagnósticos
+
+Portei `Show-ManagerPage`, `Render-History` e `Show-Diagnostics` de `src/manager-ui.ps1` e `Show-ThirdPartyNotices` de `vexan_installers.ps1`.
+
+| Parte | Onde ficou | O que faz |
+| --- | --- | --- |
+| Histórico | Motor Rust | As últimas 100 operações, da mais recente para a mais antiga. Para cada uma, o motor decide se a instalação pode ser revista de novo e se o registo pode ser aberto. |
+| Registo detalhado | Motor Rust | Só é oferecido um registo que ainda exista e esteja dentro da pasta de registos da app. |
+| Diagnósticos | Motor Rust, desde a Fase 2 | Texto para rever, com caminhos, credenciais e endereços removidos. Nada é enviado. |
+| Licenças e créditos | Motor Rust | O ficheiro de avisos, embutido. Passou a listar os 22 componentes Rust ligados ao motor, e a build falha se um deles não estiver lá com a sua versão. |
+| Página, botões e janelas | C# | `app/History.cs`. |
+
+### Um achado: o botão de repetir nunca aparece
+
+A 3.6 oferece «Refresh & review installation again» a uma instalação falhada quando o inventário diz que a app **não está instalada**. Esse estado só existe com um inventário completo, que a 3.6 obtém pelo PowerShell 7 e pelo módulo Microsoft.WinGet.Client, quando o utilizador os tem.
+
+A 4.0 lê apenas o `winget export`, que diz o que está instalado e não prova o que falta. Consequências, todas confirmadas no código e no teste da interface:
+
+- O botão de repetir **nunca aparece**. O código existe e está testado no motor com um inventário completo construído no teste, mas na aplicação não há como lá chegar.
+- Uma app que o WinGet não lista aparece como `Unknown`, nunca como `Not installed`.
+- Quem usava a 3.6 sem o PowerShell 7 e o módulo já via exatamente isto. Quem os tinha perde informação.
+
+Isto é a falta já registada desde a Fase 2 («a API COM do WinGet não está integrada»), agora com as consequências visíveis. O teste isolado da Fase 2 mostrou que a leitura por COM funciona num processo Rust se o ficheiro `.winmd` da Microsoft estiver ao lado do programa.
+
+### Erros internos do motor
+
+Até ao passo 5, um erro interno do motor terminava a app sem mensagem. Agora:
+
+- Cada função da fronteira apanha a falha, guarda o motivo e o sítio, e devolve um resultado vazio que a janela reconhece.
+- A janela regista o erro no registo da sessão, mostra um aviso e **continua aberta**.
+- Uma falha dentro da fila de instalação ou de uma operação de desinstalação termina só essa operação, com um erro visível; o motor não fica preso como ocupado.
+
+Para o poder testar, o motor tem uma falha deliberada que só funciona nos modos de teste.
+
+### A release
+
+| Peça | Estado |
+| --- | --- |
+| `build-windows.ps1` | Constrói a 4.0, com `BUILD-INFO.json` (versão do Rust incluída, 56 ficheiros de entrada com o seu SHA-256), avisos e somas de verificação. A assinatura opcional ficou como estava. |
+| `.github/workflows/windows.yml` | Corre as verificações do catálogo e dos idiomas, os testes do motor, a build, o teste de movimento, o autoteste e o empacotamento. O trabalho de publicação passou a responder ao ramo `release/4.0.0`. |
+| `scripts/package-release.ps1` | O registo `CI-reliability.txt` deu lugar a `CI-engine.txt`, o dos testes do motor. |
+| `tests/elastic-motion.ps1` | Adaptado ao executável da 4.0. Passa nas duas formas, sem janela e com janela. |
+| `tests/reliability.ps1` | Não adaptado: testa os ajudantes C# da 3.6. As mesmas regras são testadas na 4.0 pelos testes do motor e pelo oráculo. |
+| Notas e documentação | `docs/releases/4.0.0.md`, `CHANGELOG.md`, `README.md`, `docs/DEVELOPING.md`, `docs/VALIDATION.md`. |
+| Versão | 4.0.0 no motor, no executável e no manifesto. |
+
+Nada foi publicado. Não toquei em `main` nem em nenhum ramo `release/*`.
+
+## O que não foi testado
+
+Tudo o que sei que não foi verificado na 4.0, junto num só sítio.
+
+### Pela janela
+
+- **Nenhuma remoção real.** No teu PC os testes recuam sempre e o motor recusa remover; o Actions não tem ambiente de trabalho. Remover, analisar vestígios e limpar só foram exercidos pela fronteira do motor.
+- **A janela de revisão dos vestígios e o resumo da limpeza** nunca foram abertos num teste.
+- **Parar a meio** uma fila de instalação ou uma remoção, e **fechar a janela** enquanto uma fila corre.
+- **Uma instalação real.** Na janela a fila só correu com o WinGet de substituição. As páginas das apps guiadas são registadas, não abertas.
+- **As janelas de ficheiro do Windows:** guardar e carregar seleções, guardar um instantâneo, guardar os diagnósticos.
+- **«Open detailed log».** O teste confirma quando o botão aparece; não carrega nele, porque abriria o Bloco de notas.
+- **Repetir uma instalação falhada.** O botão não pode aparecer nesta versão (ver o passo 6), por isso o caminho que vai dele até à seleção nunca correu.
+- **Atualizações:** verificar, descarregar e «Restart and update» a partir das definições.
+- **Gravar definições em modo normal.** A gravação só foi testada no motor, numa pasta temporária.
+- **O aviso de erro interno numa fila de instalação.** Foi testado com um botão de teste e numa operação de desinstalação; o mesmo caminho na fila de instalação não.
+- **Aspeto e acessibilidade:** alto contraste; mudança de tema ou de cor do Windows com a app aberta; 48 dos 51 idiomas; animações (só os limites matemáticos e os estados finais são testados); leitores de ecrã reais; atalhos de teclado (Ctrl+F, F1); DPI e vários monitores; janela no tamanho mínimo.
+- **Os testes de interface da 3.6 não têm equivalente na 4.0:** `scrolling`, `appearance`, `backdrop`, `startup-opening`, `cleanup-ui`, `uninstall-queue` e `screenshots` conduzem a aplicação PowerShell e não foram adaptados.
+
+### No motor e no sistema
+
+- **Remoções de apps verdadeiras.** Só apps fictícias com um desinstalador de substituição. Os cenários reais da 3.5 no Windows Sandbox (7-Zip, Notepad++) não foram repetidos.
+- **Registos da máquina (`HKLM`), vista de 32 bits, MSI e apps da Store** na remoção. Os cenários são todos do utilizador atual.
+- **Um desinstalador que eleva pelo UAC e lança um processo filho**, contra o motor Rust. O cenário manual existe em `oracle/manual/` e só correu com a 3.6.
+- **Parar uma remoção a meio.** Não há teste que o cubra, nem no motor.
+- **Instalações reais além de uma.** Só o Sumatra PDF, no Windows Server 2025. Falhas reais do WinGet, dependências reais e pedidos de reinício não foram provocados.
+- **O inventário completo.** Não existe nesta versão; o estado «Not installed» nunca ocorre.
+- **Windows 10**, outros PCs, outras versões do WinGet. A imagem do Windows Server 2022 não tem WinGet.
+- **Os teus dados reais da 3.6.** Um arranque normal leu as tuas definições. O teu histórico e as tuas seleções guardadas não foram lidos pela 4.0.
+- **A divergência 4 da Fase 2** (aceitar os termos da origem ao verificar) não tem cobertura do oráculo, e a fila de instalação não foi comparada com uma gravação da 3.6.
+- **Fuzzing.**
+
+### Na release
+
+- **A publicação.** O trabalho `publish-stable` só corre com um push para `release/4.0.0`, que é teu. Nunca correu para a 4.0.
+- **O caminho da 3.6 que consulta o GitHub e descarrega a release.** Só pode ser exercido com a 4.0 publicada. O passo seguinte, aplicar a atualização, está provado.
+- **A assinatura de código** que `build-windows.ps1` aceita como opção, e **a build a partir do ZIP de fontes**, sem Git.
+- **Os testes de interface no Actions.** Precisam de um ambiente de trabalho e só correram no teu PC.
+- **Os modos de teste num caminho comprido.** Guardam a cache ao lado do executável e falham quando o caminho passa o limite do Windows. Encontrei-o hoje nesta pasta de trabalho; o modo normal usa a pasta do utilizador e não é afetado.
+- **As medições** vêm de um só PC, e as do passo 6 foram feitas com outra configuração de ecrã. O primeiro arranque depois de reiniciar o PC nunca foi medido.
+
 ## Otimização do arranque
 
 Medi primeiro onde o tempo se gastava, depois testei cada corte em separado.
@@ -206,7 +306,11 @@ A pesquisa do protótipo WPF da Fase 3, que tinha passado para este executável,
 
 | Verificação | Onde correu | Resultado |
 | --- | --- | --- |
-| Autoteste (`--self-test`) | Neste PC | 26 de 26 |
+| Autoteste (`--self-test`) | Neste PC | 31 de 31 |
+| Teste do histórico e dos diagnósticos por UI Automation (`app/tests/history-ui.ps1`) | Neste PC | 23 de 23; 19 de 19 sem ler o WinGet |
+| Falha interna do motor: comunicada e não fatal, na fronteira, numa operação e na janela | Neste PC | Passa |
+| Teste de movimento sobre o executável da 4.0 (`tests/elastic-motion.ps1`), sem janela e com janela | Neste PC | Passa |
+| Build de release (`build-windows.ps1`) e autoteste do executável resultante | Neste PC | Constrói; 31 de 31 |
 | Teste da desinstalação por UI Automation, só de leitura (`app/tests/uninstall-ui.ps1`) | Neste PC | 17 de 17 |
 | Desinstalação pela fronteira do motor: os modos de teste só leem | Neste PC | Passa |
 | Teste da fila por UI Automation, com o WinGet de substituição (`app/tests/queue-ui.ps1`) | Neste PC | 19 de 19 |
@@ -237,10 +341,10 @@ O que este teste não cobre: a parte da 3.6 que consulta a API do GitHub e desca
 
 | Limite | Objetivo | 4.0 agora |
 | --- | --- | --- |
-| Pronta e ociosa | abaixo de 500 ms | 479 ms |
-| Pico de working set | abaixo de 80 MB | 113 MB |
-| Executável | abaixo de 12 MB | 3,1 MB |
-| Dependências | só Windows e WinGet | .NET Framework 4.8, que vem com o Windows 10 e 11 |
+| Pronta e ociosa | abaixo de 500 ms | 473 ms no passo 5; 390 ms nas condições do passo 6 |
+| Pico de working set | abaixo de 80 MB | 113 MB no passo 5; 87 MB nas condições do passo 6 |
+| Executável | abaixo de 12 MB | 3,9 MB |
+| Dependências | só Windows e WinGet | .NET Framework 4.8, que vem com o Windows 10 e 11. O Windows PowerShell ainda é chamado para listar as apps da Store |
 
 A janela de abertura da 3.6 mostra o primeiro fotograma aos 445 ms. A 4.0 mostra a janela principal completa aos 479 ms. Deixou de haver razão para a portar.
 
@@ -250,7 +354,7 @@ Na Fase 0 escrevi que o relógio de arranque da 3.6 excluía a criação do proc
 
 ## O que falta
 
-A interface da 3.6 é comandada por 79 funções PowerShell, em cerca de 2 500 linhas, que têm de passar para C#. O motor Rust já tem a lógica; falta expô-la pela fronteira e ligá-la à janela.
+A interface da 3.6 é comandada por 79 funções PowerShell, em cerca de 2 500 linhas, que passaram para C# em seis passos, com a lógica no motor Rust.
 
 | Passo | Conteúdo | Estado |
 | --- | --- | --- |
@@ -259,20 +363,20 @@ A interface da 3.6 é comandada por 79 funções PowerShell, em cerca de 2 500 l
 | 3 | Biblioteca completa: filtros por categoria, vistas, perfis, detalhes, guardar e carregar seleções | Feito |
 | 4 | Fila de instalação: confirmação, progresso, registos, cancelamento | Feito |
 | 5 | Desinstalação: lista de apps, fila, análise e limpeza de vestígios, cópias de segurança | Feito |
-| 6 | Histórico, diagnósticos, verificação de atualizações, e a release: script de build, CI, testes da 3.6 adaptados, notas | Por fazer |
+| 6 | Histórico, diagnósticos, erros internos do motor, e a release: script de build, CI, testes da 3.6 adaptados, notas | Feito |
 
 Os passos 4 e 5 só podem ser testados neste PC com o WinGet e o desinstalador de substituição. Instalações e remoções reais continuam a correr apenas no Actions.
 
-## Limites deste passo
+## Limites
+
+A lista completa do que não foi testado está na secção «O que não foi testado».
 
 - **Um só PC.** Os tempos e a memória foram medidos numa máquina topo de gama. A memória da placa gráfica depende do controlador.
 - **As compilações não são reprodutíveis bit a bit.** As duas imagens do Actions produziram executáveis do mesmo tamanho com SHA-256 diferentes.
 - **O executável não é assinado**, tal como o da 3.6.
-- **O botão de histórico não existe ainda.**
 - **Nenhuma remoção foi conduzida pela janela.** No teu PC o teste recua sempre; no Actions não há ambiente de trabalho. A remoção, a análise e a limpeza estão testadas pela fronteira do motor, não pelos botões.
 - **A janela de revisão dos vestígios não foi aberta em nenhum teste**, porque só aparece depois de uma remoção real.
 - **Parar a meio de uma fila não foi conduzido pela interface.** O programa de substituição termina de imediato, por isso não há tempo para carregar no botão; a paragem está testada no motor.
-- **Uma falha interna do motor termina a app sem mensagem.** O motor está compilado para abortar em caso de erro interno. Fica para o passo 6 fazê-lo devolver o erro à janela.
 - **Guardar e carregar seleções não foi conduzido pela interface.** As janelas de escolha de ficheiro do Windows não se deixam conduzir de forma fiável; a leitura e a escrita dos ficheiros estão testadas no motor.
 - **Os testes de interface precisam de um ambiente de trabalho interativo** e por isso só correm neste PC, não no Actions.
 - **Não verifiquei:** o alto contraste; a app a seguir uma mudança de tema ou de cor do Windows enquanto está aberta; o descarregamento e a aplicação de uma atualização a partir da página; gravar definições pela interface em modo normal (a gravação só foi testada no motor, numa pasta temporária); e o aspeto dos outros 48 idiomas.
@@ -281,5 +385,7 @@ Os passos 4 e 5 só podem ser testados neste PC com o WinGet e o desinstalador d
 
 A memória ficou decidida em 2026-11-18: aceitas cerca de 100 MB com a placa gráfica, como a 3.6 desenha.
 
-1. **A diferença de acessibilidade nos cartões**, descrita no passo 3: aprovar ou reverter.
-2. **A ordem dos passos 4 a 6**, se quiseres outra.
+1. **O inventário completo do WinGet**, descrito no passo 6: integrá-lo antes de publicar, ou publicar a 4.0 sem ele, como as notas da versão já dizem.
+2. **A diferença de acessibilidade nos cartões**, descrita no passo 3: aprovar ou reverter.
+3. **As fontes da 3.6 que a 4.0 já não usa** (`vexan_installers.ps1`, `src/launcher.cs`, `src/startup.cs`, `src/ui-helper.cs`, `src/ui.csproj`, `src/settings.ps1`, `src/manager-ui.ps1` e os testes que as conduzem): manter ou remover. `src/package-helper.cs` e `src/uninstall-helper.cs` têm de ficar enquanto o oráculo existir.
+4. **Publicar.** Juntar `v4/app` a `main` e fazer o push de `release/4.0.0` são passos teus.

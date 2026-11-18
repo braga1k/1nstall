@@ -68,6 +68,16 @@ fn the_test_modes_only_read() {
     assert_eq!(events.last().unwrap(), &vec!["done".to_string(), "Inventory".to_string()]);
     println!("uninstall boundary: inventory read {} apps, {} warnings", apps.len(), of(&events, "warning").len());
     assert!(!data.exists(), "reading must write nothing");
+
+    // An internal failure inside the operation thread ends that operation with an error the
+    // interface can show. The engine is not left busy, and the next operation runs.
+    let events = run("Fail", &[], "");
+    let errors = of(&events, "error");
+    assert_eq!(errors.len(), 1, "{events:?}");
+    assert!(errors[0][1].starts_with("1nstall could not finish this operation: Deliberate failure for the tests (") && errors[0][1].contains("uninstall.rs:"), "{errors:?}");
+    assert_eq!(events.last().unwrap(), &vec!["done".to_string(), "Fail".to_string()]);
+    assert_eq!(of(&run("Inventory", &[], ""), "app").len(), apps.len());
+    println!("uninstall boundary: a failed operation reported \"{}\" and the next one ran", errors[0][1]);
 }
 
 #[test]

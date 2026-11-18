@@ -27,9 +27,16 @@ jobs:
         run: |
           python tests/locales.py | Tee-Object test-logs/locales.txt
           if ($LASTEXITCODE -ne 0) { throw 'Locale check failed.' }
-      - name: Headless reliability regressions
-        shell: powershell
-        run: .\tests\reliability.ps1 | Tee-Object test-logs/reliability.txt
+      - name: Rust 1.86.0
+        shell: bash
+        run: |
+          rustup toolchain install 1.86.0 --profile minimal
+          rustup default 1.86.0
+          cargo --version
+      - name: Engine rules against the recorded 3.6 behaviour
+        shell: bash
+        working-directory: engine
+        run: cargo test --locked 2>&1 | tee ../test-logs/engine.txt
       - name: Portable executable and build metadata
         shell: powershell
         run: .\build-windows.ps1
@@ -51,7 +58,7 @@ jobs:
           path: |
             dist/release/*
   publish-stable:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/release/3.6.0'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/release/4.0.0'
     needs: headless
     runs-on: ubuntu-24.04
     permissions:
@@ -80,33 +87,33 @@ jobs:
           import json, os, subprocess
           from pathlib import Path
           matches = [r for page in json.loads(Path('../releases.json').read_text()) for r in page
-                     if r['tag_name'] == 'v3.6.0']
+                     if r['tag_name'] == 'v4.0.0']
           assert len(matches) <= 1, 'Multiple draft releases require owner review'
           if matches:
               draft = matches[0]
               assert draft['draft'] and not draft['prerelease'], 'Never replace a published release'
               assert draft['author']['login'] == 'github-actions[bot]'
-              assert draft['name'] == '1nstall 3.6.0'
+              assert draft['name'] == '1nstall 4.0.0'
               subprocess.run(['git', 'merge-base', '--is-ancestor', draft['target_commitish'],
                               os.environ['RELEASE_COMMIT']], cwd='..', check=True)
               Path('../resume-draft').write_text(str(draft['id']))
           PY
           if [ -f ../resume-draft ]; then
-            gh release edit v3.6.0 --target "$RELEASE_COMMIT" --draft=true \
-              --prerelease=false --latest=false --notes-file ../docs/releases/3.6.0.md
-            gh release upload v3.6.0 ./* --clobber
+            gh release edit v4.0.0 --target "$RELEASE_COMMIT" --draft=true \
+              --prerelease=false --latest=false --notes-file ../docs/releases/4.0.0.md
+            gh release upload v4.0.0 ./* --clobber
           else
-            gh release create v3.6.0 ./* \
+            gh release create v4.0.0 ./* \
               --target "$RELEASE_COMMIT" --draft --prerelease=false --latest=false \
-              --title '1nstall 3.6.0' \
-              --notes-file ../docs/releases/3.6.0.md
+              --title '1nstall 4.0.0' \
+              --notes-file ../docs/releases/4.0.0.md
           fi
           gh api "repos/$GH_REPO/releases?per_page=100" --paginate --slurp > ../releases.json
           python3 - <<'PY'
           import hashlib, json, os
           from pathlib import Path
           matches = [r for page in json.loads(Path('../releases.json').read_text()) for r in page
-                     if r['tag_name'] == 'v3.6.0']
+                     if r['tag_name'] == 'v4.0.0']
           assert len(matches) == 1
           release = matches[0]
           expected = {p.name: 'sha256:' + hashlib.sha256(p.read_bytes()).hexdigest()
@@ -117,4 +124,4 @@ jobs:
           assert actual == expected, 'Uploaded release assets differ from verified build'
           print('PASS: uploaded asset names, SHA-256 digests and commit verified before publication.')
           PY
-          gh release edit v3.6.0 --draft=false --prerelease=false --latest
+          gh release edit v4.0.0 --draft=false --prerelease=false --latest

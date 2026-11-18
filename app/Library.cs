@@ -39,6 +39,9 @@ static partial class Library {
     // The status line of each selection row, so the queue can update it in place.
     static readonly Dictionary<string,TextBlock> statusLabels=new Dictionary<string,TextBlock>();
     static Task<string> inventoryTask;
+    // The app to select for a new review once the installed state has been read again.
+    static string retryKey="";
+    public static void RetryAfterRefresh(string key) { retryKey=key; }
     static DispatcherTimer inventoryTimer;
     // Set while a queue runs.
     public static bool Busy { get; private set; }
@@ -227,7 +230,12 @@ static partial class Library {
                 states.Clear();
                 foreach(string record in Engine.States().Split('\u001E')) { string[] fields=record.Split('\u001F'); if(fields.Length==2) states[fields[0]]=fields[1]; }
                 UpdateStates();
-            } catch(Exception error) { I18n.Set(refresh,"ToolTip",error.Message); Shell.AddLog(error.Message); }
+                if(retryKey.Length>0) {
+                    string key=retryKey; retryKey="";
+                    if(State(key)=="Not installed") { SetSelection(new[]{key}); Shell.SetText("Status","State rechecked. Review the installation again."); }
+                    else Shell.SetText("Status","Retry withheld: app is installed or its current identity/state is unknown.");
+                }
+            } catch(Exception error) { I18n.Set(refresh,"ToolTip",error.Message); Shell.AddLog(error.Message); retryKey=""; }
             inventoryTask=null; refresh.IsEnabled=true;
         }
         if(inventoryTask==null) inventoryTimer.Stop();
@@ -348,10 +356,10 @@ static partial class Library {
         bar.Children.Add(refresh);
     }
 
-    sealed class InfoDialog { public Window Window; public DockPanel Dock; public TextBox Text; }
+    public sealed class InfoDialog { public Window Window; public DockPanel Dock; public TextBox Text; }
 
     // New-InfoDialog: a borderless window in the application's appearance.
-    static InfoDialog NewInfoDialog(string title,string text) {
+    public static InfoDialog NewInfoDialog(string title,string text) {
         var panes=Find<FrameworkElement>("AppPanes");
         var dialog=new Window { FlowDirection=panes.FlowDirection, Language=window.Language, Owner=window, Icon=window.Icon, Width=640, Height=Math.Min(680,SystemParameters.WorkArea.Height-40), MinWidth=380, MinHeight=360, WindowStartupLocation=WindowStartupLocation.CenterOwner, WindowStyle=WindowStyle.None, ShowInTaskbar=false, FontFamily=window.FontFamily, FontSize=13, Resources=window.Resources };
         I18n.Set(dialog,"Title",title+" · 1nstall");

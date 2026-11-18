@@ -1,6 +1,6 @@
 # Remove apps and review leftovers
 
-This describes removal and leftover review in **1nstall 3.6.0**.
+This describes removal and leftover review as built for **1nstall 3.6.0**. 4.0 ports these rules to its Rust engine; the two intended differences are in the [4.0 release notes](releases/4.0.0.md), and the test scripts named below belong to 3.6.
 
 Uninstall lists desktop registrations in HKCU/HKLM, in both registry views, and removable current-user Store applications. Hidden system entries, updates, frameworks and non-removable packages are excluded. Sparse desktop shell-integration packages with no app-list entry are also excluded: removing a context-menu extension is not the same as uninstalling its desktop application.
 

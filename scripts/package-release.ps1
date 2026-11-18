@@ -23,7 +23,7 @@ Copy-Item -LiteralPath (Join-Path $root ('docs/releases/'+$version+'.md')) -Dest
 foreach ($name in @('VALIDATION.md','DEVELOPING.md','ELASTIC-MOTION.md','WINGET-CAPABILITIES.md','SETTINGS.md','localization.md','UNINSTALL.md')) {
     Copy-Item -LiteralPath (Join-Path $root ('docs/'+$name)) -Destination (Join-Path $portable $name)
 }
-foreach ($name in @('catalog.txt','reliability.txt','locales.txt','elastic-motion.txt')) {
+foreach ($name in @('catalog.txt','engine.txt','locales.txt','elastic-motion.txt')) {
     Copy-Item -LiteralPath (Join-Path $root ('test-logs/'+$name)) -Destination (Join-Path $portable ('CI-'+$name))
 }
 $portableSums=@(Get-ChildItem -LiteralPath $portable -File | Sort-Object Name | ForEach-Object { (Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()+'  '+$_.Name })
@@ -41,7 +41,7 @@ foreach ($inputFile in $info.Inputs.PSObject.Properties) {
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 [IO.Compression.ZipFile]::CreateFromDirectory($portable,(Join-Path $release ('1nstall-'+$version+'-Windows-x64.zip')))
 [IO.Compression.ZipFile]::CreateFromDirectory($source,(Join-Path $release ('1nstall-'+$version+'-source.zip')))
-foreach ($name in @('1nstall.exe','BUILD-INFO.json','THIRD-PARTY-NOTICES.txt','self-test.log','CI-catalog.txt','CI-reliability.txt','CI-locales.txt','CI-elastic-motion.txt')) {
+foreach ($name in @('1nstall.exe','BUILD-INFO.json','THIRD-PARTY-NOTICES.txt','self-test.log','CI-catalog.txt','CI-engine.txt','CI-locales.txt','CI-elastic-motion.txt')) {
     Copy-Item -LiteralPath (Join-Path $portable $name) -Destination (Join-Path $release $name)
 }
 $sums=@(Get-ChildItem -LiteralPath $release -File | Sort-Object Name | ForEach-Object { (Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()+'  '+$_.Name })

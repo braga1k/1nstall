@@ -19,7 +19,7 @@ use oneinstall_platform::inventory::inventory;
 use oneinstall_platform::removal::{clean, load_history, remove, scan, take_progress, take_verified, LeftoverItem, RemovalResult};
 use oneinstall_platform::WindowsHost;
 
-use crate::{flag, give, in_test_environment, packages, records, take, FIELD};
+use crate::{flag, give, guard, guarded, held, in_test_environment, packages, records, take, FIELD};
 
 static EVENTS: Mutex<VecDeque<Vec<String>>> = Mutex::new(VecDeque::new());
 static RUNNING: AtomicBool = AtomicBool::new(false);
@@ -32,9 +32,7 @@ static TARGETS: Mutex<Option<Vec<InstalledApp>>> = Mutex::new(None);
 static LEFTOVERS: Mutex<Vec<LeftoverItem>> = Mutex::new(Vec::new());
 
 fn emit(fields: &[&str]) {
-    if let Ok(mut events) = EVENTS.lock() {
-        events.push_back(fields.iter().map(|field| field.to_string()).collect());
-    }
+    held(&EVENTS).push_back(fields.iter().map(|field| field.to_string()).collect());
 }
 
 fn text(value: &Option<String>) -> &str {
@@ -159,34 +157,39 @@ fn run_clean(host: &WindowsHost, positions: &[String], log: &str) -> Result<(), 
 /// Starts an operation: `Inventory`, `Remove` (app ids), `Scan`, or `Clean` (positions of
 /// leftovers from the last scan). `log` is this session's log file, named in the history.
 pub fn start(operation: &str, arguments: &[String], log: &str) -> Result<(), String> {
-    if !matches!(operation, "Inventory" | "Remove" | "Scan" | "Clean") {
+    // "Fail" exists in the test modes only: it fails on purpose inside the operation thread.
+    let deliberate = operation == "Fail" && in_test_environment();
+    if !deliberate && !matches!(operation, "Inventory" | "Remove" | "Scan" | "Clean") {
         return Err("Unknown operation.".to_string());
     }
-    if operation != "Inventory" && in_test_environment() {
+    if !deliberate && operation != "Inventory" && in_test_environment() {
         return Err("Removing and cleaning are switched off in the test modes.".to_string());
     }
     if RUNNING.swap(true, Ordering::SeqCst) {
         return Err("A removal operation is already running.".to_string());
     }
-    if let Ok(mut events) = EVENTS.lock() {
-        events.clear();
-    }
+    held(&EVENTS).clear();
     let (operation, arguments, log) = (operation.to_string(), arguments.to_vec(), log.to_string());
     let label = operation.clone();
     let spawned = std::thread::Builder::new().name("uninstall".to_string()).spawn(move || {
-        let host = WindowsHost::new();
-        let outcome = match operation.as_str() {
-            "Inventory" => {
-                run_inventory(&host);
-                Ok(())
+        // An internal failure ends this operation only, and is reported like any other error.
+        let outcome = guarded(|| {
+            let host = WindowsHost::new();
+            match operation.as_str() {
+                "Inventory" => {
+                    run_inventory(&host);
+                    Ok(())
+                }
+                "Remove" => {
+                    run_remove(&host, &arguments, &log);
+                    Ok(())
+                }
+                "Scan" => run_scan(&host, &log),
+                "Clean" => run_clean(&host, &arguments, &log),
+                _ => panic!("Deliberate failure for the tests"),
             }
-            "Remove" => {
-                run_remove(&host, &arguments, &log);
-                Ok(())
-            }
-            "Scan" => run_scan(&host, &log),
-            _ => run_clean(&host, &arguments, &log),
-        };
+        })
+        .unwrap_or_else(|failure| Err(format!("1nstall could not finish this operation: {failure}")));
         if let Err(message) = outcome {
             emit(&["error", &message]);
         }
@@ -212,9 +215,7 @@ pub fn stop() {
 pub fn poll() -> String {
     let mut events: Vec<Vec<String>> = take_progress().into_iter().map(|text| vec!["progress".to_string(), text]).collect();
     events.extend(take_verified().into_iter().map(|id| vec!["verified".to_string(), id]));
-    if let Ok(mut queued) = EVENTS.lock() {
-        events.extend(queued.drain(..));
-    }
+    events.extend(held(&EVENTS).drain(..));
     records(events.into_iter())
 }
 
@@ -228,8 +229,10 @@ pub fn running() -> bool {
 /// Every argument must be null or point to a NUL-terminated UTF-16 string.
 #[no_mangle]
 pub unsafe extern "C" fn oi_uninstall_start(operation: *const u16, arguments: *const u16, log: *const u16) -> *mut u16 {
-    let arguments: Vec<String> = take(arguments).split(FIELD).filter(|argument| !argument.is_empty()).map(str::to_string).collect();
-    give(&start(&take(operation), &arguments, &take(log)).err().map(|reason| format!("!{reason}")).unwrap_or_default())
+    guard(|| {
+        let arguments: Vec<String> = take(arguments).split(FIELD).filter(|argument| !argument.is_empty()).map(str::to_string).collect();
+        give(&start(&take(operation), &arguments, &take(log)).err().map(|reason| format!("!{reason}")).unwrap_or_default())
+    })
 }
 
 /// See [`stop`].
@@ -241,11 +244,11 @@ pub extern "C" fn oi_uninstall_stop() {
 /// See [`poll`].
 #[no_mangle]
 pub extern "C" fn oi_uninstall_events() -> *mut u16 {
-    give(&poll())
+    guard(|| give(&poll()))
 }
 
 /// See [`targets`].
 #[no_mangle]
 pub extern "C" fn oi_uninstall_targets() -> i32 {
-    i32::try_from(targets()).unwrap_or(i32::MAX)
+    guarded(|| i32::try_from(targets()).unwrap_or(i32::MAX)).unwrap_or(0)
 }

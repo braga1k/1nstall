@@ -6,6 +6,11 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 
+// The engine failed internally while doing what the application asked. The process goes on.
+sealed class EngineException : Exception {
+    public EngineException(string message) : base(message) { }
+}
+
 static class Engine {
     const string Library="oneinstall_engine.dll";
     [DllImport("kernel32",CharSet=CharSet.Unicode,SetLastError=true)] static extern IntPtr LoadLibraryW(string path);
@@ -41,9 +46,22 @@ static class Engine {
     [DllImport(Library)] static extern void oi_uninstall_stop();
     [DllImport(Library)] static extern IntPtr oi_uninstall_events();
     [DllImport(Library)] static extern int oi_uninstall_targets();
+    [DllImport(Library,CharSet=CharSet.Unicode)] static extern IntPtr oi_history(string logFolder);
+    [DllImport(Library,CharSet=CharSet.Unicode)] static extern IntPtr oi_diagnostics(string windowsVersion);
+    [DllImport(Library)] static extern IntPtr oi_notices();
+    [DllImport(Library)] static extern IntPtr oi_last_error();
+    [DllImport(Library)] static extern IntPtr oi_test_failure();
     [DllImport(Library)] static extern void oi_free(IntPtr text);
 
-    static string Take(IntPtr text) { try { return Marshal.PtrToStringUni(text); } finally { oi_free(text); } }
+    // A null answer means the engine failed internally; it says why when asked.
+    static string Take(IntPtr text) {
+        if(text==IntPtr.Zero) {
+            IntPtr reason=oi_last_error(); string message="";
+            if(reason!=IntPtr.Zero) { try { message=Marshal.PtrToStringUni(reason); } finally { oi_free(reason); } }
+            throw new EngineException(message.Length>0?message:"Unknown failure");
+        }
+        try { return Marshal.PtrToStringUni(text); } finally { oi_free(text); }
+    }
     public static string Version() { return Take(oi_version()); }
     public static string Catalog() { return Take(oi_catalog()); }
     public static string Profiles() { return Take(oi_profiles()); }
@@ -91,6 +109,13 @@ static class Engine {
     public static string UninstallStart(string operation,string arguments,string log) { return Take(oi_uninstall_start(operation,arguments,log)); }
     public static void UninstallStop() { oi_uninstall_stop(); }
     public static string UninstallEvents() { return Take(oi_uninstall_events()); }
+    // The history page. First record: why the history could not be read, or empty. Then one
+    // record per operation, newest first: its text, the app key to review again, the log to open.
+    public static string History(string logFolder) { return Take(oi_history(logFolder)); }
+    public static string Diagnostics(string windowsVersion) { return Take(oi_diagnostics(windowsVersion)); }
+    public static string Notices() { return Take(oi_notices()); }
+    // Fails inside the engine on purpose, in the test modes only.
+    public static string TestFailure() { return Take(oi_test_failure()); }
     // How many removed apps are on record for a leftover check.
     public static int UninstallTargets() { return oi_uninstall_targets(); }
 

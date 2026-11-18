@@ -1,5 +1,7 @@
 # WinGet integration
 
+> **4.0:** the engine reads `winget export` only. The `Get-WinGetPackage` route described below is how 3.6 obtained a complete inventory; 4.0 does not use it, so apps WinGet does not list stay Unknown.
+
 Automatic catalog installation uses WinGet. The application does not offer an Update Center, package pin controls or unattended third-party upgrades. Settings updates 1nstall itself.
 
 ## Installed inventory
