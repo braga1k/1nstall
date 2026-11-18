@@ -339,7 +339,8 @@ fn rust_removal_matches_the_recorded_behaviour_of_3_6() {
         local,
     };
     std::fs::copy(env!("CARGO_BIN_EXE_oracle-publisher"), &paths.publisher).expect("stand-in uninstaller");
-    let shell = format!("\"{}\\cmd.exe\" /c exit 0", host.special_folder(SpecialFolder::System));
+    // Built from %SystemRoot% exactly as the recording script did, so the registered text is the same.
+    let shell = format!("\"{}\\System32\\cmd.exe\" /c exit 0", std::env::var("SystemRoot").expect("SystemRoot"));
     let variants: [(&str, &str, bool, Option<&str>); 8] = [
         ("Alpha", "clean", true, None),
         ("Bravo", "cancel", true, None),

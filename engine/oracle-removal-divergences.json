@@ -1,4 +1,390 @@
 {
-  "about": "Lines of the removal recording where the Rust engine deliberately differs from 3.6. Each entry holds the whole Rust line and the reason.",
-  "divergences": []
+  "about": "Lines of the removal recording where the Rust engine deliberately differs from 3.6. Each entry holds the whole Rust line and the reason. The scenario test fails if a line differs in any other way.",
+  "divergences": [
+    {
+      "line": "Golf",
+      "reason": "inferred-location: the registration has no InstallLocation, so 3.6 took the uninstaller folder as the app location, called it the recorded installation folder (Linked path) and recycled it. Rust keeps an inferred location out of the removal: no ownership is claimed, the uninstaller folder is not offered, and the leftovers found by exact product name are still offered.",
+      "rust": {
+        "Variant": "Golf",
+        "Mode": "clean",
+        "StateBefore": {
+          "Registration": true,
+          "InstallFolder": [
+            "editor.exe (30 B)",
+            "readme.txt (20 B)"
+          ],
+          "DataFolder": [
+            "settings.ini (21 B)"
+          ],
+          "ProductKey": true,
+          "TraceValue": true,
+          "SiblingTraceValue": true,
+          "ToolsFolder": [
+            "publisher.exe (5120 B)"
+          ]
+        },
+        "Listed": 1,
+        "Model": {
+          "Id": "HKCU64:OracleFixtureGolf",
+          "Name": "OracleGolf Editor 2.0 (x64)",
+          "Publisher": "Oracle Fixture Vendor",
+          "Version": "2.0",
+          "Kind": "Desktop",
+          "Location": "{LOCALAPPDATA}\\Programs\\OracleGolf Tools",
+          "Command": "\"{LOCALAPPDATA}\\Programs\\OracleGolf Tools\\publisher.exe\" clean OracleFixtureGolf",
+          "RegistryPath": "Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\OracleFixtureGolf",
+          "PackageFamily": null,
+          "Machine": false,
+          "View32": false,
+          "Msi": false,
+          "CanRemove": true,
+          "SizeKB": 0,
+          "Parsed": {
+            "FileName": "{LOCALAPPDATA}\\Programs\\OracleGolf Tools\\publisher.exe",
+            "Arguments": "clean OracleFixtureGolf"
+          }
+        },
+        "Remove": {
+          "Results": [
+            {
+              "Name": "OracleGolf Editor 2.0 (x64)",
+              "Kind": null,
+              "Path": null,
+              "Outcome": "Success",
+              "Message": "Exact registration absence verified. Cleanup remains a separate review.",
+              "ExitCode": 0
+            }
+          ],
+          "Messages": [
+            "OracleGolf Editor 2.0 (x64): Success · Exact registration absence verified. Cleanup remains a separate review."
+          ],
+          "Stages": [
+            "Preparing…",
+            "Removing…",
+            "Verifying…",
+            "Success"
+          ],
+          "AppAfter": {
+            "Name": "OracleGolf Editor 2.0 (x64)",
+            "Location": "",
+            "RemovalVerified": true,
+            "OwnershipVerified": false,
+            "IdentityVerified": true,
+            "RestartPending": false
+          }
+        },
+        "StateAfterRemove": {
+          "Registration": false,
+          "InstallFolder": [
+            "editor.exe (30 B)",
+            "readme.txt (20 B)"
+          ],
+          "DataFolder": [
+            "settings.ini (21 B)"
+          ],
+          "ProductKey": true,
+          "TraceValue": true,
+          "SiblingTraceValue": true,
+          "ToolsFolder": [
+            "publisher.exe (5120 B)"
+          ]
+        },
+        "Scan": {
+          "ScannedApps": 1,
+          "IncompleteChecks": 0,
+          "Messages": [
+            "OracleGolf Editor 2.0 (x64): checked installation folder, Roaming/Local/LocalLow AppData, ProgramData, Program Files, product registry keys and Windows executable traces. Name matches require your review; no matches does not prove every residue is absent."
+          ],
+          "Leftovers": [
+            {
+              "Kind": "Folder",
+              "Path": "{LOCALAPPDATA}\\Programs\\OracleGolf Editor",
+              "ValueName": null,
+              "Confidence": "Name match",
+              "Reason": "Exact product name; may contain settings or saved data",
+              "Machine": false,
+              "View32": false,
+              "Selected": false,
+              "Files": 2,
+              "Bytes": 50
+            },
+            {
+              "Kind": "Folder",
+              "Path": "{APPDATA}\\OracleFixtureVendor\\OracleGolf Editor",
+              "ValueName": null,
+              "Confidence": "Name match",
+              "Reason": "Exact product name; may contain settings or saved data",
+              "Machine": false,
+              "View32": false,
+              "Selected": false,
+              "Files": 1,
+              "Bytes": 21
+            },
+            {
+              "Kind": "Registry",
+              "Path": "Software\\OracleFixtureVendor\\OracleGolf Editor",
+              "ValueName": null,
+              "Confidence": "Name match",
+              "Reason": "Exact product key; registry backup before removal",
+              "Machine": false,
+              "View32": false,
+              "Selected": false,
+              "Files": 0,
+              "Bytes": 0
+            }
+          ],
+          "AppAfter": {
+            "Name": "OracleGolf Editor 2.0 (x64)",
+            "Location": "",
+            "RemovalVerified": true,
+            "OwnershipVerified": false,
+            "IdentityVerified": true,
+            "RestartPending": false
+          }
+        },
+        "Clean": {
+          "Results": [
+            {
+              "Name": "OracleGolf Editor 2.0 (x64)",
+              "Kind": "Folder",
+              "Path": "{LOCALAPPDATA}\\Programs\\OracleGolf Editor",
+              "Outcome": "Success",
+              "Message": "Reviewed folder recycled; original location absence verified.",
+              "ExitCode": 0
+            },
+            {
+              "Name": "OracleGolf Editor 2.0 (x64)",
+              "Kind": "Folder",
+              "Path": "{APPDATA}\\OracleFixtureVendor\\OracleGolf Editor",
+              "Outcome": "Success",
+              "Message": "Reviewed folder recycled; original location absence verified.",
+              "ExitCode": 0
+            },
+            {
+              "Name": "OracleGolf Editor 2.0 (x64)",
+              "Kind": "Registry",
+              "Path": "Software\\OracleFixtureVendor\\OracleGolf Editor",
+              "Outcome": "Success",
+              "Message": "Reviewed registry item absence verified; registry backup saved.",
+              "ExitCode": 0
+            }
+          ],
+          "Messages": [
+            "{LOCALAPPDATA}\\Programs\\OracleGolf Editor: sent to Recycle Bin.",
+            "{APPDATA}\\OracleFixtureVendor\\OracleGolf Editor: sent to Recycle Bin.",
+            "HKCU\\Software\\OracleFixtureVendor\\OracleGolf Editor: removed; .reg backup saved."
+          ],
+          "RecycledBytes": 71,
+          "Backup": {
+            "Folder": "{LOCALAPPDATA}\\1nstall\\Backups\\{STAMP}",
+            "Files": [
+              "{GUID}.reg",
+              "items.json",
+              "RESTORE.txt",
+              "results.json"
+            ],
+            "RegistryExports": [
+              {
+                "FirstKey": "[HKEY_CURRENT_USER\\Software\\OracleFixtureVendor\\OracleGolf Editor]",
+                "Keys": 1,
+                "FirstBytes": "FF-FE-57-00"
+              }
+            ],
+            "Restore": [
+              "HKCU\\Software\\OracleFixtureVendor\\OracleGolf Editor (64-bit)",
+              "To restore from Command Prompt:",
+              "reg.exe import \"{LOCALAPPDATA}\\1nstall\\Backups\\{STAMP}\\{GUID}.reg\" /reg:64",
+              ""
+            ],
+            "ItemsJson": {
+              "Utf8Bom": false,
+              "Rows": 3,
+              "FirstRowShape": {
+                "AppName": "string",
+                "Kind": "string",
+                "Path": "string",
+                "ValueName": "null",
+                "DisplayValueName": "null",
+                "Reason": "string",
+                "Owner": {
+                  "Id": "string",
+                  "Name": "string",
+                  "Publisher": "string",
+                  "Version": "string",
+                  "Kind": "string",
+                  "Location": "string",
+                  "Command": "string",
+                  "RegistryPath": "string",
+                  "PackageFamily": "null",
+                  "Machine": "bool",
+                  "View32": "bool",
+                  "Msi": "bool",
+                  "RemovalVerified": "bool",
+                  "OwnershipVerified": "bool",
+                  "IdentityVerified": "bool",
+                  "RestartRequestedAt": "number",
+                  "CanRemove": "bool",
+                  "SizeKB": "number",
+                  "Detail": "string"
+                },
+                "Machine": "bool",
+                "View32": "bool",
+                "Selected": "bool",
+                "Confidence": "string",
+                "Bytes": "number",
+                "Files": "number",
+                "Detail": "string"
+              }
+            },
+            "ResultsJson": {
+              "Utf8Bom": false,
+              "Rows": 3,
+              "FirstRowShape": {
+                "Id": "string",
+                "Name": "string",
+                "Outcome": "string",
+                "Message": "string",
+                "ExitCode": "number",
+                "Kind": "string",
+                "Path": "string"
+              }
+            }
+          }
+        },
+        "StateAfterClean": {
+          "Registration": false,
+          "InstallFolder": "absent",
+          "DataFolder": "absent",
+          "ProductKey": false,
+          "TraceValue": true,
+          "SiblingTraceValue": true,
+          "ToolsFolder": [
+            "publisher.exe (5120 B)"
+          ]
+        }
+      }
+    },
+    {
+      "line": "History",
+      "reason": "inferred-location: the history entry of the Golf scenario records no location and no ownership, for the reason above. Every other entry is identical to 3.6.",
+      "rust": {
+        "History": {
+          "File": "{LOCALAPPDATA}\\1nstall\\uninstall-history.json",
+          "Utf8Bom": false,
+          "FixtureRows": 8,
+          "RowShape": {
+            "Id": "string",
+            "Name": "string",
+            "Publisher": "string",
+            "Version": "string",
+            "Kind": "string",
+            "Location": "string",
+            "Command": "string",
+            "RegistryPath": "string",
+            "PackageFamily": "null",
+            "Machine": "bool",
+            "View32": "bool",
+            "Msi": "bool",
+            "RemovalVerified": "bool",
+            "OwnershipVerified": "bool",
+            "IdentityVerified": "bool",
+            "RestartRequestedAt": "number",
+            "CanRemove": "bool",
+            "SizeKB": "number",
+            "Detail": "string"
+          },
+          "Fixtures": [
+            {
+              "Id": "HKCU64:OracleFixtureAlpha",
+              "Name": "OracleAlpha Editor 2.0 (x64)",
+              "Location": "{LOCALAPPDATA}\\Programs\\OracleAlpha Editor",
+              "Command": "\"{LOCALAPPDATA}\\OracleFixtureTools\\publisher.exe\" clean OracleFixtureAlpha",
+              "CanRemove": true,
+              "RemovalVerified": true,
+              "OwnershipVerified": true,
+              "IdentityVerified": true,
+              "RestartPending": false
+            },
+            {
+              "Id": "HKCU64:OracleFixtureBravo",
+              "Name": "OracleBravo Editor 2.0 (x64)",
+              "Location": "{LOCALAPPDATA}\\Programs\\OracleBravo Editor",
+              "Command": "\"{LOCALAPPDATA}\\OracleFixtureTools\\publisher.exe\" cancel OracleFixtureBravo",
+              "CanRemove": true,
+              "RemovalVerified": false,
+              "OwnershipVerified": true,
+              "IdentityVerified": true,
+              "RestartPending": false
+            },
+            {
+              "Id": "HKCU64:OracleFixtureCharlie",
+              "Name": "OracleCharlie Editor 2.0 (x64)",
+              "Location": "{LOCALAPPDATA}\\Programs\\OracleCharlie Editor",
+              "Command": "\"{LOCALAPPDATA}\\OracleFixtureTools\\publisher.exe\" keep OracleFixtureCharlie",
+              "CanRemove": true,
+              "RemovalVerified": false,
+              "OwnershipVerified": true,
+              "IdentityVerified": true,
+              "RestartPending": false
+            },
+            {
+              "Id": "HKCU64:OracleFixtureDelta",
+              "Name": "OracleDelta Editor 2.0 (x64)",
+              "Location": "{LOCALAPPDATA}\\Programs\\OracleDelta Editor",
+              "Command": "\"{LOCALAPPDATA}\\OracleFixtureTools\\publisher.exe\" restart OracleFixtureDelta",
+              "CanRemove": true,
+              "RemovalVerified": false,
+              "OwnershipVerified": true,
+              "IdentityVerified": true,
+              "RestartPending": true
+            },
+            {
+              "Id": "HKCU64:OracleFixtureEcho",
+              "Name": "OracleEcho Editor 2.0 (x64)",
+              "Location": "{LOCALAPPDATA}\\Programs\\OracleEcho Editor",
+              "Command": "\"{LOCALAPPDATA}\\OracleFixtureTools\\publisher.exe\" child OracleFixtureEcho",
+              "CanRemove": true,
+              "RemovalVerified": true,
+              "OwnershipVerified": true,
+              "IdentityVerified": true,
+              "RestartPending": false
+            },
+            {
+              "Id": "HKCU64:OracleFixtureFoxtrot",
+              "Name": "OracleFoxtrot Editor 2.0 (x64)",
+              "Location": "{LOCALAPPDATA}\\Programs\\OracleFoxtrot Editor",
+              "Command": "\"{LOCALAPPDATA}\\OracleFixtureTools\\publisher.exe\" fail OracleFixtureFoxtrot",
+              "CanRemove": true,
+              "RemovalVerified": false,
+              "OwnershipVerified": true,
+              "IdentityVerified": true,
+              "RestartPending": false
+            },
+            {
+              "Id": "HKCU64:OracleFixtureGolf",
+              "Name": "OracleGolf Editor 2.0 (x64)",
+              "Location": "",
+              "Command": "\"{LOCALAPPDATA}\\Programs\\OracleGolf Tools\\publisher.exe\" clean OracleFixtureGolf",
+              "CanRemove": true,
+              "RemovalVerified": true,
+              "OwnershipVerified": false,
+              "IdentityVerified": true,
+              "RestartPending": false
+            },
+            {
+              "Id": "HKCU64:OracleFixtureHotel",
+              "Name": "OracleHotel Editor 2.0 (x64)",
+              "Location": "{LOCALAPPDATA}\\Programs\\OracleHotel Editor",
+              "Command": "\"C:\\Windows\\System32\\cmd.exe\" /c exit 0",
+              "CanRemove": false,
+              "RemovalVerified": false,
+              "OwnershipVerified": true,
+              "IdentityVerified": true,
+              "RestartPending": false
+            }
+          ]
+        }
+      }
+    }
+  ]
 }

@@ -3,6 +3,7 @@
 
 pub mod inventory;
 pub mod json;
+pub mod packages;
 pub mod process;
 pub mod recycle;
 pub mod registry;

@@ -16,6 +16,7 @@ pub mod error;
 pub mod host;
 pub mod model;
 pub mod packages;
+pub mod queue;
 pub mod text;
 pub mod uninstall;
 
