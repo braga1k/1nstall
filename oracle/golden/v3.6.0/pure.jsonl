@@ -1,0 +1,1552 @@
+{"fn":"Packages.ValidId","args":["Git.Git"],"out":true}
+{"fn":"Packages.ValidId","args":["7zip.7zip"],"out":true}
+{"fn":"Packages.ValidId","args":["Microsoft.VCRedist.2015+.x64"],"out":true}
+{"fn":"Packages.ValidId","args":["Notepad++.Notepad++"],"out":true}
+{"fn":"Packages.ValidId","args":["a"],"out":true}
+{"fn":"Packages.ValidId","args":["A-b_c.d+e"],"out":true}
+{"fn":"Packages.ValidId","args":["9NBLGGH4NNS1"],"out":true}
+{"fn":"Packages.ValidId","args":[""],"out":false}
+{"fn":"Packages.ValidId","args":[null],"out":false}
+{"fn":"Packages.ValidId","args":[" Git.Git"],"out":false}
+{"fn":"Packages.ValidId","args":["Git.Git "],"out":false}
+{"fn":"Packages.ValidId","args":["Git Git"],"out":false}
+{"fn":"Packages.ValidId","args":[".Git"],"out":false}
+{"fn":"Packages.ValidId","args":["-Git"],"out":false}
+{"fn":"Packages.ValidId","args":["+Git"],"out":false}
+{"fn":"Packages.ValidId","args":["_Git"],"out":false}
+{"fn":"Packages.ValidId","args":["--all"],"out":false}
+{"fn":"Packages.ValidId","args":["Git.Git\u000a"],"out":true}
+{"fn":"Packages.ValidId","args":["Git.Git\u000d\u000a"],"out":false}
+{"fn":"Packages.ValidId","args":["Git.Git\u000a\u000a"],"out":false}
+{"fn":"Packages.ValidId","args":["Git\u000aGit"],"out":false}
+{"fn":"Packages.ValidId","args":["Git.Git\u0000"],"out":false}
+{"fn":"Packages.ValidId","args":["Git.Git\u0009"],"out":false}
+{"fn":"Packages.ValidId","args":["G\u00eft.Git"],"out":false}
+{"fn":"Packages.ValidId","args":["\uff27it.Git"],"out":false}
+{"fn":"Packages.ValidId","args":["Git/Git"],"out":false}
+{"fn":"Packages.ValidId","args":["Git\\Git"],"out":false}
+{"fn":"Packages.ValidId","args":["App;Remove-Item"],"out":false}
+{"fn":"Packages.ValidId","args":["$(malicious)"],"out":false}
+{"fn":"Packages.ValidId","args":["App ID"],"out":false}
+{"fn":"Packages.ValidId","args":[{"$gen":"repeat","unit":"A","count":200}],"out":true}
+{"fn":"Packages.ValidId","args":[{"$gen":"repeat","unit":"A","count":201}],"out":false}
+{"fn":"Packages.ValidId","args":[{"$gen":"repeat","unit":"A","count":199,"suffix":"\u000a"}],"out":true}
+{"fn":"Packages.ValidId","args":[{"$gen":"repeat","unit":"A","count":200,"suffix":"\u000a"}],"out":false}
+{"fn":"Packages.ValidSource","args":["winget"],"out":true}
+{"fn":"Packages.ValidSource","args":["msstore"],"out":true}
+{"fn":"Packages.ValidSource","args":["Winget"],"out":false}
+{"fn":"Packages.ValidSource","args":["WINGET"],"out":false}
+{"fn":"Packages.ValidSource","args":["winget "],"out":false}
+{"fn":"Packages.ValidSource","args":[" winget"],"out":false}
+{"fn":"Packages.ValidSource","args":[""],"out":false}
+{"fn":"Packages.ValidSource","args":[null],"out":false}
+{"fn":"Packages.ValidSource","args":["winget\u000a"],"out":false}
+{"fn":"Packages.ValidSource","args":["store"],"out":false}
+{"fn":"Packages.ValidSource","args":["msstore\u0000"],"out":false}
+{"fn":"Packages.KnownVersion","args":["1.0"],"out":true}
+{"fn":"Packages.KnownVersion","args":["26.03"],"out":true}
+{"fn":"Packages.KnownVersion","args":["0"],"out":true}
+{"fn":"Packages.KnownVersion","args":[""],"out":false}
+{"fn":"Packages.KnownVersion","args":[null],"out":false}
+{"fn":"Packages.KnownVersion","args":[" "],"out":false}
+{"fn":"Packages.KnownVersion","args":["unknown"],"out":false}
+{"fn":"Packages.KnownVersion","args":["Unknown"],"out":false}
+{"fn":"Packages.KnownVersion","args":["UNKNOWN"],"out":false}
+{"fn":"Packages.KnownVersion","args":["latest"],"out":false}
+{"fn":"Packages.KnownVersion","args":["Latest"],"out":false}
+{"fn":"Packages.KnownVersion","args":["n/a"],"out":false}
+{"fn":"Packages.KnownVersion","args":["N/A"],"out":false}
+{"fn":"Packages.KnownVersion","args":["<1.0"],"out":true}
+{"fn":"Packages.KnownVersion","args":["<unknown>"],"out":false}
+{"fn":"Packages.KnownVersion","args":["< 24.0 >"],"out":false}
+{"fn":"Packages.KnownVersion","args":["<"],"out":true}
+{"fn":"Packages.KnownVersion","args":["<>"],"out":false}
+{"fn":"Packages.KnownVersion","args":["1.0 <beta>"],"out":true}
+{"fn":"Packages.KnownVersion","args":["unknown "],"out":true}
+{"fn":"Packages.KnownVersion","args":[" unknown"],"out":true}
+{"fn":"Packages.KnownVersion","args":["latest\u000a"],"out":false}
+{"fn":"Packages.KnownVersion","args":["v1"],"out":true}
+{"fn":"Packages.KnownVersion","args":["n/a."],"out":true}
+{"fn":"Packages.KnownVersion","args":["na"],"out":true}
+{"fn":"Packages.Quote","args":["simple"],"out":"\"simple\""}
+{"fn":"Packages.Quote","args":[""],"out":"\"\""}
+{"fn":"Packages.Quote","args":["two words"],"out":"\"two words\""}
+{"fn":"Packages.Quote","args":["a\"b"],"out":"\"a\\\"b\""}
+{"fn":"Packages.Quote","args":["trailing\\"],"out":"\"trailing\\\\\""}
+{"fn":"Packages.Quote","args":["trailing\\\\"],"out":"\"trailing\\\\\\\\\""}
+{"fn":"Packages.Quote","args":["C:\\Program Files\\App\\"],"out":"\"C:\\Program Files\\App\\\\\""}
+{"fn":"Packages.Quote","args":["a\\\"b"],"out":"\"a\\\\\\\"b\""}
+{"fn":"Packages.Quote","args":["a\\\\\"b"],"out":"\"a\\\\\\\\\\\"b\""}
+{"fn":"Packages.Quote","args":["\\\\server\\share"],"out":"\"\\\\server\\share\""}
+{"fn":"Packages.Quote","args":["  "],"out":"\"  \""}
+{"fn":"Packages.Quote","args":["tab\u0009here"],"out":"\"tab\u0009here\""}
+{"fn":"Packages.Quote","args":["new\u000aline"],"out":"\"new\u000aline\""}
+{"fn":"Packages.Quote","args":["%PATH%"],"out":"\"%PATH%\""}
+{"fn":"Packages.Quote","args":["\u00fcn\u00efc\u00f6d\u00e9 \u65e5\u672c\u8a9e"],"out":"\"\u00fcn\u00efc\u00f6d\u00e9 \u65e5\u672c\u8a9e\""}
+{"fn":"Packages.Quote","args":["\""],"out":"\"\\\"\""}
+{"fn":"Packages.Quote","args":["\\"],"out":"\"\\\\\""}
+{"fn":"Packages.Quote","args":["a b\\"],"out":"\"a b\\\\\""}
+{"fn":"Packages.Quote","args":["a\u0000b"],"err":{"type":"ArgumentException","message":"Invalid argument."}}
+{"fn":"Packages.Quote","args":[null],"err":{"type":"ArgumentException","message":"Invalid argument."}}
+{"fn":"Packages.Arguments","args":["Git.Git","winget"],"out":"install --id \"Git.Git\" --exact --source \"winget\" --no-upgrade --accept-source-agreements --accept-package-agreements --disable-interactivity"}
+{"fn":"Packages.Arguments","args":["9NBLGGH4NNS1","msstore"],"out":"install --id \"9NBLGGH4NNS1\" --exact --source \"msstore\" --no-upgrade --accept-source-agreements --accept-package-agreements --disable-interactivity"}
+{"fn":"Packages.Arguments","args":["Microsoft.VCRedist.2015+.x64","winget"],"out":"install --id \"Microsoft.VCRedist.2015+.x64\" --exact --source \"winget\" --no-upgrade --accept-source-agreements --accept-package-agreements --disable-interactivity"}
+{"fn":"Packages.Arguments","args":["Git.Git","Winget"],"err":{"type":"ArgumentException","message":"Invalid package identity."}}
+{"fn":"Packages.Arguments","args":["Git.Git",""],"err":{"type":"ArgumentException","message":"Invalid package identity."}}
+{"fn":"Packages.Arguments","args":["Git.Git",null],"err":{"type":"ArgumentException","message":"Invalid package identity."}}
+{"fn":"Packages.Arguments","args":["","winget"],"err":{"type":"ArgumentException","message":"Invalid package identity."}}
+{"fn":"Packages.Arguments","args":[null,"winget"],"err":{"type":"ArgumentException","message":"Invalid package identity."}}
+{"fn":"Packages.Arguments","args":["--all","winget"],"err":{"type":"ArgumentException","message":"Invalid package identity."}}
+{"fn":"Packages.Arguments","args":["App;Remove-Item","winget"],"err":{"type":"ArgumentException","message":"Invalid package identity."}}
+{"fn":"Packages.Arguments","args":["$(malicious)","winget"],"err":{"type":"ArgumentException","message":"Invalid package identity."}}
+{"fn":"Packages.Arguments","args":["App ID","winget"],"err":{"type":"ArgumentException","message":"Invalid package identity."}}
+{"fn":"Packages.Arguments","args":["Git.Git\u000a","winget"],"out":"install --id \"Git.Git\u000a\" --exact --source \"winget\" --no-upgrade --accept-source-agreements --accept-package-agreements --disable-interactivity"}
+{"fn":"Packages.Outcome","args":[0],"out":"Unknown"}
+{"fn":"Packages.Outcome","args":[1],"out":"Failed"}
+{"fn":"Packages.Outcome","args":[-1],"out":"Failed"}
+{"fn":"Packages.Outcome","args":[2],"out":"Failed"}
+{"fn":"Packages.Outcome","args":[5],"out":"Failed"}
+{"fn":"Packages.Outcome","args":[87],"out":"Failed"}
+{"fn":"Packages.Outcome","args":[1223],"out":"Cancelled"}
+{"fn":"Packages.Outcome","args":[1602],"out":"Cancelled"}
+{"fn":"Packages.Outcome","args":[1603],"out":"Failed"}
+{"fn":"Packages.Outcome","args":[1605],"out":"Failed"}
+{"fn":"Packages.Outcome","args":[1618],"out":"Failed"}
+{"fn":"Packages.Outcome","args":[1619],"out":"Failed"}
+{"fn":"Packages.Outcome","args":[1638],"out":"Failed"}
+{"fn":"Packages.Outcome","args":[1641],"out":"Restart required"}
+{"fn":"Packages.Outcome","args":[3010],"out":"Restart required"}
+{"fn":"Packages.Outcome","args":[3011],"out":"Failed"}
+{"fn":"Packages.Outcome","args":[2147483647],"out":"Failed"}
+{"fn":"Packages.Outcome","args":[-2147483648],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x80004005"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x80070002"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x80070005"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x800704C7"],"out":"Cancelled"}
+{"fn":"Packages.Outcome","args":["0x80072EE7"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0xC0000005"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150000"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150001"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150002"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150003"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150004"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150005"],"out":"Cancelled"}
+{"fn":"Packages.Outcome","args":["0x8A150006"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150007"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150008"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150009"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15000A"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15000B"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15000C"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15000D"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15000E"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15000F"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150010"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150011"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150012"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150013"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150014"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150015"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150016"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150017"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150018"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150019"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15001A"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15001B"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15001C"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15001D"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15001E"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15001F"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150020"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150021"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150022"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150023"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150024"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150025"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150026"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150027"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150028"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150029"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15002A"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15002B"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15002C"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15002D"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15002E"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15002F"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150030"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150031"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150032"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150033"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150034"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150035"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150036"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150037"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150038"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150039"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15003A"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15003B"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15003C"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15003D"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15003E"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15003F"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150040"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150041"],"out":"Manual action required"}
+{"fn":"Packages.Outcome","args":["0x8A150042"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150043"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150044"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150045"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150046"],"out":"Manual action required"}
+{"fn":"Packages.Outcome","args":["0x8A150047"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150048"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150049"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15004A"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15004B"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15004C"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15004D"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15004E"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15004F"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150050"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150051"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150052"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150053"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150054"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150055"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150056"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150057"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150058"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150059"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15005A"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15005B"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15005C"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15005D"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15005E"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15005F"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150060"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150061"],"out":"Unknown"}
+{"fn":"Packages.Outcome","args":["0x8A150062"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150063"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150064"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150065"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150066"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150067"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150068"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150069"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15006A"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15006B"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15006C"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15006D"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15006E"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15006F"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150070"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150071"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150072"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150073"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150074"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150075"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150076"],"out":"Manual action required"}
+{"fn":"Packages.Outcome","args":["0x8A150077"],"out":"Cancelled"}
+{"fn":"Packages.Outcome","args":["0x8A150078"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150079"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15007A"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15007B"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15007C"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15007D"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15007E"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15007F"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150080"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150081"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150082"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150083"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150084"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150085"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150086"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150087"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150088"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150089"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15008A"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15008B"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15008C"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15008D"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15008E"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15008F"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150090"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150091"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150092"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150093"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150094"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150095"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150096"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150097"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150098"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150099"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15009A"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15009B"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15009C"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15009D"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15009E"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15009F"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500A0"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500A1"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500A2"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500A3"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500A4"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500A5"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500A6"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500A7"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500A8"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500A9"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500AA"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500AB"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500AC"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500AD"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500AE"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500AF"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500B0"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500B1"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500B2"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500B3"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500B4"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500B5"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500B6"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500B7"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500B8"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500B9"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500BA"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500BB"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500BC"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500BD"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500BE"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500BF"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500C0"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500C1"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500C2"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500C3"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500C4"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500C5"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500C6"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500C7"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500C8"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500C9"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500CA"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500CB"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500CC"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500CD"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500CE"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500CF"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500D0"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500D1"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500D2"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500D3"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500D4"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500D5"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500D6"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500D7"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500D8"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500D9"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500DA"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500DB"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500DC"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500DD"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500DE"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500DF"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500E0"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500E1"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500E2"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500E3"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500E4"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500E5"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500E6"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500E7"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500E8"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500E9"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500EA"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500EB"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500EC"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500ED"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500EE"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500EF"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500F0"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500F1"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500F2"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500F3"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500F4"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500F5"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500F6"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500F7"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500F8"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500F9"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500FA"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500FB"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500FC"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500FD"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500FE"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1500FF"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150100"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150101"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150102"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150103"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150104"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150105"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150106"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150107"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150108"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150109"],"out":"Restart required"}
+{"fn":"Packages.Outcome","args":["0x8A15010A"],"out":"Restart required"}
+{"fn":"Packages.Outcome","args":["0x8A15010B"],"out":"Restart required"}
+{"fn":"Packages.Outcome","args":["0x8A15010C"],"out":"Cancelled"}
+{"fn":"Packages.Outcome","args":["0x8A15010D"],"out":"Unknown"}
+{"fn":"Packages.Outcome","args":["0x8A15010E"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15010F"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150110"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150111"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150112"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150113"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150114"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150115"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150116"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150117"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150118"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150119"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15011A"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15011B"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15011C"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15011D"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15011E"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15011F"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150120"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150121"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150122"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150123"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150124"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150125"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150126"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150127"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150128"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150129"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15012A"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15012B"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15012C"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15012D"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15012E"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15012F"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150130"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150131"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150132"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150133"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150134"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150135"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150136"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150137"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150138"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150139"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15013A"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15013B"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15013C"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15013D"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15013E"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15013F"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150140"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150141"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150142"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150143"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150144"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150145"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150146"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150147"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150148"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150149"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15014A"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15014B"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15014C"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15014D"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15014E"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15014F"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150150"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150151"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150152"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150153"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150154"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150155"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150156"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150157"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150158"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150159"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15015A"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15015B"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15015C"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15015D"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15015E"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15015F"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150160"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150161"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150162"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150163"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150164"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150165"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150166"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150167"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150168"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150169"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15016A"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15016B"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15016C"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15016D"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15016E"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15016F"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150170"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150171"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150172"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150173"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150174"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150175"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150176"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150177"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150178"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150179"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15017A"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15017B"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15017C"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15017D"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15017E"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15017F"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150180"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150181"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150182"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150183"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150184"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150185"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150186"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150187"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150188"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150189"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15018A"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15018B"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15018C"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15018D"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15018E"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15018F"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150190"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150191"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150192"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150193"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150194"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150195"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150196"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150197"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150198"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A150199"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15019A"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15019B"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15019C"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15019D"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15019E"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A15019F"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501A0"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501A1"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501A2"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501A3"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501A4"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501A5"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501A6"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501A7"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501A8"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501A9"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501AA"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501AB"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501AC"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501AD"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501AE"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501AF"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501B0"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501B1"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501B2"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501B3"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501B4"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501B5"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501B6"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501B7"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501B8"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501B9"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501BA"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501BB"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501BC"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501BD"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501BE"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501BF"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501C0"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501C1"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501C2"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501C3"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501C4"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501C5"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501C6"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501C7"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501C8"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501C9"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501CA"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501CB"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501CC"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501CD"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501CE"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501CF"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501D0"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501D1"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501D2"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501D3"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501D4"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501D5"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501D6"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501D7"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501D8"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501D9"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501DA"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501DB"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501DC"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501DD"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501DE"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501DF"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501E0"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501E1"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501E2"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501E3"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501E4"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501E5"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501E6"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501E7"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501E8"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501E9"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501EA"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501EB"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501EC"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501ED"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501EE"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501EF"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501F0"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501F1"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501F2"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501F3"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501F4"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501F5"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501F6"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501F7"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501F8"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501F9"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501FA"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501FB"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501FC"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501FD"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501FE"],"out":"Failed"}
+{"fn":"Packages.Outcome","args":["0x8A1501FF"],"out":"Failed"}
+{"fn":"Packages.Explain","args":[0],"out":"Process returned 0 / 0x00000000. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":[1],"out":"Process returned 1 / 0x00000001. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":[-1],"out":"Process returned -1 / 0xFFFFFFFF. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":[2],"out":"Process returned 2 / 0x00000002. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":[5],"out":"Process returned 5 / 0x00000005. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":[87],"out":"Process returned 87 / 0x00000057. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":[1223],"out":"Process returned 1223 / 0x000004C7. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":[1602],"out":"Process returned 1602 / 0x00000642. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":[1603],"out":"Process returned 1603 / 0x00000643. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":[1605],"out":"Process returned 1605 / 0x00000645. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":[1618],"out":"Process returned 1618 / 0x00000652. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":[1619],"out":"Process returned 1619 / 0x00000653. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":[1638],"out":"Process returned 1638 / 0x00000666. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":[1641],"out":"Process returned 1641 / 0x00000669. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":[3010],"out":"Process returned 3010 / 0x00000BC2. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":[3011],"out":"Process returned 3011 / 0x00000BC3. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":[2147483647],"out":"Process returned 2147483647 / 0x7FFFFFFF. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":[-2147483648],"out":"Process returned -2147483648 / 0x80000000. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x80004005"],"out":"Process returned -2147467259 / 0x80004005. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x80070002"],"out":"Process returned -2147024894 / 0x80070002. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x80070005"],"out":"Process returned -2147024891 / 0x80070005. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x800704C7"],"out":"Process returned -2147023673 / 0x800704C7. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x80072EE7"],"out":"Process returned -2147012889 / 0x80072EE7. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0xC0000005"],"out":"Process returned -1073741819 / 0xC0000005. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150000"],"out":"Process returned -1978335232 / 0x8A150000. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150001"],"out":"Process returned -1978335231 / 0x8A150001. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150002"],"out":"Process returned -1978335230 / 0x8A150002. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150003"],"out":"Process returned -1978335229 / 0x8A150003. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150004"],"out":"Process returned -1978335228 / 0x8A150004. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150005"],"out":"Process returned -1978335227 / 0x8A150005. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150006"],"out":"Process returned -1978335226 / 0x8A150006. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150007"],"out":"Process returned -1978335225 / 0x8A150007. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150008"],"out":"Download/network failure. Check connectivity and retry after refreshing."}
+{"fn":"Packages.Explain","args":["0x8A150009"],"out":"Process returned -1978335223 / 0x8A150009. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15000A"],"out":"Process returned -1978335222 / 0x8A15000A. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15000B"],"out":"Process returned -1978335221 / 0x8A15000B. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15000C"],"out":"Process returned -1978335220 / 0x8A15000C. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15000D"],"out":"Process returned -1978335219 / 0x8A15000D. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15000E"],"out":"Process returned -1978335218 / 0x8A15000E. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15000F"],"out":"Process returned -1978335217 / 0x8A15000F. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150010"],"out":"Process returned -1978335216 / 0x8A150010. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150011"],"out":"Process returned -1978335215 / 0x8A150011. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150012"],"out":"Process returned -1978335214 / 0x8A150012. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150013"],"out":"Process returned -1978335213 / 0x8A150013. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150014"],"out":"Process returned -1978335212 / 0x8A150014. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150015"],"out":"Process returned -1978335211 / 0x8A150015. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150016"],"out":"Process returned -1978335210 / 0x8A150016. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150017"],"out":"Process returned -1978335209 / 0x8A150017. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150018"],"out":"Process returned -1978335208 / 0x8A150018. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150019"],"out":"Process returned -1978335207 / 0x8A150019. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15001A"],"out":"Process returned -1978335206 / 0x8A15001A. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15001B"],"out":"Process returned -1978335205 / 0x8A15001B. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15001C"],"out":"Process returned -1978335204 / 0x8A15001C. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15001D"],"out":"Process returned -1978335203 / 0x8A15001D. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15001E"],"out":"Process returned -1978335202 / 0x8A15001E. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15001F"],"out":"Process returned -1978335201 / 0x8A15001F. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150020"],"out":"Process returned -1978335200 / 0x8A150020. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150021"],"out":"Process returned -1978335199 / 0x8A150021. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150022"],"out":"Process returned -1978335198 / 0x8A150022. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150023"],"out":"Process returned -1978335197 / 0x8A150023. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150024"],"out":"Process returned -1978335196 / 0x8A150024. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150025"],"out":"Process returned -1978335195 / 0x8A150025. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150026"],"out":"Process returned -1978335194 / 0x8A150026. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150027"],"out":"Process returned -1978335193 / 0x8A150027. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150028"],"out":"Process returned -1978335192 / 0x8A150028. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150029"],"out":"Process returned -1978335191 / 0x8A150029. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15002A"],"out":"Process returned -1978335190 / 0x8A15002A. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15002B"],"out":"Process returned -1978335189 / 0x8A15002B. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15002C"],"out":"Process returned -1978335188 / 0x8A15002C. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15002D"],"out":"Process returned -1978335187 / 0x8A15002D. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15002E"],"out":"Process returned -1978335186 / 0x8A15002E. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15002F"],"out":"Process returned -1978335185 / 0x8A15002F. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150030"],"out":"Process returned -1978335184 / 0x8A150030. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150031"],"out":"Process returned -1978335183 / 0x8A150031. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150032"],"out":"Process returned -1978335182 / 0x8A150032. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150033"],"out":"Process returned -1978335181 / 0x8A150033. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150034"],"out":"Process returned -1978335180 / 0x8A150034. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150035"],"out":"Process returned -1978335179 / 0x8A150035. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150036"],"out":"Process returned -1978335178 / 0x8A150036. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150037"],"out":"Process returned -1978335177 / 0x8A150037. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150038"],"out":"Process returned -1978335176 / 0x8A150038. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150039"],"out":"Process returned -1978335175 / 0x8A150039. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15003A"],"out":"Process returned -1978335174 / 0x8A15003A. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15003B"],"out":"Process returned -1978335173 / 0x8A15003B. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15003C"],"out":"Process returned -1978335172 / 0x8A15003C. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15003D"],"out":"Process returned -1978335171 / 0x8A15003D. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15003E"],"out":"Process returned -1978335170 / 0x8A15003E. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15003F"],"out":"Process returned -1978335169 / 0x8A15003F. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150040"],"out":"Process returned -1978335168 / 0x8A150040. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150041"],"out":"Process returned -1978335167 / 0x8A150041. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150042"],"out":"Process returned -1978335166 / 0x8A150042. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150043"],"out":"Process returned -1978335165 / 0x8A150043. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150044"],"out":"Process returned -1978335164 / 0x8A150044. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150045"],"out":"Process returned -1978335163 / 0x8A150045. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150046"],"out":"Process returned -1978335162 / 0x8A150046. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150047"],"out":"Process returned -1978335161 / 0x8A150047. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150048"],"out":"Process returned -1978335160 / 0x8A150048. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150049"],"out":"Process returned -1978335159 / 0x8A150049. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15004A"],"out":"Process returned -1978335158 / 0x8A15004A. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15004B"],"out":"Process returned -1978335157 / 0x8A15004B. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15004C"],"out":"Process returned -1978335156 / 0x8A15004C. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15004D"],"out":"Process returned -1978335155 / 0x8A15004D. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15004E"],"out":"Process returned -1978335154 / 0x8A15004E. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15004F"],"out":"Process returned -1978335153 / 0x8A15004F. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150050"],"out":"Process returned -1978335152 / 0x8A150050. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150051"],"out":"Process returned -1978335151 / 0x8A150051. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150052"],"out":"Process returned -1978335150 / 0x8A150052. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150053"],"out":"Process returned -1978335149 / 0x8A150053. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150054"],"out":"Process returned -1978335148 / 0x8A150054. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150055"],"out":"Process returned -1978335147 / 0x8A150055. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150056"],"out":"Process returned -1978335146 / 0x8A150056. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150057"],"out":"Process returned -1978335145 / 0x8A150057. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150058"],"out":"Process returned -1978335144 / 0x8A150058. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150059"],"out":"Process returned -1978335143 / 0x8A150059. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15005A"],"out":"Process returned -1978335142 / 0x8A15005A. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15005B"],"out":"Process returned -1978335141 / 0x8A15005B. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15005C"],"out":"Process returned -1978335140 / 0x8A15005C. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15005D"],"out":"Process returned -1978335139 / 0x8A15005D. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15005E"],"out":"Process returned -1978335138 / 0x8A15005E. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15005F"],"out":"Process returned -1978335137 / 0x8A15005F. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150060"],"out":"Process returned -1978335136 / 0x8A150060. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150061"],"out":"Process returned -1978335135 / 0x8A150061. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150062"],"out":"Process returned -1978335134 / 0x8A150062. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150063"],"out":"Process returned -1978335133 / 0x8A150063. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150064"],"out":"Process returned -1978335132 / 0x8A150064. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150065"],"out":"Process returned -1978335131 / 0x8A150065. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150066"],"out":"Process returned -1978335130 / 0x8A150066. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150067"],"out":"Process returned -1978335129 / 0x8A150067. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150068"],"out":"WinGet pin prevents this operation. Review the pin in WinGet; 1nstall will not override it."}
+{"fn":"Packages.Explain","args":["0x8A150069"],"out":"Process returned -1978335127 / 0x8A150069. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15006A"],"out":"Process returned -1978335126 / 0x8A15006A. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15006B"],"out":"Process returned -1978335125 / 0x8A15006B. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15006C"],"out":"Process returned -1978335124 / 0x8A15006C. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15006D"],"out":"Process returned -1978335123 / 0x8A15006D. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15006E"],"out":"Process returned -1978335122 / 0x8A15006E. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15006F"],"out":"Process returned -1978335121 / 0x8A15006F. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150070"],"out":"Process returned -1978335120 / 0x8A150070. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150071"],"out":"Process returned -1978335119 / 0x8A150071. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150072"],"out":"Process returned -1978335118 / 0x8A150072. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150073"],"out":"Process returned -1978335117 / 0x8A150073. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150074"],"out":"Process returned -1978335116 / 0x8A150074. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150075"],"out":"Process returned -1978335115 / 0x8A150075. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150076"],"out":"Process returned -1978335114 / 0x8A150076. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150077"],"out":"Process returned -1978335113 / 0x8A150077. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150078"],"out":"Process returned -1978335112 / 0x8A150078. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150079"],"out":"Process returned -1978335111 / 0x8A150079. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15007A"],"out":"Process returned -1978335110 / 0x8A15007A. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15007B"],"out":"Process returned -1978335109 / 0x8A15007B. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15007C"],"out":"Process returned -1978335108 / 0x8A15007C. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15007D"],"out":"Process returned -1978335107 / 0x8A15007D. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15007E"],"out":"Process returned -1978335106 / 0x8A15007E. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15007F"],"out":"Process returned -1978335105 / 0x8A15007F. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150080"],"out":"Process returned -1978335104 / 0x8A150080. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150081"],"out":"Process returned -1978335103 / 0x8A150081. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150082"],"out":"Process returned -1978335102 / 0x8A150082. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150083"],"out":"Process returned -1978335101 / 0x8A150083. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150084"],"out":"Process returned -1978335100 / 0x8A150084. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150085"],"out":"Process returned -1978335099 / 0x8A150085. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150086"],"out":"Process returned -1978335098 / 0x8A150086. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150087"],"out":"Process returned -1978335097 / 0x8A150087. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150088"],"out":"Process returned -1978335096 / 0x8A150088. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150089"],"out":"Process returned -1978335095 / 0x8A150089. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15008A"],"out":"Process returned -1978335094 / 0x8A15008A. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15008B"],"out":"Process returned -1978335093 / 0x8A15008B. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15008C"],"out":"Process returned -1978335092 / 0x8A15008C. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15008D"],"out":"Process returned -1978335091 / 0x8A15008D. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15008E"],"out":"Process returned -1978335090 / 0x8A15008E. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15008F"],"out":"Process returned -1978335089 / 0x8A15008F. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150090"],"out":"Process returned -1978335088 / 0x8A150090. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150091"],"out":"Process returned -1978335087 / 0x8A150091. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150092"],"out":"Process returned -1978335086 / 0x8A150092. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150093"],"out":"Process returned -1978335085 / 0x8A150093. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150094"],"out":"Process returned -1978335084 / 0x8A150094. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150095"],"out":"Process returned -1978335083 / 0x8A150095. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150096"],"out":"Process returned -1978335082 / 0x8A150096. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150097"],"out":"Process returned -1978335081 / 0x8A150097. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150098"],"out":"Process returned -1978335080 / 0x8A150098. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150099"],"out":"Process returned -1978335079 / 0x8A150099. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15009A"],"out":"Process returned -1978335078 / 0x8A15009A. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15009B"],"out":"Process returned -1978335077 / 0x8A15009B. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15009C"],"out":"Process returned -1978335076 / 0x8A15009C. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15009D"],"out":"Process returned -1978335075 / 0x8A15009D. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15009E"],"out":"Process returned -1978335074 / 0x8A15009E. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15009F"],"out":"Process returned -1978335073 / 0x8A15009F. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500A0"],"out":"Process returned -1978335072 / 0x8A1500A0. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500A1"],"out":"Process returned -1978335071 / 0x8A1500A1. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500A2"],"out":"Process returned -1978335070 / 0x8A1500A2. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500A3"],"out":"Process returned -1978335069 / 0x8A1500A3. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500A4"],"out":"Process returned -1978335068 / 0x8A1500A4. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500A5"],"out":"Process returned -1978335067 / 0x8A1500A5. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500A6"],"out":"Process returned -1978335066 / 0x8A1500A6. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500A7"],"out":"Process returned -1978335065 / 0x8A1500A7. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500A8"],"out":"Process returned -1978335064 / 0x8A1500A8. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500A9"],"out":"Process returned -1978335063 / 0x8A1500A9. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500AA"],"out":"Process returned -1978335062 / 0x8A1500AA. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500AB"],"out":"Process returned -1978335061 / 0x8A1500AB. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500AC"],"out":"Process returned -1978335060 / 0x8A1500AC. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500AD"],"out":"Process returned -1978335059 / 0x8A1500AD. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500AE"],"out":"Process returned -1978335058 / 0x8A1500AE. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500AF"],"out":"Process returned -1978335057 / 0x8A1500AF. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500B0"],"out":"Process returned -1978335056 / 0x8A1500B0. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500B1"],"out":"Process returned -1978335055 / 0x8A1500B1. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500B2"],"out":"Process returned -1978335054 / 0x8A1500B2. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500B3"],"out":"Process returned -1978335053 / 0x8A1500B3. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500B4"],"out":"Process returned -1978335052 / 0x8A1500B4. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500B5"],"out":"Process returned -1978335051 / 0x8A1500B5. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500B6"],"out":"Process returned -1978335050 / 0x8A1500B6. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500B7"],"out":"Process returned -1978335049 / 0x8A1500B7. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500B8"],"out":"Process returned -1978335048 / 0x8A1500B8. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500B9"],"out":"Process returned -1978335047 / 0x8A1500B9. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500BA"],"out":"Process returned -1978335046 / 0x8A1500BA. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500BB"],"out":"Process returned -1978335045 / 0x8A1500BB. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500BC"],"out":"Process returned -1978335044 / 0x8A1500BC. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500BD"],"out":"Process returned -1978335043 / 0x8A1500BD. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500BE"],"out":"Process returned -1978335042 / 0x8A1500BE. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500BF"],"out":"Process returned -1978335041 / 0x8A1500BF. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500C0"],"out":"Process returned -1978335040 / 0x8A1500C0. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500C1"],"out":"Process returned -1978335039 / 0x8A1500C1. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500C2"],"out":"Process returned -1978335038 / 0x8A1500C2. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500C3"],"out":"Process returned -1978335037 / 0x8A1500C3. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500C4"],"out":"Process returned -1978335036 / 0x8A1500C4. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500C5"],"out":"Process returned -1978335035 / 0x8A1500C5. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500C6"],"out":"Process returned -1978335034 / 0x8A1500C6. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500C7"],"out":"Process returned -1978335033 / 0x8A1500C7. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500C8"],"out":"Process returned -1978335032 / 0x8A1500C8. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500C9"],"out":"Process returned -1978335031 / 0x8A1500C9. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500CA"],"out":"Process returned -1978335030 / 0x8A1500CA. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500CB"],"out":"Process returned -1978335029 / 0x8A1500CB. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500CC"],"out":"Process returned -1978335028 / 0x8A1500CC. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500CD"],"out":"Process returned -1978335027 / 0x8A1500CD. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500CE"],"out":"Process returned -1978335026 / 0x8A1500CE. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500CF"],"out":"Process returned -1978335025 / 0x8A1500CF. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500D0"],"out":"Process returned -1978335024 / 0x8A1500D0. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500D1"],"out":"Process returned -1978335023 / 0x8A1500D1. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500D2"],"out":"Process returned -1978335022 / 0x8A1500D2. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500D3"],"out":"Process returned -1978335021 / 0x8A1500D3. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500D4"],"out":"Process returned -1978335020 / 0x8A1500D4. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500D5"],"out":"Process returned -1978335019 / 0x8A1500D5. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500D6"],"out":"Process returned -1978335018 / 0x8A1500D6. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500D7"],"out":"Process returned -1978335017 / 0x8A1500D7. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500D8"],"out":"Process returned -1978335016 / 0x8A1500D8. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500D9"],"out":"Process returned -1978335015 / 0x8A1500D9. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500DA"],"out":"Process returned -1978335014 / 0x8A1500DA. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500DB"],"out":"Process returned -1978335013 / 0x8A1500DB. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500DC"],"out":"Process returned -1978335012 / 0x8A1500DC. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500DD"],"out":"Process returned -1978335011 / 0x8A1500DD. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500DE"],"out":"Process returned -1978335010 / 0x8A1500DE. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500DF"],"out":"Process returned -1978335009 / 0x8A1500DF. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500E0"],"out":"Process returned -1978335008 / 0x8A1500E0. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500E1"],"out":"Process returned -1978335007 / 0x8A1500E1. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500E2"],"out":"Process returned -1978335006 / 0x8A1500E2. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500E3"],"out":"Process returned -1978335005 / 0x8A1500E3. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500E4"],"out":"Process returned -1978335004 / 0x8A1500E4. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500E5"],"out":"Process returned -1978335003 / 0x8A1500E5. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500E6"],"out":"Process returned -1978335002 / 0x8A1500E6. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500E7"],"out":"Process returned -1978335001 / 0x8A1500E7. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500E8"],"out":"Process returned -1978335000 / 0x8A1500E8. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500E9"],"out":"Process returned -1978334999 / 0x8A1500E9. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500EA"],"out":"Process returned -1978334998 / 0x8A1500EA. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500EB"],"out":"Process returned -1978334997 / 0x8A1500EB. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500EC"],"out":"Process returned -1978334996 / 0x8A1500EC. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500ED"],"out":"Process returned -1978334995 / 0x8A1500ED. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500EE"],"out":"Process returned -1978334994 / 0x8A1500EE. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500EF"],"out":"Process returned -1978334993 / 0x8A1500EF. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500F0"],"out":"Process returned -1978334992 / 0x8A1500F0. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500F1"],"out":"Process returned -1978334991 / 0x8A1500F1. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500F2"],"out":"Process returned -1978334990 / 0x8A1500F2. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500F3"],"out":"Process returned -1978334989 / 0x8A1500F3. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500F4"],"out":"Process returned -1978334988 / 0x8A1500F4. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500F5"],"out":"Process returned -1978334987 / 0x8A1500F5. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500F6"],"out":"Process returned -1978334986 / 0x8A1500F6. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500F7"],"out":"Process returned -1978334985 / 0x8A1500F7. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500F8"],"out":"Process returned -1978334984 / 0x8A1500F8. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500F9"],"out":"Process returned -1978334983 / 0x8A1500F9. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500FA"],"out":"Process returned -1978334982 / 0x8A1500FA. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500FB"],"out":"Process returned -1978334981 / 0x8A1500FB. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500FC"],"out":"Process returned -1978334980 / 0x8A1500FC. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500FD"],"out":"Process returned -1978334979 / 0x8A1500FD. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500FE"],"out":"Process returned -1978334978 / 0x8A1500FE. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1500FF"],"out":"Process returned -1978334977 / 0x8A1500FF. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150100"],"out":"Process returned -1978334976 / 0x8A150100. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150101"],"out":"Process returned -1978334975 / 0x8A150101. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150102"],"out":"Process returned -1978334974 / 0x8A150102. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150103"],"out":"Process returned -1978334973 / 0x8A150103. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150104"],"out":"Dependency failed. Complete its installation before retrying."}
+{"fn":"Packages.Explain","args":["0x8A150105"],"out":"Process returned -1978334971 / 0x8A150105. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150106"],"out":"Process returned -1978334970 / 0x8A150106. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150107"],"out":"Download/network failure. Check connectivity and retry after refreshing."}
+{"fn":"Packages.Explain","args":["0x8A150108"],"out":"Process returned -1978334968 / 0x8A150108. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150109"],"out":"Process returned -1978334967 / 0x8A150109. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15010A"],"out":"Process returned -1978334966 / 0x8A15010A. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15010B"],"out":"Process returned -1978334965 / 0x8A15010B. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15010C"],"out":"Process returned -1978334964 / 0x8A15010C. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15010D"],"out":"Process returned -1978334963 / 0x8A15010D. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15010E"],"out":"Process returned -1978334962 / 0x8A15010E. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15010F"],"out":"Process returned -1978334961 / 0x8A15010F. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150110"],"out":"Dependency failed. Complete its installation before retrying."}
+{"fn":"Packages.Explain","args":["0x8A150111"],"out":"Process returned -1978334959 / 0x8A150111. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150112"],"out":"Process returned -1978334958 / 0x8A150112. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150113"],"out":"Process returned -1978334957 / 0x8A150113. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150114"],"out":"Process returned -1978334956 / 0x8A150114. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150115"],"out":"Process returned -1978334955 / 0x8A150115. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150116"],"out":"Process returned -1978334954 / 0x8A150116. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150117"],"out":"Process returned -1978334953 / 0x8A150117. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150118"],"out":"Process returned -1978334952 / 0x8A150118. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150119"],"out":"Process returned -1978334951 / 0x8A150119. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15011A"],"out":"Process returned -1978334950 / 0x8A15011A. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15011B"],"out":"Process returned -1978334949 / 0x8A15011B. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15011C"],"out":"Process returned -1978334948 / 0x8A15011C. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15011D"],"out":"Process returned -1978334947 / 0x8A15011D. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15011E"],"out":"Process returned -1978334946 / 0x8A15011E. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15011F"],"out":"Process returned -1978334945 / 0x8A15011F. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150120"],"out":"Process returned -1978334944 / 0x8A150120. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150121"],"out":"Process returned -1978334943 / 0x8A150121. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150122"],"out":"Process returned -1978334942 / 0x8A150122. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150123"],"out":"Process returned -1978334941 / 0x8A150123. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150124"],"out":"Process returned -1978334940 / 0x8A150124. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150125"],"out":"Process returned -1978334939 / 0x8A150125. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150126"],"out":"Process returned -1978334938 / 0x8A150126. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150127"],"out":"Process returned -1978334937 / 0x8A150127. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150128"],"out":"Process returned -1978334936 / 0x8A150128. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150129"],"out":"Process returned -1978334935 / 0x8A150129. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15012A"],"out":"Process returned -1978334934 / 0x8A15012A. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15012B"],"out":"Process returned -1978334933 / 0x8A15012B. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15012C"],"out":"Process returned -1978334932 / 0x8A15012C. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15012D"],"out":"Process returned -1978334931 / 0x8A15012D. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15012E"],"out":"Process returned -1978334930 / 0x8A15012E. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15012F"],"out":"Process returned -1978334929 / 0x8A15012F. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150130"],"out":"Process returned -1978334928 / 0x8A150130. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150131"],"out":"Process returned -1978334927 / 0x8A150131. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150132"],"out":"Process returned -1978334926 / 0x8A150132. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150133"],"out":"Process returned -1978334925 / 0x8A150133. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150134"],"out":"Process returned -1978334924 / 0x8A150134. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150135"],"out":"Process returned -1978334923 / 0x8A150135. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150136"],"out":"Process returned -1978334922 / 0x8A150136. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150137"],"out":"Process returned -1978334921 / 0x8A150137. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150138"],"out":"Process returned -1978334920 / 0x8A150138. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150139"],"out":"Process returned -1978334919 / 0x8A150139. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15013A"],"out":"Process returned -1978334918 / 0x8A15013A. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15013B"],"out":"Process returned -1978334917 / 0x8A15013B. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15013C"],"out":"Process returned -1978334916 / 0x8A15013C. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15013D"],"out":"Process returned -1978334915 / 0x8A15013D. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15013E"],"out":"Process returned -1978334914 / 0x8A15013E. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15013F"],"out":"Process returned -1978334913 / 0x8A15013F. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150140"],"out":"Process returned -1978334912 / 0x8A150140. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150141"],"out":"Process returned -1978334911 / 0x8A150141. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150142"],"out":"Process returned -1978334910 / 0x8A150142. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150143"],"out":"Process returned -1978334909 / 0x8A150143. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150144"],"out":"Process returned -1978334908 / 0x8A150144. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150145"],"out":"Process returned -1978334907 / 0x8A150145. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150146"],"out":"Process returned -1978334906 / 0x8A150146. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150147"],"out":"Process returned -1978334905 / 0x8A150147. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150148"],"out":"Process returned -1978334904 / 0x8A150148. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150149"],"out":"Process returned -1978334903 / 0x8A150149. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15014A"],"out":"Process returned -1978334902 / 0x8A15014A. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15014B"],"out":"Process returned -1978334901 / 0x8A15014B. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15014C"],"out":"Process returned -1978334900 / 0x8A15014C. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15014D"],"out":"Process returned -1978334899 / 0x8A15014D. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15014E"],"out":"Process returned -1978334898 / 0x8A15014E. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15014F"],"out":"Process returned -1978334897 / 0x8A15014F. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150150"],"out":"Process returned -1978334896 / 0x8A150150. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150151"],"out":"Process returned -1978334895 / 0x8A150151. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150152"],"out":"Process returned -1978334894 / 0x8A150152. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150153"],"out":"Process returned -1978334893 / 0x8A150153. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150154"],"out":"Process returned -1978334892 / 0x8A150154. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150155"],"out":"Process returned -1978334891 / 0x8A150155. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150156"],"out":"Process returned -1978334890 / 0x8A150156. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150157"],"out":"Process returned -1978334889 / 0x8A150157. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150158"],"out":"Process returned -1978334888 / 0x8A150158. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150159"],"out":"Process returned -1978334887 / 0x8A150159. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15015A"],"out":"Process returned -1978334886 / 0x8A15015A. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15015B"],"out":"Process returned -1978334885 / 0x8A15015B. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15015C"],"out":"Process returned -1978334884 / 0x8A15015C. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15015D"],"out":"Process returned -1978334883 / 0x8A15015D. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15015E"],"out":"Process returned -1978334882 / 0x8A15015E. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15015F"],"out":"Process returned -1978334881 / 0x8A15015F. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150160"],"out":"Process returned -1978334880 / 0x8A150160. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150161"],"out":"Process returned -1978334879 / 0x8A150161. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150162"],"out":"Process returned -1978334878 / 0x8A150162. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150163"],"out":"Process returned -1978334877 / 0x8A150163. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150164"],"out":"Process returned -1978334876 / 0x8A150164. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150165"],"out":"Process returned -1978334875 / 0x8A150165. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150166"],"out":"Process returned -1978334874 / 0x8A150166. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150167"],"out":"Process returned -1978334873 / 0x8A150167. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150168"],"out":"Process returned -1978334872 / 0x8A150168. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150169"],"out":"Process returned -1978334871 / 0x8A150169. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15016A"],"out":"Process returned -1978334870 / 0x8A15016A. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15016B"],"out":"Process returned -1978334869 / 0x8A15016B. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15016C"],"out":"Process returned -1978334868 / 0x8A15016C. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15016D"],"out":"Process returned -1978334867 / 0x8A15016D. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15016E"],"out":"Process returned -1978334866 / 0x8A15016E. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15016F"],"out":"Process returned -1978334865 / 0x8A15016F. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150170"],"out":"Process returned -1978334864 / 0x8A150170. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150171"],"out":"Process returned -1978334863 / 0x8A150171. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150172"],"out":"Process returned -1978334862 / 0x8A150172. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150173"],"out":"Process returned -1978334861 / 0x8A150173. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150174"],"out":"Process returned -1978334860 / 0x8A150174. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150175"],"out":"Process returned -1978334859 / 0x8A150175. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150176"],"out":"Process returned -1978334858 / 0x8A150176. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150177"],"out":"Process returned -1978334857 / 0x8A150177. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150178"],"out":"Process returned -1978334856 / 0x8A150178. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150179"],"out":"Process returned -1978334855 / 0x8A150179. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15017A"],"out":"Process returned -1978334854 / 0x8A15017A. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15017B"],"out":"Process returned -1978334853 / 0x8A15017B. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15017C"],"out":"Process returned -1978334852 / 0x8A15017C. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15017D"],"out":"Process returned -1978334851 / 0x8A15017D. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15017E"],"out":"Process returned -1978334850 / 0x8A15017E. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15017F"],"out":"Process returned -1978334849 / 0x8A15017F. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150180"],"out":"Process returned -1978334848 / 0x8A150180. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150181"],"out":"Process returned -1978334847 / 0x8A150181. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150182"],"out":"Process returned -1978334846 / 0x8A150182. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150183"],"out":"Process returned -1978334845 / 0x8A150183. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150184"],"out":"Process returned -1978334844 / 0x8A150184. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150185"],"out":"Process returned -1978334843 / 0x8A150185. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150186"],"out":"Process returned -1978334842 / 0x8A150186. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150187"],"out":"Process returned -1978334841 / 0x8A150187. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150188"],"out":"Process returned -1978334840 / 0x8A150188. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150189"],"out":"Process returned -1978334839 / 0x8A150189. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15018A"],"out":"Process returned -1978334838 / 0x8A15018A. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15018B"],"out":"Process returned -1978334837 / 0x8A15018B. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15018C"],"out":"Process returned -1978334836 / 0x8A15018C. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15018D"],"out":"Process returned -1978334835 / 0x8A15018D. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15018E"],"out":"Process returned -1978334834 / 0x8A15018E. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15018F"],"out":"Process returned -1978334833 / 0x8A15018F. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150190"],"out":"Process returned -1978334832 / 0x8A150190. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150191"],"out":"Process returned -1978334831 / 0x8A150191. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150192"],"out":"Process returned -1978334830 / 0x8A150192. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150193"],"out":"Process returned -1978334829 / 0x8A150193. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150194"],"out":"Process returned -1978334828 / 0x8A150194. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150195"],"out":"Process returned -1978334827 / 0x8A150195. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150196"],"out":"Process returned -1978334826 / 0x8A150196. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150197"],"out":"Process returned -1978334825 / 0x8A150197. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150198"],"out":"Process returned -1978334824 / 0x8A150198. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A150199"],"out":"Process returned -1978334823 / 0x8A150199. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15019A"],"out":"Process returned -1978334822 / 0x8A15019A. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15019B"],"out":"Process returned -1978334821 / 0x8A15019B. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15019C"],"out":"Process returned -1978334820 / 0x8A15019C. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15019D"],"out":"Process returned -1978334819 / 0x8A15019D. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15019E"],"out":"Process returned -1978334818 / 0x8A15019E. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A15019F"],"out":"Process returned -1978334817 / 0x8A15019F. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501A0"],"out":"Process returned -1978334816 / 0x8A1501A0. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501A1"],"out":"Process returned -1978334815 / 0x8A1501A1. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501A2"],"out":"Process returned -1978334814 / 0x8A1501A2. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501A3"],"out":"Process returned -1978334813 / 0x8A1501A3. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501A4"],"out":"Process returned -1978334812 / 0x8A1501A4. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501A5"],"out":"Process returned -1978334811 / 0x8A1501A5. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501A6"],"out":"Process returned -1978334810 / 0x8A1501A6. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501A7"],"out":"Process returned -1978334809 / 0x8A1501A7. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501A8"],"out":"Process returned -1978334808 / 0x8A1501A8. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501A9"],"out":"Process returned -1978334807 / 0x8A1501A9. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501AA"],"out":"Process returned -1978334806 / 0x8A1501AA. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501AB"],"out":"Process returned -1978334805 / 0x8A1501AB. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501AC"],"out":"Process returned -1978334804 / 0x8A1501AC. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501AD"],"out":"Process returned -1978334803 / 0x8A1501AD. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501AE"],"out":"Process returned -1978334802 / 0x8A1501AE. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501AF"],"out":"Process returned -1978334801 / 0x8A1501AF. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501B0"],"out":"Process returned -1978334800 / 0x8A1501B0. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501B1"],"out":"Process returned -1978334799 / 0x8A1501B1. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501B2"],"out":"Process returned -1978334798 / 0x8A1501B2. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501B3"],"out":"Process returned -1978334797 / 0x8A1501B3. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501B4"],"out":"Process returned -1978334796 / 0x8A1501B4. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501B5"],"out":"Process returned -1978334795 / 0x8A1501B5. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501B6"],"out":"Process returned -1978334794 / 0x8A1501B6. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501B7"],"out":"Process returned -1978334793 / 0x8A1501B7. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501B8"],"out":"Process returned -1978334792 / 0x8A1501B8. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501B9"],"out":"Process returned -1978334791 / 0x8A1501B9. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501BA"],"out":"Process returned -1978334790 / 0x8A1501BA. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501BB"],"out":"Process returned -1978334789 / 0x8A1501BB. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501BC"],"out":"Process returned -1978334788 / 0x8A1501BC. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501BD"],"out":"Process returned -1978334787 / 0x8A1501BD. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501BE"],"out":"Process returned -1978334786 / 0x8A1501BE. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501BF"],"out":"Process returned -1978334785 / 0x8A1501BF. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501C0"],"out":"Process returned -1978334784 / 0x8A1501C0. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501C1"],"out":"Process returned -1978334783 / 0x8A1501C1. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501C2"],"out":"Process returned -1978334782 / 0x8A1501C2. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501C3"],"out":"Process returned -1978334781 / 0x8A1501C3. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501C4"],"out":"Process returned -1978334780 / 0x8A1501C4. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501C5"],"out":"Process returned -1978334779 / 0x8A1501C5. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501C6"],"out":"Process returned -1978334778 / 0x8A1501C6. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501C7"],"out":"Process returned -1978334777 / 0x8A1501C7. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501C8"],"out":"Process returned -1978334776 / 0x8A1501C8. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501C9"],"out":"Process returned -1978334775 / 0x8A1501C9. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501CA"],"out":"Process returned -1978334774 / 0x8A1501CA. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501CB"],"out":"Process returned -1978334773 / 0x8A1501CB. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501CC"],"out":"Process returned -1978334772 / 0x8A1501CC. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501CD"],"out":"Process returned -1978334771 / 0x8A1501CD. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501CE"],"out":"Process returned -1978334770 / 0x8A1501CE. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501CF"],"out":"Process returned -1978334769 / 0x8A1501CF. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501D0"],"out":"Process returned -1978334768 / 0x8A1501D0. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501D1"],"out":"Process returned -1978334767 / 0x8A1501D1. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501D2"],"out":"Process returned -1978334766 / 0x8A1501D2. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501D3"],"out":"Process returned -1978334765 / 0x8A1501D3. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501D4"],"out":"Process returned -1978334764 / 0x8A1501D4. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501D5"],"out":"Process returned -1978334763 / 0x8A1501D5. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501D6"],"out":"Process returned -1978334762 / 0x8A1501D6. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501D7"],"out":"Process returned -1978334761 / 0x8A1501D7. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501D8"],"out":"Process returned -1978334760 / 0x8A1501D8. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501D9"],"out":"Process returned -1978334759 / 0x8A1501D9. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501DA"],"out":"Process returned -1978334758 / 0x8A1501DA. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501DB"],"out":"Process returned -1978334757 / 0x8A1501DB. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501DC"],"out":"Process returned -1978334756 / 0x8A1501DC. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501DD"],"out":"Process returned -1978334755 / 0x8A1501DD. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501DE"],"out":"Process returned -1978334754 / 0x8A1501DE. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501DF"],"out":"Process returned -1978334753 / 0x8A1501DF. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501E0"],"out":"Process returned -1978334752 / 0x8A1501E0. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501E1"],"out":"Process returned -1978334751 / 0x8A1501E1. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501E2"],"out":"Process returned -1978334750 / 0x8A1501E2. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501E3"],"out":"Process returned -1978334749 / 0x8A1501E3. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501E4"],"out":"Process returned -1978334748 / 0x8A1501E4. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501E5"],"out":"Process returned -1978334747 / 0x8A1501E5. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501E6"],"out":"Process returned -1978334746 / 0x8A1501E6. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501E7"],"out":"Process returned -1978334745 / 0x8A1501E7. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501E8"],"out":"Process returned -1978334744 / 0x8A1501E8. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501E9"],"out":"Process returned -1978334743 / 0x8A1501E9. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501EA"],"out":"Process returned -1978334742 / 0x8A1501EA. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501EB"],"out":"Process returned -1978334741 / 0x8A1501EB. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501EC"],"out":"Process returned -1978334740 / 0x8A1501EC. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501ED"],"out":"Process returned -1978334739 / 0x8A1501ED. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501EE"],"out":"Process returned -1978334738 / 0x8A1501EE. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501EF"],"out":"Process returned -1978334737 / 0x8A1501EF. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501F0"],"out":"Process returned -1978334736 / 0x8A1501F0. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501F1"],"out":"Process returned -1978334735 / 0x8A1501F1. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501F2"],"out":"Process returned -1978334734 / 0x8A1501F2. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501F3"],"out":"Process returned -1978334733 / 0x8A1501F3. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501F4"],"out":"Process returned -1978334732 / 0x8A1501F4. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501F5"],"out":"Process returned -1978334731 / 0x8A1501F5. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501F6"],"out":"Process returned -1978334730 / 0x8A1501F6. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501F7"],"out":"Process returned -1978334729 / 0x8A1501F7. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501F8"],"out":"Process returned -1978334728 / 0x8A1501F8. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501F9"],"out":"Process returned -1978334727 / 0x8A1501F9. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501FA"],"out":"Process returned -1978334726 / 0x8A1501FA. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501FB"],"out":"Process returned -1978334725 / 0x8A1501FB. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501FC"],"out":"Process returned -1978334724 / 0x8A1501FC. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501FD"],"out":"Process returned -1978334723 / 0x8A1501FD. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501FE"],"out":"Process returned -1978334722 / 0x8A1501FE. Review detailed logs and publisher instructions."}
+{"fn":"Packages.Explain","args":["0x8A1501FF"],"out":"Process returned -1978334721 / 0x8A1501FF. Review detailed logs and publisher instructions."}
+{"fn":"Packages.ParseExport","args":["{\"Sources\":[{\"SourceDetails\":{\"Name\":\"winget\"},\"Packages\":[{\"PackageIdentifier\":\"Git.Git\",\"Version\":\"2.49.0\"},{\"PackageIdentifier\":\"7zip.7zip\"}]}]}"],"out":{"Complete":false,"Partial":true,"Message":null,"Packages":[{"Id":"Git.Git","Name":"Git.Git","Source":"winget","InstalledVersion":"2.49.0"},{"Id":"7zip.7zip","Name":"7zip.7zip","Source":"winget","InstalledVersion":null}]}}
+{"fn":"Packages.ParseExport","args":["{\"$schema\":\"https://aka.ms/winget-packages.schema.2.0.json\",\"CreationDate\":\"2026-10-01T10:00:00.000-00:00\",\"WinGetVersion\":\"1.9.25200\",\"Sources\":[{\"Packages\":[{\"PackageIdentifier\":\"Git.Git\",\"Version\":\"2.49.0\"}],\"SourceDetails\":{\"Argument\":\"https://cdn.winget.microsoft.com/cache\",\"Identifier\":\"Microsoft.Winget.Source_8wekyb3d8bbwe\",\"Name\":\"winget\",\"Type\":\"Microsoft.PreIndexed.Package\"}}]}"],"out":{"Complete":false,"Partial":true,"Message":null,"Packages":[{"Id":"Git.Git","Name":"Git.Git","Source":"winget","InstalledVersion":"2.49.0"}]}}
+{"fn":"Packages.ParseExport","args":["{\"Sources\":[{\"SourceDetails\":{\"Name\":\"msstore\"},\"Packages\":[{\"PackageIdentifier\":\"9NBLGGH4NNS1\",\"Version\":\"1.0\"}]}]}"],"out":{"Complete":false,"Partial":true,"Message":null,"Packages":[{"Id":"9NBLGGH4NNS1","Name":"9NBLGGH4NNS1","Source":"msstore","InstalledVersion":"1.0"}]}}
+{"fn":"Packages.ParseExport","args":["{\"Sources\":[{\"SourceDetails\":{\"Name\":\"winget\"},\"Packages\":[{\"PackageIdentifier\":\"A.B\",\"Version\":\"1\"}]},{\"SourceDetails\":{\"Name\":\"msstore\"},\"Packages\":[{\"PackageIdentifier\":\"A.B\",\"Version\":\"2\"}]}]}"],"out":{"Complete":false,"Partial":true,"Message":null,"Packages":[{"Id":"A.B","Name":"A.B","Source":"winget","InstalledVersion":"1"},{"Id":"A.B","Name":"A.B","Source":"msstore","InstalledVersion":"2"}]}}
+{"fn":"Packages.ParseExport","args":["{\"Sources\":[{\"SourceDetails\":{\"Name\":\"winget\"},\"Packages\":[{\"PackageIdentifier\":\"A.B\",\"Version\":\"1\"},{\"PackageIdentifier\":\"A.B\",\"Version\":\"2\"}]}]}"],"out":{"Complete":false,"Partial":true,"Message":null,"Packages":[{"Id":"A.B","Name":"A.B","Source":"winget","InstalledVersion":"1"},{"Id":"A.B","Name":"A.B","Source":"winget","InstalledVersion":"2"}]}}
+{"fn":"Packages.ParseExport","args":["{\"Sources\":[]}"],"out":{"Complete":false,"Partial":true,"Message":null,"Packages":[]}}
+{"fn":"Packages.ParseExport","args":["{}"],"err":{"type":"IOException","message":"Unexpected WinGet export schema."}}
+{"fn":"Packages.ParseExport","args":["null"],"err":{"type":"IOException","message":"Unexpected WinGet export schema."}}
+{"fn":"Packages.ParseExport","args":["[]"],"err":{"type":"InvalidOperationException","message":"Type 'WinGetExport' is not supported for deserialization of an array."}}
+{"fn":"Packages.ParseExport","args":[""],"err":{"type":"IOException","message":"Unexpected WinGet export schema."}}
+{"fn":"Packages.ParseExport","args":["{\"Sources\":"],"err":{"type":"ArgumentException","message":"Invalid object passed in, ':' or '}' expected. (11): {\"Sources\":"}}
+{"fn":"Packages.ParseExport","args":["{\"Sources\":null}"],"err":{"type":"IOException","message":"Unexpected WinGet export schema."}}
+{"fn":"Packages.ParseExport","args":["{\"Sources\":[{\"Packages\":[]}]}"],"err":{"type":"IOException","message":"Incomplete WinGet export schema."}}
+{"fn":"Packages.ParseExport","args":["{\"Sources\":[{\"SourceDetails\":{},\"Packages\":[]}]}"],"err":{"type":"IOException","message":"Incomplete WinGet export schema."}}
+{"fn":"Packages.ParseExport","args":["{\"Sources\":[{\"SourceDetails\":{\"name\":\"winget\"},\"Packages\":[]}]}"],"err":{"type":"IOException","message":"Incomplete WinGet export schema."}}
+{"fn":"Packages.ParseExport","args":["{\"Sources\":[{\"SourceDetails\":{\"Name\":\"winget\"}}]}"],"err":{"type":"IOException","message":"Incomplete WinGet export schema."}}
+{"fn":"Packages.ParseExport","args":["{\"Sources\":[{\"SourceDetails\":{\"Name\":\"winget\"},\"Packages\":null}]}"],"err":{"type":"IOException","message":"Incomplete WinGet export schema."}}
+{"fn":"Packages.ParseExport","args":["{\"sources\":[{\"sourcedetails\":{\"Name\":\"winget\"},\"packages\":[{\"packageidentifier\":\"Git.Git\",\"version\":\"1\"}]}]}"],"out":{"Complete":false,"Partial":true,"Message":null,"Packages":[{"Id":"Git.Git","Name":"Git.Git","Source":"winget","InstalledVersion":"1"}]}}
+{"fn":"Packages.ParseExport","args":["{\"Sources\":[{\"SourceDetails\":{\"Name\":\"custom\"},\"Packages\":[{\"PackageIdentifier\":\"not valid!\"}]}]}"],"out":{"Complete":false,"Partial":true,"Message":null,"Packages":[]}}
+{"fn":"Packages.ParseExport","args":["{\"Sources\":[{\"SourceDetails\":{\"Name\":\"Winget\"},\"Packages\":[{\"PackageIdentifier\":\"Git.Git\"}]}]}"],"out":{"Complete":false,"Partial":true,"Message":null,"Packages":[]}}
+{"fn":"Packages.ParseExport","args":["{\"Sources\":[{\"SourceDetails\":{\"Name\":\"winget\"},\"Packages\":[{\"PackageIdentifier\":\"not valid!\"}]}]}"],"err":{"type":"IOException","message":"Invalid exported identity."}}
+{"fn":"Packages.ParseExport","args":["{\"Sources\":[{\"SourceDetails\":{\"Name\":\"winget\"},\"Packages\":[{\"PackageIdentifier\":\"Git.Git\\n\",\"Version\":\"1\"}]}]}"],"out":{"Complete":false,"Partial":true,"Message":null,"Packages":[{"Id":"Git.Git\u000a","Name":"Git.Git\u000a","Source":"winget","InstalledVersion":"1"}]}}
+{"fn":"Packages.ParseExport","args":["{\"Sources\":[{\"SourceDetails\":{\"Name\":\"winget\"},\"Packages\":[{\"Version\":\"1\"}]}]}"],"err":{"type":"IOException","message":"Invalid exported identity."}}
+{"fn":"Packages.ParseExport","args":["{\"Sources\":[{\"SourceDetails\":{\"Name\":\"winget\"},\"Packages\":[{\"PackageIdentifier\":\"Git.Git\",\"Version\":1.5}]}]}"],"out":{"Complete":false,"Partial":true,"Message":null,"Packages":[{"Id":"Git.Git","Name":"Git.Git","Source":"winget","InstalledVersion":"1.5"}]}}
+{"fn":"Packages.ParseExport","args":["{\"Sources\":[{\"SourceDetails\":{\"Name\":\"winget\"},\"Packages\":[{\"PackageIdentifier\":\"Git.Git\",\"Version\":null}]}]}"],"out":{"Complete":false,"Partial":true,"Message":null,"Packages":[{"Id":"Git.Git","Name":"Git.Git","Source":"winget","InstalledVersion":null}]}}
+{"fn":"Packages.ParseExport","args":["\ufeff{\"Sources\":[]}"],"err":{"type":"ArgumentException","message":"Invalid JSON primitive: ."}}
+{"fn":"Packages.InstalledState","args":[{"Complete":false,"Partial":false,"Packages":[]},["A.B"],"winget"],"out":"Unknown"}
+{"fn":"Packages.InstalledState","args":[{"Complete":true,"Partial":false,"Packages":[]},["A.B"],"winget"],"out":"Not installed"}
+{"fn":"Packages.InstalledState","args":[{"Complete":true,"Partial":false,"Packages":[{"Id":"A.B","Name":"A B","Source":"winget","InstalledVersion":"1.0"}]},["A.B"],"winget"],"out":"Installed \u00b7 1.0"}
+{"fn":"Packages.InstalledState","args":[{"Complete":true,"Partial":false,"Packages":[{"Id":"A.B","Name":"A B","Source":"winget","InstalledVersion":"1.0"}]},["a.b"],"winget"],"out":"Installed \u00b7 1.0"}
+{"fn":"Packages.InstalledState","args":[{"Complete":true,"Partial":false,"Packages":[{"Id":"A.B","Name":"A B","Source":"msstore","InstalledVersion":"1.0"}]},["A.B"],"winget"],"out":"Not installed"}
+{"fn":"Packages.InstalledState","args":[{"Complete":true,"Partial":false,"Packages":[{"Id":"A.B","Name":"A B","Source":"winget","InstalledVersion":"1.0"}]},["A.B"],"Winget"],"out":"Not installed"}
+{"fn":"Packages.InstalledState","args":[{"Complete":true,"Partial":false,"Packages":[{"Id":"Other.Id","Name":"A.B","Source":"winget","InstalledVersion":"1.0"}]},["A.B"],"winget"],"out":"Not installed"}
+{"fn":"Packages.InstalledState","args":[{"Complete":true,"Partial":false,"Packages":[{"Id":"A.B","Name":"A B","Source":"winget","InstalledVersion":"1.0"},{"Id":"a.b","Name":"A B","Source":"winget","InstalledVersion":"2.0"}]},["A.B"],"winget"],"out":"Unknown \u00b7 multiple registrations"}
+{"fn":"Packages.InstalledState","args":[{"Complete":true,"Partial":false,"Packages":[{"Id":"A.B","Name":"A B","Source":"winget","InstalledVersion":"1.0"}]},[],"winget"],"out":"Unknown"}
+{"fn":"Packages.InstalledState","args":[{"Complete":true,"Partial":false,"Packages":[{"Id":"A.B","Name":"A B","Source":"winget","InstalledVersion":"1.0"}]},null,"winget"],"out":"Unknown"}
+{"fn":"Packages.InstalledState","args":[{"Complete":true,"Partial":false,"Packages":[{"Id":"A.B","Name":"A B","Source":"winget","InstalledVersion":"1.0"}]},[null],"winget"],"out":"Not installed"}
+{"fn":"Packages.InstalledState","args":[{"Complete":false,"Partial":true,"Packages":[]},["A.B"],"winget"],"out":"Unknown \u00b7 omitted or partially installed"}
+{"fn":"Packages.InstalledState","args":[{"Complete":false,"Partial":true,"Packages":[{"Id":"A.B","Name":"A.B","Source":"winget","InstalledVersion":"1.0"}]},["A.B"],"winget"],"out":"Installed \u00b7 1.0"}
+{"fn":"Packages.InstalledState","args":[{"Complete":true,"Partial":true,"Packages":[]},["A.B"],"winget"],"out":"Not installed"}
+{"fn":"Packages.InstalledState","args":[{"Complete":true,"Partial":false,"Packages":[{"Id":"A.B","Name":"A","Source":"winget","InstalledVersion":"1"},{"Id":"C.D","Name":"C","Source":"winget","InstalledVersion":"2"}]},["A.B","C.D"],"winget"],"out":"Installed \u00b7 1 / 2"}
+{"fn":"Packages.InstalledState","args":[{"Complete":true,"Partial":false,"Packages":[{"Id":"A.B","Name":"A","Source":"winget","InstalledVersion":"1"}]},["A.B","C.D"],"winget"],"out":"Unknown \u00b7 omitted or partially installed"}
+{"fn":"Packages.InstalledState","args":[{"Complete":true,"Partial":false,"Packages":[{"Id":"A.B","Name":"A","Source":"winget","InstalledVersion":"1"}]},["C.D","A.B"],"winget"],"out":"Unknown \u00b7 omitted or partially installed"}
+{"fn":"Packages.InstalledState","args":[{"Complete":false,"Partial":true,"Packages":[{"Id":"A.B","Name":"A","Source":"winget","InstalledVersion":"1"}]},["A.B","C.D"],"winget"],"out":"Unknown \u00b7 omitted or partially installed"}
+{"fn":"Packages.InstalledState","args":[{"Complete":true,"Partial":false,"Packages":[{"Id":"A.B","Name":"A","Source":"winget","InstalledVersion":"1"}]},["A.B","A.B"],"winget"],"out":"Installed \u00b7 1 / 1"}
+{"fn":"Packages.InstalledState","args":[{"Complete":true,"Partial":false,"Packages":[{"Id":"A.B","Name":"A","Source":"winget","InstalledVersion":""}]},["A.B"],"winget"],"out":"Installed \u00b7 version unknown"}
+{"fn":"Packages.InstalledState","args":[{"Complete":true,"Partial":false,"Packages":[{"Id":"A.B","Name":"A","Source":"winget","InstalledVersion":null}]},["A.B"],"winget"],"out":"Installed \u00b7 version unknown"}
+{"fn":"Packages.InstalledState","args":[{"Complete":true,"Partial":false,"Packages":[{"Id":"A.B","Name":"A","Source":"winget","InstalledVersion":"latest"}]},["A.B"],"winget"],"out":"Installed \u00b7 version unknown"}
+{"fn":"Packages.InstalledState","args":[{"Complete":true,"Partial":false,"Packages":[{"Id":"A.B","Name":"A","Source":"winget","InstalledVersion":"< 2.0"}]},["A.B"],"winget"],"out":"Installed \u00b7 < 2.0"}
+{"fn":"Packages.InstalledState","args":[{"Complete":true,"Partial":false,"Packages":[{"Id":"A.B","Name":"A","Source":"winget","InstalledVersion":"<unknown>"}]},["A.B"],"winget"],"out":"Installed \u00b7 version unknown"}
+{"fn":"Packages.InstalledState","args":[{"Complete":true,"Partial":false,"Packages":[{"Id":"A.B","Name":"A","Source":"winget","InstalledVersion":"1"},{"Id":"C.D","Name":"C","Source":"winget","InstalledVersion":"Unknown"}]},["A.B","C.D"],"winget"],"out":"Installed \u00b7 1 / version unknown"}
+{"fn":"Packages.InstalledState","args":[{"Complete":true,"Partial":false,"Packages":[{"Id":"A.B","Name":"A","Source":"winget","InstalledVersion":"1"}]},["A.B"],null],"out":"Not installed"}
+{"fn":"Packages.ParseSetup","args":["{\"Version\":1,\"Apps\":[\"git\",\"vlc\"]}"],"out":{"Version":1,"Keys":["git","vlc"],"Apps":[]}}
+{"fn":"Packages.ParseSetup","args":["{\"Version\":2,\"Kind\":\"1nstall-selection\",\"Apps\":[{\"Id\":\"Git.Git\",\"Source\":\"winget\",\"Name\":\"Git\",\"Version\":\"2.49.0\"}]}"],"out":{"Version":2,"Keys":[],"Apps":[{"Id":"Git.Git","Source":"winget","Name":"Git","Version":"2.49.0"}]}}
+{"fn":"Packages.ParseSetup","args":["{\"Apps\":[\"git\"],\"Version\":1}"],"out":{"Version":1,"Keys":["git"],"Apps":[]}}
+{"fn":"Packages.ParseSetup","args":["{\"Version\":1.0,\"Apps\":[\"git\"]}"],"err":{"type":"IOException","message":"Invalid setup schema."}}
+{"fn":"Packages.ParseSetup","args":["{\"Version\":\"1\",\"Apps\":[\"git\"]}"],"err":{"type":"IOException","message":"Invalid setup schema."}}
+{"fn":"Packages.ParseSetup","args":["{\"Version\":0,\"Apps\":[\"git\"]}"],"err":{"type":"IOException","message":"Unsupported setup version."}}
+{"fn":"Packages.ParseSetup","args":["{\"Version\":3,\"Apps\":[\"git\"]}"],"err":{"type":"IOException","message":"Unsupported setup version."}}
+{"fn":"Packages.ParseSetup","args":["{\"Version\":99,\"Apps\":[\"git\"]}"],"err":{"type":"IOException","message":"Unsupported setup version."}}
+{"fn":"Packages.ParseSetup","args":["{\"Version\":1,\"Apps\":[\"git\"],\"Command\":\"calc.exe\"}"],"err":{"type":"IOException","message":"Unsupported setup fields. Commands and executable content are not allowed."}}
+{"fn":"Packages.ParseSetup","args":["{\"Version\":1,\"Kind\":\"1nstall-selection\",\"Apps\":[\"git\"]}"],"err":{"type":"IOException","message":"Unsupported setup fields. Commands and executable content are not allowed."}}
+{"fn":"Packages.ParseSetup","args":["{\"Version\":2,\"Apps\":[{\"Id\":\"Git.Git\",\"Source\":\"winget\",\"Name\":\"Git\",\"Version\":\"1\"}]}"],"err":{"type":"IOException","message":"Invalid setup kind."}}
+{"fn":"Packages.ParseSetup","args":["{\"Version\":2,\"Kind\":\"other\",\"Apps\":[{\"Id\":\"Git.Git\",\"Source\":\"winget\",\"Name\":\"Git\",\"Version\":\"1\"}]}"],"err":{"type":"IOException","message":"Invalid setup kind."}}
+{"fn":"Packages.ParseSetup","args":["{\"Version\":2,\"Kind\":\"1NSTALL-SELECTION\",\"Apps\":[{\"Id\":\"Git.Git\",\"Source\":\"winget\",\"Name\":\"Git\",\"Version\":\"1\"}]}"],"err":{"type":"IOException","message":"Invalid setup kind."}}
+{"fn":"Packages.ParseSetup","args":["{\"Version\":1,\"Apps\":\"A\"}"],"err":{"type":"IOException","message":"Setup must contain 1\u2013500 app selections."}}
+{"fn":"Packages.ParseSetup","args":["{\"Version\":1,\"Apps\":[]}"],"err":{"type":"IOException","message":"Setup must contain 1\u2013500 app selections."}}
+{"fn":"Packages.ParseSetup","args":["{\"Version\":1,\"Apps\":null}"],"err":{"type":"IOException","message":"Setup must contain 1\u2013500 app selections."}}
+{"fn":"Packages.ParseSetup","args":["{\"Version\":1}"],"err":{"type":"IOException","message":"Invalid setup schema."}}
+{"fn":"Packages.ParseSetup","args":["{\"Version\":1,\"Apps\":[\"A\",\"A\"]}"],"err":{"type":"IOException","message":"Invalid or duplicate catalog key."}}
+{"fn":"Packages.ParseSetup","args":["{\"Version\":1,\"Apps\":[\"a\",\"A\"]}"],"err":{"type":"IOException","message":"Invalid or duplicate catalog key."}}
+{"fn":"Packages.ParseSetup","args":["{\"Version\":1,\"Apps\":[\"--all\"]}"],"err":{"type":"IOException","message":"Invalid or duplicate catalog key."}}
+{"fn":"Packages.ParseSetup","args":["{\"Version\":1,\"Apps\":[\"A B\"]}"],"err":{"type":"IOException","message":"Invalid or duplicate catalog key."}}
+{"fn":"Packages.ParseSetup","args":["{\"Version\":1,\"Apps\":[1]}"],"err":{"type":"IOException","message":"Invalid or duplicate catalog key."}}
+{"fn":"Packages.ParseSetup","args":["{\"Version\":1,\"Apps\":[null]}"],"err":{"type":"IOException","message":"Invalid or duplicate catalog key."}}
+{"fn":"Packages.ParseSetup","args":["{\"Version\":1,\"Apps\":[{}]}"],"err":{"type":"IOException","message":"Invalid or duplicate catalog key."}}
+{"fn":"Packages.ParseSetup","args":["{\"Version\":1,\"Apps\":[\"git\\n\"]}"],"out":{"Version":1,"Keys":["git\u000a"],"Apps":[]}}
+{"fn":"Packages.ParseSetup","args":["{\"Version\":1,\"Apps\":[\"winutil_claude-code\",\"peace\",\"apo\"]}"],"out":{"Version":1,"Keys":["winutil_claude-code","peace","apo"],"Apps":[]}}
+{"fn":"Packages.ParseSetup","args":["{\"Version\":2,\"Kind\":\"1nstall-selection\",\"Apps\":[\"git\"]}"],"err":{"type":"IOException","message":"Invalid app fields. Executable content is not allowed."}}
+{"fn":"Packages.ParseSetup","args":["{\"Version\":2,\"Kind\":\"1nstall-selection\",\"Apps\":[{\"Id\":\"Git.Git\",\"Source\":\"winget\",\"Name\":\"Git\",\"Version\":\"1\",\"Extra\":\"x\"}]}"],"err":{"type":"IOException","message":"Invalid app fields. Executable content is not allowed."}}
+{"fn":"Packages.ParseSetup","args":["{\"Version\":2,\"Kind\":\"1nstall-selection\",\"Apps\":[{\"Id\":\"Git.Git\",\"Source\":\"winget\",\"Name\":\"Git\"}]}"],"err":{"type":"IOException","message":"Invalid app fields. Executable content is not allowed."}}
+{"fn":"Packages.ParseSetup","args":["{\"Version\":2,\"Kind\":\"1nstall-selection\",\"Apps\":[{\"Id\":\"Git.Git\",\"Source\":\"winget\",\"Name\":\"Git\",\"Version\":1}]}"],"err":{"type":"IOException","message":"Invalid app fields. Executable content is not allowed."}}
+{"fn":"Packages.ParseSetup","args":["{\"Version\":2,\"Kind\":\"1nstall-selection\",\"Apps\":[{\"Id\":\"Git.Git\",\"Source\":\"winget\",\"Name\":\"Git\",\"Version\":null}]}"],"err":{"type":"IOException","message":"Invalid app fields. Executable content is not allowed."}}
+{"fn":"Packages.ParseSetup","args":["{\"Version\":2,\"Kind\":\"1nstall-selection\",\"Apps\":[{\"Id\":\"Git.Git\",\"Source\":\"Winget\",\"Name\":\"Git\",\"Version\":\"1\"}]}"],"err":{"type":"IOException","message":"Invalid or duplicate package identity."}}
+{"fn":"Packages.ParseSetup","args":["{\"Version\":2,\"Kind\":\"1nstall-selection\",\"Apps\":[{\"Id\":\"--all\",\"Source\":\"winget\",\"Name\":\"Git\",\"Version\":\"1\"}]}"],"err":{"type":"IOException","message":"Invalid or duplicate package identity."}}
+{"fn":"Packages.ParseSetup","args":["{\"Version\":2,\"Kind\":\"1nstall-selection\",\"Apps\":[{\"Id\":\"Git.Git\",\"Source\":\"winget\",\"Name\":\"\",\"Version\":\"\"}]}"],"out":{"Version":2,"Keys":[],"Apps":[{"Id":"Git.Git","Source":"winget","Name":"","Version":""}]}}
+{"fn":"Packages.ParseSetup","args":["{\"Version\":2,\"Kind\":\"1nstall-selection\",\"Apps\":[{\"Id\":\"Git.Git\",\"Source\":\"winget\",\"Name\":\"Git\\u0001\",\"Version\":\"1\"}]}"],"err":{"type":"IOException","message":"Invalid or duplicate package identity."}}
+{"fn":"Packages.ParseSetup","args":["{\"Version\":2,\"Kind\":\"1nstall-selection\",\"Apps\":[{\"Id\":\"Git.Git\",\"Source\":\"winget\",\"Name\":\"Git\",\"Version\":\"1\\t\"}]}"],"err":{"type":"IOException","message":"Invalid or duplicate package identity."}}
+{"fn":"Packages.ParseSetup","args":["{\"Version\":2,\"Kind\":\"1nstall-selection\",\"Apps\":[{\"Id\":\"Git.Git\",\"Source\":\"winget\",\"Name\":\"Git\\u007f\",\"Version\":\"1\"}]}"],"out":{"Version":2,"Keys":[],"Apps":[{"Id":"Git.Git","Source":"winget","Name":"Git\u007f","Version":"1"}]}}
+{"fn":"Packages.ParseSetup","args":["{\"Version\":2,\"Kind\":\"1nstall-selection\",\"Apps\":[{\"Id\":\"Git.Git\",\"Source\":\"winget\",\"Name\":\"A\",\"Version\":\"1\"},{\"Id\":\"git.git\",\"Source\":\"winget\",\"Name\":\"B\",\"Version\":\"2\"}]}"],"err":{"type":"IOException","message":"Invalid or duplicate package identity."}}
+{"fn":"Packages.ParseSetup","args":["{\"Version\":2,\"Kind\":\"1nstall-selection\",\"Apps\":[{\"Id\":\"A.B\",\"Source\":\"winget\",\"Name\":\"A\",\"Version\":\"1\"},{\"Id\":\"A.B\",\"Source\":\"msstore\",\"Name\":\"B\",\"Version\":\"2\"}]}"],"out":{"Version":2,"Keys":[],"Apps":[{"Id":"A.B","Source":"winget","Name":"A","Version":"1"},{"Id":"A.B","Source":"msstore","Name":"B","Version":"2"}]}}
+{"fn":"Packages.ParseSetup","args":[{"$gen":"concat","parts":["{\"Version\":2,\"Kind\":\"1nstall-selection\",\"Apps\":[{\"Id\":\"A.B\",\"Source\":\"winget\",\"Name\":\"",{"$gen":"repeat","unit":"n","count":200},"\",\"Version\":\"",{"$gen":"repeat","unit":"9","count":100},"\"}]}"]}],"out":{"Version":2,"Keys":[],"Apps":[{"Id":"A.B","Source":"winget","Name":"nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn","Version":"9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999"}]}}
+{"fn":"Packages.ParseSetup","args":[{"$gen":"concat","parts":["{\"Version\":2,\"Kind\":\"1nstall-selection\",\"Apps\":[{\"Id\":\"A.B\",\"Source\":\"winget\",\"Name\":\"",{"$gen":"repeat","unit":"n","count":201},"\",\"Version\":\"1\"}]}"]}],"err":{"type":"IOException","message":"Invalid or duplicate package identity."}}
+{"fn":"Packages.ParseSetup","args":[{"$gen":"concat","parts":["{\"Version\":2,\"Kind\":\"1nstall-selection\",\"Apps\":[{\"Id\":\"A.B\",\"Source\":\"winget\",\"Name\":\"n\",\"Version\":\"",{"$gen":"repeat","unit":"9","count":101},"\"}]}"]}],"err":{"type":"IOException","message":"Invalid or duplicate package identity."}}
+{"fn":"Packages.ParseSetup","args":[{"$gen":"concat","parts":["{\"Version\":1,\"Apps\":[",{"$gen":"join","prefix":"\"k","suffix":"\"","count":500,"sep":","},"]}"]}],"out":{"Version":1,"Keys":["k0","k1","k2","k3","k4","k5","k6","k7","k8","k9","k10","k11","k12","k13","k14","k15","k16","k17","k18","k19","k20","k21","k22","k23","k24","k25","k26","k27","k28","k29","k30","k31","k32","k33","k34","k35","k36","k37","k38","k39","k40","k41","k42","k43","k44","k45","k46","k47","k48","k49","k50","k51","k52","k53","k54","k55","k56","k57","k58","k59","k60","k61","k62","k63","k64","k65","k66","k67","k68","k69","k70","k71","k72","k73","k74","k75","k76","k77","k78","k79","k80","k81","k82","k83","k84","k85","k86","k87","k88","k89","k90","k91","k92","k93","k94","k95","k96","k97","k98","k99","k100","k101","k102","k103","k104","k105","k106","k107","k108","k109","k110","k111","k112","k113","k114","k115","k116","k117","k118","k119","k120","k121","k122","k123","k124","k125","k126","k127","k128","k129","k130","k131","k132","k133","k134","k135","k136","k137","k138","k139","k140","k141","k142","k143","k144","k145","k146","k147","k148","k149","k150","k151","k152","k153","k154","k155","k156","k157","k158","k159","k160","k161","k162","k163","k164","k165","k166","k167","k168","k169","k170","k171","k172","k173","k174","k175","k176","k177","k178","k179","k180","k181","k182","k183","k184","k185","k186","k187","k188","k189","k190","k191","k192","k193","k194","k195","k196","k197","k198","k199","k200","k201","k202","k203","k204","k205","k206","k207","k208","k209","k210","k211","k212","k213","k214","k215","k216","k217","k218","k219","k220","k221","k222","k223","k224","k225","k226","k227","k228","k229","k230","k231","k232","k233","k234","k235","k236","k237","k238","k239","k240","k241","k242","k243","k244","k245","k246","k247","k248","k249","k250","k251","k252","k253","k254","k255","k256","k257","k258","k259","k260","k261","k262","k263","k264","k265","k266","k267","k268","k269","k270","k271","k272","k273","k274","k275","k276","k277","k278","k279","k280","k281","k282","k283","k284","k285","k286","k287","k288","k289","k290","k291","k292","k293","k294","k295","k296","k297","k298","k299","k300","k301","k302","k303","k304","k305","k306","k307","k308","k309","k310","k311","k312","k313","k314","k315","k316","k317","k318","k319","k320","k321","k322","k323","k324","k325","k326","k327","k328","k329","k330","k331","k332","k333","k334","k335","k336","k337","k338","k339","k340","k341","k342","k343","k344","k345","k346","k347","k348","k349","k350","k351","k352","k353","k354","k355","k356","k357","k358","k359","k360","k361","k362","k363","k364","k365","k366","k367","k368","k369","k370","k371","k372","k373","k374","k375","k376","k377","k378","k379","k380","k381","k382","k383","k384","k385","k386","k387","k388","k389","k390","k391","k392","k393","k394","k395","k396","k397","k398","k399","k400","k401","k402","k403","k404","k405","k406","k407","k408","k409","k410","k411","k412","k413","k414","k415","k416","k417","k418","k419","k420","k421","k422","k423","k424","k425","k426","k427","k428","k429","k430","k431","k432","k433","k434","k435","k436","k437","k438","k439","k440","k441","k442","k443","k444","k445","k446","k447","k448","k449","k450","k451","k452","k453","k454","k455","k456","k457","k458","k459","k460","k461","k462","k463","k464","k465","k466","k467","k468","k469","k470","k471","k472","k473","k474","k475","k476","k477","k478","k479","k480","k481","k482","k483","k484","k485","k486","k487","k488","k489","k490","k491","k492","k493","k494","k495","k496","k497","k498","k499"],"Apps":[]}}
+{"fn":"Packages.ParseSetup","args":[{"$gen":"concat","parts":["{\"Version\":1,\"Apps\":[",{"$gen":"join","prefix":"\"k","suffix":"\"","count":501,"sep":","},"]}"]}],"err":{"type":"IOException","message":"Setup must contain 1\u2013500 app selections."}}
+{"fn":"Packages.ParseSetup","args":[{"$gen":"concat","parts":["{\"Version\":1,\"Apps\":[\"git\"]}",{"$gen":"repeat","unit":" ","count":65508}]}],"out":{"Version":1,"Keys":["git"],"Apps":[]}}
+{"fn":"Packages.ParseSetup","args":[{"$gen":"concat","parts":["{\"Version\":1,\"Apps\":[\"git\"]}",{"$gen":"repeat","unit":" ","count":65509}]}],"err":{"type":"IOException","message":"Setup file exceeds 64 KiB."}}
+{"fn":"Packages.ParseSetup","args":["{\"version\":1,\"apps\":[\"git\"]}"],"err":{"type":"IOException","message":"Invalid setup schema."}}
+{"fn":"Packages.ParseSetup","args":["{\"Version\":1,\"Version\":2,\"Apps\":[\"git\"]}"],"err":{"type":"IOException","message":"Invalid setup kind."}}
+{"fn":"Packages.ParseSetup","args":["{\"Version\":2147483648,\"Apps\":[\"git\"]}"],"err":{"type":"IOException","message":"Invalid setup schema."}}
+{"fn":"Packages.ParseSetup","args":["[]"],"err":{"type":"IOException","message":"Invalid setup schema."}}
+{"fn":"Packages.ParseSetup","args":["null"],"err":{"type":"IOException","message":"Invalid setup schema."}}
+{"fn":"Packages.ParseSetup","args":["\"text\""],"err":{"type":"IOException","message":"Invalid setup schema."}}
+{"fn":"Packages.ParseSetup","args":["{"],"err":{"type":"ArgumentException","message":"Invalid object passed in, ':' or '}' expected. (1): {"}}
+{"fn":"Packages.ParseSetup","args":[""],"err":{"type":"IOException","message":"Invalid setup schema."}}
+{"fn":"Packages.ParseSetup","args":["\ufeff{\"Version\":1,\"Apps\":[\"git\"]}"],"err":{"type":"ArgumentException","message":"Invalid JSON primitive: ."}}
+{"fn":"Packages.Redact","args":["C:\\Users\\alice\\AppData\\Local\\app.log failed"],"out":"<path>"}
+{"fn":"Packages.Redact","args":["\\\\server\\share\\file.txt"],"out":"<path>"}
+{"fn":"Packages.Redact","args":["/Users/alice/x and /home/bob/y"],"out":"<path> and <path>"}
+{"fn":"Packages.Redact","args":["C:/forward/slash"],"out":"C:/forward/slash"}
+{"fn":"Packages.Redact","args":["d:\\x \"quoted\" tail"],"out":"<path>\"quoted\" tail"}
+{"fn":"Packages.Redact","args":["path C:\\a\\b\u000anext line"],"out":"path <path>\u000anext line"}
+{"fn":"Packages.Redact","args":["password=hunter2"],"out":"password=<redacted>"}
+{"fn":"Packages.Redact","args":["Password : abc, next"],"out":"Password=<redacted>, next"}
+{"fn":"Packages.Redact","args":["PASSWD=abc"],"out":"PASSWD=<redacted>"}
+{"fn":"Packages.Redact","args":["api_key: XYZ;rest"],"out":"api_key=<redacted>;rest"}
+{"fn":"Packages.Redact","args":["api-key=1"],"out":"api-key=<redacted>"}
+{"fn":"Packages.Redact","args":["apikey=1"],"out":"apikey=<redacted>"}
+{"fn":"Packages.Redact","args":["credential=abc"],"out":"credential=<redacted>"}
+{"fn":"Packages.Redact","args":["secretary=1"],"out":"secretary=1"}
+{"fn":"Packages.Redact","args":["my_token=1"],"out":"my_token=1"}
+{"fn":"Packages.Redact","args":["token=abc\u000anext line"],"out":"token=<redacted>\u000anext line"}
+{"fn":"Packages.Redact","args":["Authorization: Bearer abc.def"],"out":"Authorization=<redacted>"}
+{"fn":"Packages.Redact","args":["bearer   tok rest"],"out":"Bearer <redacted> rest"}
+{"fn":"Packages.Redact","args":["https://user:pass@example.com/path"],"out":"https://<credentials>@example.com/path"}
+{"fn":"Packages.Redact","args":["https://example.com/p?token=abc&x=1"],"out":"https://example.com/p?<redacted>"}
+{"fn":"Packages.Redact","args":["http://a.b/c?d"],"out":"http://a.b/c?<redacted>"}
+{"fn":"Packages.Redact","args":["ftp://u:p@h"],"out":"ftp://u:p@h"}
+{"fn":"Packages.Redact","args":["mail alice@example.com now"],"out":"mail <email> now"}
+{"fn":"Packages.Redact","args":["a@b.c"],"out":"a@b.c"}
+{"fn":"Packages.Redact","args":["a@b.co"],"out":"<email>"}
+{"fn":"Packages.Redact","args":["no secrets here"],"out":"no secrets here"}
+{"fn":"Packages.Redact","args":[""],"out":""}
+{"fn":"Packages.Redact","args":[null],"out":""}
+{"fn":"Uninstall.QuoteArgument","args":["simple"],"out":"\"simple\""}
+{"fn":"Uninstall.QuoteArgument","args":[""],"out":"\"\""}
+{"fn":"Uninstall.QuoteArgument","args":["two words"],"out":"\"two words\""}
+{"fn":"Uninstall.QuoteArgument","args":["a\"b"],"out":"\"a\\\"b\""}
+{"fn":"Uninstall.QuoteArgument","args":["trailing\\"],"out":"\"trailing\\\\\""}
+{"fn":"Uninstall.QuoteArgument","args":["trailing\\\\"],"out":"\"trailing\\\\\\\\\""}
+{"fn":"Uninstall.QuoteArgument","args":["C:\\Program Files\\App\\"],"out":"\"C:\\Program Files\\App\\\\\""}
+{"fn":"Uninstall.QuoteArgument","args":["a\\\"b"],"out":"\"a\\\\\\\"b\""}
+{"fn":"Uninstall.QuoteArgument","args":["a\\\\\"b"],"out":"\"a\\\\\\\\\\\"b\""}
+{"fn":"Uninstall.QuoteArgument","args":["\\\\server\\share"],"out":"\"\\\\server\\share\""}
+{"fn":"Uninstall.QuoteArgument","args":["\""],"out":"\"\\\"\""}
+{"fn":"Uninstall.QuoteArgument","args":["\\"],"out":"\"\\\\\""}
+{"fn":"Uninstall.QuoteArgument","args":["a b\\"],"out":"\"a b\\\\\""}
+{"fn":"Uninstall.QuoteArgument","args":["HKCU\\Software\\Sample Editor"],"out":"\"HKCU\\Software\\Sample Editor\""}
+{"fn":"Uninstall.QuoteArgument","args":["a\u0000b"],"out":"\"a\u0000b\""}
+{"fn":"Uninstall.QuoteArgument","args":[null],"err":{"type":"NullReferenceException","message":"Object reference not set to an instance of an object."}}
+{"fn":"Uninstall.Token","args":["Notepad++"],"out":"notepad"}
+{"fn":"Uninstall.Token","args":["Sample Editor 2.0"],"out":"sampleeditor20"}
+{"fn":"Uninstall.Token","args":["7-Zip"],"out":"7zip"}
+{"fn":"Uninstall.Token","args":["\u65e5\u672c\u8a9e\u30a8\u30c7\u30a3\u30bf\u30fc"],"out":"\u65e5\u672c\u8a9e\u30a8\u30c7\u30a3\u30bf\u30fc"}
+{"fn":"Uninstall.Token","args":["\u00dcn\u00ef C\u00f2d\u00e9"],"out":"\u00fcn\u00efc\u00f2d\u00e9"}
+{"fn":"Uninstall.Token","args":["\u0130stanbul"],"out":"\u0130stanbul"}
+{"fn":"Uninstall.Token","args":["I\u0307stanbul"],"out":"istanbul"}
+{"fn":"Uninstall.Token","args":["\u01c5ungla"],"out":"\u01c5ungla"}
+{"fn":"Uninstall.Token","args":["STRA\u1e9eE"],"out":"stra\u1e9ee"}
+{"fn":"Uninstall.Token","args":["\u039f\u0394\u039f\u03a3"],"out":"\u03bf\u03b4\u03bf\u03c3"}
+{"fn":"Uninstall.Token","args":["a_b-c.d"],"out":"abcd"}
+{"fn":"Uninstall.Token","args":["\uff11\uff12\uff13"],"out":"\uff11\uff12\uff13"}
+{"fn":"Uninstall.Token","args":["x\u00b2\u00b3"],"out":"x\u00b2\u00b3"}
+{"fn":"Uninstall.Token","args":["x64"],"out":"x64"}
+{"fn":"Uninstall.Token","args":[""],"out":""}
+{"fn":"Uninstall.Token","args":[null],"out":""}
+{"fn":"Uninstall.Token","args":["  "],"out":""}
+{"fn":"Uninstall.Token","args":["A\u0301pp"],"out":"app"}
+{"fn":"Uninstall.Token","args":["\ud83d\udc4dapp"],"out":"app"}
+{"fn":"Uninstall.Product","args":["app"],"out":false}
+{"fn":"Uninstall.Product","args":["Apps"],"out":false}
+{"fn":"Uninstall.Product","args":["Application"],"out":false}
+{"fn":"Uninstall.Product","args":["Applications"],"out":false}
+{"fn":"Uninstall.Product","args":["bin"],"out":false}
+{"fn":"Uninstall.Product","args":["x64"],"out":false}
+{"fn":"Uninstall.Product","args":["ab"],"out":false}
+{"fn":"Uninstall.Product","args":["abc"],"out":true}
+{"fn":"Uninstall.Product","args":["Setup"],"out":false}
+{"fn":"Uninstall.Product","args":["Set-up"],"out":false}
+{"fn":"Uninstall.Product","args":["Microsoft"],"out":false}
+{"fn":"Uninstall.Product","args":["Microsoft 365"],"out":true}
+{"fn":"Uninstall.Product","args":["1nstall"],"out":false}
+{"fn":"Uninstall.Product","args":["Users"],"out":false}
+{"fn":"Uninstall.Product","args":["VLC"],"out":true}
+{"fn":"Uninstall.Product","args":["7-Zip"],"out":true}
+{"fn":"Uninstall.Product","args":["Git"],"out":true}
+{"fn":"Uninstall.Product","args":["Go"],"out":false}
+{"fn":"Uninstall.Product","args":[""],"out":false}
+{"fn":"Uninstall.Product","args":[null],"out":false}
+{"fn":"Uninstall.Product","args":["Common Files"],"out":false}
+{"fn":"Uninstall.Product","args":["Data"],"out":false}
+{"fn":"Uninstall.Product","args":["Launcher"],"out":false}
+{"fn":"Uninstall.Product","args":["Update"],"out":false}
+{"fn":"Uninstall.Product","args":["Updater"],"out":true}
+{"fn":"Uninstall.Product","args":["Client"],"out":false}
+{"fn":"Uninstall.Product","args":["Temp"],"out":false}
+{"fn":"Uninstall.Names","args":[{"Name":"Notepad++ (64-bit x64)","Publisher":"Notepad++ Team"}],"out":["Notepad++"]}
+{"fn":"Uninstall.Names","args":[{"Name":"VLC"}],"out":["VLC"]}
+{"fn":"Uninstall.Names","args":[{"Name":"VLC media player"}],"out":["VLC media player"]}
+{"fn":"Uninstall.Names","args":[{"Name":"\u65e5\u672c\u8a9e\u30a8\u30c7\u30a3\u30bf\u30fc"}],"out":["\u65e5\u672c\u8a9e\u30a8\u30c7\u30a3\u30bf\u30fc"]}
+{"fn":"Uninstall.Names","args":[{"Name":"Sample Editor 2.0 (x64)","Publisher":"Sample Company","Location":"C:\\Apps\\Sample Editor"}],"out":["Sample Editor"]}
+{"fn":"Uninstall.Names","args":[{"Name":"Adobe Example Editor","Publisher":"Adobe Inc.","Location":"C:\\Program Files\\Adobe"}],"out":["Adobe Example Editor"]}
+{"fn":"Uninstall.Names","args":[{"Name":"7-Zip 26.03 (x64)","Publisher":"Igor Pavlov","Location":"C:\\Program Files\\7-Zip\\"}],"out":["7-Zip"]}
+{"fn":"Uninstall.Names","args":[{"Name":"Foo 2 Bar"}],"out":["Foo"]}
+{"fn":"Uninstall.Names","args":[{"Name":"Microsoft Visual C++ 2015-2022 Redistributable (x64) - 14.40.33810"}],"out":["Microsoft Visual C++"]}
+{"fn":"Uninstall.Names","args":[{"Name":"Git version 2.49.0"}],"out":["Git version"]}
+{"fn":"Uninstall.Names","args":[{"Name":"Python 3.12.4 (64-bit)"}],"out":["Python"]}
+{"fn":"Uninstall.Names","args":[{"Name":"App (x86)"}],"out":[]}
+{"fn":"Uninstall.Names","args":[{"Name":"App x64"}],"out":[]}
+{"fn":"Uninstall.Names","args":[{"Name":"Tool (ARM64)"}],"out":["Tool"]}
+{"fn":"Uninstall.Names","args":[{"Name":"Tool (64 bit)"}],"out":["Tool"]}
+{"fn":"Uninstall.Names","args":[{"Name":"Tool (x64, x86)"}],"out":["Tool"]}
+{"fn":"Uninstall.Names","args":[{"Name":"Tool (x64) (x86)"}],"out":["Tool"]}
+{"fn":"Uninstall.Names","args":[{"Name":"Tool v2"}],"out":["Tool"]}
+{"fn":"Uninstall.Names","args":[{"Name":"Tool 2024 Pro"}],"out":["Tool"]}
+{"fn":"Uninstall.Names","args":[{"Name":"Tool2024"}],"out":["Tool2024"]}
+{"fn":"Uninstall.Names","args":[{"Name":"Node.js"}],"out":["Node.js"]}
+{"fn":"Uninstall.Names","args":[{"Name":"AC/DC Player"}],"out":[]}
+{"fn":"Uninstall.Names","args":[{"Name":"What?"}],"out":[]}
+{"fn":"Uninstall.Names","args":[{"Name":"C:\\Thing"}],"out":[]}
+{"fn":"Uninstall.Names","args":[{"Name":"Go"}],"out":[]}
+{"fn":"Uninstall.Names","args":[{"Name":"Setup"}],"out":[]}
+{"fn":"Uninstall.Names","args":[{"Name":null}],"out":[]}
+{"fn":"Uninstall.Names","args":[{"Name":""}],"out":[]}
+{"fn":"Uninstall.Names","args":[{}],"out":[]}
+{"fn":"Uninstall.Names","args":[{"Name":"Example Suite","Publisher":"Example","Location":"C:\\Program Files\\Example"}],"out":["Example Suite"]}
+{"fn":"Uninstall.Names","args":[{"Name":"Example Suite","Publisher":"Other Corp","Location":"C:\\Program Files\\Example"}],"out":["Example Suite","Example"]}
+{"fn":"Uninstall.Names","args":[{"Name":"Example Suite","Publisher":null,"Location":"C:\\Program Files\\Example"}],"out":["Example Suite","Example"]}
+{"fn":"Uninstall.Names","args":[{"Name":"Example Suite","Publisher":"Other Corp","Location":"C:\\Program Files\\Exmpl"}],"out":["Example Suite"]}
+{"fn":"Uninstall.Names","args":[{"Name":"Example Suite","Publisher":"Other Corp","Location":"C:\\Program Files\\Exmpl","IdentityVerified":true}],"out":["Example Suite","Exmpl"]}
+{"fn":"Uninstall.Names","args":[{"Name":"Example Suite","Publisher":"Other Corp","Location":"C:\\Program Files\\Exmpl","OwnershipVerified":true}],"out":["Example Suite","Exmpl"]}
+{"fn":"Uninstall.Names","args":[{"Name":"Examp Suite","Publisher":"Other Corp","Location":"C:\\Program Files\\Examp"}],"out":["Examp Suite"]}
+{"fn":"Uninstall.Names","args":[{"Name":"Tool","Location":"C:\\Tool\\bin"}],"out":["Tool"]}
+{"fn":"Uninstall.Names","args":[{"Name":"Tool","Location":"\"C:\\Tools\\Tool\""}],"out":["Tool"]}
+{"fn":"Uninstall.Names","args":[{"Name":"Tool","Location":"C:\\Tools\\Tool\\..\\Other","OwnershipVerified":true}],"out":["Tool","Other"]}
+{"fn":"Uninstall.Names","args":[{"Name":"Tool","Location":"C:\\bad|path","OwnershipVerified":true}],"out":["Tool"]}
+{"fn":"Uninstall.Names","args":[{"Name":"TOOL","Location":"C:\\x\\tool"}],"out":["TOOL"]}
+{"fn":"Uninstall.Names","args":[{"Name":"Tool","Location":"%ProgramFiles%\\Tool"}],"out":["Tool"]}
+{"fn":"Uninstall.Names","args":[{"Name":"Tool","Location":"C:\\"}],"out":["Tool"]}
+{"fn":"Uninstall.Names","args":[{"Name":"Tool","Location":"   "}],"out":["Tool"]}
+{"fn":"Uninstall.ReservedRegistryName","args":["Microsoft"],"out":true}
+{"fn":"Uninstall.ReservedRegistryName","args":["microsoft"],"out":true}
+{"fn":"Uninstall.ReservedRegistryName","args":["Windows"],"out":true}
+{"fn":"Uninstall.ReservedRegistryName","args":["Classes"],"out":true}
+{"fn":"Uninstall.ReservedRegistryName","args":["Policies"],"out":true}
+{"fn":"Uninstall.ReservedRegistryName","args":["RegisteredApplications"],"out":true}
+{"fn":"Uninstall.ReservedRegistryName","args":["Clients"],"out":true}
+{"fn":"Uninstall.ReservedRegistryName","args":["Wow6432Node"],"out":true}
+{"fn":"Uninstall.ReservedRegistryName","args":["WOW6432NODE"],"out":true}
+{"fn":"Uninstall.ReservedRegistryName","args":["Microsoft "],"out":false}
+{"fn":"Uninstall.ReservedRegistryName","args":["Microsoft Corporation"],"out":false}
+{"fn":"Uninstall.ReservedRegistryName","args":["Windows NT"],"out":false}
+{"fn":"Uninstall.ReservedRegistryName","args":[""],"out":false}
+{"fn":"Uninstall.ReservedRegistryName","args":["Microsoft\u000a"],"out":true}
+{"fn":"Uninstall.Rot13","args":["Hello, World!"],"out":"Uryyb, Jbeyq!"}
+{"fn":"Uninstall.Rot13","args":["P:\\Nccf\\Fnzcyr Rqvgbe\\rqvgbe.rkr"],"out":"C:\\Apps\\Sample Editor\\editor.exe"}
+{"fn":"Uninstall.Rot13","args":[""],"out":""}
+{"fn":"Uninstall.Rot13","args":[null],"out":null}
+{"fn":"Uninstall.Rot13","args":["\u00fcn\u00ef"],"out":"\u00fca\u00ef"}
+{"fn":"Uninstall.Rot13","args":["ABCxyz123"],"out":"NOPklm123"}
+{"fn":"Uninstall.Inside","args":["C:\\Apps\\App","C:\\Apps\\App"],"out":true}
+{"fn":"Uninstall.Inside","args":["C:\\Apps\\App\\x","C:\\Apps\\App"],"out":true}
+{"fn":"Uninstall.Inside","args":["C:\\Apps\\AppSibling","C:\\Apps\\App"],"out":false}
+{"fn":"Uninstall.Inside","args":["c:\\apps\\app\\X","C:\\Apps\\App"],"out":true}
+{"fn":"Uninstall.Inside","args":["C:\\Apps","C:\\Apps\\App"],"out":false}
+{"fn":"Uninstall.Inside","args":["C:\\Apps\\App\\","C:\\Apps\\App"],"out":true}
+{"fn":"Uninstall.Inside","args":["C:\\Apps\\App","C:\\Apps\\App\\"],"out":false}
+{"fn":"Uninstall.Inside","args":["C:\\x","C:"],"out":true}
+{"fn":"Uninstall.Inside","args":["C:/Apps/App/x","C:\\Apps\\App"],"out":false}
+{"fn":"Uninstall.Inside","args":["",""],"out":true}
+{"fn":"Uninstall.Inside","args":["x",""],"out":false}
+{"fn":"Uninstall.Inside","args":["\\x",""],"out":true}
+{"fn":"Uninstall.FormatBytes","args":[0],"out":"0 B"}
+{"fn":"Uninstall.FormatBytes","args":[1],"out":"1 B"}
+{"fn":"Uninstall.FormatBytes","args":[1023],"out":"1023 B"}
+{"fn":"Uninstall.FormatBytes","args":[1024],"out":"1 KB"}
+{"fn":"Uninstall.FormatBytes","args":[1536],"out":"1.5 KB"}
+{"fn":"Uninstall.FormatBytes","args":[1048575],"out":"1024 KB"}
+{"fn":"Uninstall.FormatBytes","args":[1048576],"out":"1 MB"}
+{"fn":"Uninstall.FormatBytes","args":[1572864],"out":"1.5 MB"}
+{"fn":"Uninstall.FormatBytes","args":[1073741823],"out":"1024 MB"}
+{"fn":"Uninstall.FormatBytes","args":[1073741824],"out":"1 GB"}
+{"fn":"Uninstall.FormatBytes","args":[1610612736],"out":"1.5 GB"}
+{"fn":"Uninstall.FormatBytes","args":[-1],"out":"-1 B"}
+{"fn":"Uninstall.FormatBytes","args":[9223372036854775807],"out":"8589934592 GB"}
+{"fn":"Uninstall.FormatBytes@pt-PT","args":[1023],"out":"1023 B"}
+{"fn":"Uninstall.FormatBytes@pt-PT","args":[1536],"out":"1,5 KB"}
+{"fn":"Uninstall.FormatBytes@pt-PT","args":[1572864],"out":"1,5 MB"}
+{"fn":"Uninstall.FormatBytes@pt-PT","args":[1610612736],"out":"1,5 GB"}
+{"fn":"Uninstall.SafeRegistry","args":["Software\\Sample Company",{"Name":"Sample Editor 2.0 (x64)","Publisher":"Sample Company","Location":"C:\\Apps\\Sample Editor"},[{"Name":"Another Editor","Publisher":"Sample Company","Location":"C:\\Apps\\Sample Editor\\Plugin"}]],"out":false}
+{"fn":"Uninstall.SafeRegistry","args":["Software\\Microsoft\\Windows",{"Name":"Sample Editor 2.0 (x64)","Publisher":"Sample Company","Location":"C:\\Apps\\Sample Editor"},[{"Name":"Another Editor","Publisher":"Sample Company","Location":"C:\\Apps\\Sample Editor\\Plugin"}]],"out":false}
+{"fn":"Uninstall.SafeRegistry","args":["Software\\Sample Company\\Sample Editor",{"Name":"Sample Editor 2.0 (x64)","Publisher":"Sample Company","Location":"C:\\Apps\\Sample Editor"},[{"Name":"Another Editor","Publisher":"Sample Company","Location":"C:\\Apps\\Sample Editor\\Plugin"}]],"out":true}
+{"fn":"Uninstall.SafeRegistry","args":["Software\\Sample Editor",{"Name":"Sample Editor 2.0 (x64)","Publisher":"Sample Company","Location":"C:\\Apps\\Sample Editor"},[{"Name":"Sample Editor 2.0 (x64)","Publisher":"Sample Company","Location":"C:\\Apps\\Sample Editor"}]],"out":false}
+{"fn":"Uninstall.SafeRegistry","args":["Software\\Sample Editor\" & bad",{"Name":"Sample Editor 2.0 (x64)","Publisher":"Sample Company","Location":"C:\\Apps\\Sample Editor"},[]],"out":false}
+{"fn":"Uninstall.SafeRegistry","args":["Software\\Sample Editor",{"Name":"Sample Editor 2.0 (x64)","Publisher":"Sample Company","Location":"C:\\Apps\\Sample Editor"},[]],"out":true}
+{"fn":"Uninstall.SafeRegistry","args":["software\\sample editor",{"Name":"Sample Editor"},[]],"out":true}
+{"fn":"Uninstall.SafeRegistry","args":["SOFTWARE\\Sample-Editor",{"Name":"Sample Editor"},[]],"out":true}
+{"fn":"Uninstall.SafeRegistry","args":["Software\\SampleEditor",{"Name":"Sample Editor"},[]],"out":true}
+{"fn":"Uninstall.SafeRegistry","args":["Software\\A\\B\\Sample Editor",{"Name":"Sample Editor"},[]],"out":true}
+{"fn":"Uninstall.SafeRegistry","args":["Software\\A\\B\\C\\Sample Editor",{"Name":"Sample Editor"},[]],"out":false}
+{"fn":"Uninstall.SafeRegistry","args":["Software\\Wow6432Node\\Sample Editor",{"Name":"Sample Editor"},[]],"out":false}
+{"fn":"Uninstall.SafeRegistry","args":["Software\\Classes\\Sample Editor",{"Name":"Sample Editor"},[]],"out":false}
+{"fn":"Uninstall.SafeRegistry","args":["Software\\Policies\\Vendor\\Sample Editor",{"Name":"Sample Editor"},[]],"out":false}
+{"fn":"Uninstall.SafeRegistry","args":["Software\\S\u00e4mple\\Sample Editor",{"Name":"Sample Editor"},[]],"out":true}
+{"fn":"Uninstall.SafeRegistry","args":["Software\\Sample Editor\u000a",{"Name":"Sample Editor"},[]],"out":true}
+{"fn":"Uninstall.SafeRegistry","args":["Software\\Sample Editor\\",{"Name":"Sample Editor"},[]],"out":false}
+{"fn":"Uninstall.SafeRegistry","args":["Software\\Sample Editor\\Settings",{"Name":"Sample Editor"},[]],"out":false}
+{"fn":"Uninstall.SafeRegistry","args":["HKCU\\Software\\Sample Editor",{"Name":"Sample Editor"},[]],"out":false}
+{"fn":"Uninstall.SafeRegistry","args":["Software",{"Name":"Sample Editor"},[]],"out":false}
+{"fn":"Uninstall.SafeRegistry","args":["Software\\",{"Name":"Sample Editor"},[]],"out":false}
+{"fn":"Uninstall.SafeRegistry","args":["",{"Name":"Sample Editor"},[]],"out":false}
+{"fn":"Uninstall.SafeRegistry","args":[null,{"Name":"Sample Editor"},[]],"out":false}
+{"fn":"Uninstall.SafeRegistry","args":["Software\\Sample Editor",{"Name":"Sample Editor"},[{"Name":"Unrelated","Publisher":"Sample Editor"}]],"out":false}
+{"fn":"Uninstall.SafeRegistry","args":["Software\\Sample Editor",{"Name":"Sample Editor"},[{"Name":"Sample Editor 3 (x64)","Publisher":"Someone"}]],"out":false}
+{"fn":"Uninstall.SafeRegistry","args":["Software\\Sample Editor",{"Name":"Sample Editor"},[{"Name":"Sample Editor Pro","Publisher":"Someone"}]],"out":true}
+{"fn":"Uninstall.SafeRegistry","args":["Software\\Vendor\\Exmpl",{"Name":"Example Suite","Publisher":"Other Corp","Location":"C:\\Program Files\\Exmpl","IdentityVerified":true},[]],"out":true}
+{"fn":"Uninstall.SafeRegistry","args":["Software\\Vendor\\Exmpl",{"Name":"Example Suite","Publisher":"Other Corp","Location":"C:\\Program Files\\Exmpl"},[]],"out":false}
+{"fn":"Uninstall.SafeRegistryValue","args":["Software\\Microsoft\\Windows\\CurrentVersion\\Search\\JumplistData","C:\\Apps\\Sample Editor\\editor.exe",{"Name":"Sample Editor 2.0 (x64)","Publisher":"Sample Company","Location":"C:\\Apps\\Sample Editor"},[]],"out":true}
+{"fn":"Uninstall.SafeRegistryValue","args":["Software\\Microsoft\\Windows\\CurrentVersion\\Search\\JumplistData","C:\\Apps\\Sample EditorSibling\\editor.exe",{"Name":"Sample Editor 2.0 (x64)","Publisher":"Sample Company","Location":"C:\\Apps\\Sample Editor"},[]],"out":false}
+{"fn":"Uninstall.SafeRegistryValue","args":["Software\\Microsoft\\Windows\\CurrentVersion\\Search\\JumplistData","C:\\Apps\\Sample Editor\\editor.exe",{"Name":"Sample Editor 2.0 (x64)","Publisher":"Sample Company","Location":"C:\\Apps\\Sample Editor"},[{"Name":"Another Editor","Publisher":"Sample Company","Location":"C:\\Apps\\Sample Editor\\Plugin"}]],"out":false}
+{"fn":"Uninstall.SafeRegistryValue","args":["Software\\Microsoft\\Windows\\CurrentVersion\\Search\\JumplistData","C:\\Apps\\Sample Editor\\editor.exe\" /f",{"Name":"Sample Editor 2.0 (x64)","Publisher":"Sample Company","Location":"C:\\Apps\\Sample Editor"},[]],"out":false}
+{"fn":"Uninstall.SafeRegistryValue","args":["Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\UserAssist\\{CEBFF5CD-ACE2-4F4F-9178-9926F41749EA}\\Count","P:\\Nccf\\Fnzcyr Rqvgbe\\rqvgbe.rkr",{"Name":"Sample Editor 2.0 (x64)","Publisher":"Sample Company","Location":"C:\\Apps\\Sample Editor"},[]],"out":true}
+{"fn":"Uninstall.SafeRegistryValue","args":["Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\UserAssist\\{CEBFF5CD-ACE2-4F4F-9178-9926F41749EA}\\Count","C:\\Apps\\Sample Editor\\editor.exe",{"Name":"Sample Editor 2.0 (x64)","Publisher":"Sample Company","Location":"C:\\Apps\\Sample Editor"},[]],"out":false}
+{"fn":"Uninstall.SafeRegistryValue","args":["software\\microsoft\\windows\\currentversion\\search\\jumplistdata","C:\\Apps\\Sample Editor\\editor.exe",{"Name":"Sample Editor","Location":"C:\\Apps\\Sample Editor"},[]],"out":true}
+{"fn":"Uninstall.SafeRegistryValue","args":["Software\\Microsoft\\Windows\\CurrentVersion\\Run","C:\\Apps\\Sample Editor\\editor.exe",{"Name":"Sample Editor","Location":"C:\\Apps\\Sample Editor"},[]],"out":false}
+{"fn":"Uninstall.SafeRegistryValue","args":["Software\\Classes\\Local Settings\\Software\\Microsoft\\Windows\\Shell\\MuiCache","C:\\Apps\\Sample Editor\\editor.exe.FriendlyAppName",{"Name":"Sample Editor","Location":"C:\\Apps\\Sample Editor"},[]],"out":true}
+{"fn":"Uninstall.SafeRegistryValue","args":["Software\\Classes\\Local Settings\\Software\\Microsoft\\Windows\\Shell\\MuiCache","C:\\Apps\\Sample Editor\\editor.exe.ApplicationCompany",{"Name":"Sample Editor","Location":"C:\\Apps\\Sample Editor"},[]],"out":true}
+{"fn":"Uninstall.SafeRegistryValue","args":["Software\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\Layers","C:\\APPS\\SAMPLE EDITOR\\BIN\\EDITOR.EXE",{"Name":"Sample Editor","Location":"C:\\Apps\\Sample Editor"},[]],"out":true}
+{"fn":"Uninstall.SafeRegistryValue","args":["Software\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\Layers","C:\\Apps\\Sample Editor\\editor.dll",{"Name":"Sample Editor","Location":"C:\\Apps\\Sample Editor"},[]],"out":false}
+{"fn":"Uninstall.SafeRegistryValue","args":["Software\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\Layers","C:\\Apps\\Sample Editor\\..\\Other\\x.exe",{"Name":"Sample Editor","Location":"C:\\Apps\\Sample Editor"},[]],"out":false}
+{"fn":"Uninstall.SafeRegistryValue","args":["Software\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\Layers","\\\\server\\Apps\\Sample Editor\\editor.exe",{"Name":"Sample Editor","Location":"C:\\Apps\\Sample Editor"},[]],"out":false}
+{"fn":"Uninstall.SafeRegistryValue","args":["Software\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\Layers","Sample Editor\\editor.exe",{"Name":"Sample Editor","Location":"C:\\Apps\\Sample Editor"},[]],"out":false}
+{"fn":"Uninstall.SafeRegistryValue","args":["Software\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\Layers","",{"Name":"Sample Editor","Location":"C:\\Apps\\Sample Editor"},[]],"out":false}
+{"fn":"Uninstall.SafeRegistryValue","args":["Software\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\Layers",null,{"Name":"Sample Editor","Location":"C:\\Apps\\Sample Editor"},[]],"out":false}
+{"fn":"Uninstall.SafeRegistryValue","args":["Software\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\Layers","C:\\Apps\\Sample Editor\\editor.exe\u000a",{"Name":"Sample Editor","Location":"C:\\Apps\\Sample Editor"},[]],"out":false}
+{"fn":"Uninstall.SafeRegistryValue","args":["Software\\Microsoft\\Windows\\CurrentVersion\\Search\\JumplistData","C:\\Apps\\Sample Editor\\editor.exe",{"Name":"Sample Editor","Location":""},[]],"out":false}
+{"fn":"Uninstall.SafeRegistryValue","args":["Software\\Microsoft\\Windows\\CurrentVersion\\Search\\JumplistData","C:\\Apps\\Sample Editor\\editor.exe",{"Name":"Totally Different","Location":"C:\\Apps\\Sample Editor"},[]],"out":false}
+{"fn":"Uninstall.SafeRegistryValue","args":["Software\\Microsoft\\Windows\\CurrentVersion\\Search\\JumplistData","C:\\Apps\\Sample Editor\\editor.exe",{"Name":"Totally Different","Location":"C:\\Apps\\Sample Editor","OwnershipVerified":true},[]],"out":true}
+{"fn":"Uninstall.SafeRegistryValue","args":["Software\\Microsoft\\Windows\\CurrentVersion\\Search\\JumplistData","C:\\Apps\\Sample Editor\\editor.exe",{"Name":"Sample Editor","Location":"C:\\Apps\\Sample Editor"},[{"Name":"Sample Editor","Location":"D:\\Elsewhere"}]],"out":false}
+{"fn":"Uninstall.SafeRegistryValue","args":["Software\\Microsoft\\Windows\\CurrentVersion\\Search\\JumplistData","C:\\Apps\\Sample Editor\\editor.exe",{"Name":"Sample Editor","Location":"C:\\Apps\\Sample Editor"},[{"Name":"Unrelated","Location":"C:\\Apps"}]],"out":false}
+{"fn":"Uninstall.SafeRegistryValue","args":["Software\\Microsoft\\Windows\\CurrentVersion\\Search\\JumplistData","C:\\Apps\\Sample Editor\\editor.exe",{"Name":"Sample Editor","Location":"C:\\Apps\\Sample Editor"},[{"Name":"Unrelated","Location":"D:\\Elsewhere"}]],"out":true}
+{"fn":"Uninstall.SafeRegistryValue","args":["Software\\Microsoft\\Windows\\CurrentVersion\\Search\\JumplistData","%SystemRoot%\\Sample Editor\\editor.exe",{"Name":"Sample Editor","Location":"%SystemRoot%\\Sample Editor"},[]],"out":false}
+{"fn":"Uninstall.SafeRegistryValue","args":["Software\\Microsoft\\Windows\\CurrentVersion\\Search\\JumplistData","{6D809377-6AF0-444B-8957-A3773F02200E}\\Sample Editor\\editor.exe",{"Name":"Sample Editor","Location":"%ProgramW6432%\\Sample Editor"},[]],"out":true}
+{"fn":"Uninstall.SafeRegistryValue","args":["Software\\Microsoft\\Windows\\CurrentVersion\\Search\\JumplistData","{00000000-0000-0000-0000-000000000000}\\Sample Editor\\editor.exe",{"Name":"Sample Editor","Location":"%ProgramW6432%\\Sample Editor"},[]],"out":false}
+{"fn":"Uninstall.GetCommand","args":[{"Command":"\"%SystemRoot%\\System32\\msiexec.exe\" /test \"quoted value\""}],"out":{"FileName":"{SYSTEM32}\\msiexec.exe","Arguments":"/test \"quoted value\""}}
+{"fn":"Uninstall.GetCommand","args":[{"Command":"%SystemRoot%\\System32\\msiexec.exe /test"}],"out":{"FileName":"{SYSTEM32}\\msiexec.exe","Arguments":"/test"}}
+{"fn":"Uninstall.GetCommand","args":[{"Command":"  \"%SystemRoot%\\System32\\msiexec.exe\"   /a   /b  "}],"out":{"FileName":"{SYSTEM32}\\msiexec.exe","Arguments":"/a   /b"}}
+{"fn":"Uninstall.GetCommand","args":[{"Command":"\"%SystemRoot%\\System32\\msiexec.exe\"/x{01234567-89AB-CDEF-0123-456789ABCDEF}"}],"out":{"FileName":"{SYSTEM32}\\msiexec.exe","Arguments":"/x{01234567-89AB-CDEF-0123-456789ABCDEF}"}}
+{"fn":"Uninstall.GetCommand","args":[{"Command":"\"%SystemRoot%\\System32\\msiexec.exe\" /I{01234567-89AB-CDEF-0123-456789ABCDEF}"}],"out":{"FileName":"{SYSTEM32}\\msiexec.exe","Arguments":"/I{01234567-89AB-CDEF-0123-456789ABCDEF}"}}
+{"fn":"Uninstall.GetCommand","args":[{"Command":"\"%SystemRoot%\\System32\\msiexec.exe\""}],"out":{"FileName":"{SYSTEM32}\\msiexec.exe","Arguments":""}}
+{"fn":"Uninstall.GetCommand","args":[{"Command":"%SystemRoot%\\System32\\MSIEXEC.EXE"}],"out":{"FileName":"{SYSTEM32}\\MSIEXEC.EXE","Arguments":""}}
+{"fn":"Uninstall.GetCommand","args":[{"Command":"%SystemRoot%\\System32\\notepad.exe C:\\x\\y.exe /S"}],"out":{"FileName":"{SYSTEM32}\\notepad.exe","Arguments":"C:\\x\\y.exe /S"}}
+{"fn":"Uninstall.GetCommand","args":[{"Command":"\"%SystemRoot%\\System32\\msi\"exec.exe /x"}],"err":{"type":"InvalidOperationException","message":"Uninstaller is missing. Use Windows Settings."}}
+{"fn":"Uninstall.GetCommand","args":[{"Command":"\"%SystemRoot%\\System32\\msiexec.exe /x"}],"err":{"type":"InvalidOperationException","message":"Unclosed uninstaller path."}}
+{"fn":"Uninstall.GetCommand","args":[{"Command":"\"%SystemRoot%\\System32\\kernel32.dll\" x"}],"err":{"type":"InvalidOperationException","message":"Uninstaller is missing. Use Windows Settings."}}
+{"fn":"Uninstall.GetCommand","args":[{"Command":"MsiExec.exe /X{01234567-89AB-CDEF-0123-456789ABCDEF}"}],"err":{"type":"InvalidOperationException","message":"Uninstaller is missing. Use Windows Settings."}}
+{"fn":"Uninstall.GetCommand","args":[{"Command":"C:\\Nope\\uninstall.exe /S"}],"err":{"type":"InvalidOperationException","message":"Uninstaller is missing. Use Windows Settings."}}
+{"fn":"Uninstall.GetCommand","args":[{"Command":"C:\\Program Files\\Nope App\\un.exe /S"}],"err":{"type":"InvalidOperationException","message":"Uninstaller is missing. Use Windows Settings."}}
+{"fn":"Uninstall.GetCommand","args":[{"Command":"\\\\server\\share\\un.exe"}],"err":{"type":"InvalidOperationException","message":"Uninstaller is missing. Use Windows Settings."}}
+{"fn":"Uninstall.GetCommand","args":[{"Command":"uninstall.bat /S"}],"err":{"type":"InvalidOperationException","message":"No executable uninstaller. Use Windows Settings."}}
+{"fn":"Uninstall.GetCommand","args":[{"Command":""}],"err":{"type":"InvalidOperationException","message":"No executable uninstaller. Use Windows Settings."}}
+{"fn":"Uninstall.GetCommand","args":[{"Command":null}],"err":{"type":"InvalidOperationException","message":"No executable uninstaller. Use Windows Settings."}}
+{"fn":"Uninstall.GetCommand","args":[{"Command":"%SystemRoot%\\System32\\cmd.exe /c del x"}],"err":{"type":"InvalidOperationException","message":"This uninstaller needs Windows Settings."}}
+{"fn":"Uninstall.GetCommand","args":[{"Command":"\"%SystemRoot%\\System32\\CMD.EXE\" /c"}],"err":{"type":"InvalidOperationException","message":"This uninstaller needs Windows Settings."}}
+{"fn":"Uninstall.GetCommand","args":[{"Command":"\"%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" -File x.ps1"}],"err":{"type":"InvalidOperationException","message":"This uninstaller needs Windows Settings."}}
+{"fn":"Uninstall.GetCommand","args":[{"Command":"%SystemRoot%\\System32\\rundll32.exe shell32.dll,Control_RunDLL"}],"err":{"type":"InvalidOperationException","message":"This uninstaller needs Windows Settings."}}
+{"fn":"Uninstall.GetCommand","args":[{"Command":"%SystemRoot%\\System32\\reg.exe delete HKCU\\x /f"}],"err":{"type":"InvalidOperationException","message":"This uninstaller needs Windows Settings."}}
+{"fn":"Uninstall.GetCommand","args":[{"Command":"%SystemRoot%\\System32\\mshta.exe x.hta"}],"err":{"type":"InvalidOperationException","message":"This uninstaller needs Windows Settings."}}
+{"fn":"Uninstall.GetCommand","args":[{"Command":"%SystemRoot%\\System32\\wscript.exe x.vbs"}],"err":{"type":"InvalidOperationException","message":"This uninstaller needs Windows Settings."}}
+{"fn":"Uninstall.GetCommand","args":[{"Command":"%SystemRoot%\\System32\\cscript.exe x.vbs"}],"err":{"type":"InvalidOperationException","message":"This uninstaller needs Windows Settings."}}
+{"fn":"Uninstall.GetCommand","args":[{"Msi":true,"RegistryPath":"Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\{01234567-89AB-CDEF-0123-456789ABCDEF}"}],"out":{"FileName":"{SYSTEM32}\\msiexec.exe","Arguments":"/x {01234567-89ab-cdef-0123-456789abcdef}"}}
+{"fn":"Uninstall.GetCommand","args":[{"Msi":true,"RegistryPath":"Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\0123456789ABCDEF0123456789ABCDEF"}],"out":{"FileName":"{SYSTEM32}\\msiexec.exe","Arguments":"/x {01234567-89ab-cdef-0123-456789abcdef}"}}
+{"fn":"Uninstall.GetCommand","args":[{"Msi":true,"RegistryPath":"Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\(01234567-89AB-CDEF-0123-456789ABCDEF)"}],"out":{"FileName":"{SYSTEM32}\\msiexec.exe","Arguments":"/x {01234567-89ab-cdef-0123-456789abcdef}"}}
+{"fn":"Uninstall.GetCommand","args":[{"Msi":true,"RegistryPath":"Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\invalid"}],"err":{"type":"InvalidOperationException","message":"Invalid Windows Installer product code."}}
+{"fn":"Uninstall.GetCommand","args":[{"Msi":true,"RegistryPath":null,"Command":"\"%SystemRoot%\\System32\\msiexec.exe\" /x"}],"err":{"type":"InvalidOperationException","message":"Invalid Windows Installer product code."}}
+{"fn":"Uninstall.GetCommand","args":[{"Msi":true,"RegistryPath":"Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\{01234567-89AB-CDEF-0123-456789ABCDEF}","Command":"%SystemRoot%\\System32\\cmd.exe /c x"}],"out":{"FileName":"{SYSTEM32}\\msiexec.exe","Arguments":"/x {01234567-89ab-cdef-0123-456789abcdef}"}}

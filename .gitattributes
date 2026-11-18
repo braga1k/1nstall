@@ -4,3 +4,5 @@
 *.png binary
 *.ico binary
 *.exe binary
+oracle/golden/** text eol=lf
+oracle/corpus/** text eol=lf

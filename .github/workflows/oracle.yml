@@ -1,0 +1,69 @@
+name: Oracle (recorded 3.6 behaviour)
+on:
+  push:
+    branches:
+      - 'oracle/**'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: oracle-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  pure:
+    name: Pure functions (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-2022, windows-2025]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Regenerate the golden file with the 3.6 helpers
+        shell: powershell
+        run: .\oracle\drivers\v36-pure.ps1 -Out oracle\golden\v3.6.0\pure.jsonl
+      - name: Golden file must be byte-identical to the committed one
+        shell: bash
+        run: |
+          file=oracle/golden/v3.6.0/pure.jsonl
+          if git diff --exit-code --quiet -- oracle/golden; then
+            echo "::notice title=oracle pure (${{ matrix.os }})::$(wc -l < "$file" | tr -d ' ') cases reproduced byte-for-byte; sha256 $(sha256sum "$file" | cut -c1-64)"
+          else
+            git diff -U0 -- oracle/golden | grep -E '^[+-]\{' | head -8 | while IFS= read -r line; do
+              echo "::warning title=oracle pure diff (${{ matrix.os }})::${line:0:600}"
+            done
+            echo "::error title=oracle pure (${{ matrix.os }})::golden differs on this machine (added/removed lines: $(git diff --numstat -- oracle/golden | cut -f1,2 | tr '\t' '/'))"
+            exit 1
+          fi
+  observe:
+    name: Machine observations (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-2022, windows-2025]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - name: Existing native removal tests (disposable machine)
+        shell: powershell
+        timeout-minutes: 12
+        continue-on-error: true
+        run: .\oracle\observe-machine.ps1 -DisposableEnvironment -Stage tests -Out oracle-out
+      - name: How 3.6 reads this machine's uninstall registrations
+        shell: powershell
+        timeout-minutes: 8
+        continue-on-error: true
+        run: .\oracle\observe-machine.ps1 -DisposableEnvironment -Stage inventory -Out oracle-out
+      - name: Real WinGet install through the 3.6 install path
+        shell: powershell
+        timeout-minutes: 15
+        continue-on-error: true
+        run: .\oracle\observe-machine.ps1 -DisposableEnvironment -Stage winget -Out oracle-out
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: oracle-observations-${{ matrix.os }}
+          path: oracle-out/
+          if-no-files-found: warn

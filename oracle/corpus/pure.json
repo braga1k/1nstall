@@ -1,0 +1,374 @@
+{
+  "version": 1,
+  "functions": [
+    {
+      "fn": "Packages.ValidId",
+      "cases": [
+        ["Git.Git"], ["7zip.7zip"], ["Microsoft.VCRedist.2015+.x64"], ["Notepad++.Notepad++"], ["a"], ["A-b_c.d+e"], ["9NBLGGH4NNS1"],
+        [""], [null], [" Git.Git"], ["Git.Git "], ["Git Git"], [".Git"], ["-Git"], ["+Git"], ["_Git"], ["--all"],
+        ["Git.Git\n"], ["Git.Git\r\n"], ["Git.Git\n\n"], ["Git\nGit"], ["Git.Git\u0000"], ["Git.Git\t"],
+        ["G\u00eft.Git"], ["\uff27it.Git"], ["Git/Git"], ["Git\\Git"], ["App;Remove-Item"], ["$(malicious)"], ["App ID"],
+        [{"$gen": "repeat", "unit": "A", "count": 200}],
+        [{"$gen": "repeat", "unit": "A", "count": 201}],
+        [{"$gen": "repeat", "unit": "A", "count": 199, "suffix": "\n"}],
+        [{"$gen": "repeat", "unit": "A", "count": 200, "suffix": "\n"}]
+      ]
+    },
+    {
+      "fn": "Packages.ValidSource",
+      "cases": [["winget"], ["msstore"], ["Winget"], ["WINGET"], ["winget "], [" winget"], [""], [null], ["winget\n"], ["store"], ["msstore\u0000"]]
+    },
+    {
+      "fn": "Packages.KnownVersion",
+      "cases": [
+        ["1.0"], ["26.03"], ["0"], [""], [null], [" "], ["unknown"], ["Unknown"], ["UNKNOWN"], ["latest"], ["Latest"], ["n/a"], ["N/A"],
+        ["<1.0"], ["<unknown>"], ["< 24.0 >"], ["<"], ["<>"], ["1.0 <beta>"], ["unknown "], [" unknown"], ["latest\n"], ["v1"], ["n/a."], ["na"]
+      ]
+    },
+    {
+      "fn": "Packages.Quote",
+      "cases": [
+        ["simple"], [""], ["two words"], ["a\"b"], ["trailing\\"], ["trailing\\\\"], ["C:\\Program Files\\App\\"], ["a\\\"b"], ["a\\\\\"b"],
+        ["\\\\server\\share"], ["  "], ["tab\there"], ["new\nline"], ["%PATH%"], ["\u00fcn\u00efc\u00f6d\u00e9 \u65e5\u672c\u8a9e"], ["\""], ["\\"], ["a b\\"],
+        ["a\u0000b"], [null]
+      ]
+    },
+    {
+      "fn": "Packages.Arguments",
+      "cases": [
+        ["Git.Git", "winget"], ["9NBLGGH4NNS1", "msstore"], ["Microsoft.VCRedist.2015+.x64", "winget"],
+        ["Git.Git", "Winget"], ["Git.Git", ""], ["Git.Git", null], ["", "winget"], [null, "winget"],
+        ["--all", "winget"], ["App;Remove-Item", "winget"], ["$(malicious)", "winget"], ["App ID", "winget"], ["Git.Git\n", "winget"]
+      ]
+    },
+    {
+      "fn": "Packages.Outcome",
+      "cases": [
+        [0], [1], [-1], [2], [5], [87], [1223], [1602], [1603], [1605], [1618], [1619], [1638], [1641], [3010], [3011], [2147483647], [-2147483648],
+        ["0x80004005"], ["0x80070002"], ["0x80070005"], ["0x800704C7"], ["0x80072EE7"], ["0xC0000005"]
+      ],
+      "ranges": [["0x8A150000", "0x8A1501FF"]]
+    },
+    {
+      "fn": "Packages.Explain",
+      "cases": [
+        [0], [1], [-1], [2], [5], [87], [1223], [1602], [1603], [1605], [1618], [1619], [1638], [1641], [3010], [3011], [2147483647], [-2147483648],
+        ["0x80004005"], ["0x80070002"], ["0x80070005"], ["0x800704C7"], ["0x80072EE7"], ["0xC0000005"]
+      ],
+      "ranges": [["0x8A150000", "0x8A1501FF"]]
+    },
+    {
+      "fn": "Packages.ParseExport",
+      "cases": [
+        ["{\"Sources\":[{\"SourceDetails\":{\"Name\":\"winget\"},\"Packages\":[{\"PackageIdentifier\":\"Git.Git\",\"Version\":\"2.49.0\"},{\"PackageIdentifier\":\"7zip.7zip\"}]}]}"],
+        ["{\"$schema\":\"https://aka.ms/winget-packages.schema.2.0.json\",\"CreationDate\":\"2026-10-01T10:00:00.000-00:00\",\"WinGetVersion\":\"1.9.25200\",\"Sources\":[{\"Packages\":[{\"PackageIdentifier\":\"Git.Git\",\"Version\":\"2.49.0\"}],\"SourceDetails\":{\"Argument\":\"https://cdn.winget.microsoft.com/cache\",\"Identifier\":\"Microsoft.Winget.Source_8wekyb3d8bbwe\",\"Name\":\"winget\",\"Type\":\"Microsoft.PreIndexed.Package\"}}]}"],
+        ["{\"Sources\":[{\"SourceDetails\":{\"Name\":\"msstore\"},\"Packages\":[{\"PackageIdentifier\":\"9NBLGGH4NNS1\",\"Version\":\"1.0\"}]}]}"],
+        ["{\"Sources\":[{\"SourceDetails\":{\"Name\":\"winget\"},\"Packages\":[{\"PackageIdentifier\":\"A.B\",\"Version\":\"1\"}]},{\"SourceDetails\":{\"Name\":\"msstore\"},\"Packages\":[{\"PackageIdentifier\":\"A.B\",\"Version\":\"2\"}]}]}"],
+        ["{\"Sources\":[{\"SourceDetails\":{\"Name\":\"winget\"},\"Packages\":[{\"PackageIdentifier\":\"A.B\",\"Version\":\"1\"},{\"PackageIdentifier\":\"A.B\",\"Version\":\"2\"}]}]}"],
+        ["{\"Sources\":[]}"],
+        ["{}"],
+        ["null"],
+        ["[]"],
+        [""],
+        ["{\"Sources\":"],
+        ["{\"Sources\":null}"],
+        ["{\"Sources\":[{\"Packages\":[]}]}"],
+        ["{\"Sources\":[{\"SourceDetails\":{},\"Packages\":[]}]}"],
+        ["{\"Sources\":[{\"SourceDetails\":{\"name\":\"winget\"},\"Packages\":[]}]}"],
+        ["{\"Sources\":[{\"SourceDetails\":{\"Name\":\"winget\"}}]}"],
+        ["{\"Sources\":[{\"SourceDetails\":{\"Name\":\"winget\"},\"Packages\":null}]}"],
+        ["{\"sources\":[{\"sourcedetails\":{\"Name\":\"winget\"},\"packages\":[{\"packageidentifier\":\"Git.Git\",\"version\":\"1\"}]}]}"],
+        ["{\"Sources\":[{\"SourceDetails\":{\"Name\":\"custom\"},\"Packages\":[{\"PackageIdentifier\":\"not valid!\"}]}]}"],
+        ["{\"Sources\":[{\"SourceDetails\":{\"Name\":\"Winget\"},\"Packages\":[{\"PackageIdentifier\":\"Git.Git\"}]}]}"],
+        ["{\"Sources\":[{\"SourceDetails\":{\"Name\":\"winget\"},\"Packages\":[{\"PackageIdentifier\":\"not valid!\"}]}]}"],
+        ["{\"Sources\":[{\"SourceDetails\":{\"Name\":\"winget\"},\"Packages\":[{\"PackageIdentifier\":\"Git.Git\\n\",\"Version\":\"1\"}]}]}"],
+        ["{\"Sources\":[{\"SourceDetails\":{\"Name\":\"winget\"},\"Packages\":[{\"Version\":\"1\"}]}]}"],
+        ["{\"Sources\":[{\"SourceDetails\":{\"Name\":\"winget\"},\"Packages\":[{\"PackageIdentifier\":\"Git.Git\",\"Version\":1.5}]}]}"],
+        ["{\"Sources\":[{\"SourceDetails\":{\"Name\":\"winget\"},\"Packages\":[{\"PackageIdentifier\":\"Git.Git\",\"Version\":null}]}]}"],
+        ["\ufeff{\"Sources\":[]}"]
+      ]
+    },
+    {
+      "fn": "Packages.InstalledState",
+      "cases": [
+        [{"Complete": false, "Partial": false, "Packages": []}, ["A.B"], "winget"],
+        [{"Complete": true, "Partial": false, "Packages": []}, ["A.B"], "winget"],
+        [{"Complete": true, "Partial": false, "Packages": [{"Id": "A.B", "Name": "A B", "Source": "winget", "InstalledVersion": "1.0"}]}, ["A.B"], "winget"],
+        [{"Complete": true, "Partial": false, "Packages": [{"Id": "A.B", "Name": "A B", "Source": "winget", "InstalledVersion": "1.0"}]}, ["a.b"], "winget"],
+        [{"Complete": true, "Partial": false, "Packages": [{"Id": "A.B", "Name": "A B", "Source": "msstore", "InstalledVersion": "1.0"}]}, ["A.B"], "winget"],
+        [{"Complete": true, "Partial": false, "Packages": [{"Id": "A.B", "Name": "A B", "Source": "winget", "InstalledVersion": "1.0"}]}, ["A.B"], "Winget"],
+        [{"Complete": true, "Partial": false, "Packages": [{"Id": "Other.Id", "Name": "A.B", "Source": "winget", "InstalledVersion": "1.0"}]}, ["A.B"], "winget"],
+        [{"Complete": true, "Partial": false, "Packages": [{"Id": "A.B", "Name": "A B", "Source": "winget", "InstalledVersion": "1.0"}, {"Id": "a.b", "Name": "A B", "Source": "winget", "InstalledVersion": "2.0"}]}, ["A.B"], "winget"],
+        [{"Complete": true, "Partial": false, "Packages": [{"Id": "A.B", "Name": "A B", "Source": "winget", "InstalledVersion": "1.0"}]}, [], "winget"],
+        [{"Complete": true, "Partial": false, "Packages": [{"Id": "A.B", "Name": "A B", "Source": "winget", "InstalledVersion": "1.0"}]}, null, "winget"],
+        [{"Complete": true, "Partial": false, "Packages": [{"Id": "A.B", "Name": "A B", "Source": "winget", "InstalledVersion": "1.0"}]}, [null], "winget"],
+        [{"Complete": false, "Partial": true, "Packages": []}, ["A.B"], "winget"],
+        [{"Complete": false, "Partial": true, "Packages": [{"Id": "A.B", "Name": "A.B", "Source": "winget", "InstalledVersion": "1.0"}]}, ["A.B"], "winget"],
+        [{"Complete": true, "Partial": true, "Packages": []}, ["A.B"], "winget"],
+        [{"Complete": true, "Partial": false, "Packages": [{"Id": "A.B", "Name": "A", "Source": "winget", "InstalledVersion": "1"}, {"Id": "C.D", "Name": "C", "Source": "winget", "InstalledVersion": "2"}]}, ["A.B", "C.D"], "winget"],
+        [{"Complete": true, "Partial": false, "Packages": [{"Id": "A.B", "Name": "A", "Source": "winget", "InstalledVersion": "1"}]}, ["A.B", "C.D"], "winget"],
+        [{"Complete": true, "Partial": false, "Packages": [{"Id": "A.B", "Name": "A", "Source": "winget", "InstalledVersion": "1"}]}, ["C.D", "A.B"], "winget"],
+        [{"Complete": false, "Partial": true, "Packages": [{"Id": "A.B", "Name": "A", "Source": "winget", "InstalledVersion": "1"}]}, ["A.B", "C.D"], "winget"],
+        [{"Complete": true, "Partial": false, "Packages": [{"Id": "A.B", "Name": "A", "Source": "winget", "InstalledVersion": "1"}]}, ["A.B", "A.B"], "winget"],
+        [{"Complete": true, "Partial": false, "Packages": [{"Id": "A.B", "Name": "A", "Source": "winget", "InstalledVersion": ""}]}, ["A.B"], "winget"],
+        [{"Complete": true, "Partial": false, "Packages": [{"Id": "A.B", "Name": "A", "Source": "winget", "InstalledVersion": null}]}, ["A.B"], "winget"],
+        [{"Complete": true, "Partial": false, "Packages": [{"Id": "A.B", "Name": "A", "Source": "winget", "InstalledVersion": "latest"}]}, ["A.B"], "winget"],
+        [{"Complete": true, "Partial": false, "Packages": [{"Id": "A.B", "Name": "A", "Source": "winget", "InstalledVersion": "< 2.0"}]}, ["A.B"], "winget"],
+        [{"Complete": true, "Partial": false, "Packages": [{"Id": "A.B", "Name": "A", "Source": "winget", "InstalledVersion": "<unknown>"}]}, ["A.B"], "winget"],
+        [{"Complete": true, "Partial": false, "Packages": [{"Id": "A.B", "Name": "A", "Source": "winget", "InstalledVersion": "1"}, {"Id": "C.D", "Name": "C", "Source": "winget", "InstalledVersion": "Unknown"}]}, ["A.B", "C.D"], "winget"],
+        [{"Complete": true, "Partial": false, "Packages": [{"Id": "A.B", "Name": "A", "Source": "winget", "InstalledVersion": "1"}]}, ["A.B"], null]
+      ]
+    },
+    {
+      "fn": "Packages.ParseSetup",
+      "cases": [
+        ["{\"Version\":1,\"Apps\":[\"git\",\"vlc\"]}"],
+        ["{\"Version\":2,\"Kind\":\"1nstall-selection\",\"Apps\":[{\"Id\":\"Git.Git\",\"Source\":\"winget\",\"Name\":\"Git\",\"Version\":\"2.49.0\"}]}"],
+        ["{\"Apps\":[\"git\"],\"Version\":1}"],
+        ["{\"Version\":1.0,\"Apps\":[\"git\"]}"],
+        ["{\"Version\":\"1\",\"Apps\":[\"git\"]}"],
+        ["{\"Version\":0,\"Apps\":[\"git\"]}"],
+        ["{\"Version\":3,\"Apps\":[\"git\"]}"],
+        ["{\"Version\":99,\"Apps\":[\"git\"]}"],
+        ["{\"Version\":1,\"Apps\":[\"git\"],\"Command\":\"calc.exe\"}"],
+        ["{\"Version\":1,\"Kind\":\"1nstall-selection\",\"Apps\":[\"git\"]}"],
+        ["{\"Version\":2,\"Apps\":[{\"Id\":\"Git.Git\",\"Source\":\"winget\",\"Name\":\"Git\",\"Version\":\"1\"}]}"],
+        ["{\"Version\":2,\"Kind\":\"other\",\"Apps\":[{\"Id\":\"Git.Git\",\"Source\":\"winget\",\"Name\":\"Git\",\"Version\":\"1\"}]}"],
+        ["{\"Version\":2,\"Kind\":\"1NSTALL-SELECTION\",\"Apps\":[{\"Id\":\"Git.Git\",\"Source\":\"winget\",\"Name\":\"Git\",\"Version\":\"1\"}]}"],
+        ["{\"Version\":1,\"Apps\":\"A\"}"],
+        ["{\"Version\":1,\"Apps\":[]}"],
+        ["{\"Version\":1,\"Apps\":null}"],
+        ["{\"Version\":1}"],
+        ["{\"Version\":1,\"Apps\":[\"A\",\"A\"]}"],
+        ["{\"Version\":1,\"Apps\":[\"a\",\"A\"]}"],
+        ["{\"Version\":1,\"Apps\":[\"--all\"]}"],
+        ["{\"Version\":1,\"Apps\":[\"A B\"]}"],
+        ["{\"Version\":1,\"Apps\":[1]}"],
+        ["{\"Version\":1,\"Apps\":[null]}"],
+        ["{\"Version\":1,\"Apps\":[{}]}"],
+        ["{\"Version\":1,\"Apps\":[\"git\\n\"]}"],
+        ["{\"Version\":1,\"Apps\":[\"winutil_claude-code\",\"peace\",\"apo\"]}"],
+        ["{\"Version\":2,\"Kind\":\"1nstall-selection\",\"Apps\":[\"git\"]}"],
+        ["{\"Version\":2,\"Kind\":\"1nstall-selection\",\"Apps\":[{\"Id\":\"Git.Git\",\"Source\":\"winget\",\"Name\":\"Git\",\"Version\":\"1\",\"Extra\":\"x\"}]}"],
+        ["{\"Version\":2,\"Kind\":\"1nstall-selection\",\"Apps\":[{\"Id\":\"Git.Git\",\"Source\":\"winget\",\"Name\":\"Git\"}]}"],
+        ["{\"Version\":2,\"Kind\":\"1nstall-selection\",\"Apps\":[{\"Id\":\"Git.Git\",\"Source\":\"winget\",\"Name\":\"Git\",\"Version\":1}]}"],
+        ["{\"Version\":2,\"Kind\":\"1nstall-selection\",\"Apps\":[{\"Id\":\"Git.Git\",\"Source\":\"winget\",\"Name\":\"Git\",\"Version\":null}]}"],
+        ["{\"Version\":2,\"Kind\":\"1nstall-selection\",\"Apps\":[{\"Id\":\"Git.Git\",\"Source\":\"Winget\",\"Name\":\"Git\",\"Version\":\"1\"}]}"],
+        ["{\"Version\":2,\"Kind\":\"1nstall-selection\",\"Apps\":[{\"Id\":\"--all\",\"Source\":\"winget\",\"Name\":\"Git\",\"Version\":\"1\"}]}"],
+        ["{\"Version\":2,\"Kind\":\"1nstall-selection\",\"Apps\":[{\"Id\":\"Git.Git\",\"Source\":\"winget\",\"Name\":\"\",\"Version\":\"\"}]}"],
+        ["{\"Version\":2,\"Kind\":\"1nstall-selection\",\"Apps\":[{\"Id\":\"Git.Git\",\"Source\":\"winget\",\"Name\":\"Git\\u0001\",\"Version\":\"1\"}]}"],
+        ["{\"Version\":2,\"Kind\":\"1nstall-selection\",\"Apps\":[{\"Id\":\"Git.Git\",\"Source\":\"winget\",\"Name\":\"Git\",\"Version\":\"1\\t\"}]}"],
+        ["{\"Version\":2,\"Kind\":\"1nstall-selection\",\"Apps\":[{\"Id\":\"Git.Git\",\"Source\":\"winget\",\"Name\":\"Git\\u007f\",\"Version\":\"1\"}]}"],
+        ["{\"Version\":2,\"Kind\":\"1nstall-selection\",\"Apps\":[{\"Id\":\"Git.Git\",\"Source\":\"winget\",\"Name\":\"A\",\"Version\":\"1\"},{\"Id\":\"git.git\",\"Source\":\"winget\",\"Name\":\"B\",\"Version\":\"2\"}]}"],
+        ["{\"Version\":2,\"Kind\":\"1nstall-selection\",\"Apps\":[{\"Id\":\"A.B\",\"Source\":\"winget\",\"Name\":\"A\",\"Version\":\"1\"},{\"Id\":\"A.B\",\"Source\":\"msstore\",\"Name\":\"B\",\"Version\":\"2\"}]}"],
+        [{"$gen": "concat", "parts": ["{\"Version\":2,\"Kind\":\"1nstall-selection\",\"Apps\":[{\"Id\":\"A.B\",\"Source\":\"winget\",\"Name\":\"", {"$gen": "repeat", "unit": "n", "count": 200}, "\",\"Version\":\"", {"$gen": "repeat", "unit": "9", "count": 100}, "\"}]}"]}],
+        [{"$gen": "concat", "parts": ["{\"Version\":2,\"Kind\":\"1nstall-selection\",\"Apps\":[{\"Id\":\"A.B\",\"Source\":\"winget\",\"Name\":\"", {"$gen": "repeat", "unit": "n", "count": 201}, "\",\"Version\":\"1\"}]}"]}],
+        [{"$gen": "concat", "parts": ["{\"Version\":2,\"Kind\":\"1nstall-selection\",\"Apps\":[{\"Id\":\"A.B\",\"Source\":\"winget\",\"Name\":\"n\",\"Version\":\"", {"$gen": "repeat", "unit": "9", "count": 101}, "\"}]}"]}],
+        [{"$gen": "concat", "parts": ["{\"Version\":1,\"Apps\":[", {"$gen": "join", "prefix": "\"k", "suffix": "\"", "count": 500, "sep": ","}, "]}"]}],
+        [{"$gen": "concat", "parts": ["{\"Version\":1,\"Apps\":[", {"$gen": "join", "prefix": "\"k", "suffix": "\"", "count": 501, "sep": ","}, "]}"]}],
+        [{"$gen": "concat", "parts": ["{\"Version\":1,\"Apps\":[\"git\"]}", {"$gen": "repeat", "unit": " ", "count": 65508}]}],
+        [{"$gen": "concat", "parts": ["{\"Version\":1,\"Apps\":[\"git\"]}", {"$gen": "repeat", "unit": " ", "count": 65509}]}],
+        ["{\"version\":1,\"apps\":[\"git\"]}"],
+        ["{\"Version\":1,\"Version\":2,\"Apps\":[\"git\"]}"],
+        ["{\"Version\":2147483648,\"Apps\":[\"git\"]}"],
+        ["[]"], ["null"], ["\"text\""], ["{"], [""], ["\ufeff{\"Version\":1,\"Apps\":[\"git\"]}"]
+      ]
+    },
+    {
+      "fn": "Packages.Redact",
+      "cases": [
+        ["C:\\Users\\alice\\AppData\\Local\\app.log failed"], ["\\\\server\\share\\file.txt"], ["/Users/alice/x and /home/bob/y"], ["C:/forward/slash"],
+        ["d:\\x \"quoted\" tail"], ["path C:\\a\\b\nnext line"],
+        ["password=hunter2"], ["Password : abc, next"], ["PASSWD=abc"], ["api_key: XYZ;rest"], ["api-key=1"], ["apikey=1"], ["credential=abc"],
+        ["secretary=1"], ["my_token=1"], ["token=abc\nnext line"], ["Authorization: Bearer abc.def"], ["bearer   tok rest"],
+        ["https://user:pass@example.com/path"], ["https://example.com/p?token=abc&x=1"], ["http://a.b/c?d"], ["ftp://u:p@h"],
+        ["mail alice@example.com now"], ["a@b.c"], ["a@b.co"], ["no secrets here"], [""], [null]
+      ]
+    },
+    {
+      "fn": "Uninstall.QuoteArgument",
+      "cases": [
+        ["simple"], [""], ["two words"], ["a\"b"], ["trailing\\"], ["trailing\\\\"], ["C:\\Program Files\\App\\"], ["a\\\"b"], ["a\\\\\"b"],
+        ["\\\\server\\share"], ["\""], ["\\"], ["a b\\"], ["HKCU\\Software\\Sample Editor"], ["a\u0000b"], [null]
+      ]
+    },
+    {
+      "fn": "Uninstall.Token",
+      "cases": [
+        ["Notepad++"], ["Sample Editor 2.0"], ["7-Zip"], ["\u65e5\u672c\u8a9e\u30a8\u30c7\u30a3\u30bf\u30fc"], ["\u00dcn\u00ef C\u00f2d\u00e9"], ["\u0130stanbul"], ["I\u0307stanbul"],
+        ["\u01c5ungla"], ["STRA\u1e9eE"], ["\u039f\u0394\u039f\u03a3"], ["a_b-c.d"], ["\uff11\uff12\uff13"], ["x\u00b2\u00b3"], ["x64"], [""], [null], ["  "], ["A\u0301pp"], ["\ud83d\udc4dapp"]
+      ]
+    },
+    {
+      "fn": "Uninstall.Product",
+      "cases": [
+        ["app"], ["Apps"], ["Application"], ["Applications"], ["bin"], ["x64"], ["ab"], ["abc"], ["Setup"], ["Set-up"], ["Microsoft"], ["Microsoft 365"],
+        ["1nstall"], ["Users"], ["VLC"], ["7-Zip"], ["Git"], ["Go"], [""], [null], ["Common Files"], ["Data"], ["Launcher"], ["Update"], ["Updater"], ["Client"], ["Temp"]
+      ]
+    },
+    {
+      "fn": "Uninstall.Names",
+      "cases": [
+        [{"Name": "Notepad++ (64-bit x64)", "Publisher": "Notepad++ Team"}],
+        [{"Name": "VLC"}],
+        [{"Name": "VLC media player"}],
+        [{"Name": "\u65e5\u672c\u8a9e\u30a8\u30c7\u30a3\u30bf\u30fc"}],
+        [{"Name": "Sample Editor 2.0 (x64)", "Publisher": "Sample Company", "Location": "C:\\Apps\\Sample Editor"}],
+        [{"Name": "Adobe Example Editor", "Publisher": "Adobe Inc.", "Location": "C:\\Program Files\\Adobe"}],
+        [{"Name": "7-Zip 26.03 (x64)", "Publisher": "Igor Pavlov", "Location": "C:\\Program Files\\7-Zip\\"}],
+        [{"Name": "Foo 2 Bar"}],
+        [{"Name": "Microsoft Visual C++ 2015-2022 Redistributable (x64) - 14.40.33810"}],
+        [{"Name": "Git version 2.49.0"}],
+        [{"Name": "Python 3.12.4 (64-bit)"}],
+        [{"Name": "App (x86)"}], [{"Name": "App x64"}], [{"Name": "Tool (ARM64)"}], [{"Name": "Tool (64 bit)"}], [{"Name": "Tool (x64, x86)"}], [{"Name": "Tool (x64) (x86)"}],
+        [{"Name": "Tool v2"}], [{"Name": "Tool 2024 Pro"}], [{"Name": "Tool2024"}],
+        [{"Name": "Node.js"}], [{"Name": "AC/DC Player"}], [{"Name": "What?"}], [{"Name": "C:\\Thing"}],
+        [{"Name": "Go"}], [{"Name": "Setup"}], [{"Name": null}], [{"Name": ""}], [{}],
+        [{"Name": "Example Suite", "Publisher": "Example", "Location": "C:\\Program Files\\Example"}],
+        [{"Name": "Example Suite", "Publisher": "Other Corp", "Location": "C:\\Program Files\\Example"}],
+        [{"Name": "Example Suite", "Publisher": null, "Location": "C:\\Program Files\\Example"}],
+        [{"Name": "Example Suite", "Publisher": "Other Corp", "Location": "C:\\Program Files\\Exmpl"}],
+        [{"Name": "Example Suite", "Publisher": "Other Corp", "Location": "C:\\Program Files\\Exmpl", "IdentityVerified": true}],
+        [{"Name": "Example Suite", "Publisher": "Other Corp", "Location": "C:\\Program Files\\Exmpl", "OwnershipVerified": true}],
+        [{"Name": "Examp Suite", "Publisher": "Other Corp", "Location": "C:\\Program Files\\Examp"}],
+        [{"Name": "Tool", "Location": "C:\\Tool\\bin"}],
+        [{"Name": "Tool", "Location": "\"C:\\Tools\\Tool\""}],
+        [{"Name": "Tool", "Location": "C:\\Tools\\Tool\\..\\Other", "OwnershipVerified": true}],
+        [{"Name": "Tool", "Location": "C:\\bad|path", "OwnershipVerified": true}],
+        [{"Name": "TOOL", "Location": "C:\\x\\tool"}],
+        [{"Name": "Tool", "Location": "%ProgramFiles%\\Tool"}],
+        [{"Name": "Tool", "Location": "C:\\"}],
+        [{"Name": "Tool", "Location": "   "}]
+      ]
+    },
+    {
+      "fn": "Uninstall.ReservedRegistryName",
+      "cases": [
+        ["Microsoft"], ["microsoft"], ["Windows"], ["Classes"], ["Policies"], ["RegisteredApplications"], ["Clients"], ["Wow6432Node"], ["WOW6432NODE"],
+        ["Microsoft "], ["Microsoft Corporation"], ["Windows NT"], [""], ["Microsoft\n"]
+      ]
+    },
+    {
+      "fn": "Uninstall.Rot13",
+      "cases": [["Hello, World!"], ["P:\\Nccf\\Fnzcyr Rqvgbe\\rqvgbe.rkr"], [""], [null], ["\u00fcn\u00ef"], ["ABCxyz123"]]
+    },
+    {
+      "fn": "Uninstall.Inside",
+      "cases": [
+        ["C:\\Apps\\App", "C:\\Apps\\App"], ["C:\\Apps\\App\\x", "C:\\Apps\\App"], ["C:\\Apps\\AppSibling", "C:\\Apps\\App"], ["c:\\apps\\app\\X", "C:\\Apps\\App"],
+        ["C:\\Apps", "C:\\Apps\\App"], ["C:\\Apps\\App\\", "C:\\Apps\\App"], ["C:\\Apps\\App", "C:\\Apps\\App\\"], ["C:\\x", "C:"], ["C:/Apps/App/x", "C:\\Apps\\App"],
+        ["", ""], ["x", ""], ["\\x", ""]
+      ]
+    },
+    {
+      "fn": "Uninstall.FormatBytes",
+      "cases": [[0], [1], [1023], [1024], [1536], [1048575], [1048576], [1572864], [1073741823], [1073741824], [1610612736], [-1], [9223372036854775807]]
+    },
+    {
+      "fn": "Uninstall.FormatBytes@pt-PT",
+      "cases": [[1023], [1536], [1572864], [1610612736]]
+    },
+    {
+      "fn": "Uninstall.SafeRegistry",
+      "cases": [
+        ["Software\\Sample Company", {"Name": "Sample Editor 2.0 (x64)", "Publisher": "Sample Company", "Location": "C:\\Apps\\Sample Editor"}, [{"Name": "Another Editor", "Publisher": "Sample Company", "Location": "C:\\Apps\\Sample Editor\\Plugin"}]],
+        ["Software\\Microsoft\\Windows", {"Name": "Sample Editor 2.0 (x64)", "Publisher": "Sample Company", "Location": "C:\\Apps\\Sample Editor"}, [{"Name": "Another Editor", "Publisher": "Sample Company", "Location": "C:\\Apps\\Sample Editor\\Plugin"}]],
+        ["Software\\Sample Company\\Sample Editor", {"Name": "Sample Editor 2.0 (x64)", "Publisher": "Sample Company", "Location": "C:\\Apps\\Sample Editor"}, [{"Name": "Another Editor", "Publisher": "Sample Company", "Location": "C:\\Apps\\Sample Editor\\Plugin"}]],
+        ["Software\\Sample Editor", {"Name": "Sample Editor 2.0 (x64)", "Publisher": "Sample Company", "Location": "C:\\Apps\\Sample Editor"}, [{"Name": "Sample Editor 2.0 (x64)", "Publisher": "Sample Company", "Location": "C:\\Apps\\Sample Editor"}]],
+        ["Software\\Sample Editor\" & bad", {"Name": "Sample Editor 2.0 (x64)", "Publisher": "Sample Company", "Location": "C:\\Apps\\Sample Editor"}, []],
+        ["Software\\Sample Editor", {"Name": "Sample Editor 2.0 (x64)", "Publisher": "Sample Company", "Location": "C:\\Apps\\Sample Editor"}, []],
+        ["software\\sample editor", {"Name": "Sample Editor"}, []],
+        ["SOFTWARE\\Sample-Editor", {"Name": "Sample Editor"}, []],
+        ["Software\\SampleEditor", {"Name": "Sample Editor"}, []],
+        ["Software\\A\\B\\Sample Editor", {"Name": "Sample Editor"}, []],
+        ["Software\\A\\B\\C\\Sample Editor", {"Name": "Sample Editor"}, []],
+        ["Software\\Wow6432Node\\Sample Editor", {"Name": "Sample Editor"}, []],
+        ["Software\\Classes\\Sample Editor", {"Name": "Sample Editor"}, []],
+        ["Software\\Policies\\Vendor\\Sample Editor", {"Name": "Sample Editor"}, []],
+        ["Software\\S\u00e4mple\\Sample Editor", {"Name": "Sample Editor"}, []],
+        ["Software\\Sample Editor\n", {"Name": "Sample Editor"}, []],
+        ["Software\\Sample Editor\\", {"Name": "Sample Editor"}, []],
+        ["Software\\Sample Editor\\Settings", {"Name": "Sample Editor"}, []],
+        ["HKCU\\Software\\Sample Editor", {"Name": "Sample Editor"}, []],
+        ["Software", {"Name": "Sample Editor"}, []],
+        ["Software\\", {"Name": "Sample Editor"}, []],
+        ["", {"Name": "Sample Editor"}, []],
+        [null, {"Name": "Sample Editor"}, []],
+        ["Software\\Sample Editor", {"Name": "Sample Editor"}, [{"Name": "Unrelated", "Publisher": "Sample Editor"}]],
+        ["Software\\Sample Editor", {"Name": "Sample Editor"}, [{"Name": "Sample Editor 3 (x64)", "Publisher": "Someone"}]],
+        ["Software\\Sample Editor", {"Name": "Sample Editor"}, [{"Name": "Sample Editor Pro", "Publisher": "Someone"}]],
+        ["Software\\Vendor\\Exmpl", {"Name": "Example Suite", "Publisher": "Other Corp", "Location": "C:\\Program Files\\Exmpl", "IdentityVerified": true}, []],
+        ["Software\\Vendor\\Exmpl", {"Name": "Example Suite", "Publisher": "Other Corp", "Location": "C:\\Program Files\\Exmpl"}, []]
+      ]
+    },
+    {
+      "fn": "Uninstall.SafeRegistryValue",
+      "cases": [
+        ["Software\\Microsoft\\Windows\\CurrentVersion\\Search\\JumplistData", "C:\\Apps\\Sample Editor\\editor.exe", {"Name": "Sample Editor 2.0 (x64)", "Publisher": "Sample Company", "Location": "C:\\Apps\\Sample Editor"}, []],
+        ["Software\\Microsoft\\Windows\\CurrentVersion\\Search\\JumplistData", "C:\\Apps\\Sample EditorSibling\\editor.exe", {"Name": "Sample Editor 2.0 (x64)", "Publisher": "Sample Company", "Location": "C:\\Apps\\Sample Editor"}, []],
+        ["Software\\Microsoft\\Windows\\CurrentVersion\\Search\\JumplistData", "C:\\Apps\\Sample Editor\\editor.exe", {"Name": "Sample Editor 2.0 (x64)", "Publisher": "Sample Company", "Location": "C:\\Apps\\Sample Editor"}, [{"Name": "Another Editor", "Publisher": "Sample Company", "Location": "C:\\Apps\\Sample Editor\\Plugin"}]],
+        ["Software\\Microsoft\\Windows\\CurrentVersion\\Search\\JumplistData", "C:\\Apps\\Sample Editor\\editor.exe\" /f", {"Name": "Sample Editor 2.0 (x64)", "Publisher": "Sample Company", "Location": "C:\\Apps\\Sample Editor"}, []],
+        ["Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\UserAssist\\{CEBFF5CD-ACE2-4F4F-9178-9926F41749EA}\\Count", "P:\\Nccf\\Fnzcyr Rqvgbe\\rqvgbe.rkr", {"Name": "Sample Editor 2.0 (x64)", "Publisher": "Sample Company", "Location": "C:\\Apps\\Sample Editor"}, []],
+        ["Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\UserAssist\\{CEBFF5CD-ACE2-4F4F-9178-9926F41749EA}\\Count", "C:\\Apps\\Sample Editor\\editor.exe", {"Name": "Sample Editor 2.0 (x64)", "Publisher": "Sample Company", "Location": "C:\\Apps\\Sample Editor"}, []],
+        ["software\\microsoft\\windows\\currentversion\\search\\jumplistdata", "C:\\Apps\\Sample Editor\\editor.exe", {"Name": "Sample Editor", "Location": "C:\\Apps\\Sample Editor"}, []],
+        ["Software\\Microsoft\\Windows\\CurrentVersion\\Run", "C:\\Apps\\Sample Editor\\editor.exe", {"Name": "Sample Editor", "Location": "C:\\Apps\\Sample Editor"}, []],
+        ["Software\\Classes\\Local Settings\\Software\\Microsoft\\Windows\\Shell\\MuiCache", "C:\\Apps\\Sample Editor\\editor.exe.FriendlyAppName", {"Name": "Sample Editor", "Location": "C:\\Apps\\Sample Editor"}, []],
+        ["Software\\Classes\\Local Settings\\Software\\Microsoft\\Windows\\Shell\\MuiCache", "C:\\Apps\\Sample Editor\\editor.exe.ApplicationCompany", {"Name": "Sample Editor", "Location": "C:\\Apps\\Sample Editor"}, []],
+        ["Software\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\Layers", "C:\\APPS\\SAMPLE EDITOR\\BIN\\EDITOR.EXE", {"Name": "Sample Editor", "Location": "C:\\Apps\\Sample Editor"}, []],
+        ["Software\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\Layers", "C:\\Apps\\Sample Editor\\editor.dll", {"Name": "Sample Editor", "Location": "C:\\Apps\\Sample Editor"}, []],
+        ["Software\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\Layers", "C:\\Apps\\Sample Editor\\..\\Other\\x.exe", {"Name": "Sample Editor", "Location": "C:\\Apps\\Sample Editor"}, []],
+        ["Software\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\Layers", "\\\\server\\Apps\\Sample Editor\\editor.exe", {"Name": "Sample Editor", "Location": "C:\\Apps\\Sample Editor"}, []],
+        ["Software\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\Layers", "Sample Editor\\editor.exe", {"Name": "Sample Editor", "Location": "C:\\Apps\\Sample Editor"}, []],
+        ["Software\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\Layers", "", {"Name": "Sample Editor", "Location": "C:\\Apps\\Sample Editor"}, []],
+        ["Software\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\Layers", null, {"Name": "Sample Editor", "Location": "C:\\Apps\\Sample Editor"}, []],
+        ["Software\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\Layers", "C:\\Apps\\Sample Editor\\editor.exe\n", {"Name": "Sample Editor", "Location": "C:\\Apps\\Sample Editor"}, []],
+        ["Software\\Microsoft\\Windows\\CurrentVersion\\Search\\JumplistData", "C:\\Apps\\Sample Editor\\editor.exe", {"Name": "Sample Editor", "Location": ""}, []],
+        ["Software\\Microsoft\\Windows\\CurrentVersion\\Search\\JumplistData", "C:\\Apps\\Sample Editor\\editor.exe", {"Name": "Totally Different", "Location": "C:\\Apps\\Sample Editor"}, []],
+        ["Software\\Microsoft\\Windows\\CurrentVersion\\Search\\JumplistData", "C:\\Apps\\Sample Editor\\editor.exe", {"Name": "Totally Different", "Location": "C:\\Apps\\Sample Editor", "OwnershipVerified": true}, []],
+        ["Software\\Microsoft\\Windows\\CurrentVersion\\Search\\JumplistData", "C:\\Apps\\Sample Editor\\editor.exe", {"Name": "Sample Editor", "Location": "C:\\Apps\\Sample Editor"}, [{"Name": "Sample Editor", "Location": "D:\\Elsewhere"}]],
+        ["Software\\Microsoft\\Windows\\CurrentVersion\\Search\\JumplistData", "C:\\Apps\\Sample Editor\\editor.exe", {"Name": "Sample Editor", "Location": "C:\\Apps\\Sample Editor"}, [{"Name": "Unrelated", "Location": "C:\\Apps"}]],
+        ["Software\\Microsoft\\Windows\\CurrentVersion\\Search\\JumplistData", "C:\\Apps\\Sample Editor\\editor.exe", {"Name": "Sample Editor", "Location": "C:\\Apps\\Sample Editor"}, [{"Name": "Unrelated", "Location": "D:\\Elsewhere"}]],
+        ["Software\\Microsoft\\Windows\\CurrentVersion\\Search\\JumplistData", "%SystemRoot%\\Sample Editor\\editor.exe", {"Name": "Sample Editor", "Location": "%SystemRoot%\\Sample Editor"}, []],
+        ["Software\\Microsoft\\Windows\\CurrentVersion\\Search\\JumplistData", "{6D809377-6AF0-444B-8957-A3773F02200E}\\Sample Editor\\editor.exe", {"Name": "Sample Editor", "Location": "%ProgramW6432%\\Sample Editor"}, []],
+        ["Software\\Microsoft\\Windows\\CurrentVersion\\Search\\JumplistData", "{00000000-0000-0000-0000-000000000000}\\Sample Editor\\editor.exe", {"Name": "Sample Editor", "Location": "%ProgramW6432%\\Sample Editor"}, []]
+      ]
+    },
+    {
+      "fn": "Uninstall.GetCommand",
+      "cases": [
+        [{"Command": "\"%SystemRoot%\\System32\\msiexec.exe\" /test \"quoted value\""}],
+        [{"Command": "%SystemRoot%\\System32\\msiexec.exe /test"}],
+        [{"Command": "  \"%SystemRoot%\\System32\\msiexec.exe\"   /a   /b  "}],
+        [{"Command": "\"%SystemRoot%\\System32\\msiexec.exe\"/x{01234567-89AB-CDEF-0123-456789ABCDEF}"}],
+        [{"Command": "\"%SystemRoot%\\System32\\msiexec.exe\" /I{01234567-89AB-CDEF-0123-456789ABCDEF}"}],
+        [{"Command": "\"%SystemRoot%\\System32\\msiexec.exe\""}],
+        [{"Command": "%SystemRoot%\\System32\\MSIEXEC.EXE"}],
+        [{"Command": "%SystemRoot%\\System32\\notepad.exe C:\\x\\y.exe /S"}],
+        [{"Command": "\"%SystemRoot%\\System32\\msi\"exec.exe /x"}],
+        [{"Command": "\"%SystemRoot%\\System32\\msiexec.exe /x"}],
+        [{"Command": "\"%SystemRoot%\\System32\\kernel32.dll\" x"}],
+        [{"Command": "MsiExec.exe /X{01234567-89AB-CDEF-0123-456789ABCDEF}"}],
+        [{"Command": "C:\\Nope\\uninstall.exe /S"}],
+        [{"Command": "C:\\Program Files\\Nope App\\un.exe /S"}],
+        [{"Command": "\\\\server\\share\\un.exe"}],
+        [{"Command": "uninstall.bat /S"}],
+        [{"Command": ""}],
+        [{"Command": null}],
+        [{"Command": "%SystemRoot%\\System32\\cmd.exe /c del x"}],
+        [{"Command": "\"%SystemRoot%\\System32\\CMD.EXE\" /c"}],
+        [{"Command": "\"%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" -File x.ps1"}],
+        [{"Command": "%SystemRoot%\\System32\\rundll32.exe shell32.dll,Control_RunDLL"}],
+        [{"Command": "%SystemRoot%\\System32\\reg.exe delete HKCU\\x /f"}],
+        [{"Command": "%SystemRoot%\\System32\\mshta.exe x.hta"}],
+        [{"Command": "%SystemRoot%\\System32\\wscript.exe x.vbs"}],
+        [{"Command": "%SystemRoot%\\System32\\cscript.exe x.vbs"}],
+        [{"Msi": true, "RegistryPath": "Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\{01234567-89AB-CDEF-0123-456789ABCDEF}"}],
+        [{"Msi": true, "RegistryPath": "Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\0123456789ABCDEF0123456789ABCDEF"}],
+        [{"Msi": true, "RegistryPath": "Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\(01234567-89AB-CDEF-0123-456789ABCDEF)"}],
+        [{"Msi": true, "RegistryPath": "Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\invalid"}],
+        [{"Msi": true, "RegistryPath": null, "Command": "\"%SystemRoot%\\System32\\msiexec.exe\" /x"}],
+        [{"Msi": true, "RegistryPath": "Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\{01234567-89AB-CDEF-0123-456789ABCDEF}", "Command": "%SystemRoot%\\System32\\cmd.exe /c x"}]
+      ]
+    }
+  ]
+}
