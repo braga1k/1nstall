@@ -1,8 +1,13 @@
 //! The engine as `oneinstall_engine.dll`, with a C interface, for the WPF application.
 //!
-//! Text crosses the boundary as NUL-terminated UTF-16 holding JSON. Every pointer this
-//! library returns must be handed back to [`oi_free`]. No function panics across the
-//! boundary: a failure is reported inside the returned JSON.
+//! Text crosses the boundary as NUL-terminated UTF-16. Every pointer this library returns
+//! must be handed back to [`oi_free`]. No function panics across the boundary: a failure is
+//! reported inside the returned text.
+//!
+//! Large, rarely read data is JSON. What the interface needs on every start and on every
+//! click is plain records instead, so the application does not have to load a JSON parser
+//! before its first frame: fields end with U+001F, records with U+001E, and the items of a
+//! list inside a field are separated by U+001D.
 
 use std::sync::OnceLock;
 
@@ -10,7 +15,7 @@ use oneinstall_core::packages::installed_state;
 use oneinstall_core::queue::{plan, CatalogApp};
 use oneinstall_platform::packages::Packages;
 use oneinstall_platform::WindowsHost;
-use serde_json::{json, Value};
+use serde_json::Value;
 
 // The application's data, embedded as 3.6 embeds it in its executable.
 const CATALOG: &str = include_str!("../../../catalog.json");
@@ -45,14 +50,42 @@ fn catalog() -> &'static [CatalogApp] {
     })
 }
 
-/// The install order for a selection, dependencies first, as `{Rows, Error}`.
-pub fn plan_json(keys: &[String]) -> Value {
+const FIELD: char = '\u{1f}';
+const RECORD: char = '\u{1e}';
+const ITEM: char = '\u{1d}';
+
+fn records(rows: impl Iterator<Item = Vec<String>>) -> String {
+    rows.map(|fields| fields.join(&FIELD.to_string())).collect::<Vec<_>>().join(&RECORD.to_string())
+}
+
+/// What a library card shows, one record per app:
+/// key, name, category, category group, description, licence label, URL, WinGet ids, also-in categories.
+pub fn cards() -> String {
+    let rows: Value = serde_json::from_str(without_mark(CATALOG)).unwrap_or(Value::Null);
+    let text = |row: &Value, name: &str| row[name].as_str().unwrap_or("").to_string();
+    let items = |row: &Value, name: &str| list(row, name).join(&ITEM.to_string());
+    records(rows.as_array().map(Vec::as_slice).unwrap_or_default().iter().map(|row| {
+        vec![
+            text(row, "Key"),
+            text(row, "Name"),
+            text(row, "Category"),
+            text(row, "CategoryGroup"),
+            text(row, "Description"),
+            text(row, "LicenseLabel"),
+            text(row, "Url"),
+            items(row, "Ids"),
+            items(row, "AlsoIn"),
+        ]
+    }))
+}
+
+/// The install order for a selection, dependencies first, one record per app:
+/// key, name, and "1" when WinGet installs it or "0" when it is guided.
+/// A refused selection gives "!" followed by the reason instead.
+pub fn plan_records(keys: &[String]) -> String {
     match plan(catalog(), keys) {
-        Ok(ordered) => json!({
-            "Rows": ordered.iter().map(|app| json!({"Key": app.key, "Name": app.name, "Ids": app.ids, "Url": app.url})).collect::<Vec<_>>(),
-            "Error": null
-        }),
-        Err(error) => json!({"Rows": [], "Error": error.message}),
+        Ok(ordered) => records(ordered.iter().map(|app| vec![app.key.clone(), app.name.clone(), if app.ids.is_empty() { "0" } else { "1" }.to_string()])),
+        Err(error) => format!("!{}", error.message),
     }
 }
 
@@ -107,17 +140,20 @@ pub extern "C" fn oi_locales() -> *mut u16 {
     give(without_mark(LOCALES))
 }
 
-/// The install order for a JSON array of app keys.
+/// The library cards, as records. See [`cards`].
+#[no_mangle]
+pub extern "C" fn oi_cards() -> *mut u16 {
+    give(&cards())
+}
+
+/// The install order for app keys separated by U+001F, as records. See [`plan_records`].
 ///
 /// # Safety
-/// `keys_json` must be null or point to a NUL-terminated UTF-16 string.
+/// `keys` must be null or point to a NUL-terminated UTF-16 string.
 #[no_mangle]
-pub unsafe extern "C" fn oi_plan(keys_json: *const u16) -> *mut u16 {
-    let result = match serde_json::from_str::<Vec<String>>(&take(keys_json)) {
-        Ok(keys) => plan_json(&keys),
-        Err(_) => json!({"Rows": [], "Error": "The selection is not a list of app keys."}),
-    };
-    give(&result.to_string())
+pub unsafe extern "C" fn oi_plan(keys: *const u16) -> *mut u16 {
+    let keys: Vec<String> = take(keys).split(FIELD).filter(|key| !key.is_empty()).map(str::to_string).collect();
+    give(&plan_records(&keys))
 }
 
 /// Keys of the installed catalog apps, as a JSON array. Slow: call it off the UI thread.
@@ -139,8 +175,8 @@ pub unsafe extern "C" fn oi_free(text: *mut u16) {
 mod tests {
     use super::*;
 
-    fn keys(result: &Value) -> Vec<&str> {
-        result["Rows"].as_array().unwrap().iter().map(|row| row["Key"].as_str().unwrap()).collect()
+    fn keys(plan: &str) -> Vec<&str> {
+        plan.split(RECORD).map(|record| record.split(FIELD).next().unwrap()).collect()
     }
 
     #[test]
@@ -152,9 +188,23 @@ mod tests {
 
     #[test]
     fn a_plan_puts_dependencies_first_and_reports_unknown_keys() {
-        assert_eq!(keys(&plan_json(&["peace".to_string()])), ["apo", "peace"]);
-        assert_eq!(keys(&plan_json(&["peace".to_string(), "apo".to_string()])), ["apo", "peace"]);
-        assert!(plan_json(&["no-such-app".to_string()])["Error"].is_string());
+        assert_eq!(keys(&plan_records(&["peace".to_string()])), ["apo", "peace"]);
+        assert_eq!(keys(&plan_records(&["peace".to_string(), "apo".to_string()])), ["apo", "peace"]);
+        assert!(plan_records(&["no-such-app".to_string()]).starts_with('!'));
+        assert_eq!(plan_records(&[]), "");
+        assert_eq!(plan_records(&["peace".to_string()]).split(RECORD).next_back().unwrap().split(FIELD).collect::<Vec<_>>(), ["peace", "Peace GUI", "0"]);
+    }
+
+    #[test]
+    fn every_card_has_nine_fields_and_no_separator_inside_its_text() {
+        let cards = cards();
+        let rows: Vec<Vec<&str>> = cards.split(RECORD).map(|record| record.split(FIELD).collect()).collect();
+        assert_eq!(rows.len(), 325);
+        assert!(rows.iter().all(|fields| fields.len() == 9 && !fields[0].is_empty() && !fields[1].is_empty()));
+        // The catalog itself must not contain the separators, or records would split wrongly.
+        assert!(![FIELD, RECORD, ITEM].iter().any(|separator| without_mark(CATALOG).contains(*separator)));
+        let seven_zip = rows.iter().find(|fields| fields[1] == "7-Zip").unwrap();
+        assert_eq!((seven_zip[0], seven_zip[2], seven_zip[3]), ("extra_7zip", "Files & Downloads", "Files & Storage"));
     }
 
     #[test]
@@ -165,13 +215,13 @@ mod tests {
         unsafe {
             assert_eq!(take(pointer), sent);
             oi_free(pointer);
-            let wide: Vec<u16> = "[\"peace\"]".encode_utf16().chain(std::iter::once(0)).collect();
+            let wide: Vec<u16> = "peace".encode_utf16().chain(std::iter::once(0)).collect();
             let answer = oi_plan(wide.as_ptr());
-            assert_eq!(keys(&serde_json::from_str(&take(answer)).unwrap()), ["apo", "peace"]);
+            assert_eq!(keys(&take(answer)), ["apo", "peace"]);
             oi_free(answer);
-            let refused = oi_plan(std::ptr::null());
-            assert!(take(refused).contains("not a list"));
-            oi_free(refused);
+            let empty = oi_plan(std::ptr::null());
+            assert_eq!(take(empty), "");
+            oi_free(empty);
         }
     }
 }

@@ -1,12 +1,12 @@
 // 1nstall 4.0: the WPF interface of 3.6, hosted by plain C# with no PowerShell,
 // over the Rust engine. This file is the entry point, the test modes and the error path.
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
 using System.Web.Script.Serialization;
 using System.Windows;
 
@@ -31,6 +31,13 @@ sealed class StartupTimer {
 
 static class Program {
     static readonly string[] Tests={"--self-test","--startup-test"};
+    static StartupTimer timer;
+    static readonly StringBuilder marks=new StringBuilder();
+
+    // One line per start-up step, written to startup-test.log after the 3.6 marks.
+    public static void Mark(string step) {
+        if(timer!=null) marks.AppendLine("Mark "+step+" "+timer.ElapsedMilliseconds+" ms, heap "+(GC.GetTotalMemory(false)>>20)+" MB, working set "+(Environment.WorkingSet>>20)+" MB");
+    }
 
     // Test modes keep everything beside the executable; a normal start uses the user's profile.
     public static string RuntimeRoot(bool test) {
@@ -52,12 +59,13 @@ static class Program {
         Check(log,ref passed,"profiles parse",((object[])json.DeserializeObject(Engine.Profiles())).Length>0);
         var locales=(Dictionary<string,object>)json.DeserializeObject(Engine.Locales());
         Check(log,ref passed,"locales has "+locales.Count+" languages",locales.ContainsKey("en") && locales.ContainsKey("pt-PT"));
-        var plan=(Dictionary<string,object>)json.DeserializeObject(Engine.Plan("[\"peace\"]"));
+        var cards=OneInstall.CatalogCard.Parse(Engine.Cards());
+        Check(log,ref passed,"card records match the catalog: "+cards.Length,cards.Length==catalog.Length);
         var order=new List<string>();
-        foreach(Dictionary<string,object> row in (IEnumerable)plan["Rows"]) order.Add((string)row["Key"]);
+        foreach(string record in Engine.Plan("peace").Split('\u001E')) order.Add(record.Split('\u001F')[0]);
         Check(log,ref passed,"plan installs a dependency first: "+String.Join(", ",order),order.Count==2 && order[0]=="apo" && order[1]=="peace");
-        var unknown=(Dictionary<string,object>)json.DeserializeObject(Engine.Plan("[\"no-such-app\"]"));
-        Check(log,ref passed,"plan refuses an unknown app",unknown["Error"] is string);
+        Check(log,ref passed,"plan refuses an unknown app",Engine.Plan("no-such-app").StartsWith("!",StringComparison.Ordinal));
+        Check(log,ref passed,"an empty selection plans nothing",Engine.Plan("").Length==0);
         var identity=Assembly.GetExecutingAssembly().GetName();
         Check(log,ref passed,"assembly identity "+identity.Name+" "+identity.Version,identity.Name=="1nstall" && identity.Version.Major==4);
         return passed;
@@ -78,11 +86,16 @@ static class Program {
                 System.Runtime.ProfileOptimization.SetProfileRoot(root);
                 System.Runtime.ProfileOptimization.StartProfile("startup.profile");
             } catch(IOException) { } catch(UnauthorizedAccessException) { }
-            Engine.Load(test);
             var output=new StringBuilder();
             bool passed=true;
-            if(test && args[0]=="--self-test") passed=SelfTest(output);
-            else Shell.Run(test,clock,output);
+            if(test && args[0]=="--self-test") { Engine.Load(test); passed=SelfTest(output); }
+            else {
+                if(test) { timer=clock; Mark("main"); }
+                // The engine is loaded and the catalog read on another thread while WPF starts on this one.
+                var cards=Task.Factory.StartNew(delegate { Engine.Load(test); return OneInstall.CatalogCard.Parse(Engine.Cards()); });
+                Shell.Run(test,clock,output,cards);
+            }
+            if(marks.Length>0) { using(var process=Process.GetCurrentProcess()) marks.AppendLine("Mark peak working set "+(process.PeakWorkingSet64>>20)+" MB"); output.Append(marks); }
             if(test) File.WriteAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory,args[0].Substring(2)+".log"),output.ToString());
             return passed?0:1;
         }

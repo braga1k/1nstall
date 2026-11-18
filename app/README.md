@@ -9,9 +9,11 @@ This is work in progress. `Shell.cs` lists what is ported and what is not; the 3
 | `Program.cs` | Entry point, test modes, start-up error path, assembly identity. |
 | `Engine.cs` | Extracts and loads `oneinstall_engine.dll`; the C# side of the engine boundary. |
 | `Shell.cs` | The main window, wired to the engine. |
+| `Cards.cs` | The library cards: the 3.6 card builder, reading engine records and filling a card only when it nears the viewport. |
 | `1nstall.csproj` | Compiles `interface.xaml`, the 3.6 interface helpers in `src/` and the files above into one assembly. |
 | `build.ps1` | Builds the engine, then the executable, into `dist\v4`. |
 | `tests/update-bridge.ps1` | Proves the 3.6 updater accepts and applies the 4.0 executable. |
+| `tests/library-ui.ps1` | Drives the install library through UI Automation and checks what a 3.6 user relies on. Needs an interactive desktop. |
 
 ## Build
 
@@ -26,14 +28,18 @@ Needs Rust 1.86 or later. The C# side uses the compiler and MSBuild that ship wi
 | Argument | Effect |
 | --- | --- |
 | `--self-test` | Exercises the engine through the boundary the interface uses, writes `self-test.log` beside the executable, shows no window. Exit code 0 means every check passed. |
-| `--startup-test` | Shows the main window, writes the 3.6 timing marks to `startup-test.log`, and exits. |
+| `--startup-test` | Shows the main window, writes the 3.6 timing marks to `startup-test.log`, followed by one `Mark` line per start-up step, and exits. |
 | `--apply-update …` | The update step of 3.6 (`src/update-helper.cs`), unchanged. |
 
 Test modes keep their cache in `runtime-cache` beside the executable. A normal start uses `%LOCALAPPDATA%\1nstall\Runtime`, as 3.6 does.
 
 ## The engine boundary
 
-`oneinstall_engine.dll` exports C functions that return NUL-terminated UTF-16 JSON; every returned pointer goes back to `oi_free`. The functions are documented in `engine/ffi/src/lib.rs`.
+`oneinstall_engine.dll` exports C functions that return NUL-terminated UTF-16 text; every returned pointer goes back to `oi_free`. Large, rarely read data is JSON. What the interface needs before its first frame and on every click is plain records, so no JSON parser is loaded at start-up: fields end with U+001F, records with U+001E, list items with U+001D. The functions are documented in `engine/ffi/src/lib.rs`.
+
+## Start-up
+
+Three things keep the start short, and none changes what is drawn. The system window is created before the cards are built, so WPF starts the graphics device on its render thread in parallel. The engine is loaded and the catalog read on a worker thread while WPF starts. The inside of a card is built only when the card first nears the viewport; every card still exists, with its name, for keyboard and assistive tools.
 
 ## Updating from 3.6
 

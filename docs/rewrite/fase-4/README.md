@@ -1,14 +1,107 @@
 # Fase 4 — Interface, migração e release
 
-Estado em 2026-11-18, depois do primeiro de seis passos. O código está no ramo `v4/app`, nas pastas `app/` e `engine/ffi/`. A 3.6 na raiz do repositório continua intocada e a compilar.
+Estado em 2026-11-18, depois do primeiro de seis passos e de uma ronda de otimização do arranque. O código está no ramo `v4/app`, nas pastas `app/` e `engine/ffi/`. A 3.6 na raiz do repositório continua intocada e a compilar.
 
 ## Resumo
 
-Escolheste a interface WPF sobre o motor Rust. O primeiro passo está feito: existe um `1nstall.exe` 4.0 num único ficheiro, sem PowerShell, e está provado que a 3.6 se atualiza para ele sem release intermédia. A fase não está concluída: só o ecrã da biblioteca de instalação está ligado, e ainda não instala nem remove nada.
+Escolheste a interface WPF sobre o motor Rust. Existe um `1nstall.exe` 4.0 num único ficheiro, sem PowerShell, e está provado que a 3.6 se atualiza para ele sem release intermédia. Depois da otimização fica pronto em 444 ms, abaixo do limite de 500 ms, com o aspeto e as animações intactos. O limite de memória de 80 MB não é atingido: fica em 101 MB.
 
-## A ponte de atualização deixou de ser um problema
+A fase não está concluída: só o ecrã da biblioteca de instalação está ligado, e ainda não instala nem remove nada.
 
-Era a decisão em aberto desde a Fase 0. O atualizador da 3.6 só aceita um `1nstall.exe` que seja um assembly .NET chamado `1nstall` com a versão da release. Com a interface em WPF, o executável da 4.0 já é isso, por natureza. Não é preciso stub nem release-ponte.
+## O executável da 4.0
+
+| Medida | 3.6.0 | 4.0 antes de otimizar | 4.0 agora |
+| --- | --- | --- | --- |
+| Tamanho | 2 699 264 bytes | 3 098 624 bytes | 3 064 320 bytes |
+| Pronta e ociosa, a quente | 1 996 ms | 594 ms | 444 ms |
+| Primeira execução, com extração do motor | 2 425 ms | 763 ms | 501 ms |
+| Pico de working set | 242 MB | 105 MB | 101 MB |
+| Em repouso após 8 s (working set / privada) | não medido | não medido | 101 / 104 MB |
+| Precisa, além do Windows | .NET Framework 4.8, PowerShell 5.1 | .NET Framework 4.8 | .NET Framework 4.8 |
+
+Medido neste PC com a régua da Fase 0, mediana de 10 arranques a quente. Os 10 arranques a quente ficaram entre 429 e 446 ms.
+
+**Estes números vão piorar um pouco.** A 4.0 ainda só carrega a biblioteca de instalação; faltam as definições, os idiomas, o tema e as restantes páginas.
+
+Como é construído:
+
+- **Um só assembly.** A interface compilada da 3.6 (`interface.xaml`), os seus ajudantes C# e o anfitrião novo ficam no mesmo `1nstall.exe`.
+- **O motor Rust vai dentro do executável** e é extraído para a mesma cache imutável da 3.6, com o SHA-256 verificado antes de ser carregado. É carregado pelo caminho completo, sem procurar em pastas.
+- **O passo de atualização é o da 3.6**, sem alterações.
+
+## Otimização do arranque
+
+Medi primeiro onde o tempo se gastava, depois testei cada corte em separado.
+
+Onde estavam os 594 ms:
+
+| Etapa | Tempo |
+| --- | --- |
+| Do processo criado até ao início do programa | 30 ms |
+| Carregar o motor Rust | 12 ms |
+| Iniciar o WPF e carregar a janela | 175 ms |
+| Construir os 325 cartões | 113 ms |
+| Mostrar a janela e desenhar o primeiro fotograma | 225 ms |
+
+O que testei:
+
+| Mudança | Efeito | Aplicada |
+| --- | --- | --- |
+| Criar a janela de sistema antes de construir os cartões, para o WPF iniciar a placa gráfica em paralelo | Cerca de 130 ms a menos | Sim |
+| Preencher o interior de um cartão só quando ele chega perto do ecrã, e ler o catálogo em registos simples em vez de JSON | Cartões de 113 para 46 ms | Sim |
+| Carregar o motor e ler o catálogo noutro fio enquanto o WPF inicia | Cerca de 10 ms a menos | Sim |
+| Extrair o motor por fluxo em vez de o carregar todo em memória | 15 MB a menos no pico | Sim |
+| Desligar a luz ambiente ou o desfoque dos painéis | Nenhum | Não |
+| Desenhar por software em vez de usar a placa gráfica | 336 ms e 76 MB | Não: decisão tua, ver abaixo |
+
+Nenhuma das mudanças aplicadas altera o que se vê. A captura de ecrã depois da otimização é igual à de antes.
+
+Onde estão os 444 ms agora:
+
+| Etapa | Tempo |
+| --- | --- |
+| Do processo criado até ao início do programa | 30 ms |
+| Iniciar o WPF e carregar a janela | 176 ms |
+| Construir os cartões e as categorias | 45 ms |
+| Mostrar a janela e desenhar o primeiro fotograma | 166 ms |
+
+O que resta é quase todo do próprio WPF: iniciá-lo, e esperar que a placa gráfica fique pronta, o que demora cerca de 165 ms desde que a janela de sistema existe.
+
+### A memória
+
+| Momento | Working set |
+| --- | --- |
+| Início do programa | 20 MB |
+| WPF iniciado e janela carregada, ainda sem conteúdo | 52 MB |
+| Cartões construídos | 62 MB |
+| Primeiro fotograma desenhado | 100 MB |
+
+A memória gerida pelo .NET é de 8 MB. Os 38 MB entre os cartões e o primeiro fotograma são da placa gráfica e do desenho. Com a placa gráfica não vejo como chegar aos 80 MB.
+
+### Desenho por software: a única forma de cumprir os 80 MB
+
+Numa variante de teste, não aplicada, mandei o WPF desenhar por software: 336 ms e 76 MB. Cumpre os dois limites.
+
+O custo é que as animações elásticas e o desfoque dos painéis passam a ser desenhados pelo processador. Não medi a fluidez, e num PC mais fraco do que este a diferença pode notar-se. A 3.6 usa a placa gráfica.
+
+## Um erro meu, encontrado e corrigido
+
+A pesquisa do protótipo WPF da Fase 3, que tinha passado para este executável, não era a da 3.6: partia o texto em palavras e escondia os cartões sem os reordenar, o que podia deixar cartões em branco depois de uma pesquisa. Substituí-a pela lógica de `Update-Filter` da 3.6. O teste de interface novo cobre este caso.
+
+## Verificações
+
+| Verificação | Onde correu | Resultado |
+| --- | --- | --- |
+| Autoteste (`--self-test`) | Neste PC | 9 de 9 |
+| Teste da biblioteca por UI Automation (`app/tests/library-ui.ps1`) | Neste PC | 13 de 13 |
+| Motor: formatação, lints e testes | Neste PC | Limpos |
+| Tudo o anterior no Actions | Ver a última execução do ramo | — |
+
+O teste da biblioteca conduz a janela por fora, como um leitor de ecrã: confirma que os 325 cartões existem e têm nome, que um cartão fora do ecrã só é preenchido quando se chega a ele, que a pesquisa deixa só os cartões certos e desenhados, que a seleção sobrevive à pesquisa, que a dependência aparece antes da app que precisa dela, e que remover uma linha limpa a seleção.
+
+## A ponte de atualização
+
+Era a decisão em aberto desde a Fase 0. O atualizador da 3.6 só aceita um `1nstall.exe` que seja um assembly .NET chamado `1nstall` com a versão da release. Com a interface em WPF, o executável da 4.0 já é isso. Não é preciso stub nem release-ponte.
 
 | Verificação | Onde correu | Resultado |
 | --- | --- | --- |
@@ -16,57 +109,22 @@ Era a decisão em aberto desde a Fase 0. O atualizador da 3.6 só aceita um `1ns
 | A mesma condição aplicada ao executável da 3.6, como controlo | Neste PC | Recusado, como esperado |
 | O executável publicado da 3.6.0 a correr o seu próprio passo `--apply-update` contra a 4.0 | Actions, Windows Server 2022 e 2025 | Substituiu-se pela 4.0, guardou a cópia anterior, e a 4.0 resultante passou o autoteste |
 
-O executável da 3.6.0 usado no Actions foi descarregado da release e o seu SHA-256 conferido com o publicado.
-
 O que este teste não cobre: a parte da 3.6 que consulta a API do GitHub e descarrega a release. Essa só pode ser exercitada com uma release 4.0 publicada.
 
-## O executável da 4.0
+## Objetivo da Fase 0
 
-| Medida | 3.6.0 | 4.0, primeiro passo |
+| Limite | Objetivo | 4.0 agora |
 | --- | --- | --- |
-| Ficheiros distribuídos | 1 | 1 |
-| Tamanho | 2 699 264 bytes | 3 098 624 bytes |
-| Pronta e ociosa, a quente | 1 996 ms | 594 ms |
-| Primeira execução, com extração do motor | 2 425 ms | 763 ms |
-| Pico de working set | 242 MB | 105 MB |
-| Pico de memória privada | 275 MB | 110 MB |
-| Precisa, além do Windows | .NET Framework 4.8, PowerShell 5.1 | .NET Framework 4.8 |
-
-Medido neste PC com a régua da Fase 0, mediana de 10 arranques a quente.
-
-**Estes números vão piorar.** A 4.0 ainda só carrega a biblioteca de instalação; faltam as definições, os idiomas, o tema e as restantes páginas, que a 3.6 já carrega nos seus 1 996 ms.
-
-Como é construído:
-
-- **Um só assembly.** A interface compilada da 3.6 (`interface.xaml`), os seus ajudantes C# e o anfitrião novo ficam no mesmo `1nstall.exe`. A 3.6 extraía dois DLL; a 4.0 extrai um.
-- **O motor Rust vai dentro do executável** e é extraído para a mesma cache imutável da 3.6, com o SHA-256 verificado antes de ser carregado. É carregado pelo caminho completo, sem procurar em pastas.
-- **O passo de atualização é o da 3.6**, sem alterações.
-
-Verificações do executável:
-
-| Verificação | Resultado |
-| --- | --- |
-| Autoteste (`--self-test`), neste PC e nas duas imagens do Actions | 7 de 7 |
-| Acessibilidade por UI Automation, neste PC | 325 cartões expostos; ligar o «7-Zip» funciona |
-| Argumento desconhecido | Sai com código 1, como a 3.6 |
-| Motor: formatação, lints e testes, nas duas imagens | Limpos; os resultados do oráculo não mudaram |
-
-## Objetivo da Fase 0: tem de ser revisto
-
-Com esta escolha, dois dos quatro limites aceites na Fase 0 não são atingidos:
-
-| Limite | Objetivo | 4.0, primeiro passo |
-| --- | --- | --- |
-| Pronta e ociosa | abaixo de 500 ms | 594 ms |
-| Pico de working set | abaixo de 80 MB | 105 MB |
+| Pronta e ociosa | abaixo de 500 ms | 444 ms |
+| Pico de working set | abaixo de 80 MB | 101 MB |
 | Executável | abaixo de 12 MB | 3,1 MB |
 | Dependências | só Windows e WinGet | .NET Framework 4.8, que vem com o Windows 10 e 11 |
 
-A decisão de não portar a janela de abertura dependia de a 4.0 ficar pronta em menos de 500 ms. Na 3.6 a janela de abertura mostra o primeiro fotograma aos 445 ms; a 4.0 mostra a janela principal completa aos 594 ms. A diferença é de 150 ms, e a 4.0 ainda vai ganhar peso. Fica como decisão tua.
+A janela de abertura da 3.6 mostra o primeiro fotograma aos 445 ms. A 4.0 mostra a janela principal completa aos 444 ms. Deixou de haver razão para a portar.
 
 ## Correção a relatórios anteriores
 
-Na Fase 0 escrevi que o relógio de arranque da 3.6 excluía a criação do processo, e repeti-o na Fase 3. Está errado: o relógio da 3.6 soma o tempo desde que o Windows criou o processo (`launcher.cs:21-28`). Os números não mudam; o que muda é a leitura: a comparação entre a 3.6 e os protótipos é direta. Os dois relatórios foram corrigidos e a correção está assinalada neles.
+Na Fase 0 escrevi que o relógio de arranque da 3.6 excluía a criação do processo, e repeti-o na Fase 3. Está errado: o relógio da 3.6 soma o tempo desde que o Windows criou o processo (`launcher.cs:21-28`). Os números não mudam; a comparação entre a 3.6 e os protótipos é direta. Os dois relatórios foram corrigidos e a correção está assinalada neles.
 
 ## O que falta
 
@@ -74,7 +132,7 @@ A interface da 3.6 é comandada por 79 funções PowerShell, em cerca de 2 500 l
 
 | Passo | Conteúdo | Estado |
 | --- | --- | --- |
-| 1 | Executável único, fronteira com o motor, ponte de atualização, modos de teste | Feito |
+| 1 | Executável único, fronteira com o motor, ponte de atualização, modos de teste, arranque otimizado | Feito |
 | 2 | Definições, tema, cor de destaque, vidro e os 51 idiomas, incluindo os dois da direita para a esquerda | Por fazer |
 | 3 | Biblioteca completa: filtros por categoria, vistas, perfis, detalhes, guardar e carregar seleções | Por fazer |
 | 4 | Fila de instalação: confirmação, progresso, registos, cancelamento | Por fazer |
@@ -85,13 +143,14 @@ Os passos 4 e 5 só podem ser testados neste PC com o WinGet e o desinstalador d
 
 ## Limites deste passo
 
+- **Um só PC.** Os tempos e a memória foram medidos numa máquina topo de gama. A memória da placa gráfica depende do controlador.
 - **As compilações não são reprodutíveis bit a bit.** As duas imagens do Actions produziram executáveis do mesmo tamanho com SHA-256 diferentes.
 - **O executável não é assinado**, tal como o da 3.6.
 - **O texto está só em inglês** e o tema é fixo: escuro, com a cor de destaque do Windows.
 - **Os botões de vista, histórico e definições não existem ainda**: na 3.6 são criados pelo script.
+- **O teste da biblioteca precisa de um ambiente de trabalho interativo** e por isso só corre neste PC, não no Actions.
 
 ## Decisões que preciso de ti
 
-1. **O objetivo de arranque e memória**: aceitar os valores do WPF (cerca de 600 ms e 105 MB, a subir um pouco) como novo objetivo, ou tentar otimizar antes de continuar.
-2. **A janela de abertura**: continuar sem ela, ou portá-la.
-3. **A ordem dos passos 2 a 6**, se quiseres outra.
+1. **A memória**: aceitar cerca de 100 MB com a placa gráfica, como a 3.6 desenha, ou cumprir os 80 MB com desenho por software.
+2. **A ordem dos passos 2 a 6**, se quiseres outra.

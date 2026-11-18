@@ -14,9 +14,9 @@
  </ItemGroup>
  <ItemGroup>
   <Page Include="$(Out)\src\interface.xaml"><Link>interface.xaml</Link></Page>
-  <Compile Include="..\src\ui-helper.cs"/><Compile Include="..\src\motion.cs"/><Compile Include="..\src\appearance.cs"/>
+  <Compile Include="..\src\motion.cs"/><Compile Include="..\src\appearance.cs"/>
   <Compile Include="..\src\window-helper.cs"/><Compile Include="..\src\update-helper.cs"/>
-  <Compile Include="Program.cs"/><Compile Include="Engine.cs"/><Compile Include="Shell.cs"/>
+  <Compile Include="Program.cs"/><Compile Include="Engine.cs"/><Compile Include="Shell.cs"/><Compile Include="Cards.cs"/>
   <EmbeddedResource Include="$(EngineDll)"><LogicalName>1nstall.Engine</LogicalName></EmbeddedResource>
  </ItemGroup>
  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets"/>

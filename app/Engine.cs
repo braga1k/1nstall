@@ -13,7 +13,8 @@ static class Engine {
     [DllImport(Library)] static extern IntPtr oi_catalog();
     [DllImport(Library)] static extern IntPtr oi_profiles();
     [DllImport(Library)] static extern IntPtr oi_locales();
-    [DllImport(Library,CharSet=CharSet.Unicode)] static extern IntPtr oi_plan(string keysJson);
+    [DllImport(Library)] static extern IntPtr oi_cards();
+    [DllImport(Library,CharSet=CharSet.Unicode)] static extern IntPtr oi_plan(string keys);
     [DllImport(Library)] static extern IntPtr oi_installed();
     [DllImport(Library)] static extern void oi_free(IntPtr text);
 
@@ -22,7 +23,10 @@ static class Engine {
     public static string Catalog() { return Take(oi_catalog()); }
     public static string Profiles() { return Take(oi_profiles()); }
     public static string Locales() { return Take(oi_locales()); }
-    public static string Plan(string keysJson) { return Take(oi_plan(keysJson)); }
+    // Records: fields end with U+001F, records with U+001E, list items with U+001D.
+    public static string Cards() { return Take(oi_cards()); }
+    // Keys separated by U+001F in; one record per planned app out, or "!" and a reason.
+    public static string Plan(string keys) { return Take(oi_plan(keys)); }
     public static string Installed() { return Take(oi_installed()); }
 
     static string Hash(Stream stream) {
