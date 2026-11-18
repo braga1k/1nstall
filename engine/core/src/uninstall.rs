@@ -157,7 +157,8 @@ pub fn safe_registry(host: &dyn Host, path: Option<&str>, owner: &InstalledApp, 
     !active.iter().any(|app| names(host, app).iter().any(|name| token(host, Some(name)) == leaf_token) || token(host, app.publisher.as_deref()) == leaf_token)
 }
 
-fn trace_path(host: &dyn Host, key: &str, value: &str) -> String {
+/// The executable path a trace value refers to: decoded, without display suffixes, with a leading known-folder GUID resolved.
+pub fn trace_path(host: &dyn Host, key: &str, value: &str) -> String {
     let mut path = if key.to_lowercase().contains("\\userassist\\") { rot13(value) } else { value.to_string() };
     for suffix in [".FriendlyAppName", ".ApplicationCompany"] {
         if ends_with_ignore_case(&path, suffix) {
@@ -309,4 +310,160 @@ pub fn get_command(host: &dyn Host, app: &InstalledApp) -> Result<Command, Engin
         return Err(EngineError::invalid_operation("This uninstaller needs Windows Settings."));
     }
     Ok(Command { file_name: executable, arguments })
+}
+
+/// Drive or root part of an absolute path: `C:\` for `C:\Apps\App`.
+fn path_root(path: &str) -> &str {
+    let bytes = path.as_bytes();
+    if bytes.len() >= 2 && bytes[1] == b':' {
+        if bytes.len() >= 3 && (bytes[2] == b'\\' || bytes[2] == b'/') {
+            return &path[..3];
+        }
+        return &path[..2];
+    }
+    if path.starts_with('\\') || path.starts_with('/') {
+        return &path[..1];
+    }
+    ""
+}
+
+/// Parent directory of an absolute path, or `None` at a root.
+pub fn parent_directory(path: &str) -> Option<&str> {
+    let root = path_root(path);
+    let trimmed = path.trim_end_matches('\\');
+    if trimmed.len() <= root.trim_end_matches('\\').len() {
+        return None;
+    }
+    let index = trimmed.rfind('\\')?;
+    if index < root.len() {
+        Some(root)
+    } else {
+        Some(&trimmed[..index])
+    }
+}
+
+fn directory_is_safe(host: &dyn Host, path: &str, owner: &InstalledApp, active: &[InstalledApp]) -> Option<bool> {
+    let path = full(host, path)?;
+    if path.starts_with("\\\\") || utf16_len(&path) < 8 || !host.directory_exists(&path) {
+        return Some(false);
+    }
+    let windows = full(host, &host.special_folder(SpecialFolder::Windows))?;
+    if inside(&path, &windows) {
+        return Some(false);
+    }
+    for folder in [SpecialFolder::MyDocuments, SpecialFolder::Desktop, SpecialFolder::MyPictures, SpecialFolder::MyMusic, SpecialFolder::MyVideos] {
+        if inside(&path, &full(host, &host.special_folder(folder))?) {
+            return Some(false);
+        }
+    }
+    let home = full(host, &host.special_folder(SpecialFolder::UserProfile))?;
+    if inside(&path, &format!("{home}\\Downloads")) || inside(&path, &format!("{home}\\OneDrive")) {
+        return Some(false);
+    }
+    let program_files = host.special_folder(SpecialFolder::ProgramFiles);
+    let program_files_x86 = host.special_folder(SpecialFolder::ProgramFilesX86);
+    let roots = [
+        path_root(&path).to_string(),
+        home.clone(),
+        program_files.clone(),
+        program_files_x86.clone(),
+        host.special_folder(SpecialFolder::CommonApplicationData),
+        host.special_folder(SpecialFolder::LocalApplicationData),
+        host.special_folder(SpecialFolder::ApplicationData),
+    ];
+    for root in roots.iter().filter(|root| !root.is_empty()) {
+        if eq_ignore_case(&full(host, root)?, &path) {
+            return Some(false);
+        }
+    }
+    let users = format!("{}Users", path_root(&windows));
+    if inside(&path, &users) && !inside(&path, &home) {
+        return Some(false);
+    }
+    for sensitive in [
+        format!("{program_files}\\Common Files"),
+        format!("{program_files_x86}\\Common Files"),
+        format!("{program_files}\\WindowsApps"),
+        format!("{home}\\AppData\\Local\\Packages"),
+    ] {
+        if inside(&path, &full(host, &sensitive)?) {
+            return Some(false);
+        }
+    }
+    let product = token(host, Some(file_name(&path)));
+    if !names(host, owner).iter().any(|name| token(host, Some(name)) == product) {
+        return Some(false);
+    }
+    if active.iter().any(|app| names(host, app).iter().any(|name| token(host, Some(name)) == product) || token(host, app.publisher.as_deref()) == product) {
+        return Some(false);
+    }
+    for other in active {
+        if let Some(location) = other.location.as_deref().filter(|location| !location.trim().is_empty()) {
+            let location = full(host, location)?;
+            if inside(&path, &location) || inside(&location, &path) {
+                return Some(false);
+            }
+        }
+    }
+    let mut current = Some(path.as_str());
+    while let Some(directory) = current {
+        if host.is_reparse_point(directory)? {
+            return Some(false);
+        }
+        current = parent_directory(directory);
+    }
+    Some(true)
+}
+
+/// May a folder be offered as a leftover of `owner`?
+///
+/// It must exist, be local, lie outside Windows, personal folders, other profiles and
+/// shared roots, be named exactly like the owner, not collide with any installed app by
+/// name, publisher or location, and have no reparse point in its chain of parents.
+/// Anything that cannot be evaluated counts as unsafe.
+pub fn safe_directory(host: &dyn Host, path: &str, owner: &InstalledApp, active: &[InstalledApp]) -> bool {
+    directory_is_safe(host, path, owner, active).unwrap_or(false)
+}
+
+/// The only roots in which leftovers are looked for. Never the whole disk.
+pub fn data_roots(host: &dyn Host) -> Vec<String> {
+    let candidates = [
+        host.special_folder(SpecialFolder::ApplicationData),
+        host.special_folder(SpecialFolder::LocalApplicationData),
+        format!("{}\\AppData\\LocalLow", host.special_folder(SpecialFolder::UserProfile)),
+        host.special_folder(SpecialFolder::CommonApplicationData),
+        host.special_folder(SpecialFolder::ProgramFiles),
+        host.special_folder(SpecialFolder::ProgramFilesX86),
+    ];
+    let mut roots: Vec<String> = Vec::new();
+    for candidate in candidates {
+        if !candidate.trim().is_empty() && !roots.iter().any(|kept| eq_ignore_case(kept, &candidate)) {
+            roots.push(candidate);
+        }
+    }
+    roots
+}
+
+/// Is a folder still within what discovery could have offered: the owner's verified
+/// location, or at most three levels below a data root?
+pub fn discovery_folder(host: &dyn Host, path: &str, owner: &InstalledApp) -> bool {
+    let Some(path) = full(host, path) else { return false };
+    if owner.ownership_verified {
+        if let Some(location) = owner.location.as_deref().filter(|location| !location.trim().is_empty()) {
+            if full(host, location).is_some_and(|location| eq_ignore_case(&path, &location)) {
+                return true;
+            }
+        }
+    }
+    data_roots(host).iter().any(|root| match full(host, root) {
+        Some(root) => inside(&path, &root) && path.chars().skip(root.chars().count()).collect::<String>().split('\\').filter(|part| !part.is_empty()).count() <= 3,
+        None => false,
+    })
+}
+
+/// A removal that asked for a restart blocks leftover work until Windows has restarted:
+/// the boot time recorded with the request still matches the current one within two minutes.
+pub fn waiting_for_restart(app: &InstalledApp, boot_time_ticks: i64) -> bool {
+    const TICKS_PER_MINUTE: i64 = 600_000_000;
+    app.restart_requested_at > 0 && (app.restart_requested_at - boot_time_ticks).abs() < TICKS_PER_MINUTE * 2
 }

@@ -1,0 +1,4 @@
+{
+  "about": "Lines of the removal recording where the Rust engine deliberately differs from 3.6. Each entry holds the whole Rust line and the reason.",
+  "divergences": []
+}

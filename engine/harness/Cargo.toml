@@ -1,0 +1,15 @@
+[package]
+name = "oneinstall-harness"
+description = "Fixtures and scenario tests that compare the Rust engine with the recorded 3.6 behaviour on disposable machines."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[dependencies]
+oneinstall-core = { path = "../core" }
+oneinstall-platform = { path = "../platform" }
+
+[dev-dependencies]
+regex.workspace = true
+serde_json = { workspace = true, features = ["preserve_order"] }

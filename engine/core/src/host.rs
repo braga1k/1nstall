@@ -9,6 +9,11 @@ pub enum SpecialFolder {
     CommonApplicationData,
     LocalApplicationData,
     ApplicationData,
+    MyDocuments,
+    Desktop,
+    MyPictures,
+    MyMusic,
+    MyVideos,
 }
 
 /// Everything the rules ask of the machine. The Windows implementation lives in `oneinstall-platform`;
@@ -21,6 +26,10 @@ pub trait Host {
     fn expand_environment(&self, text: &str) -> String;
     /// True only for an existing file, never for a directory.
     fn file_exists(&self, path: &str) -> bool;
+    fn directory_exists(&self, path: &str) -> bool;
+    /// Whether a file or directory is a reparse point (junction, symbolic link, cloud
+    /// placeholder). `None` when its attributes cannot be read.
+    fn is_reparse_point(&self, path: &str) -> Option<bool>;
     /// Absolute, normalised path. `None` when the text is not a usable path.
     fn full_path(&self, path: &str) -> Option<String>;
     /// The program part of a command line, as Windows itself splits it.

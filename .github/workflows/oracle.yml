@@ -66,6 +66,15 @@ jobs:
           grep -E '^oracle [a-z]+:' test.log | while IFS= read -r line; do
             echo "::notice title=engine (${{ matrix.os }})::$line"
           done
+      - name: Rust removal scenarios against the recorded 3.6 behaviour
+        shell: bash
+        env:
+          ORACLE_DISPOSABLE: '1'
+        run: |
+          cargo test --locked -p oneinstall-harness --test oracle_removal -- --nocapture 2>&1 | tee removal.log
+          grep -E '^oracle removal:' removal.log | while IFS= read -r line; do
+            echo "::notice title=engine (${{ matrix.os }})::$line"
+          done
   observe:
     name: Machine observations (${{ matrix.os }})
     strategy:

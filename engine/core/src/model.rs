@@ -8,6 +8,10 @@ pub struct InstalledApp {
     pub version: Option<String>,
     pub kind: Option<String>,
     pub location: Option<String>,
+    /// The registration had no install location; `location` was derived from the icon or
+    /// the uninstaller. It still protects that folder while the app is installed, but it is
+    /// never carried into a removal as proof of ownership.
+    pub location_inferred: bool,
     pub command: Option<String>,
     pub registry_path: Option<String>,
     pub package_family: Option<String>,

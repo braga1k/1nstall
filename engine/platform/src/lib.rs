@@ -1,6 +1,13 @@
 //! Windows implementation of what the engine rules ask of the machine.
 #![cfg(windows)]
 
+pub mod inventory;
+pub mod json;
+pub mod process;
+pub mod recycle;
+pub mod registry;
+pub mod removal;
+
 use std::ffi::c_void;
 use std::ptr::{null, null_mut};
 
@@ -51,11 +58,23 @@ const LCMAP_LOWERCASE: u32 = 0x0000_0100;
 const LOCALE_SDECIMAL: u32 = 0x0000_000E;
 const INVALID_FILE_ATTRIBUTES: u32 = 0xFFFF_FFFF;
 const FILE_ATTRIBUTE_DIRECTORY: u32 = 0x0000_0010;
+const FILE_ATTRIBUTE_REPARSE_POINT: u32 = 0x0000_0400;
 /// Longest path the 3.6 runtime accepted.
 const MAX_PATH: usize = 260;
 
 fn wide(text: &str) -> Vec<u16> {
     text.encode_utf16().chain(std::iter::once(0)).collect()
+}
+
+/// File attributes, or `None` when the path does not exist or cannot be read.
+pub(crate) fn attributes(path: &str) -> Option<u32> {
+    if path.trim().is_empty() || has_invalid_path_chars(path) {
+        return None;
+    }
+    let path = wide(path);
+    // SAFETY: the path is NUL-terminated.
+    let flags = unsafe { GetFileAttributesW(path.as_ptr()) };
+    (flags != INVALID_FILE_ATTRIBUTES).then_some(flags)
 }
 
 /// Reads a NUL-terminated UTF-16 string.
@@ -153,6 +172,14 @@ impl Host for WindowsHost {
         attributes != INVALID_FILE_ATTRIBUTES && attributes & FILE_ATTRIBUTE_DIRECTORY == 0
     }
 
+    fn directory_exists(&self, path: &str) -> bool {
+        matches!(attributes(path), Some(flags) if flags & FILE_ATTRIBUTE_DIRECTORY != 0)
+    }
+
+    fn is_reparse_point(&self, path: &str) -> Option<bool> {
+        attributes(path).map(|flags| flags & FILE_ATTRIBUTE_REPARSE_POINT != 0)
+    }
+
     fn full_path(&self, path: &str) -> Option<String> {
         // The same refusals as the 3.6 runtime: blank text, illegal characters, a colon
         // anywhere but after the drive letter, and over-long paths.
@@ -191,6 +218,11 @@ impl Host for WindowsHost {
 
     fn special_folder(&self, folder: SpecialFolder) -> String {
         let identifier = match folder {
+            SpecialFolder::Desktop => 0x00,
+            SpecialFolder::MyDocuments => 0x05,
+            SpecialFolder::MyMusic => 0x0D,
+            SpecialFolder::MyVideos => 0x0E,
+            SpecialFolder::MyPictures => 0x27,
             SpecialFolder::ApplicationData => 0x1A,
             SpecialFolder::LocalApplicationData => 0x1C,
             SpecialFolder::CommonApplicationData => 0x23,
