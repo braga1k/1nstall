@@ -37,6 +37,10 @@ static class Engine {
     [DllImport(Library,CharSet=CharSet.Unicode)] static extern IntPtr oi_queue_start(string keys,string logs);
     [DllImport(Library)] static extern void oi_queue_stop();
     [DllImport(Library)] static extern IntPtr oi_queue_events();
+    [DllImport(Library,CharSet=CharSet.Unicode)] static extern IntPtr oi_uninstall_start(string operation,string arguments,string log);
+    [DllImport(Library)] static extern void oi_uninstall_stop();
+    [DllImport(Library)] static extern IntPtr oi_uninstall_events();
+    [DllImport(Library)] static extern int oi_uninstall_targets();
     [DllImport(Library)] static extern void oi_free(IntPtr text);
 
     static string Take(IntPtr text) { try { return Marshal.PtrToStringUni(text); } finally { oi_free(text); } }
@@ -82,6 +86,13 @@ static class Engine {
     public static void QueueStop() { oi_queue_stop(); }
     // What happened since the last call: one record per event, as kind, app key and text.
     public static string QueueEvents() { return Take(oi_queue_events()); }
+    // Uninstalling: Inventory, Remove (app ids), Scan, or Clean (positions of leftovers), one at a
+    // time inside the engine. In the test modes only Inventory is allowed. See engine/ffi/src/uninstall.rs.
+    public static string UninstallStart(string operation,string arguments,string log) { return Take(oi_uninstall_start(operation,arguments,log)); }
+    public static void UninstallStop() { oi_uninstall_stop(); }
+    public static string UninstallEvents() { return Take(oi_uninstall_events()); }
+    // How many removed apps are on record for a leftover check.
+    public static int UninstallTargets() { return oi_uninstall_targets(); }
 
     static string Hash(Stream stream) {
         using(var sha=SHA256.Create()) return BitConverter.ToString(sha.ComputeHash(stream)).Replace("-","").ToLowerInvariant();

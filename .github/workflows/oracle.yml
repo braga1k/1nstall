@@ -75,6 +75,21 @@ jobs:
           grep -E '^oracle removal:' removal.log | while IFS= read -r line; do
             echo "::notice title=engine (${{ matrix.os }})::$line"
           done
+      - name: Remove, scan and clean a fixture app through the engine boundary (disposable machine)
+        shell: bash
+        env:
+          ORACLE_DISPOSABLE: '1'
+        run: |
+          set +e
+          cargo test --locked -p oneinstall-harness --test uninstall_boundary -- --nocapture 2>&1 | tee uninstall.log
+          result=${PIPESTATUS[0]}
+          grep -E '^oracle uninstall:' uninstall.log | while IFS= read -r line; do
+            echo "::notice title=engine (${{ matrix.os }})::${line:0:600}"
+          done
+          if [ "$result" -ne 0 ]; then
+            echo "::error title=engine (${{ matrix.os }})::uninstall boundary test failed: $(grep -E 'panicked|assertion|left:|right:' uninstall.log | head -4 | tr '\n' ' ' | cut -c1-600)"
+          fi
+          exit "$result"
       - name: Real WinGet install through the Rust queue (disposable machine)
         shell: bash
         timeout-minutes: 20

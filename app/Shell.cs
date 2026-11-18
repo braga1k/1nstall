@@ -1,9 +1,9 @@
 // The main window: the compiled 3.6 interface, started and wired in C# over the Rust engine.
 //
-// Ported so far: the install library (Library.cs), the install queue (Queue.cs), appearance (Theme.cs), languages (I18n.cs)
+// Ported so far: the install library (Library.cs), the install queue (Queue.cs), the
+// Uninstall pages (Uninstall.cs), appearance (Theme.cs), languages (I18n.cs)
 // and the Settings page (SettingsPage.cs).
-// Still to port from vexan_installers.ps1 and src/manager-ui.ps1: the uninstall pages, and
-// history and diagnostics.
+// Still to port from src/manager-ui.ps1: history and diagnostics.
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -28,7 +28,7 @@ sealed class StartupData {
 static class Shell {
     static Window window;
     static string logDirectory, logPath;
-    // "Install" or "Settings" so far.
+    // "Install", "Uninstall" or "Settings".
     public static string Mode="Install";
 
     static T Find<T>(string name) where T:class { return window.FindName(name) as T; }
@@ -54,24 +54,25 @@ static class Shell {
         catch(UnauthorizedAccessException) { SetText("Status","Could not save the log to disk."); }
     }
 
-    // Set-AppMode of 3.6, for the Install mode; the Uninstall mode is not ported yet.
+    // Set-AppMode: the Install library or the Uninstall page.
     public static void SetMode(string mode) {
+        if(Library.Busy || Uninstall.Busy) return;
         SettingsPage.Hide();
         bool changed=Mode!=mode;
         if(changed) Motion.ClearDecorations();
-        Mode=mode;
-        Show("InstallLibrary",true); Show("SetupGlass",true); Show("CategoriesHost",true);
-        Show("UninstallNavigation",false); Show("UninstallPage",false); Show("RemovalGlass",false);
+        Mode=mode; bool uninstall=mode=="Uninstall";
+        Show("InstallLibrary",!uninstall); Show("SetupGlass",!uninstall); Show("CategoriesHost",!uninstall);
+        Show("UninstallNavigation",uninstall); Show("UninstallPage",uninstall);
         var controls=Find<FrameworkElement>("WindowControls"); if(controls!=null) controls.Margin=new Thickness(0,30,30,0);
-        SetText("NavigationHeading","LIBRARY");
+        SetText("NavigationHeading",uninstall?"THIS PC":"LIBRARY");
         foreach(string name in new[]{"InstallMode","UninstallMode","HistoryMode"}) {
             var button=Find<Control>(name); if(button==null) continue;
             if(name==mode+"Mode") button.SetResourceReference(Control.BackgroundProperty,"AccentSurfaceBrush"); else button.Background=Brushes.Transparent;
         }
-        Library.UpdateFilter(true);
+        if(uninstall) Uninstall.Shown(); else Library.UpdateFilter(true);
         if(changed && window.IsVisible) {
-            Motion.Enter(Find<FrameworkElement>("InstallLibrary"),0,10,0);
-            Motion.Enter(Find<FrameworkElement>("SetupGlass"),10,0,40);
+            Motion.Enter(Find<FrameworkElement>(uninstall?"UninstallPage":"InstallLibrary"),0,10,0);
+            if(!uninstall) Motion.Enter(Find<FrameworkElement>("SetupGlass"),10,0,40);
         }
     }
 
@@ -135,12 +136,15 @@ static class Shell {
         // Ctrl+F goes to the search box.
         window.PreviewKeyDown+=delegate(object sender,KeyEventArgs e) {
             if(e.Key!=Key.F || (Keyboard.Modifiers & ModifierKeys.Control)==0) return;
-            var search=Find<TextBox>("Search"); if(search==null) return;
+            var search=Find<TextBox>(Mode=="Uninstall"?"InstalledSearch":"Search"); if(search==null) return;
             search.Focus(); search.SelectAll(); e.Handled=true;
         };
         var donate=Find<Button>("Donate"); if(donate!=null) donate.Click+=delegate { Process.Start("https://ko-fi.com/braga1k"); };
         var openLogs=Find<Button>("OpenLogs"); if(openLogs!=null) openLogs.Click+=delegate { Process.Start("explorer.exe","\""+logDirectory+"\""); };
         var installMode=Find<Button>("InstallMode"); if(installMode!=null) installMode.Click+=delegate { SetMode("Install"); };
+        var uninstallMode=Find<Button>("UninstallMode"); if(uninstallMode!=null) uninstallMode.Click+=delegate { SetMode("Uninstall"); };
+        // Test modes keep registry backups beside the executable too.
+        Uninstall.Initialize(window,logPath,test?System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"test-data","Backups"):System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"1nstall","Backups"));
         // The named buttons of the window follow the pointer with a light, as in 3.6.
         foreach(string name in new[]{"ClearSearch","UserProfiles","Profiles","ClearSelection","SaveSetup","Install","Cancel","OpenLogs","MinimizeWindow","MaximizeWindow","CloseWindow","InstallMode","UninstallMode","RefreshInstalled","WindowsAppsSettings","ClearUninstallSelection","CheckLeftovers","OpenUninstallBackups","ReviewUninstall","StopUninstall","Donate"}) {
             var button=Find<Button>(name); if(button!=null) Theme.EnableHoverMotion(button);

@@ -4,8 +4,9 @@
 //! the registration is gone; `scan` offers leftover candidates, none selected; `clean` removes
 //! only the items it is given, re-checking each one first.
 
-use std::collections::HashSet;
+use std::collections::{HashSet, VecDeque};
 use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::Mutex;
 use std::time::Duration;
 
 use oneinstall_core::text::eq_ignore_case;
@@ -17,6 +18,40 @@ use crate::json::{app_from_json, app_to_json};
 use crate::process::{self, run_captured, LaunchError, RunError};
 use crate::recycle::recycle_folder;
 use crate::registry::{Hive, Key};
+
+/// Live text for whoever shows progress, as 3.6 keeps it in a static queue: what is being
+/// removed, checked or cleaned right now. Nothing depends on it being read.
+static PROGRESS: Mutex<VecDeque<String>> = Mutex::new(VecDeque::new());
+/// Ids of apps whose removal has just been verified.
+static VERIFIED: Mutex<VecDeque<String>> = Mutex::new(VecDeque::new());
+/// Unread entries kept at most, so a caller that never reads cannot grow the queues.
+const UNREAD_LIMIT: usize = 4096;
+
+fn push(queue: &Mutex<VecDeque<String>>, text: String) {
+    if let Ok(mut queue) = queue.lock() {
+        if queue.len() < UNREAD_LIMIT {
+            queue.push_back(text);
+        }
+    }
+}
+
+fn progress(text: String) {
+    push(&PROGRESS, text);
+}
+
+fn verified(app: &InstalledApp) {
+    push(&VERIFIED, app.id.clone().unwrap_or_default());
+}
+
+/// The progress text reported since the last call, oldest first.
+pub fn take_progress() -> Vec<String> {
+    PROGRESS.lock().map(|mut queue| queue.drain(..).collect()).unwrap_or_default()
+}
+
+/// The ids of removals verified since the last call.
+pub fn take_verified() -> Vec<String> {
+    VERIFIED.lock().map(|mut queue| queue.drain(..).collect()).unwrap_or_default()
+}
 
 /// Limit on entries examined per root, per registry hive view and per candidate folder.
 const SCAN_LIMIT: usize = 20_000;
@@ -183,6 +218,7 @@ pub fn remove(host: &dyn Host, apps: &mut [InstalledApp], stop: &AtomicBool, on_
             continue;
         }
         on_stage(Stage { id: app.id.as_deref(), name: app.name.as_deref(), state: "Preparing\u{2026}" });
+        progress(format!("Removing {}\u{2026} Finish any publisher dialog that opens.", name_of(app)));
         if let Err(failure) = remove_one(host, app, &mut item, &mut result.messages, on_stage) {
             item.outcome = failure.outcome.to_string();
             result.messages.push(format!("{}: {} \u{b7} {}", name_of(app), item.outcome, failure.message));
@@ -263,6 +299,7 @@ fn remove_one(host: &dyn Host, app: &mut InstalledApp, item: &mut RemovalOutcome
     } else {
         item.outcome = "Success".to_string();
         app.removal_verified = true;
+        verified(app);
         "Exact registration absence verified. Cleanup remains a separate review."
     };
     item.message = Some(message.to_string());
@@ -507,6 +544,7 @@ pub fn scan(host: &dyn Host, owners: &mut [InstalledApp]) -> Result<RemovalResul
     let mut seen: HashSet<String> = HashSet::new();
     for app in owners.iter_mut() {
         let name = name_of(app).to_string();
+        progress(format!("Checking leftovers for {name}\u{2026}"));
         if uninstall::waiting_for_restart(app, boot_time) {
             result.messages.push(format!("{name}: restart Windows before scanning leftovers."));
             continue;
@@ -537,6 +575,7 @@ pub fn scan(host: &dyn Host, owners: &mut [InstalledApp]) -> Result<RemovalResul
                 message: Some("Removal verified on recheck: recorded registration is absent.".to_string()),
                 ..RemovalOutcome::default()
             });
+            verified(app);
             result.messages.push(format!("{name}: removal now verified; the recorded registration is absent."));
         }
         if !app.removal_verified || !(app.identity_verified || app.ownership_verified) {
@@ -557,11 +596,13 @@ pub fn scan(host: &dyn Host, owners: &mut [InstalledApp]) -> Result<RemovalResul
             }
         }
         for root in uninstall::data_roots(host) {
+            progress(format!("{name} \u{b7} Disk \u{b7} {root}"));
             let mut count = 0usize;
             scan.discover_folders(&root, 0, &app_view, &mut count);
         }
         for machine in [false, true] {
             for view32 in [false, true] {
+                progress(format!("{name} \u{b7} Registry \u{b7} {}{}", if machine { "HKLM" } else { "HKCU" }, if view32 { " 32-bit" } else { " 64-bit" }));
                 match Key::open(hive_of(machine), view32, "Software") {
                     Ok(Some(software)) => {
                         let mut count = 0usize;
@@ -659,6 +700,7 @@ pub fn clean(host: &dyn Host, items: &[LeftoverItem]) -> Result<RemovalResult, S
             outcome: "Unknown".to_string(),
             ..RemovalOutcome::default()
         };
+        progress(format!("Removing reviewed leftover: {}", item.path));
         match clean_one(host, item, &installed, boot_time, &backup_folder, &mut result) {
             Ok(message) => {
                 outcome.outcome = "Success".to_string();

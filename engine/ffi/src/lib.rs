@@ -24,6 +24,7 @@ const LOCALES: &str = include_str!("../../../locales.json");
 
 pub mod library;
 pub mod queue;
+pub mod uninstall;
 
 fn without_mark(text: &'static str) -> &'static str {
     text.trim_start_matches('\u{feff}')
@@ -171,6 +172,11 @@ pub fn set_test_environment(data_root: &str, install_program: &str) {
     if let Ok(mut environment) = TEST_ENVIRONMENT.lock() {
         *environment = Some(TestEnvironment { data_root: data_root.to_string(), install_program: install_program.to_string() });
     }
+}
+
+/// Whether the engine is in its test environment, where nothing may change the machine.
+pub(crate) fn in_test_environment() -> bool {
+    TEST_ENVIRONMENT.lock().map(|environment| environment.is_some()).unwrap_or(true)
 }
 
 /// The package service for reading: this machine's WinGet, and the data folder in use.

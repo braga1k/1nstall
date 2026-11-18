@@ -1,27 +1,27 @@
 # Fase 4 — Interface, migração e release
 
-Estado em 2026-11-18, depois de quatro dos seis passos e de uma ronda de otimização do arranque. O código está no ramo `v4/app`, nas pastas `app/` e `engine/ffi/`. A 3.6 na raiz do repositório continua intocada e a compilar.
+Estado em 2026-11-18, depois de cinco dos seis passos e de uma ronda de otimização do arranque. O código está no ramo `v4/app`, nas pastas `app/` e `engine/ffi/`. A 3.6 na raiz do repositório continua intocada e a compilar.
 
 ## Resumo
 
-Escolheste a interface WPF sobre o motor Rust. Existe um `1nstall.exe` 4.0 num único ficheiro, sem PowerShell, e está provado que a 3.6 se atualiza para ele sem release intermédia. Com a biblioteca, a fila de instalação, as definições, o tema e os 51 idiomas já incluídos, fica pronto em 473 ms, abaixo do limite de 500 ms, com o aspeto e as animações intactos. O limite de memória de 80 MB não é atingido: fica em 116 MB.
+Escolheste a interface WPF sobre o motor Rust. Existe um `1nstall.exe` 4.0 num único ficheiro, sem PowerShell, e está provado que a 3.6 se atualiza para ele sem release intermédia. Com a biblioteca, a fila de instalação, a desinstalação, as definições, o tema e os 51 idiomas já incluídos, fica pronto em 473 ms, abaixo do limite de 500 ms, com o aspeto e as animações intactos. O limite de memória de 80 MB não é atingido: fica em 113 MB.
 
-A fase não está concluída: a 4.0 já instala, mas ainda não desinstala, e faltam o histórico e a release.
+A fase não está concluída: a 4.0 já instala e desinstala, e faltam o histórico, os diagnósticos e a release.
 
 ## O executável da 4.0
 
-| Medida | 3.6.0 | Passo 1, antes de otimizar | Passo 1, otimizado | Passo 2 | Passo 3 | Passo 4 |
-| --- | --- | --- | --- | --- | --- | --- |
-| Tamanho | 2 699 264 bytes | 3 098 624 bytes | 3 064 320 bytes | 3 130 880 bytes | 3 231 744 bytes | 3 277 312 bytes |
-| Pronta e ociosa, a quente | 1 996 ms | 594 ms | 444 ms | 467 ms | 479 ms | 473 ms |
-| Primeira execução, com extração do motor | 2 425 ms | 763 ms | 501 ms | 563 ms | 569 ms | 559 ms |
-| Pico de working set | 242 MB | 105 MB | 101 MB | 110 MB | 113 MB | 116 MB |
-| Em repouso após 8 s (working set / privada) | não medido | não medido | 101 / 104 MB | 113 / 124 MB | 116 / 129 MB | 109 / 125 MB |
-| Precisa, além do Windows | .NET Framework 4.8, PowerShell 5.1 | .NET Framework 4.8 | .NET Framework 4.8 | .NET Framework 4.8 | .NET Framework 4.8 | .NET Framework 4.8 |
+| Medida | 3.6.0 | Passo 1, antes de otimizar | Passo 1, otimizado | Passo 2 | Passo 3 | Passo 4 | Passo 5 |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Tamanho | 2 699 264 bytes | 3 098 624 bytes | 3 064 320 bytes | 3 130 880 bytes | 3 231 744 bytes | 3 277 312 bytes | 3 513 856 bytes |
+| Pronta e ociosa, a quente | 1 996 ms | 594 ms | 444 ms | 467 ms | 479 ms | 473 ms | 473 ms |
+| Primeira execução, com extração do motor | 2 425 ms | 763 ms | 501 ms | 563 ms | 569 ms | 559 ms | 567 ms |
+| Pico de working set | 242 MB | 105 MB | 101 MB | 110 MB | 113 MB | 116 MB | 113 MB |
+| Em repouso após 8 s (working set / privada) | não medido | não medido | 101 / 104 MB | 113 / 124 MB | 116 / 129 MB | 109 / 125 MB | 112 / 130 MB |
+| Precisa, além do Windows | .NET Framework 4.8, PowerShell 5.1 | .NET Framework 4.8 | .NET Framework 4.8 | .NET Framework 4.8 | .NET Framework 4.8 | .NET Framework 4.8 | .NET Framework 4.8 |
 
-Medido neste PC com a régua da Fase 0, mediana de 10 arranques a quente. No passo 4 os 10 arranques ficaram entre 468 e 483 ms.
+Medido neste PC com a régua da Fase 0, mediana de 10 arranques a quente. No passo 5 os 10 arranques ficaram entre 453 e 496 ms.
 
-**Estes números ainda vão subir um pouco, e a margem para os 500 ms é de 27 ms.** Faltam as páginas de desinstalação e de histórico. A partir do passo 3 a app pergunta ao WinGet o que está instalado logo que a janela abre, como a 3.6 faz; isso corre noutro processo e não entra no pico de memória acima.
+**A margem para os 500 ms é de 27 ms na mediana, e o arranque mais lento da série ficou a 4 ms do limite.** Falta a página de histórico. A partir do passo 3 a app pergunta ao WinGet o que está instalado logo que a janela abre, como a 3.6 faz; isso corre noutro processo e não entra no pico de memória acima.
 
 Como é construído:
 
@@ -109,6 +109,32 @@ Resultado no commit `e485117`:
 
 Na Fase 1, a 3.6 instalou este mesmo pacote na mesma imagem e respondeu `Unknown`, porque a sua verificação não conseguia ler a lista de instalados antes de os acordos da origem serem aceites. A 4.0 aceita-os na verificação, depois de o utilizador os ter aceite para instalar. É a divergência 4 da Fase 2, agora confirmada com uma instalação real.
 
+## Passo 5: a desinstalação
+
+Portei a parte de desinstalação de `vexan_installers.ps1`: a lista de apps instaladas, a fila de remoção e a sua revisão, a análise de vestígios e a limpeza dos que o utilizador escolher.
+
+| Parte | Onde ficou | O que faz |
+| --- | --- | --- |
+| Regras de remoção | Motor Rust, desde a Fase 2 | Corre o desinstalador do próprio editor; só conta como removida a app cujo registo exato desapareceu; a limpeza é sempre um passo à parte. |
+| Execução | Motor Rust | Ler as apps, remover, analisar e limpar correm uma de cada vez, num fio próprio dentro do motor. O histórico e as cópias de segurança são os da 3.6. |
+| Progresso em direto | Motor Rust | As mensagens que a 3.6 mostra durante a remoção e a análise, nos mesmos pontos. Na Fase 2 o motor não as emitia, porque não havia interface. |
+| Lista e filtros | C# | As apps instaladas, os filtros «Desktop» e «Microsoft Store» e a pesquisa por nome ou editor. |
+| Revisão | C# | A janela de revisão da remoção e a dos vestígios: nada avança sem um consentimento novo e explícito, e os vestígios começam todos por selecionar. |
+| Fila e resultado | C# | Estado por app, barra de progresso, registo da sessão, resumo da limpeza. |
+
+A página ficou igual à captura da 3.6 em `docs/images/uninstall-queue-dark.png`.
+
+### Como foi testado
+
+A desinstalação altera o sistema, por isso os testes estão separados em dois.
+
+| Onde | O que corre | O que não corre |
+| --- | --- | --- |
+| Neste PC | Só leitura: listar as apps, filtrar, pesquisar, selecionar uma e abrir a revisão. O teste recua sempre em vez de confirmar. | Nenhuma remoção, análise ou limpeza. Nos modos de teste o motor recusa as três. |
+| Actions, máquinas descartáveis | Uma app fictícia é registada, removida com um desinstalador de substituição, analisada e limpa, tudo pela fronteira que a janela usa. Mais os oito cenários de remoção da Fase 2. | A janela em si: o Actions não tem ambiente de trabalho interativo. |
+
+Neste PC a página leu 210 apps instaladas, 165 de ambiente de trabalho e 45 da Store: o mesmo número que o motor tinha contado na Fase 2 e que coincidia com a 3.6.
+
 ## Otimização do arranque
 
 Medi primeiro onde o tempo se gastava, depois testei cada corte em separado.
@@ -172,7 +198,9 @@ A pesquisa do protótipo WPF da Fase 3, que tinha passado para este executável,
 
 | Verificação | Onde correu | Resultado |
 | --- | --- | --- |
-| Autoteste (`--self-test`) | Neste PC | 22 de 22 |
+| Autoteste (`--self-test`) | Neste PC | 26 de 26 |
+| Teste da desinstalação por UI Automation, só de leitura (`app/tests/uninstall-ui.ps1`) | Neste PC | 17 de 17 |
+| Desinstalação pela fronteira do motor: os modos de teste só leem | Neste PC | Passa |
 | Teste da fila por UI Automation, com o WinGet de substituição (`app/tests/queue-ui.ps1`) | Neste PC | 19 de 19 |
 | Fila pela fronteira do motor, com o WinGet de substituição: execução, recusa, paragem | Neste PC | Passa |
 | Teste da biblioteca por UI Automation (`app/tests/library-ui.ps1`) | Neste PC | 27 de 27 |
@@ -222,7 +250,7 @@ A interface da 3.6 é comandada por 79 funções PowerShell, em cerca de 2 500 l
 | 2 | Definições, tema, cor de destaque, vidro e os 51 idiomas, incluindo os dois da direita para a esquerda | Feito |
 | 3 | Biblioteca completa: filtros por categoria, vistas, perfis, detalhes, guardar e carregar seleções | Feito |
 | 4 | Fila de instalação: confirmação, progresso, registos, cancelamento | Feito |
-| 5 | Desinstalação: lista de apps, fila, análise e limpeza de vestígios, cópias de segurança | Por fazer |
+| 5 | Desinstalação: lista de apps, fila, análise e limpeza de vestígios, cópias de segurança | Feito |
 | 6 | Histórico, diagnósticos, verificação de atualizações, e a release: script de build, CI, testes da 3.6 adaptados, notas | Por fazer |
 
 Os passos 4 e 5 só podem ser testados neste PC com o WinGet e o desinstalador de substituição. Instalações e remoções reais continuam a correr apenas no Actions.
@@ -232,7 +260,9 @@ Os passos 4 e 5 só podem ser testados neste PC com o WinGet e o desinstalador d
 - **Um só PC.** Os tempos e a memória foram medidos numa máquina topo de gama. A memória da placa gráfica depende do controlador.
 - **As compilações não são reprodutíveis bit a bit.** As duas imagens do Actions produziram executáveis do mesmo tamanho com SHA-256 diferentes.
 - **O executável não é assinado**, tal como o da 3.6.
-- **O botão de histórico não existe ainda**, e o botão Desinstalar ainda não faz nada.
+- **O botão de histórico não existe ainda.**
+- **Nenhuma remoção foi conduzida pela janela.** No teu PC o teste recua sempre; no Actions não há ambiente de trabalho. A remoção, a análise e a limpeza estão testadas pela fronteira do motor, não pelos botões.
+- **A janela de revisão dos vestígios não foi aberta em nenhum teste**, porque só aparece depois de uma remoção real.
 - **Parar a meio de uma fila não foi conduzido pela interface.** O programa de substituição termina de imediato, por isso não há tempo para carregar no botão; a paragem está testada no motor.
 - **Uma falha interna do motor termina a app sem mensagem.** O motor está compilado para abortar em caso de erro interno. Fica para o passo 6 fazê-lo devolver o erro à janela.
 - **Guardar e carregar seleções não foi conduzido pela interface.** As janelas de escolha de ficheiro do Windows não se deixam conduzir de forma fiável; a leitura e a escrita dos ficheiros estão testadas no motor.

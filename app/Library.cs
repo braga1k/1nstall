@@ -58,7 +58,7 @@ static partial class Library {
     }
 
     // Animate-Value
-    static void AnimateValue(DependencyObject element,DependencyProperty property,double from,double to,int milliseconds) {
+    public static void AnimateValue(DependencyObject element,DependencyProperty property,double from,double to,int milliseconds) {
         var target=(IAnimatable)element;
         target.BeginAnimation(property,null);
         element.SetValue(property,to);
@@ -88,17 +88,17 @@ static partial class Library {
         Motion.Pop(Find<FrameworkElement>("SelectedCount"));
     }
 
-    // New-SelectionRow
-    static StackPanel NewSelectionRow(string key,string name,string detail) {
-        var panel=new StackPanel { Margin=new Thickness(0,8,0,9), Tag=key };
+    // New-SelectionRow: a name, a line of detail under it, and a button that removes the row.
+    public static StackPanel NewSelectionRow(object tag,string name,string detail,RoutedEventHandler onRemove,bool enabled) {
+        var panel=new StackPanel { Margin=new Thickness(0,8,0,9), Tag=tag };
         var row=new Grid(); row.ColumnDefinitions.Add(new ColumnDefinition()); row.ColumnDefinitions.Add(new ColumnDefinition { Width=GridLength.Auto });
         var title=Shell.NewLabel(name,false,13); title.FontWeight=FontWeights.SemiBold; title.Margin=new Thickness(0,0,8,0); title.VerticalAlignment=VerticalAlignment.Center;
         row.Children.Add(title);
-        var remove=new Button { Tag=key, Width=32, MinHeight=32, Padding=new Thickness(0), Margin=new Thickness(0), FontSize=18, Background=Brushes.Transparent, BorderThickness=new Thickness(0), IsEnabled=!Busy };
+        var remove=new Button { Tag=tag, Width=32, MinHeight=32, Padding=new Thickness(0), Margin=new Thickness(0), FontSize=18, Background=Brushes.Transparent, BorderThickness=new Thickness(0), IsEnabled=enabled };
         I18n.Set(remove,"Content","×"); I18n.Set(remove,"ToolTip","Remove "+name+" from selection");
         AutomationProperties.SetName(remove,"Remove "+name+" from selection");
         Theme.EnableHoverMotion(remove);
-        Grid.SetColumn(remove,1); remove.Click+=delegate(object sender,RoutedEventArgs e) { RemoveSelectedApp((string)((Button)sender).Tag); };
+        Grid.SetColumn(remove,1); remove.Click+=onRemove;
         row.Children.Add(remove); panel.Children.Add(row);
         var label=Shell.NewLabel(detail,true,12); label.Margin=new Thickness(0,4,0,0); panel.Children.Add(label);
         return panel;
@@ -125,7 +125,7 @@ static partial class Library {
         if(plan.Length>0) foreach(string record in plan.Split('\u001E')) {
             string[] fields=record.Split('\u001F'); string key=fields[0], status;
             string text=statuses.TryGetValue(key,out status)?status:fields[2]=="1"?"Automatic · WinGet":"Guided · official website";
-            var panel=NewSelectionRow(key,fields[1],text);
+            var panel=NewSelectionRow(key,fields[1],text,delegate(object sender,RoutedEventArgs e) { RemoveSelectedApp((string)((Button)sender).Tag); },!Busy);
             queue.Children.Add(panel);
             statusLabels[key]=(TextBlock)panel.Children[1];
             Motion.Phase((TextBlock)panel.Children[1],text);
@@ -212,7 +212,7 @@ static partial class Library {
     }
 
     // Refresh-LibraryInventory
-    static void RefreshInventory() {
+    public static void RefreshInventory() {
         if(inventoryTask!=null) return;
         refresh.IsEnabled=false;
         I18n.Set(refresh,"ToolTip","Checking installed apps…");

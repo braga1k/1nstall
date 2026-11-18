@@ -78,6 +78,8 @@ static class Program {
         Check(log,ref passed,"the test modes use the default library view",Engine.LibraryView(true)=="All apps");
         Check(log,ref passed,"the test modes refuse to install",Engine.QueueStart("extra_7zip",Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"test-logs")).StartsWith("!",StringComparison.Ordinal));
         Check(log,ref passed,"an idle queue reports nothing",Engine.QueueEvents().Length==0);
+        foreach(string operation in new[]{"Remove","Scan","Clean"}) Check(log,ref passed,"the test modes refuse to "+operation.ToLowerInvariant(),Engine.UninstallStart(operation,"anything","").StartsWith("!",StringComparison.Ordinal));
+        Check(log,ref passed,"the test modes read no removal history",Engine.UninstallTargets()==0);
         Check(log,ref passed,"test preferences are fixed: "+Engine.Settings(true).Replace('\u001F',' '),Engine.Settings(true)=="Dark\u001F1\u001Fen\u001F0");
         Check(log,ref passed,"every language is listed",Engine.Languages().Split('\u001E').Length==locales.Count);
         I18n.Load(Engine.Language("System","pt-BR"));
