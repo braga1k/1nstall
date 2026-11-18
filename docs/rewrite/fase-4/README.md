@@ -133,6 +133,14 @@ A desinstalação altera o sistema, por isso os testes estão separados em dois.
 | Neste PC | Só leitura: listar as apps, filtrar, pesquisar, selecionar uma e abrir a revisão. O teste recua sempre em vez de confirmar. | Nenhuma remoção, análise ou limpeza. Nos modos de teste o motor recusa as três. |
 | Actions, máquinas descartáveis | Uma app fictícia é registada, removida com um desinstalador de substituição, analisada e limpa, tudo pela fronteira que a janela usa. Mais os oito cenários de remoção da Fase 2. | A janela em si: o Actions não tem ambiente de trabalho interativo. |
 
+Resultado no Actions, commit `d9c38b4`, igual nas duas imagens (Windows Server 2022 e 2025):
+
+| Passo | Resultado |
+| --- | --- |
+| Remover | `Preparing…`, `Removing…`, `Verifying…`, `Success` |
+| Analisar | Duas pastas oferecidas: a de instalação, como `Linked path`, e a de dados, como `Name match` |
+| Limpar | As duas com `Success`; a cópia de segurança regista o que foi limpo |
+
 Neste PC a página leu 210 apps instaladas, 165 de ambiente de trabalho e 45 da Store: o mesmo número que o motor tinha contado na Fase 2 e que coincidia com a 3.6.
 
 ## Otimização do arranque
