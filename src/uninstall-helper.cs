@@ -252,66 +252,90 @@ public static class OneInstallUninstall
         using (var hive = RegistryKey.OpenBaseKey(app.Machine ? RegistryHive.LocalMachine : RegistryHive.CurrentUser, app.View32 ? RegistryView.Registry32 : RegistryView.Registry64))
         using (var key = hive.OpenSubKey(app.RegistryPath)) return key != null;
     }
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-    struct ProcessEntry
+    struct ProcessStamp { public int Id, Parent; public DateTime Created; }
+    sealed class TrackedProcess { public DateTime Created; public DateTime? Gone; }
+    [DllImport("ntdll.dll")] static extern int NtQuerySystemInformation(int informationClass, IntPtr buffer, int length, out int returned);
+    static bool stampsVerified;
+    // Every process with its parent and creation time, read without opening any process.
+    // An uninstaller elevated through UAC, and its children, cannot be opened from a standard session.
+    static List<ProcessStamp> ProcessStamps()
     {
-        public uint Size, Usage, Id; public UIntPtr Heap; public uint Module, Threads, Parent;
-        public int Priority; public uint Flags;
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)] public string Exe;
+        const string failure = "Cannot track the publisher uninstaller; verify removal manually.";
+        int length = 0x100000, idOffset = IntPtr.Size == 8 ? 0x50 : 0x44;
+        for (int attempt = 0; attempt < 6; attempt++)
+        {
+            IntPtr buffer = Marshal.AllocHGlobal(length);
+            try
+            {
+                int returned, status = NtQuerySystemInformation(5, buffer, length, out returned); // SystemProcessInformation
+                if (status == unchecked((int)0xC0000004)) { length = Math.Max(length * 2, returned + 0x20000); continue; } // Buffer too small.
+                if (status < 0) throw new InvalidOperationException(failure);
+                var rows = new List<ProcessStamp>();
+                for (int offset = 0; ;)
+                {
+                    if (offset < 0 || offset + idOffset + 2 * IntPtr.Size > length) throw new InvalidOperationException(failure);
+                    int next = Marshal.ReadInt32(buffer, offset);
+                    long created = Marshal.ReadInt64(buffer, offset + 0x20);
+                    if (created < 0 || created > DateTime.MaxValue.ToFileTimeUtc()) throw new InvalidOperationException(failure);
+                    rows.Add(new ProcessStamp
+                    {
+                        Created = DateTime.FromFileTimeUtc(created),
+                        Id = (int)Marshal.ReadIntPtr(buffer, offset + idOffset).ToInt64(),
+                        Parent = (int)Marshal.ReadIntPtr(buffer, offset + idOffset + IntPtr.Size).ToInt64()
+                    });
+                    if (next == 0) break;
+                    offset += next;
+                }
+                if (!stampsVerified)
+                {
+                    // Guard against a different structure layout: this process must appear with its own start time.
+                    using (var self = Process.GetCurrentProcess())
+                    {
+                        var mine = rows.FirstOrDefault(row => row.Id == self.Id);
+                        if (mine.Id != self.Id || Math.Abs((mine.Created - self.StartTime.ToUniversalTime()).TotalSeconds) > 2) throw new InvalidOperationException(failure);
+                    }
+                    stampsVerified = true;
+                }
+                return rows;
+            }
+            finally { Marshal.FreeHGlobal(buffer); }
+        }
+        throw new InvalidOperationException(failure);
     }
-    [DllImport("kernel32.dll", SetLastError = true)] static extern IntPtr CreateToolhelp32Snapshot(uint flags, uint id);
-    [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)] static extern bool Process32FirstW(IntPtr snapshot, ref ProcessEntry entry);
-    [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)] static extern bool Process32NextW(IntPtr snapshot, ref ProcessEntry entry);
-    [DllImport("kernel32.dll")] static extern bool CloseHandle(IntPtr handle);
     // Publisher launchers (including NSIS) can exit before their actual uninstaller.
     // Observe only descendants born during this launch; never kill publisher processes.
     public static void WaitForUninstaller(Process root, DateTime launchedAt)
     {
-        var tracked = new Dictionary<int, Process>(); tracked.Add(root.Id, root);
-        var parents = new Dictionary<int, DateTime>(); parents.Add(root.Id, launchedAt);
-        try
+        // Identity is process id plus creation time, so a reused id is never mistaken for a tracked process.
+        var tracked = new Dictionary<int, TrackedProcess>(); tracked.Add(root.Id, new TrackedProcess { Created = launchedAt });
+        while (true)
         {
-            while (true)
+            var stamps = ProcessStamps();
+            var alive = new Dictionary<int, DateTime>(); foreach (var stamp in stamps) alive[stamp.Id] = stamp.Created;
+            foreach (var pair in tracked)
             {
-                var snapshot = CreateToolhelp32Snapshot(2, 0);
-                if (snapshot == new IntPtr(-1)) throw new Win32Exception(Marshal.GetLastWin32Error(), "Cannot track the publisher uninstaller; verify removal manually.");
-                var entries = new List<ProcessEntry>();
-                try
-                {
-                    var entry = new ProcessEntry { Size = (uint)Marshal.SizeOf(typeof(ProcessEntry)) };
-                    if (!Process32FirstW(snapshot, ref entry)) throw new Win32Exception(Marshal.GetLastWin32Error());
-                    do { entries.Add(entry); } while (Process32NextW(snapshot, ref entry));
-                }
-                finally { CloseHandle(snapshot); }
-                bool added;
-                do
-                {
-                    added = false;
-                    foreach (var entry in entries)
-                    {
-                        if (parents.ContainsKey((int)entry.Id) || !parents.ContainsKey((int)entry.Parent)) continue;
-                        Process child = null;
-                        try
-                        {
-                            child = Process.GetProcessById((int)entry.Id);
-                            DateTime born = child.StartTime.ToUniversalTime();
-                            if (born < parents[(int)entry.Parent]) continue;
-                            var parent = tracked[(int)entry.Parent];
-                            if (parent.HasExited && born > parent.ExitTime.ToUniversalTime()) continue;
-                            // Open and retain a handle now, so PID reuse cannot change the process we await.
-                            IntPtr handle = child.Handle;
-                            parents.Add(child.Id, born); tracked.Add(child.Id, child); child = null; added = true;
-                        }
-                        catch (ArgumentException) { } // Already gone between snapshot and handle acquisition.
-                        catch (InvalidOperationException) { }
-                        finally { if (child != null) child.Dispose(); }
-                    }
-                } while (added);
-                if (tracked.Values.All(p => p.HasExited)) return;
-                Thread.Sleep(100);
+                if (pair.Value.Gone != null) continue;
+                DateTime created;
+                bool present = pair.Key == root.Id ? !root.HasExited : alive.TryGetValue(pair.Key, out created) && created == pair.Value.Created;
+                if (!present) pair.Value.Gone = DateTime.UtcNow;
             }
+            bool added;
+            do
+            {
+                added = false;
+                foreach (var stamp in stamps)
+                {
+                    TrackedProcess parent, known;
+                    if (stamp.Id == 0 || stamp.Id == root.Id || !tracked.TryGetValue(stamp.Parent, out parent)) continue;
+                    if (tracked.TryGetValue(stamp.Id, out known) && known.Created == stamp.Created) continue;
+                    if (stamp.Created < parent.Created) continue; // Older than the process it names as parent: a reused id.
+                    if (parent.Gone != null && stamp.Created > parent.Gone.Value) continue; // Born after that parent was gone.
+                    tracked[stamp.Id] = new TrackedProcess { Created = stamp.Created }; added = true;
+                }
+            } while (added);
+            if (tracked.Values.All(process => process.Gone != null)) return;
+            Thread.Sleep(100);
         }
-        finally { foreach (var child in tracked.Values) if (!Object.ReferenceEquals(child, root)) child.Dispose(); }
     }
     static void Stage(InstalledApp app, string state)
     {
@@ -783,6 +807,7 @@ public static class OneInstallUninstall
         app.Msi = true; app.RegistryPath = Arp + @"\{01234567-89AB-CDEF-0123-456789ABCDEF}";
         if (GetCommand(app).Arguments != "/x {01234567-89ab-cdef-0123-456789abcdef}") throw new Exception("MSI removal command regression.");
         app.RegistryPath = Arp + "\\invalid"; bool rejected = false; try { GetCommand(app); } catch { rejected = true; } if (!rejected) throw new Exception("Invalid MSI accepted.");
+        using (var self = Process.GetCurrentProcess()) { if (!ProcessStamps().Any(row => row.Id == self.Id)) throw new Exception("Process snapshot regression."); }
         // Real filesystem boundary checks use only a new temporary fixture, never installed apps.
         string folder = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "1nstall-check-" + Guid.NewGuid().ToString("N"), "Sample Editor");
         Directory.CreateDirectory(folder);
