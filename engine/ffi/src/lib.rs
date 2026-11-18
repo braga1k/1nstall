@@ -11,10 +11,8 @@
 
 use std::sync::OnceLock;
 
-use oneinstall_core::packages::installed_state;
 use oneinstall_core::queue::{plan, CatalogApp};
 use oneinstall_core::settings::{resolve_language, Settings};
-use oneinstall_platform::packages::Packages;
 use oneinstall_platform::settings::{load, save, settings_path, system_appearance};
 use oneinstall_platform::WindowsHost;
 use serde_json::Value;
@@ -24,6 +22,8 @@ const CATALOG: &str = include_str!("../../../catalog.json");
 const PROFILES: &str = include_str!("../../../profiles.json");
 const LOCALES: &str = include_str!("../../../locales.json");
 
+pub mod library;
+
 fn without_mark(text: &'static str) -> &'static str {
     text.trim_start_matches('\u{feff}')
 }
@@ -32,7 +32,7 @@ fn list(row: &Value, name: &str) -> Vec<String> {
     row[name].as_array().map(|items| items.iter().filter_map(Value::as_str).map(str::to_string).collect()).unwrap_or_default()
 }
 
-fn catalog() -> &'static [CatalogApp] {
+pub(crate) fn catalog() -> &'static [CatalogApp] {
     static APPS: OnceLock<Vec<CatalogApp>> = OnceLock::new();
     APPS.get_or_init(|| {
         let rows: Value = serde_json::from_str(without_mark(CATALOG)).unwrap_or(Value::Null);
@@ -52,11 +52,22 @@ fn catalog() -> &'static [CatalogApp] {
     })
 }
 
-const FIELD: char = '\u{1f}';
-const RECORD: char = '\u{1e}';
-const ITEM: char = '\u{1d}';
+pub(crate) const FIELD: char = '\u{1f}';
+pub(crate) const RECORD: char = '\u{1e}';
+pub(crate) const ITEM: char = '\u{1d}';
 
-fn records(rows: impl Iterator<Item = Vec<String>>) -> String {
+/// The catalog as parsed JSON, for the fields only the details window needs.
+pub(crate) fn catalog_rows() -> &'static [Value] {
+    static ROWS: OnceLock<Vec<Value>> = OnceLock::new();
+    ROWS.get_or_init(|| serde_json::from_str(without_mark(CATALOG)).unwrap_or_default())
+}
+
+pub(crate) fn profile_rows() -> &'static [Value] {
+    static ROWS: OnceLock<Vec<Value>> = OnceLock::new();
+    ROWS.get_or_init(|| serde_json::from_str(without_mark(PROFILES)).unwrap_or_default())
+}
+
+pub(crate) fn records(rows: impl Iterator<Item = Vec<String>>) -> String {
     rows.map(|fields| fields.join(&FIELD.to_string())).collect::<Vec<_>>().join(&RECORD.to_string())
 }
 
@@ -91,12 +102,6 @@ pub fn plan_records(keys: &[String]) -> String {
     }
 }
 
-/// Keys of the catalog apps WinGet confirms as installed. Slow: it runs `winget export`.
-pub fn installed_keys() -> Vec<String> {
-    let inventory = Packages::new(&WindowsHost::new()).inventory(false);
-    catalog().iter().filter(|app| installed_state(&inventory, Some(&app.ids), "winget") == "Installed").map(|app| app.key.clone()).collect()
-}
-
 fn locales() -> &'static Value {
     static PARSED: OnceLock<Value> = OnceLock::new();
     PARSED.get_or_init(|| serde_json::from_str(without_mark(LOCALES)).unwrap_or(Value::Null))
@@ -106,7 +111,7 @@ fn language_codes() -> Vec<&'static str> {
     locales().as_object().map(|languages| languages.keys().map(String::as_str).collect()).unwrap_or_default()
 }
 
-fn flag(value: bool) -> String {
+pub(crate) fn flag(value: bool) -> String {
     if value { "1" } else { "0" }.to_string()
 }
 
@@ -149,7 +154,7 @@ pub fn language(choice: &str, ui_culture: &str) -> String {
     records(std::iter::once(header).chain(strings.into_iter().flatten().map(|(key, value)| vec![key.clone(), value.as_str().unwrap_or(key).to_string()])))
 }
 
-fn give(text: &str) -> *mut u16 {
+pub(crate) fn give(text: &str) -> *mut u16 {
     let wide: Box<[u16]> = text.encode_utf16().chain(std::iter::once(0)).collect();
     Box::into_raw(wide).cast()
 }
@@ -166,7 +171,7 @@ unsafe fn length(text: *const u16) -> usize {
 
 /// # Safety
 /// `text` must be null or point to a NUL-terminated UTF-16 string.
-unsafe fn take(text: *const u16) -> String {
+pub(crate) unsafe fn take(text: *const u16) -> String {
     if text.is_null() {
         return String::new();
     }
@@ -208,12 +213,6 @@ pub extern "C" fn oi_cards() -> *mut u16 {
 pub unsafe extern "C" fn oi_plan(keys: *const u16) -> *mut u16 {
     let keys: Vec<String> = take(keys).split(FIELD).filter(|key| !key.is_empty()).map(str::to_string).collect();
     give(&plan_records(&keys))
-}
-
-/// Keys of the installed catalog apps, as a JSON array. Slow: call it off the UI thread.
-#[no_mangle]
-pub extern "C" fn oi_installed() -> *mut u16 {
-    give(&serde_json::to_string(&installed_keys()).unwrap_or_else(|_| "[]".to_string()))
 }
 
 /// The saved preferences, as [`settings_record`] gives them. With `test` non-zero, the fixed

@@ -69,6 +69,12 @@ static class Program {
         Check(log,ref passed,"plan installs a dependency first: "+String.Join(", ",order),order.Count==2 && order[0]=="apo" && order[1]=="peace");
         Check(log,ref passed,"plan refuses an unknown app",Engine.Plan("no-such-app").StartsWith("!",StringComparison.Ordinal));
         Check(log,ref passed,"an empty selection plans nothing",Engine.Plan("").Length==0);
+        Check(log,ref passed,"selecting an app brings what it requires",Engine.SelectionAdd("","peace")=="apo\u001Fpeace");
+        Check(log,ref passed,"removing a requirement drops what needed it",Engine.SelectionRemove("apo\u001Fpeace","apo").Length==0);
+        Check(log,ref passed,"details name the dependency",Engine.Details("peace").Contains("Dependencies\u001FEqualizer APO"));
+        Check(log,ref passed,"states cover every app before any inventory",Engine.States().Split('\u001E').Length==catalog.Length);
+        Check(log,ref passed,"built-in profiles are listed",Engine.ProfilesMenu().Split('\u001E').Length==((object[])json.DeserializeObject(Engine.Profiles())).Length);
+        Check(log,ref passed,"the test modes use the default library view",Engine.LibraryView(true)=="All apps");
         Check(log,ref passed,"test preferences are fixed: "+Engine.Settings(true).Replace('\u001F',' '),Engine.Settings(true)=="Dark\u001F1\u001Fen\u001F0");
         Check(log,ref passed,"every language is listed",Engine.Languages().Split('\u001E').Length==locales.Count);
         I18n.Load(Engine.Language("System","pt-BR"));
@@ -101,16 +107,16 @@ static class Program {
             bool passed=true;
             if(test && args[0]=="--self-test") { Engine.Load(test); passed=SelfTest(output); }
             else {
-                bool startupTest=test && args[0]=="--startup-test";
-                if(startupTest) { timer=clock; Mark("main"); }
+                string mode=test?args[0]:"";
+                if(mode=="--startup-test") { timer=clock; Mark("main"); }
                 // The engine is loaded and the catalog read on another thread while WPF starts on this one.
                 var loading=Task.Factory.StartNew(delegate {
                     Engine.Load(test);
-                    var data=new StartupData { Cards=OneInstall.CatalogCard.Parse(Engine.Cards()), Settings=Engine.Settings(test) };
+                    var data=new StartupData { Cards=OneInstall.CatalogCard.Parse(Engine.Cards()), Settings=Engine.Settings(test), View=Engine.LibraryView(test) };
                     data.Language=Engine.Language(data.Settings.Split('\u001F')[2],I18n.UiCulture);
                     return data;
                 });
-                Shell.Run(test,startupTest,clock,output,loading);
+                Shell.Run(mode,clock,output,loading);
             }
             if(marks.Length>0) { using(var process=Process.GetCurrentProcess()) marks.AppendLine("Mark peak working set "+(process.PeakWorkingSet64>>20)+" MB"); output.Append(marks); }
             if(test && output.Length>0) File.WriteAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory,args[0].Substring(2)+".log"),output.ToString());

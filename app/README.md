@@ -9,6 +9,7 @@ This is work in progress. `Shell.cs` lists what is ported and what is not; the 3
 | `Program.cs` | Entry point, test modes, start-up error path, assembly identity. |
 | `Engine.cs` | Extracts and loads `oneinstall_engine.dll`; the C# side of the engine boundary. |
 | `Shell.cs` | The main window, wired to the engine. |
+| `Library.cs` | The install library: selection, filters, views, installed states, details, profiles and saved selections. |
 | `Cards.cs` | The library cards: the 3.6 card builder, reading engine records and filling a card only when it nears the viewport. |
 | `I18n.cs` | Interface language: every label remembers its English text and the window is re-translated in place. |
 | `Theme.cs` | Preferences and appearance: theme, Windows accent, glass and high contrast. |
@@ -16,7 +17,7 @@ This is work in progress. `Shell.cs` lists what is ported and what is not; the 3
 | `1nstall.csproj` | Compiles `interface.xaml`, the 3.6 interface helpers in `src/` and the files above into one assembly. |
 | `build.ps1` | Builds the engine, then the executable, into `dist\v4`. |
 | `tests/update-bridge.ps1` | Proves the 3.6 updater accepts and applies the 4.0 executable. |
-| `tests/library-ui.ps1` | Drives the install library through UI Automation and checks what a 3.6 user relies on. Needs an interactive desktop. |
+| `tests/library-ui.ps1` | Drives the install library through UI Automation and checks what a 3.6 user relies on. Needs an interactive desktop; its last part runs `winget export`, which only reads. |
 | `tests/settings-ui.ps1` | Drives the Settings page: languages, right-to-left layout, theme and accent. Needs an interactive desktop. |
 
 ## Build

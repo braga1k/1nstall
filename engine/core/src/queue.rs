@@ -49,6 +49,31 @@ pub fn plan<'a>(catalog: &'a [CatalogApp], keys: &[String]) -> Result<Vec<&'a Ca
     Ok(ordered)
 }
 
+/// The selection after a card is switched on: the app and everything it requires join it.
+/// The result keeps the given order and appends what is new.
+pub fn select(catalog: &[CatalogApp], selected: &[String], key: &str) -> Result<Vec<String>, EngineError> {
+    let mut keys = selected.to_vec();
+    for app in plan(catalog, &[key.to_string()])? {
+        if !keys.contains(&app.key) {
+            keys.push(app.key.clone());
+        }
+    }
+    Ok(keys)
+}
+
+/// The selection after an app is removed (`Remove-SelectedApp`): it leaves, and so does every
+/// selected app left without one of its requirements, until none is.
+pub fn deselect(catalog: &[CatalogApp], selected: &[String], key: &str) -> Vec<String> {
+    let mut keys: Vec<String> = selected.iter().filter(|selected| selected.as_str() != key).cloned().collect();
+    loop {
+        let orphan = catalog.iter().find(|app| keys.contains(&app.key) && app.requires.iter().any(|required| !keys.contains(required))).map(|app| app.key.clone());
+        match orphan {
+            Some(orphan) => keys.retain(|key| *key != orphan),
+            None => return keys,
+        }
+    }
+}
+
 /// What one install attempt reported.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct InstallReport {

@@ -16,7 +16,7 @@
   <Page Include="$(Out)\src\interface.xaml"><Link>interface.xaml</Link></Page>
   <Compile Include="..\src\motion.cs"/><Compile Include="..\src\appearance.cs"/>
   <Compile Include="..\src\window-helper.cs"/><Compile Include="..\src\update-helper.cs"/>
-  <Compile Include="Program.cs"/><Compile Include="Engine.cs"/><Compile Include="Shell.cs"/><Compile Include="Cards.cs"/><Compile Include="I18n.cs"/><Compile Include="Theme.cs"/><Compile Include="SettingsPage.cs"/>
+  <Compile Include="Program.cs"/><Compile Include="Engine.cs"/><Compile Include="Shell.cs"/><Compile Include="Cards.cs"/><Compile Include="I18n.cs"/><Compile Include="Theme.cs"/><Compile Include="SettingsPage.cs"/><Compile Include="Library.cs"/>
   <EmbeddedResource Include="$(EngineDll)"><LogicalName>1nstall.Engine</LogicalName></EmbeddedResource>
  </ItemGroup>
  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets"/>

@@ -15,12 +15,24 @@ static class Engine {
     [DllImport(Library)] static extern IntPtr oi_locales();
     [DllImport(Library)] static extern IntPtr oi_cards();
     [DllImport(Library,CharSet=CharSet.Unicode)] static extern IntPtr oi_plan(string keys);
-    [DllImport(Library)] static extern IntPtr oi_installed();
     [DllImport(Library)] static extern IntPtr oi_settings(int test);
     [DllImport(Library,CharSet=CharSet.Unicode)] static extern IntPtr oi_save_settings(string record);
     [DllImport(Library)] static extern IntPtr oi_languages();
     [DllImport(Library,CharSet=CharSet.Unicode)] static extern IntPtr oi_language(string choice,string uiCulture);
     [DllImport(Library)] static extern IntPtr oi_system_appearance();
+    [DllImport(Library,CharSet=CharSet.Unicode)] static extern IntPtr oi_selection_add(string selected,string key);
+    [DllImport(Library,CharSet=CharSet.Unicode)] static extern IntPtr oi_selection_remove(string selected,string key);
+    [DllImport(Library)] static extern IntPtr oi_refresh_inventory();
+    [DllImport(Library)] static extern IntPtr oi_states();
+    [DllImport(Library,CharSet=CharSet.Unicode)] static extern IntPtr oi_details(string key);
+    [DllImport(Library)] static extern IntPtr oi_profiles_menu();
+    [DllImport(Library)] static extern IntPtr oi_winget();
+    [DllImport(Library)] static extern IntPtr oi_library_view(int test);
+    [DllImport(Library,CharSet=CharSet.Unicode)] static extern IntPtr oi_save_library_view(string view);
+    [DllImport(Library,CharSet=CharSet.Unicode)] static extern IntPtr oi_save_selection(string path,string keys);
+    [DllImport(Library,CharSet=CharSet.Unicode)] static extern IntPtr oi_read_setup(string path);
+    [DllImport(Library)] static extern IntPtr oi_snapshot_rows();
+    [DllImport(Library,CharSet=CharSet.Unicode)] static extern IntPtr oi_save_snapshot(string path,string keys);
     [DllImport(Library)] static extern void oi_free(IntPtr text);
 
     static string Take(IntPtr text) { try { return Marshal.PtrToStringUni(text); } finally { oi_free(text); } }
@@ -32,7 +44,6 @@ static class Engine {
     public static string Cards() { return Take(oi_cards()); }
     // Keys separated by U+001F in; one record per planned app out, or "!" and a reason.
     public static string Plan(string keys) { return Take(oi_plan(keys)); }
-    public static string Installed() { return Take(oi_installed()); }
     // One record: theme, Windows accent, language, automatic updates. Test modes read no file.
     public static string Settings(bool test) { return Take(oi_settings(test?1:0)); }
     // Empty when saved, or "!" and a reason.
@@ -43,6 +54,22 @@ static class Engine {
     public static string Language(string choice,string uiCulture) { return Take(oi_language(choice,uiCulture)); }
     // One record: accent "RRGGBB", transparency effects, light app theme. Call on the interface thread.
     public static string SystemAppearance() { return Take(oi_system_appearance()); }
+    // The library. Keys travel separated by U+001F; a refusal comes back as "!" and a reason.
+    // See engine/ffi/src/library.rs for the records each call returns.
+    public static string SelectionAdd(string selected,string key) { return Take(oi_selection_add(selected,key)); }
+    public static string SelectionRemove(string selected,string key) { return Take(oi_selection_remove(selected,key)); }
+    // Slow: runs WinGet. Call it off the interface thread.
+    public static string RefreshInventory() { return Take(oi_refresh_inventory()); }
+    public static string States() { return Take(oi_states()); }
+    public static string Details(string key) { return Take(oi_details(key)); }
+    public static string ProfilesMenu() { return Take(oi_profiles_menu()); }
+    public static string Winget() { return Take(oi_winget()); }
+    public static string LibraryView(bool test) { return Take(oi_library_view(test?1:0)); }
+    public static string SaveLibraryView(string view) { return Take(oi_save_library_view(view)); }
+    public static string SaveSelection(string path,string keys) { return Take(oi_save_selection(path,keys)); }
+    public static string ReadSetup(string path) { return Take(oi_read_setup(path)); }
+    public static string SnapshotRows() { return Take(oi_snapshot_rows()); }
+    public static string SaveSnapshot(string path,string keys) { return Take(oi_save_snapshot(path,keys)); }
 
     static string Hash(Stream stream) {
         using(var sha=SHA256.Create()) return BitConverter.ToString(sha.ComputeHash(stream)).Replace("-","").ToLowerInvariant();

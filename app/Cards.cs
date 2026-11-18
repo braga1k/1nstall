@@ -17,6 +17,8 @@ namespace OneInstall {
     // What a card shows. Parsed on a worker thread at start-up, so this class holds no WPF object.
     public sealed class CatalogCard {
         public string Key, Name, Category, CategoryGroup, Description, LicenseLabel, Url;
+        // The category the card currently shows: a second category of the app while that one is chosen.
+        public string ShownCategory;
         public string[] Ids, AlsoIn;
         public bool Automatic { get { return Ids.Length>0; } }
         static readonly char[] Field={'\u001F'}, Record={'\u001E'}, Item={'\u001D'};
