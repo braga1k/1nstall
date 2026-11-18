@@ -31,7 +31,8 @@ sealed class StartupTimer {
 
 static class Program {
     // --ui-test is the normal window with the fixed preferences of the test modes: nothing in
-    // the user's profile is read or written, so interface tests can drive it freely.
+    // the user's profile is read or written, so interface tests can drive it freely. Installing
+    // is refused there, unless ONEINSTALL_TEST_WINGET names a stand-in program to run instead.
     static readonly string[] Tests={"--self-test","--startup-test","--ui-test"};
     public const string Version="4.0.0";
     static StartupTimer timer;
@@ -75,6 +76,8 @@ static class Program {
         Check(log,ref passed,"states cover every app before any inventory",Engine.States().Split('\u001E').Length==catalog.Length);
         Check(log,ref passed,"built-in profiles are listed",Engine.ProfilesMenu().Split('\u001E').Length==((object[])json.DeserializeObject(Engine.Profiles())).Length);
         Check(log,ref passed,"the test modes use the default library view",Engine.LibraryView(true)=="All apps");
+        Check(log,ref passed,"the test modes refuse to install",Engine.QueueStart("extra_7zip",Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"test-logs")).StartsWith("!",StringComparison.Ordinal));
+        Check(log,ref passed,"an idle queue reports nothing",Engine.QueueEvents().Length==0);
         Check(log,ref passed,"test preferences are fixed: "+Engine.Settings(true).Replace('\u001F',' '),Engine.Settings(true)=="Dark\u001F1\u001Fen\u001F0");
         Check(log,ref passed,"every language is listed",Engine.Languages().Split('\u001E').Length==locales.Count);
         I18n.Load(Engine.Language("System","pt-BR"));
@@ -105,13 +108,19 @@ static class Program {
             } catch(IOException) { } catch(UnauthorizedAccessException) { }
             var output=new StringBuilder();
             bool passed=true;
-            if(test && args[0]=="--self-test") { Engine.Load(test); passed=SelfTest(output); }
+            // Every test mode keeps the operation history beside the executable and never runs WinGet to install.
+            Action isolate=delegate {
+                if(!test) return;
+                string standIn=args[0]=="--ui-test"?Environment.GetEnvironmentVariable("ONEINSTALL_TEST_WINGET") ?? "":"";
+                Engine.TestEnvironment(Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"test-data"),standIn);
+            };
+            if(test && args[0]=="--self-test") { Engine.Load(test); isolate(); passed=SelfTest(output); }
             else {
                 string mode=test?args[0]:"";
                 if(mode=="--startup-test") { timer=clock; Mark("main"); }
                 // The engine is loaded and the catalog read on another thread while WPF starts on this one.
                 var loading=Task.Factory.StartNew(delegate {
-                    Engine.Load(test);
+                    Engine.Load(test); isolate();
                     var data=new StartupData { Cards=OneInstall.CatalogCard.Parse(Engine.Cards()), Settings=Engine.Settings(test), View=Engine.LibraryView(test) };
                     data.Language=Engine.Language(data.Settings.Split('\u001F')[2],I18n.UiCulture);
                     return data;

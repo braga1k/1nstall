@@ -10,6 +10,7 @@ This is work in progress. `Shell.cs` lists what is ported and what is not; the 3
 | `Engine.cs` | Extracts and loads `oneinstall_engine.dll`; the C# side of the engine boundary. |
 | `Shell.cs` | The main window, wired to the engine. |
 | `Library.cs` | The install library: selection, filters, views, installed states, details, profiles and saved selections. |
+| `Queue.cs` | The install queue: review, start, progress, per-app status, stopping and the end of the run. |
 | `Cards.cs` | The library cards: the 3.6 card builder, reading engine records and filling a card only when it nears the viewport. |
 | `I18n.cs` | Interface language: every label remembers its English text and the window is re-translated in place. |
 | `Theme.cs` | Preferences and appearance: theme, Windows accent, glass and high contrast. |
@@ -18,6 +19,7 @@ This is work in progress. `Shell.cs` lists what is ported and what is not; the 3
 | `build.ps1` | Builds the engine, then the executable, into `dist\v4`. |
 | `tests/update-bridge.ps1` | Proves the 3.6 updater accepts and applies the 4.0 executable. |
 | `tests/library-ui.ps1` | Drives the install library through UI Automation and checks what a 3.6 user relies on. Needs an interactive desktop; its last part runs `winget export`, which only reads. |
+| `tests/queue-ui.ps1` | Drives an install from review to result with a stand-in for WinGet that installs nothing. Needs an interactive desktop. |
 | `tests/settings-ui.ps1` | Drives the Settings page: languages, right-to-left layout, theme and accent. Needs an interactive desktop. |
 
 ## Build
@@ -34,7 +36,7 @@ Needs Rust 1.86 or later. The C# side uses the compiler and MSBuild that ship wi
 | --- | --- |
 | `--self-test` | Exercises the engine through the boundary the interface uses, writes `self-test.log` beside the executable, shows no window. Exit code 0 means every check passed. |
 | `--startup-test` | Shows the main window, writes the 3.6 timing marks to `startup-test.log`, followed by one `Mark` line per start-up step, and exits. |
-| `--ui-test` | The normal window with the fixed preferences of the test modes (English, dark, no update check). Nothing in the user's profile is read or written, so interface tests can change settings freely. |
+| `--ui-test` | The normal window with the fixed preferences of the test modes (English, dark, no update check). Nothing in the user's profile is read or written, so interface tests can change settings freely. Installing is refused, unless `ONEINSTALL_TEST_WINGET` names a stand-in program to run in place of WinGet; pages of guided apps are logged, not opened. |
 | `--apply-update …` | The update step of 3.6 (`src/update-helper.cs`), unchanged. |
 
 Test modes keep their cache in `runtime-cache` beside the executable. A normal start uses `%LOCALAPPDATA%\1nstall\Runtime`, as 3.6 does.

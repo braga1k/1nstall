@@ -8,11 +8,10 @@ use std::sync::Mutex;
 use oneinstall_core::model::PackageInventory;
 use oneinstall_core::packages::{installed_state, valid_id, valid_source};
 use oneinstall_core::queue::{deselect, plan, select};
-use oneinstall_platform::packages::{read_setup, save_setup, Packages, SetupDraft};
-use oneinstall_platform::WindowsHost;
+use oneinstall_platform::packages::{read_setup, save_setup, SetupDraft};
 use serde_json::{json, Value};
 
-use crate::{catalog, catalog_rows, flag, give, profile_rows, records, take, FIELD, ITEM};
+use crate::{catalog, catalog_rows, flag, give, packages, profile_rows, records, take, FIELD, ITEM};
 
 /// The last inventory WinGet reported. Empty until [`refresh_inventory`] has run.
 static INVENTORY: Mutex<PackageInventory> = Mutex::new(PackageInventory { complete: false, partial: false, packages: Vec::new(), message: None });
@@ -51,7 +50,7 @@ pub fn selection_remove(selected: &[String], key: &str) -> String {
 /// One record: the message to show, then whether the list is complete, then whether it is
 /// partial. Slow: it runs `winget export`.
 pub fn refresh_inventory() -> String {
-    let found = Packages::new(&WindowsHost::new()).inventory(false);
+    let found = packages().inventory(false);
     let record = vec![found.message.clone().unwrap_or_default(), flag(found.complete), flag(found.partial)];
     if let Ok(mut inventory) = INVENTORY.lock() {
         *inventory = found;
@@ -131,13 +130,13 @@ pub fn profiles_menu() -> String {
 
 /// Where WinGet is on this machine, or empty when it is missing.
 pub fn winget_path() -> String {
-    Packages::new(&WindowsHost::new()).winget
+    packages().winget
 }
 
 const VIEWS: [&str; 2] = ["All apps", "Installed"];
 
 fn view_path() -> std::path::PathBuf {
-    Path::new(&Packages::new(&WindowsHost::new()).data_root).join("preferences.json")
+    Path::new(&packages().data_root).join("preferences.json")
 }
 
 /// The library view 3.6 remembers in `preferences.json`: "All apps" unless a valid one is saved.

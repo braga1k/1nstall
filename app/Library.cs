@@ -19,7 +19,7 @@ using System.Windows.Threading;
 using Microsoft.Win32;
 using OneInstall;
 
-static class Library {
+static partial class Library {
     static Window window;
     static CatalogCard[] catalog;
     static readonly Dictionary<string,CatalogCard> byKey=new Dictionary<string,CatalogCard>();
@@ -34,11 +34,14 @@ static class Library {
     static string category="All apps", view="All apps";
     static bool syncing, inventoryKnown;
     static Button refresh;
-    static MenuItem export;
+    static MenuItem export, import;
+    static ContextMenu profilesMenu, userMenu;
+    // The status line of each selection row, so the queue can update it in place.
+    static readonly Dictionary<string,TextBlock> statusLabels=new Dictionary<string,TextBlock>();
     static Task<string> inventoryTask;
     static DispatcherTimer inventoryTimer;
-    // Set while a queue runs. The queue itself is not ported yet, so this stays false.
-    public static bool Busy { get; set; }
+    // Set while a queue runs.
+    public static bool Busy { get; private set; }
 
     static T Find<T>(string name) where T:class { return window.FindName(name) as T; }
     static UniformGrid Cards { get { return Find<UniformGrid>("Cards"); } }
@@ -55,9 +58,10 @@ static class Library {
     }
 
     // Animate-Value
-    static void AnimateValue(Animatable target,DependencyProperty property,double from,double to,int milliseconds) {
+    static void AnimateValue(DependencyObject element,DependencyProperty property,double from,double to,int milliseconds) {
+        var target=(IAnimatable)element;
         target.BeginAnimation(property,null);
-        ((DependencyObject)target).SetValue(property,to);
+        element.SetValue(property,to);
         if(!Motion.Enabled || !window.IsVisible || Math.Abs(from-to)<0.001) return;
         var animation=new DoubleAnimation(from,to,new Duration(TimeSpan.FromMilliseconds(milliseconds))) { EasingFunction=new CubicEase { EasingMode=EasingMode.EaseOut }, FillBehavior=FillBehavior.Stop };
         target.BeginAnimation(property,animation,HandoffBehavior.SnapshotAndReplace);
@@ -111,7 +115,7 @@ static class Library {
         var queue=Find<Panel>("QueuePanel");
         var oldRows=new Dictionary<string,double>();
         foreach(FrameworkElement child in queue.Children) if(child.Tag is string) oldRows[(string)child.Tag]=child.TranslatePoint(new Point(0,0),queue).Y;
-        queue.Children.Clear();
+        queue.Children.Clear(); statusLabels.Clear();
         if(selected.Count==0) {
             var hint=Shell.NewLabel("Your next setup starts here. Select apps from the library.",true,13); hint.Margin=new Thickness(0,15,0,0); queue.Children.Add(hint);
         }
@@ -123,6 +127,7 @@ static class Library {
             string text=statuses.TryGetValue(key,out status)?status:fields[2]=="1"?"Automatic · WinGet":"Guided · official website";
             var panel=NewSelectionRow(key,fields[1],text);
             queue.Children.Add(panel);
+            statusLabels[key]=(TextBlock)panel.Children[1];
             Motion.Phase((TextBlock)panel.Children[1],text);
         }
         if(!window.IsVisible) return;
@@ -491,14 +496,14 @@ static class Library {
         if(profilesButton!=null) {
             ContextMenu menu=null;
             I18n.Set(profilesButton,"ToolTip","Choose a profile to select its apps. Review and adjust before installing.");
-            profilesButton.Click+=delegate { if(menu==null) menu=BuildProfilesMenu(profilesButton); menu.IsOpen=true; };
+            profilesButton.Click+=delegate { if(menu==null) profilesMenu=menu=BuildProfilesMenu(profilesButton); menu.IsOpen=true; };
         }
         var userButton=Find<Button>("UserProfiles");
         if(userButton==null) return;
-        var userMenu=new ContextMenu { Resources=window.Resources, PlacementTarget=userButton, Placement=PlacementMode.Bottom };
+        userMenu=new ContextMenu { Resources=window.Resources, PlacementTarget=userButton, Placement=PlacementMode.Bottom };
         userMenu.Opened+=delegate { Motion.Enter(userMenu,0,3,0); };
         export=new MenuItem(); I18n.Set(export,"Header","Save current selection..."); export.Click+=delegate { SaveProfile(); }; userMenu.Items.Add(export);
-        var import=new MenuItem(); I18n.Set(import,"Header","Load saved profile...");
+        import=new MenuItem(); I18n.Set(import,"Header","Load saved profile...");
         import.Click+=delegate {
             var dialog=new OpenFileDialog { Filter="1nstall profile (*.json)|*.json" };
             if(dialog.ShowDialog(window)!=true) return;
@@ -517,7 +522,7 @@ static class Library {
         return element as CheckBox;
     }
 
-    public static void Initialize(Window target,CatalogCard[] apps,string savedView,bool refreshOnLoad) {
+    public static void Initialize(Window target,CatalogCard[] apps,string savedView,bool refreshOnLoad,string logs) {
         window=target; catalog=apps; view=savedView;
         NativeUI.Filled=delegate(CheckBox card) { Dress(card); I18n.UpdateTree(card); };
         foreach(var app in catalog) byKey[app.Key]=app;
@@ -559,6 +564,8 @@ static class Library {
         // 3.6 asks WinGet what is installed as soon as the window is loaded. The interface test
         // mode leaves that to its Refresh button, so a test decides when WinGet runs.
         window.Loaded+=delegate { UpdateLayout(); AnimateLibrary(); if(refreshOnLoad) RefreshInventory(); };
+        // Only the interface test mode keeps the browser closed: it records the page instead.
+        InitializeQueue(logs,refreshOnLoad);
         UpdateSelection();
     }
 

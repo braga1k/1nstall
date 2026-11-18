@@ -1,9 +1,9 @@
 // The main window: the compiled 3.6 interface, started and wired in C# over the Rust engine.
 //
-// Ported so far: the install library (Library.cs), appearance (Theme.cs), languages (I18n.cs)
+// Ported so far: the install library (Library.cs), the install queue (Queue.cs), appearance (Theme.cs), languages (I18n.cs)
 // and the Settings page (SettingsPage.cs).
-// Still to port from vexan_installers.ps1 and src/manager-ui.ps1: running the install queue,
-// the uninstall pages, and history and diagnostics.
+// Still to port from vexan_installers.ps1 and src/manager-ui.ps1: the uninstall pages, and
+// history and diagnostics.
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -113,7 +113,7 @@ static class Shell {
         logPath=System.IO.Path.Combine(logDirectory,"session-"+DateTime.Now.ToString("yyyyMMdd-HHmmss")+"-"+Process.GetCurrentProcess().Id+".log");
 
         // The interface test mode leaves the WinGet inventory to its Refresh button.
-        Library.Initialize(window,data.Cards,data.View,mode!="--ui-test");
+        Library.Initialize(window,data.Cards,data.View,mode!="--ui-test",logDirectory);
         Program.Mark("library");
 
         var minimize=Find<Button>("MinimizeWindow"); if(minimize!=null) minimize.Click+=delegate { window.WindowState=WindowState.Minimized; };

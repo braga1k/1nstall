@@ -23,6 +23,7 @@ const PROFILES: &str = include_str!("../../../profiles.json");
 const LOCALES: &str = include_str!("../../../locales.json");
 
 pub mod library;
+pub mod queue;
 
 fn without_mark(text: &'static str) -> &'static str {
     text.trim_start_matches('\u{feff}')
@@ -152,6 +153,53 @@ pub fn language(choice: &str, ui_culture: &str) -> String {
     let header = vec![code.clone(), flag(chosen["Rtl"].as_bool().unwrap_or(false))];
     let strings = chosen["Strings"].as_object().filter(|_| code != "en");
     records(std::iter::once(header).chain(strings.into_iter().flatten().map(|(key, value)| vec![key.clone(), value.as_str().unwrap_or(key).to_string()])))
+}
+
+/// Where the test modes of the application keep data, and what they may install with.
+struct TestEnvironment {
+    data_root: String,
+    install_program: String,
+}
+
+static TEST_ENVIRONMENT: std::sync::Mutex<Option<TestEnvironment>> = std::sync::Mutex::new(None);
+
+/// Puts the engine in its test environment: the operation history and remembered view go to
+/// `data_root` instead of the user's profile, and installing uses `install_program` in place of
+/// WinGet. With no install program, installing is refused. Reading what is installed still
+/// asks the real WinGet, which only reads.
+pub fn set_test_environment(data_root: &str, install_program: &str) {
+    if let Ok(mut environment) = TEST_ENVIRONMENT.lock() {
+        *environment = Some(TestEnvironment { data_root: data_root.to_string(), install_program: install_program.to_string() });
+    }
+}
+
+/// The package service for reading: this machine's WinGet, and the data folder in use.
+pub(crate) fn packages() -> oneinstall_platform::packages::Packages {
+    let machine = oneinstall_platform::packages::Packages::new(&WindowsHost::new());
+    match TEST_ENVIRONMENT.lock().ok().and_then(|environment| environment.as_ref().map(|test| test.data_root.clone())) {
+        Some(data_root) => oneinstall_platform::packages::Packages::with(&data_root, &machine.winget),
+        None => machine,
+    }
+}
+
+/// The package service for installing. Refused in the test environment unless it names a
+/// stand-in installer.
+pub(crate) fn install_packages() -> Result<oneinstall_platform::packages::Packages, String> {
+    let test = TEST_ENVIRONMENT.lock().ok().and_then(|environment| environment.as_ref().map(|test| (test.data_root.clone(), test.install_program.clone())));
+    match test {
+        Some((_, program)) if program.is_empty() => Err("Installing is switched off in the test modes.".to_string()),
+        Some((data_root, program)) => Ok(oneinstall_platform::packages::Packages::with(&data_root, &program)),
+        None => Ok(oneinstall_platform::packages::Packages::new(&WindowsHost::new())),
+    }
+}
+
+/// See [`set_test_environment`].
+///
+/// # Safety
+/// Both arguments must be null or point to NUL-terminated UTF-16 strings.
+#[no_mangle]
+pub unsafe extern "C" fn oi_test_environment(data_root: *const u16, install_program: *const u16) {
+    set_test_environment(&take(data_root), &take(install_program));
 }
 
 pub(crate) fn give(text: &str) -> *mut u16 {

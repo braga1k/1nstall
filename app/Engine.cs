@@ -33,6 +33,10 @@ static class Engine {
     [DllImport(Library,CharSet=CharSet.Unicode)] static extern IntPtr oi_read_setup(string path);
     [DllImport(Library)] static extern IntPtr oi_snapshot_rows();
     [DllImport(Library,CharSet=CharSet.Unicode)] static extern IntPtr oi_save_snapshot(string path,string keys);
+    [DllImport(Library,CharSet=CharSet.Unicode)] static extern void oi_test_environment(string dataRoot,string installProgram);
+    [DllImport(Library,CharSet=CharSet.Unicode)] static extern IntPtr oi_queue_start(string keys,string logs);
+    [DllImport(Library)] static extern void oi_queue_stop();
+    [DllImport(Library)] static extern IntPtr oi_queue_events();
     [DllImport(Library)] static extern void oi_free(IntPtr text);
 
     static string Take(IntPtr text) { try { return Marshal.PtrToStringUni(text); } finally { oi_free(text); } }
@@ -70,6 +74,14 @@ static class Engine {
     public static string ReadSetup(string path) { return Take(oi_read_setup(path)); }
     public static string SnapshotRows() { return Take(oi_snapshot_rows()); }
     public static string SaveSnapshot(string path,string keys) { return Take(oi_save_snapshot(path,keys)); }
+    // The test modes: history and remembered view go to dataRoot, and installing uses
+    // installProgram in place of WinGet, or is refused when that is empty.
+    public static void TestEnvironment(string dataRoot,string installProgram) { oi_test_environment(dataRoot,installProgram); }
+    // The install queue runs inside the engine. Start is empty when started, or "!" and a reason.
+    public static string QueueStart(string keys,string logs) { return Take(oi_queue_start(keys,logs)); }
+    public static void QueueStop() { oi_queue_stop(); }
+    // What happened since the last call: one record per event, as kind, app key and text.
+    public static string QueueEvents() { return Take(oi_queue_events()); }
 
     static string Hash(Stream stream) {
         using(var sha=SHA256.Create()) return BitConverter.ToString(sha.ComputeHash(stream)).Replace("-","").ToLowerInvariant();
