@@ -7,9 +7,29 @@ This folder records what the 3.6 engine actually does, so that a rewrite can be 
 | Layer | What | Where it runs | Output |
 | --- | --- | --- | --- |
 | Pure functions | 1,552 inputs through 23 engine functions: package ID validation, WinGet command line, exit-code mapping, export and setup parsing, redaction, uninstall-command parsing, name normalisation, registry-leftover rules | Any Windows machine; nothing is written outside the output file | `golden/v3.6.0/pure.jsonl` (committed) |
-| Machine observations | The existing native removal tests, how 3.6 reads the machine's real uninstall registrations, and one real WinGet install | Disposable machines only (CI runners, VMs) | Workflow artifact `oracle-observations-<os>` |
+| Removal scenarios | Remove, scan and clean on eight fixture apps, with registry and file state before and after each step, the backup folder and the removal history file | Disposable machines only (CI runners, VMs) | `golden/v3.6.0/removal.jsonl` (committed) |
+| Machine observations | The existing native removal tests, how 3.6 reads the machine's real uninstall registrations, and real WinGet installs | Disposable machines only | Workflow artifact `oracle-observations-<os>` |
 
-The pure-function layer is a golden file: CI regenerates it on a clean runner and fails if a single byte differs. The machine layer is an observation: runner images change, so it is compared between implementations within the same run, not against a stored file.
+The first two layers are golden files: CI regenerates them on clean runners and fails if a single byte differs. The third is an observation: runner images change, so it is compared between implementations within the same run, not against a stored file.
+
+`reference/winget-errors.json` holds the official names of the WinGet error codes, taken from `AppInstallerErrors.h`.
+
+## Removal scenarios
+
+Each scenario registers a fixture app under `HKCU` with a stand-in uninstaller, then runs the real 3.6 calls: `Inventory`, `RemoveAsync`, `ScanAsync`, `CleanAsync`.
+
+| Scenario | Stand-in uninstaller | Recorded 3.6 outcome |
+| --- | --- | --- |
+| Alpha | Succeeds, leaves a program file, user data, a product key and a trace value | Success; 4 leftovers offered and cleaned |
+| Bravo | Exits 1602 | Cancelled |
+| Charlie | Exits 0 but the registration stays | Manual action required |
+| Delta | Exits 3010 | Restart required; scan withheld |
+| Echo | Launcher exits at once, a child finishes 1.5 s later | Success after waiting for the child |
+| Foxtrot | Exits 1603 | Failed |
+| Golf | Succeeds; the registration has no `InstallLocation` | Success; the uninstaller's own folder is offered as the installation folder |
+| Hotel | The uninstall command is `cmd.exe` | Refused; Failed |
+
+Paths are recorded as `{LOCALAPPDATA}`, `{APPDATA}` and `{USERPROFILE}`; backup folder stamps and GUID file names as `{STAMP}` and `{GUID}`.
 
 ## Files
 
