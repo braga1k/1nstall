@@ -1,0 +1,11 @@
+[package]
+name = "prototype-model"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[dependencies]
+oneinstall-core = { path = "../../core" }
+oneinstall-platform = { path = "../../platform" }
+serde_json = { version = "1.0", features = ["preserve_order"] }

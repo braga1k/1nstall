@@ -1,0 +1,328 @@
+// The install library screen of 1nstall, drawn with Slint.
+import { ListView } from "std-widgets.slint";
+
+export struct CardData { key: string, name: string, category: string, method: string, checked: bool, installed: bool }
+export struct CardRow { cards: [CardData] }
+export struct QueueItem { key: string, name: string, method: string }
+export struct Strings {
+    install: string, uninstall: string, history: string, settings: string, beer: string, library: string,
+    all-apps: string, installed: string, refresh: string, search: string, all-profiles: string, clear: string,
+    selection: string, save: string, details: string, review: string, logs: string, activity: string,
+    progress: string, hint: string, empty: string,
+}
+
+global Theme {
+    out property <color> text: #f1eefc;
+    out property <color> muted: #a9a7ba;
+    out property <color> edge: #6f66a3;
+    out property <color> hover-edge: #d4c7ff;
+    out property <color> card: #2a2d39;
+    out property <color> card-edge: #3b3e50;
+    out property <color> accent: #7a5cd6;
+}
+
+component Pill inherits Rectangle {
+    in property <string> text;
+    in property <bool> active;
+    in property <bool> accent;
+    in property <bool> leading;
+    callback clicked;
+    height: 34px;
+    horizontal-stretch: 0;
+    min-width: label.preferred-width + 24px;
+    border-radius: self.height / 2;
+    border-width: 1px;
+    border-color: touch.has-hover ? Theme.hover-edge : Theme.edge;
+    background: root.accent ? @linear-gradient(90deg, #5b3fa6 0%, #8261d6 100%) : root.active ? #3a3266 : touch.has-hover ? #343647 : #2a2c3a;
+    animate border-color { duration: 120ms; }
+    label := Text {
+        x: root.leading ? 12px : (parent.width - self.width) / 2;
+        text: root.text;
+        color: Theme.text;
+        font-size: 13px;
+        vertical-alignment: center;
+    }
+    touch := TouchArea {
+        clicked => { root.clicked(); }
+    }
+    accessible-role: button;
+    accessible-label: root.text;
+    accessible-action-default => { root.clicked(); }
+}
+
+component Switch inherits Rectangle {
+    in property <bool> checked;
+    width: 38px;
+    height: 22px;
+    border-radius: 11px;
+    border-width: 1px;
+    border-color: root.checked ? #c9b8ff : #8f8ca6;
+    background: root.checked ? #6b6878 : #1f2029;
+    animate background { duration: 160ms; }
+    Rectangle {
+        width: 14px;
+        height: 14px;
+        y: 4px;
+        x: root.checked ? 20px : 4px;
+        border-radius: 7px;
+        background: #c9c6e0;
+        animate x { duration: 260ms; easing: ease-out-back; }
+    }
+}
+
+component AppCard inherits Rectangle {
+    in property <CardData> data;
+    in property <string> details;
+    in property <string> installed-text;
+    callback toggled;
+    // Equal preferred widths, so the three cards of a row share it equally.
+    preferred-width: 100px;
+    min-width: 100px;
+    visible: root.data.key != "";
+    border-radius: 16px;
+    border-width: 1px;
+    border-color: root.data.checked ? Theme.accent : touch.has-hover ? #beb1f1 : Theme.card-edge;
+    background: root.data.checked ? #33295c : Theme.card;
+    animate border-color, background { duration: 140ms; }
+    touch := TouchArea {
+        clicked => { root.toggled(); }
+    }
+    VerticalLayout {
+        padding: 13px;
+        spacing: 3px;
+        HorizontalLayout {
+            spacing: 8px;
+            height: 38px;
+            Text {
+                horizontal-stretch: 1;
+                text: root.data.name;
+                color: Theme.text;
+                font-size: 14px;
+                font-weight: 600;
+                wrap: word-wrap;
+                overflow: elide;
+                vertical-alignment: top;
+            }
+            VerticalLayout {
+                alignment: start;
+                Switch { checked: root.data.checked; }
+            }
+        }
+        Text { text: root.data.category; color: Theme.muted; font-size: 11px; overflow: elide; }
+        Text {
+            text: root.data.installed ? root.installed-text + " · " + root.data.method : root.data.method;
+            color: root.data.installed ? #b9a5ff : Theme.muted;
+            font-size: 11px;
+            overflow: elide;
+        }
+        Rectangle { height: 4px; }
+        HorizontalLayout {
+            alignment: start;
+            Pill { text: root.details; height: 28px; width: 150px; }
+        }
+    }
+    accessible-role: checkbox;
+    accessible-label: root.data.name;
+    accessible-description: root.data.category + ", " + root.data.method;
+    accessible-checkable: true;
+    accessible-checked: root.data.checked;
+    accessible-action-default => { root.toggled(); }
+}
+
+component Panel inherits Rectangle {
+    border-radius: 24px;
+    border-width: 1px;
+    border-color: Theme.edge;
+    background: @linear-gradient(170deg, #3b3852 0%, #2b2c39 45%, #2a2836 100%);
+    @children
+}
+
+component CaptionButton inherits Rectangle {
+    in property <string> glyph;
+    in property <string> name;
+    callback clicked;
+    width: 28px;
+    height: 24px;
+    border-radius: 6px;
+    background: touch.has-hover ? #45425c : transparent;
+    Text { text: root.glyph; color: Theme.text; font-size: 15px; horizontal-alignment: center; vertical-alignment: center; }
+    touch := TouchArea {
+        clicked => { root.clicked(); }
+    }
+    accessible-role: button;
+    accessible-label: root.name;
+    accessible-action-default => { root.clicked(); }
+}
+
+export component AppWindow inherits Window {
+    in property <Strings> t;
+    in property <[CardRow]> rows;
+    in property <[QueueItem]> queue;
+    in property <[string]> groups;
+    in property <string> library-label;
+    in property <string> selected-label;
+    in property <string> status;
+    in property <bool> empty;
+    callback toggle(string);
+    callback search-edited(string);
+    callback clear-selection();
+    callback drag-window();
+    callback minimize();
+    callback maximize();
+    callback close();
+    callback installed-loaded(string);
+
+    title: "1nstall 4.0 · Slint";
+    no-frame: true;
+    preferred-width: 1240px;
+    preferred-height: 840px;
+    min-width: 1040px;
+    min-height: 540px;
+    background: #22252b;
+    default-font-family: "Segoe UI";
+    default-font-size: 13px;
+
+    Rectangle { background: @linear-gradient(160deg, #2a2d34 0%, #1f2228 55%, #25222f 100%); }
+
+    // The whole top strip moves the window, as the 3.6 caption does.
+    TouchArea {
+        y: 0;
+        height: 40px;
+        pointer-event(event) => {
+            if event.kind == PointerEventKind.down && event.button == PointerEventButton.left {
+                root.drag-window();
+            }
+        }
+    }
+
+    HorizontalLayout {
+        padding: 12px;
+        spacing: 20px;
+
+        Panel {
+            width: 246px;
+            VerticalLayout {
+                padding: 14px;
+                spacing: 7px;
+                Text { text: "1nstall"; color: Theme.text; font-size: 22px; font-weight: 700; horizontal-alignment: center; height: 62px; vertical-alignment: center; }
+                Pill { text: root.t.install; active: true; }
+                Pill { text: root.t.uninstall; }
+                Pill { text: root.t.history; }
+                Rectangle { height: 8px; }
+                Text { text: root.t.library; color: Theme.text; font-size: 12px; }
+                Text { text: root.library-label; color: Theme.muted; font-size: 11px; }
+                Pill { text: root.t.all-apps; active: true; leading: true; }
+                for group in root.groups: Rectangle {
+                    height: 52px;
+                    Text { x: 10px; text: group; color: Theme.text; font-size: 14px; vertical-alignment: center; }
+                    Text { x: parent.width - 22px; text: "›"; color: Theme.text; font-size: 18px; vertical-alignment: center; }
+                    Rectangle { y: parent.height - 1px; height: 1px; background: #3a3b4c; }
+                    accessible-role: button;
+                    accessible-label: group;
+                }
+                Rectangle { vertical-stretch: 1; }
+                Pill { text: root.t.settings; }
+                Pill { text: root.t.beer; accent: true; }
+            }
+        }
+
+        VerticalLayout {
+            horizontal-stretch: 1;
+            padding-top: 22px;
+            spacing: 14px;
+            HorizontalLayout {
+                alignment: start;
+                spacing: 8px;
+                Pill { text: root.t.all-apps; active: true; }
+                Pill { text: root.t.installed; }
+                Pill { text: root.t.refresh; }
+            }
+            HorizontalLayout {
+                spacing: 12px;
+                Rectangle {
+                    horizontal-stretch: 1;
+                    height: 40px;
+                    border-radius: 20px;
+                    border-width: 1px;
+                    border-color: search.has-focus ? Theme.hover-edge : Theme.edge;
+                    background: #262835;
+                    Text { x: 36px; text: root.t.search; color: Theme.muted; visible: search.text == ""; vertical-alignment: center; }
+                    Text { x: 14px; text: "⌕"; color: Theme.text; font-size: 17px; vertical-alignment: center; }
+                    search := TextInput {
+                        x: 36px;
+                        width: parent.width - 52px;
+                        color: Theme.text;
+                        font-size: 13px;
+                        single-line: true;
+                        vertical-alignment: center;
+                        accessible-role: text-input;
+                        accessible-label: root.t.search;
+                        edited => { root.search-edited(self.text); }
+                    }
+                }
+                Pill { text: root.t.all-profiles; }
+                Pill { text: root.t.clear; clicked => { root.clear-selection(); } }
+            }
+            Rectangle {
+                vertical-stretch: 1;
+                ListView {
+                    for row in root.rows: HorizontalLayout {
+                        height: 148px;
+                        padding-bottom: 8px;
+                        padding-right: 12px;
+                        spacing: 8px;
+                        for card in row.cards: AppCard {
+                            horizontal-stretch: 1;
+                            data: card;
+                            details: root.t.details;
+                            installed-text: root.t.installed;
+                            toggled => { root.toggle(card.key); }
+                        }
+                    }
+                }
+                Text { visible: root.empty; text: root.t.empty; color: Theme.muted; font-size: 14px; horizontal-alignment: center; vertical-alignment: center; }
+            }
+            Rectangle {
+                height: 44px;
+                Text { x: 10px; text: root.t.activity; color: Theme.text; vertical-alignment: center; }
+                Text { x: parent.width - 22px; text: "›"; color: Theme.text; font-size: 18px; vertical-alignment: center; }
+            }
+        }
+
+        Panel {
+            width: 246px;
+            VerticalLayout {
+                padding: 18px;
+                spacing: 8px;
+                HorizontalLayout {
+                    Text { horizontal-stretch: 1; text: root.t.selection; color: Theme.text; font-size: 20px; font-weight: 600; vertical-alignment: center; }
+                    CaptionButton { glyph: "–"; name: "Minimize"; clicked => { root.minimize(); } }
+                    CaptionButton { glyph: "□"; name: "Maximize"; clicked => { root.maximize(); } }
+                    CaptionButton { glyph: "×"; name: "Close"; clicked => { root.close(); } }
+                }
+                Text { text: root.selected-label; color: Theme.muted; }
+                Rectangle { height: 4px; }
+                Pill { text: root.t.save; }
+                Rectangle { height: 6px; }
+                Rectangle { height: 1px; background: #4a4c63; }
+                for item in root.queue: VerticalLayout {
+                    padding-top: 10px;
+                    spacing: 6px;
+                    HorizontalLayout {
+                        Text { horizontal-stretch: 1; text: item.name; color: Theme.text; font-size: 14px; font-weight: 600; overflow: elide; }
+                        CaptionButton { glyph: "×"; name: "Remove " + item.name; height: 20px; clicked => { root.toggle(item.key); } }
+                    }
+                    Text { text: item.method; color: Theme.muted; font-size: 12px; }
+                }
+                Rectangle { vertical-stretch: 1; }
+                Rectangle { height: 1px; background: #4a4c63; }
+                Text { text: root.status; color: Theme.text; wrap: word-wrap; }
+                Text { text: root.t.progress; color: Theme.muted; font-size: 12px; wrap: word-wrap; }
+                Rectangle { height: 5px; border-radius: 2px; background: #4a4c63; }
+                Rectangle { height: 8px; }
+                Pill { text: root.t.review + "  →"; accent: true; height: 38px; }
+                Text { text: root.t.logs; color: Theme.text; font-size: 14px; horizontal-alignment: center; height: 34px; vertical-alignment: center; }
+            }
+        }
+    }
+}

@@ -1,0 +1,18 @@
+[package]
+name = "prototype-slint"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+build = "build.rs"
+
+[[bin]]
+name = "oneinstall-slint"
+path = "src/main.rs"
+
+[dependencies]
+prototype-model = { path = "../model" }
+slint = { version = "1.13", default-features = false, features = ["std", "compat-1-2", "backend-winit", "renderer-femtovg", "renderer-software", "accessibility", "unstable-winit-030"] }
+
+[build-dependencies]
+slint-build = "1.13"

@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>1nstall 4.0 · Tauri</title>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<div class="drag" data-tauri-drag-region></div>
+<main class="shell">
+  <aside class="panel side">
+    <h1 class="brand">1nstall</h1>
+    <button class="pill active" data-t="Install"></button>
+    <button class="pill" data-t="Uninstall"></button>
+    <button class="pill" data-t="History &amp; diagnostics"></button>
+    <p class="eyebrow" data-t="LIBRARY"></p>
+    <p class="muted small" id="library-label"></p>
+    <button class="pill active leading" data-t="All apps"></button>
+    <nav id="groups" aria-label="Categories"></nav>
+    <div class="grow"></div>
+    <button class="pill" data-t="Settings"></button>
+    <button class="pill accent" data-t="Buy me a beer"></button>
+  </aside>
+
+  <section class="library">
+    <div class="row views">
+      <button class="pill active" data-t="All apps"></button>
+      <button class="pill" data-t="Installed"></button>
+      <button class="pill" data-t="Refresh"></button>
+    </div>
+    <div class="row">
+      <label class="search"><span aria-hidden="true">⌕</span><input id="search" type="search" autocomplete="off" spellcheck="false"></label>
+      <button class="pill" data-t="All profiles"></button>
+      <button class="pill" id="clear" data-t="Clear selection"></button>
+    </div>
+    <div id="cards" class="cards" role="list"></div>
+    <p id="empty" class="muted empty" hidden></p>
+    <button class="disclosure"><span data-t="Activity &amp; details"></span><span aria-hidden="true">›</span></button>
+  </section>
+
+  <aside class="panel side selection">
+    <header class="row">
+      <h2 class="grow" data-t="Selection"></h2>
+      <button class="caption" id="minimize" aria-label="Minimize">–</button>
+      <button class="caption" id="maximize" aria-label="Maximize">□</button>
+      <button class="caption" id="close" aria-label="Close">×</button>
+    </header>
+    <p class="muted" id="selected-label"></p>
+    <button class="pill" data-t="Save selection..."></button>
+    <hr>
+    <ul id="queue" aria-live="polite"></ul>
+    <div class="grow"></div>
+    <hr>
+    <p id="status"></p>
+    <p class="muted small" data-t="Queue progress · apps processed"></p>
+    <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+    <button class="pill accent tall" id="review"></button>
+    <button class="link" data-t="Open logs"></button>
+  </aside>
+</main>
+<script src="app.js"></script>
+</body>
+</html>

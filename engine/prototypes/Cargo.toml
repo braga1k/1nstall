@@ -1,0 +1,18 @@
+# Phase 3: the same install library screen in three UI toolkits, over the same engine.
+# A workspace of its own, so the engine's lock file and CI stay free of UI dependencies.
+[workspace]
+resolver = "3"
+members = ["model", "ffi", "slint", "tauri"]
+
+[workspace.package]
+version = "4.0.0-alpha.0"
+edition = "2021"
+rust-version = "1.86"
+publish = false
+
+[profile.release]
+opt-level = "s"
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true

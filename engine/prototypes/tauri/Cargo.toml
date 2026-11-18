@@ -1,0 +1,20 @@
+[package]
+name = "prototype-tauri"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+build = "build.rs"
+
+[[bin]]
+name = "oneinstall-tauri"
+path = "src/main.rs"
+
+[dependencies]
+prototype-model = { path = "../model" }
+serde_json = "1.0"
+# custom-protocol embeds the pages in the program, as a release build does.
+tauri = { version = "2", features = ["custom-protocol"] }
+
+[build-dependencies]
+tauri-build = "2"
