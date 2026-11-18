@@ -30,7 +30,10 @@ sealed class StartupTimer {
 }
 
 static class Program {
-    static readonly string[] Tests={"--self-test","--startup-test"};
+    // --ui-test is the normal window with the fixed preferences of the test modes: nothing in
+    // the user's profile is read or written, so interface tests can drive it freely.
+    static readonly string[] Tests={"--self-test","--startup-test","--ui-test"};
+    public const string Version="4.0.0";
     static StartupTimer timer;
     static readonly StringBuilder marks=new StringBuilder();
 
@@ -66,6 +69,14 @@ static class Program {
         Check(log,ref passed,"plan installs a dependency first: "+String.Join(", ",order),order.Count==2 && order[0]=="apo" && order[1]=="peace");
         Check(log,ref passed,"plan refuses an unknown app",Engine.Plan("no-such-app").StartsWith("!",StringComparison.Ordinal));
         Check(log,ref passed,"an empty selection plans nothing",Engine.Plan("").Length==0);
+        Check(log,ref passed,"test preferences are fixed: "+Engine.Settings(true).Replace('\u001F',' '),Engine.Settings(true)=="Dark\u001F1\u001Fen\u001F0");
+        Check(log,ref passed,"every language is listed",Engine.Languages().Split('\u001E').Length==locales.Count);
+        I18n.Load(Engine.Language("System","pt-BR"));
+        Check(log,ref passed,"a Portuguese system resolves to "+I18n.Language+" and translates",I18n.Language=="pt-PT" && I18n.Convert("Install")=="Instalar" && I18n.Convert("3 apps selected")=="3 apps selecionadas");
+        I18n.Load(Engine.Language("ar","en-US"));
+        Check(log,ref passed,"Arabic is right-to-left",I18n.Rtl && I18n.Language=="ar");
+        I18n.Load(Engine.Language("System","af-ZA"));
+        Check(log,ref passed,"an unsupported system language falls back to English",I18n.Language=="en" && I18n.Convert("Install")=="Install");
         var identity=Assembly.GetExecutingAssembly().GetName();
         Check(log,ref passed,"assembly identity "+identity.Name+" "+identity.Version,identity.Name=="1nstall" && identity.Version.Major==4);
         return passed;
@@ -90,13 +101,19 @@ static class Program {
             bool passed=true;
             if(test && args[0]=="--self-test") { Engine.Load(test); passed=SelfTest(output); }
             else {
-                if(test) { timer=clock; Mark("main"); }
+                bool startupTest=test && args[0]=="--startup-test";
+                if(startupTest) { timer=clock; Mark("main"); }
                 // The engine is loaded and the catalog read on another thread while WPF starts on this one.
-                var cards=Task.Factory.StartNew(delegate { Engine.Load(test); return OneInstall.CatalogCard.Parse(Engine.Cards()); });
-                Shell.Run(test,clock,output,cards);
+                var loading=Task.Factory.StartNew(delegate {
+                    Engine.Load(test);
+                    var data=new StartupData { Cards=OneInstall.CatalogCard.Parse(Engine.Cards()), Settings=Engine.Settings(test) };
+                    data.Language=Engine.Language(data.Settings.Split('\u001F')[2],I18n.UiCulture);
+                    return data;
+                });
+                Shell.Run(test,startupTest,clock,output,loading);
             }
             if(marks.Length>0) { using(var process=Process.GetCurrentProcess()) marks.AppendLine("Mark peak working set "+(process.PeakWorkingSet64>>20)+" MB"); output.Append(marks); }
-            if(test) File.WriteAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory,args[0].Substring(2)+".log"),output.ToString());
+            if(test && output.Length>0) File.WriteAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory,args[0].Substring(2)+".log"),output.ToString());
             return passed?0:1;
         }
         catch(Exception error) {

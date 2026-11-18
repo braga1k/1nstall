@@ -16,6 +16,11 @@ static class Engine {
     [DllImport(Library)] static extern IntPtr oi_cards();
     [DllImport(Library,CharSet=CharSet.Unicode)] static extern IntPtr oi_plan(string keys);
     [DllImport(Library)] static extern IntPtr oi_installed();
+    [DllImport(Library)] static extern IntPtr oi_settings(int test);
+    [DllImport(Library,CharSet=CharSet.Unicode)] static extern IntPtr oi_save_settings(string record);
+    [DllImport(Library)] static extern IntPtr oi_languages();
+    [DllImport(Library,CharSet=CharSet.Unicode)] static extern IntPtr oi_language(string choice,string uiCulture);
+    [DllImport(Library)] static extern IntPtr oi_system_appearance();
     [DllImport(Library)] static extern void oi_free(IntPtr text);
 
     static string Take(IntPtr text) { try { return Marshal.PtrToStringUni(text); } finally { oi_free(text); } }
@@ -28,6 +33,16 @@ static class Engine {
     // Keys separated by U+001F in; one record per planned app out, or "!" and a reason.
     public static string Plan(string keys) { return Take(oi_plan(keys)); }
     public static string Installed() { return Take(oi_installed()); }
+    // One record: theme, Windows accent, language, automatic updates. Test modes read no file.
+    public static string Settings(bool test) { return Take(oi_settings(test?1:0)); }
+    // Empty when saved, or "!" and a reason.
+    public static string SaveSettings(string record) { return Take(oi_save_settings(record)); }
+    // One record per language: code, own name, right-to-left.
+    public static string Languages() { return Take(oi_languages()); }
+    // First record: resolved code and direction. Then one record per English text and its translation.
+    public static string Language(string choice,string uiCulture) { return Take(oi_language(choice,uiCulture)); }
+    // One record: accent "RRGGBB", transparency effects, light app theme. Call on the interface thread.
+    public static string SystemAppearance() { return Take(oi_system_appearance()); }
 
     static string Hash(Stream stream) {
         using(var sha=SHA256.Create()) return BitConverter.ToString(sha.ComputeHash(stream)).Replace("-","").ToLowerInvariant();

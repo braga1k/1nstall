@@ -63,6 +63,8 @@ namespace OneInstall {
             content.Arrange(new Rect(0,0,window.Width,window.Height));
         }
         static readonly ControlTemplate EmptyCard = new ControlTemplate(typeof(CheckBox));
+        // Called with each card once its inside has been built, so its labels can be translated.
+        public static Action<CheckBox> Filled;
         // The app a slot stands for, until its content is built.
         static readonly DependencyProperty PendingProperty = DependencyProperty.RegisterAttached("Pending",typeof(CatalogCard),typeof(NativeUI));
         public static TextBlock Label(string text, double size, bool secondary) {
@@ -98,6 +100,7 @@ namespace OneInstall {
             var details=new Button { Content="Details", Tag=app.Key, Margin=new Thickness(0,8,0,0), Padding=new Thickness(6,4,6,4), MinHeight=28 };
             AutomationProperties.SetName(details,"Details for "+app.Name); content.Children.Add(details);
             card.Content=content;
+            if(Filled!=null) Filled(card);
         }
         // Keep lightweight card slots for scrolling and keyboard navigation; construct
         // their content and visual templates only around the viewport. Selection persists.

@@ -9,4 +9,4 @@ publish.workspace = true
 [dependencies]
 oneinstall-core = { path = "../core" }
 serde_json = { workspace = true, features = ["preserve_order"] }
-windows = { version = "0.62", features = ["Win32_Foundation", "Win32_System_Com", "Win32_UI_Shell", "Win32_UI_Shell_Common"] }
+windows = { version = "0.62", features = ["Win32_Foundation", "Win32_System_Com", "Win32_UI_Shell", "Win32_UI_Shell_Common", "UI", "UI_ViewManagement"] }

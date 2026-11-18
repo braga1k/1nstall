@@ -13,7 +13,9 @@ use std::sync::OnceLock;
 
 use oneinstall_core::packages::installed_state;
 use oneinstall_core::queue::{plan, CatalogApp};
+use oneinstall_core::settings::{resolve_language, Settings};
 use oneinstall_platform::packages::Packages;
+use oneinstall_platform::settings::{load, save, settings_path, system_appearance};
 use oneinstall_platform::WindowsHost;
 use serde_json::Value;
 
@@ -95,6 +97,58 @@ pub fn installed_keys() -> Vec<String> {
     catalog().iter().filter(|app| installed_state(&inventory, Some(&app.ids), "winget") == "Installed").map(|app| app.key.clone()).collect()
 }
 
+fn locales() -> &'static Value {
+    static PARSED: OnceLock<Value> = OnceLock::new();
+    PARSED.get_or_init(|| serde_json::from_str(without_mark(LOCALES)).unwrap_or(Value::Null))
+}
+
+fn language_codes() -> Vec<&'static str> {
+    locales().as_object().map(|languages| languages.keys().map(String::as_str).collect()).unwrap_or_default()
+}
+
+fn flag(value: bool) -> String {
+    if value { "1" } else { "0" }.to_string()
+}
+
+/// The preferences as one record: theme, Windows accent ("1" or "0"), language, automatic updates.
+pub fn settings_record(settings: &Settings) -> String {
+    records(std::iter::once(vec![settings.theme.clone(), flag(settings.windows_accent), settings.language.clone(), flag(settings.auto_update)]))
+}
+
+/// The reverse of [`settings_record`]. Refuses anything that would not read back unchanged.
+pub fn settings_from_record(record: &str) -> Option<Settings> {
+    let fields: Vec<&str> = record.split(FIELD).collect();
+    let [theme, accent, language, updates] = fields.as_slice() else { return None };
+    let on = |value: &str| match value {
+        "1" => Some(true),
+        "0" => Some(false),
+        _ => None,
+    };
+    let settings = Settings { theme: theme.to_string(), windows_accent: on(accent)?, language: language.to_string(), auto_update: on(updates)? };
+    (Settings::parse(&settings.to_json(), &language_codes()) == settings).then_some(settings)
+}
+
+/// Every language of the interface, one record each: code, own name, right-to-left ("1" or "0").
+pub fn languages() -> String {
+    let all = locales().as_object();
+    records(
+        all.into_iter()
+            .flatten()
+            .map(|(code, language)| vec![code.clone(), language["Name"].as_str().unwrap_or(code).to_string(), flag(language["Rtl"].as_bool().unwrap_or(false))]),
+    )
+}
+
+/// The language to show for a choice and the Windows display language. The first record is
+/// the language code and right-to-left ("1" or "0"); each further record is an English text
+/// and its translation. English has no further records: its texts are their own keys.
+pub fn language(choice: &str, ui_culture: &str) -> String {
+    let code = resolve_language(choice, ui_culture, &language_codes());
+    let chosen = &locales()[code.as_str()];
+    let header = vec![code.clone(), flag(chosen["Rtl"].as_bool().unwrap_or(false))];
+    let strings = chosen["Strings"].as_object().filter(|_| code != "en");
+    records(std::iter::once(header).chain(strings.into_iter().flatten().map(|(key, value)| vec![key.clone(), value.as_str().unwrap_or(key).to_string()])))
+}
+
 fn give(text: &str) -> *mut u16 {
     let wide: Box<[u16]> = text.encode_utf16().chain(std::iter::once(0)).collect();
     Box::into_raw(wide).cast()
@@ -162,6 +216,52 @@ pub extern "C" fn oi_installed() -> *mut u16 {
     give(&serde_json::to_string(&installed_keys()).unwrap_or_else(|_| "[]".to_string()))
 }
 
+/// The saved preferences, as [`settings_record`] gives them. With `test` non-zero, the fixed
+/// preferences of the test modes instead, and no file is read.
+#[no_mangle]
+pub extern "C" fn oi_settings(test: i32) -> *mut u16 {
+    let settings = if test != 0 { Settings::for_tests() } else { load(&settings_path(&WindowsHost::new()), &language_codes()) };
+    give(&settings_record(&settings))
+}
+
+/// Saves preferences given as one record. Empty on success, or "!" followed by the reason.
+///
+/// # Safety
+/// `record` must be null or point to a NUL-terminated UTF-16 string.
+#[no_mangle]
+pub unsafe extern "C" fn oi_save_settings(record: *const u16) -> *mut u16 {
+    let result = match settings_from_record(&take(record)) {
+        Some(settings) => save(&settings_path(&WindowsHost::new()), &settings),
+        None => Err("The settings are not valid.".to_string()),
+    };
+    give(&result.err().map(|reason| format!("!{reason}")).unwrap_or_default())
+}
+
+/// Every language, as records. See [`languages`].
+#[no_mangle]
+pub extern "C" fn oi_languages() -> *mut u16 {
+    give(&languages())
+}
+
+/// The language for a choice and the Windows display language, as records. See [`language`].
+///
+/// # Safety
+/// `choice` and `ui_culture` must each be null or point to a NUL-terminated UTF-16 string.
+#[no_mangle]
+pub unsafe extern "C" fn oi_language(choice: *const u16, ui_culture: *const u16) -> *mut u16 {
+    give(&language(&take(choice), &take(ui_culture)))
+}
+
+/// What Windows reports about appearance, as one record: the accent colour as "RRGGBB",
+/// transparency effects ("1" or "0"), and the light app theme ("1" or "0"). The first two are
+/// empty when Windows cannot be asked. Call it on a thread with COM initialised.
+#[no_mangle]
+pub extern "C" fn oi_system_appearance() -> *mut u16 {
+    let appearance = system_appearance();
+    let accent = appearance.accent.map(|(red, green, blue)| format!("{red:02X}{green:02X}{blue:02X}")).unwrap_or_default();
+    give(&records(std::iter::once(vec![accent, appearance.advanced_effects.map(flag).unwrap_or_default(), flag(appearance.light)])))
+}
+
 /// # Safety
 /// `text` must be null or a pointer returned by this library that was not freed yet.
 #[no_mangle]
@@ -205,6 +305,40 @@ mod tests {
         assert!(![FIELD, RECORD, ITEM].iter().any(|separator| without_mark(CATALOG).contains(*separator)));
         let seven_zip = rows.iter().find(|fields| fields[1] == "7-Zip").unwrap();
         assert_eq!((seven_zip[0], seven_zip[2], seven_zip[3]), ("extra_7zip", "Files & Downloads", "Files & Storage"));
+    }
+
+    #[test]
+    fn languages_resolve_and_translate() {
+        let all = languages();
+        let rows: Vec<Vec<&str>> = all.split(RECORD).map(|record| record.split(FIELD).collect()).collect();
+        assert_eq!(rows.len(), 51);
+        assert!(rows.iter().all(|fields| fields.len() == 3));
+        let right_to_left: Vec<&str> = rows.iter().filter(|fields| fields[2] == "1").map(|fields| fields[0]).collect();
+        assert_eq!(right_to_left, ["ar", "ur"]);
+
+        let portuguese = language("System", "pt-BR");
+        let mut records = portuguese.split(RECORD);
+        assert_eq!(records.next().unwrap().split(FIELD).collect::<Vec<_>>(), ["pt-PT", "0"]);
+        let strings: Vec<Vec<&str>> = records.map(|record| record.split(FIELD).collect()).collect();
+        assert!(strings.iter().all(|fields| fields.len() == 2));
+        assert!(strings.contains(&vec!["Install", "Instalar"]));
+        // English needs no table, and an explicit choice ignores the Windows language.
+        assert_eq!(language("System", "af-ZA"), format!("en{FIELD}0"));
+        assert!(language("ar", "pt-BR").starts_with(&format!("ar{FIELD}1{RECORD}")));
+        // No translation may contain a separator, or records would split wrongly.
+        assert!(![FIELD, RECORD, ITEM].iter().any(|separator| without_mark(LOCALES).contains(*separator)));
+    }
+
+    #[test]
+    fn settings_cross_as_one_record_and_invalid_ones_are_refused() {
+        let settings = Settings { theme: "Light".to_string(), windows_accent: false, language: "ar".to_string(), auto_update: true };
+        let record = settings_record(&settings);
+        assert_eq!(record.split(FIELD).collect::<Vec<_>>(), ["Light", "0", "ar", "1"]);
+        assert_eq!(settings_from_record(&record), Some(settings));
+        assert_eq!(settings_record(&Settings::for_tests()).split(FIELD).collect::<Vec<_>>(), ["Dark", "1", "en", "0"]);
+        for invalid in ["", "Neon\u{1f}1\u{1f}en\u{1f}1", "Dark\u{1f}yes\u{1f}en\u{1f}1", "Dark\u{1f}1\u{1f}xx\u{1f}1", "Dark\u{1f}1\u{1f}en"] {
+            assert_eq!(settings_from_record(invalid), None, "{invalid:?}");
+        }
     }
 
     #[test]

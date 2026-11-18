@@ -12,4 +12,5 @@ crate-type = ["cdylib", "rlib"]
 [dependencies]
 oneinstall-core = { path = "../core" }
 oneinstall-platform = { path = "../platform" }
-serde_json = { workspace = true }
+# Order matters: translation patterns are tried in the order of locales.json, as 3.6 tries them.
+serde_json = { workspace = true, features = ["preserve_order"] }

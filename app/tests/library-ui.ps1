@@ -1,6 +1,7 @@
-# Drives the install library of a built 1nstall.exe from outside, through UI Automation,
+﻿# Drives the install library of a built 1nstall.exe from outside, through UI Automation,
 # and checks what a user of the 3.6 library relies on. Needs an interactive desktop.
-# It selects and searches only; nothing is installed.
+# It selects and searches only; nothing is installed. The application runs with --ui-test,
+# so nothing in the user's profile is read or written.
 param([Parameter(Mandatory)][string]$Exe)
 $ErrorActionPreference='Stop'
 Add-Type -AssemblyName UIAutomationClient, UIAutomationTypes
@@ -13,7 +14,7 @@ function Named($root,[string]$name) { $root.FindFirst($descendants,(New-Object W
 function Cards($root) { @(All $root ([Windows.Automation.ControlType]::CheckBox)) }
 
 $exe=(Resolve-Path -LiteralPath $Exe).Path
-$process=Start-Process -FilePath $exe -PassThru
+$process=Start-Process -FilePath $exe -ArgumentList '--ui-test' -PassThru
 try {
     $deadline=(Get-Date).AddSeconds(20)
     do { Start-Sleep -Milliseconds 100; $process.Refresh() } while ($process.MainWindowHandle -eq [IntPtr]::Zero -and (Get-Date) -lt $deadline -and -not $process.HasExited)

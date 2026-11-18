@@ -10,10 +10,14 @@ This is work in progress. `Shell.cs` lists what is ported and what is not; the 3
 | `Engine.cs` | Extracts and loads `oneinstall_engine.dll`; the C# side of the engine boundary. |
 | `Shell.cs` | The main window, wired to the engine. |
 | `Cards.cs` | The library cards: the 3.6 card builder, reading engine records and filling a card only when it nears the viewport. |
+| `I18n.cs` | Interface language: every label remembers its English text and the window is re-translated in place. |
+| `Theme.cs` | Preferences and appearance: theme, Windows accent, glass and high contrast. |
+| `SettingsPage.cs` | The Settings page and the update check. |
 | `1nstall.csproj` | Compiles `interface.xaml`, the 3.6 interface helpers in `src/` and the files above into one assembly. |
 | `build.ps1` | Builds the engine, then the executable, into `dist\v4`. |
 | `tests/update-bridge.ps1` | Proves the 3.6 updater accepts and applies the 4.0 executable. |
 | `tests/library-ui.ps1` | Drives the install library through UI Automation and checks what a 3.6 user relies on. Needs an interactive desktop. |
+| `tests/settings-ui.ps1` | Drives the Settings page: languages, right-to-left layout, theme and accent. Needs an interactive desktop. |
 
 ## Build
 
@@ -29,6 +33,7 @@ Needs Rust 1.86 or later. The C# side uses the compiler and MSBuild that ship wi
 | --- | --- |
 | `--self-test` | Exercises the engine through the boundary the interface uses, writes `self-test.log` beside the executable, shows no window. Exit code 0 means every check passed. |
 | `--startup-test` | Shows the main window, writes the 3.6 timing marks to `startup-test.log`, followed by one `Mark` line per start-up step, and exits. |
+| `--ui-test` | The normal window with the fixed preferences of the test modes (English, dark, no update check). Nothing in the user's profile is read or written, so interface tests can change settings freely. |
 | `--apply-update …` | The update step of 3.6 (`src/update-helper.cs`), unchanged. |
 
 Test modes keep their cache in `runtime-cache` beside the executable. A normal start uses `%LOCALAPPDATA%\1nstall\Runtime`, as 3.6 does.

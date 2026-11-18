@@ -1,33 +1,54 @@
 # Fase 4 — Interface, migração e release
 
-Estado em 2026-11-18, depois do primeiro de seis passos e de uma ronda de otimização do arranque. O código está no ramo `v4/app`, nas pastas `app/` e `engine/ffi/`. A 3.6 na raiz do repositório continua intocada e a compilar.
+Estado em 2026-11-18, depois de dois dos seis passos e de uma ronda de otimização do arranque. O código está no ramo `v4/app`, nas pastas `app/` e `engine/ffi/`. A 3.6 na raiz do repositório continua intocada e a compilar.
 
 ## Resumo
 
-Escolheste a interface WPF sobre o motor Rust. Existe um `1nstall.exe` 4.0 num único ficheiro, sem PowerShell, e está provado que a 3.6 se atualiza para ele sem release intermédia. Depois da otimização fica pronto em 444 ms, abaixo do limite de 500 ms, com o aspeto e as animações intactos. O limite de memória de 80 MB não é atingido: fica em 101 MB.
+Escolheste a interface WPF sobre o motor Rust. Existe um `1nstall.exe` 4.0 num único ficheiro, sem PowerShell, e está provado que a 3.6 se atualiza para ele sem release intermédia. Com as definições, o tema e os 51 idiomas já incluídos, fica pronto em 467 ms, abaixo do limite de 500 ms, com o aspeto e as animações intactos. O limite de memória de 80 MB não é atingido: fica em 110 MB.
 
-A fase não está concluída: só o ecrã da biblioteca de instalação está ligado, e ainda não instala nem remove nada.
+A fase não está concluída: estão ligados a biblioteca de instalação e as definições, e ainda não instala nem remove nada.
 
 ## O executável da 4.0
 
-| Medida | 3.6.0 | 4.0 antes de otimizar | 4.0 agora |
-| --- | --- | --- | --- |
-| Tamanho | 2 699 264 bytes | 3 098 624 bytes | 3 064 320 bytes |
-| Pronta e ociosa, a quente | 1 996 ms | 594 ms | 444 ms |
-| Primeira execução, com extração do motor | 2 425 ms | 763 ms | 501 ms |
-| Pico de working set | 242 MB | 105 MB | 101 MB |
-| Em repouso após 8 s (working set / privada) | não medido | não medido | 101 / 104 MB |
-| Precisa, além do Windows | .NET Framework 4.8, PowerShell 5.1 | .NET Framework 4.8 | .NET Framework 4.8 |
+| Medida | 3.6.0 | Passo 1, antes de otimizar | Passo 1, otimizado | Passo 2 |
+| --- | --- | --- | --- | --- |
+| Tamanho | 2 699 264 bytes | 3 098 624 bytes | 3 064 320 bytes | 3 130 880 bytes |
+| Pronta e ociosa, a quente | 1 996 ms | 594 ms | 444 ms | 467 ms |
+| Primeira execução, com extração do motor | 2 425 ms | 763 ms | 501 ms | 563 ms |
+| Pico de working set | 242 MB | 105 MB | 101 MB | 110 MB |
+| Em repouso após 8 s (working set / privada) | não medido | não medido | 101 / 104 MB | 113 / 124 MB |
+| Precisa, além do Windows | .NET Framework 4.8, PowerShell 5.1 | .NET Framework 4.8 | .NET Framework 4.8 | .NET Framework 4.8 |
 
-Medido neste PC com a régua da Fase 0, mediana de 10 arranques a quente. Os 10 arranques a quente ficaram entre 429 e 446 ms.
+Medido neste PC com a régua da Fase 0, mediana de 10 arranques a quente. No passo 2 os 10 arranques ficaram entre 459 e 479 ms.
 
-**Estes números vão piorar um pouco.** A 4.0 ainda só carrega a biblioteca de instalação; faltam as definições, os idiomas, o tema e as restantes páginas.
+**Estes números ainda vão subir um pouco.** Faltam as páginas de desinstalação, histórico e perfis.
 
 Como é construído:
 
 - **Um só assembly.** A interface compilada da 3.6 (`interface.xaml`), os seus ajudantes C# e o anfitrião novo ficam no mesmo `1nstall.exe`.
 - **O motor Rust vai dentro do executável** e é extraído para a mesma cache imutável da 3.6, com o SHA-256 verificado antes de ser carregado. É carregado pelo caminho completo, sem procurar em pastas.
 - **O passo de atualização é o da 3.6**, sem alterações.
+
+## Passo 2: definições, tema e idiomas
+
+Portei `src/settings.ps1` inteiro e as funções de aspeto de `vexan_installers.ps1`.
+
+| Parte | Onde ficou | O que faz |
+| --- | --- | --- |
+| Ficheiro de definições | Motor Rust | Lê e grava `%LOCALAPPDATA%\1nstall\settings.json`, o mesmo ficheiro e formato da 3.6. Cada propriedade só é aceite se for válida; a escrita passa por um ficheiro temporário. |
+| Escolha do idioma | Motor Rust | Resolve o idioma do Windows para um dos 51, com os casos especiais da 3.6 (português, chinês, norueguês, montenegrino). |
+| O que o Windows diz | Motor Rust | Cor de destaque e efeitos de transparência pelo mesmo objeto do Windows que a 3.6 usa, e o tema claro pelo mesmo valor do registo. |
+| Traduções | C# | Cada texto guarda o original em inglês, e a janela inteira é traduzida no sítio quando o idioma muda. Árabe e urdu espelham a disposição. |
+| Aspeto | C# | Tema claro, escuro ou do sistema; cor de destaque ou preto e branco; vidro; alto contraste. Segue o Windows uma vez por segundo, como a 3.6. |
+| Página de definições | C# | As cinco secções da 3.6, incluindo a verificação de atualizações. |
+
+A página de definições em tema claro ficou igual à captura da 3.6 em `docs/images/settings-light.png`, tirando o botão de histórico, que ainda não existe, e o número da versão.
+
+Diferenças face à 3.6, todas sem efeito visível:
+
+- **Código do idioma.** A 3.6 devolve o código em minúsculas (`sr-latn`) e conta com o PowerShell ignorar maiúsculas; a 4.0 devolve-o como está em `locales.json` (`sr-Latn`). É o mesmo idioma.
+- **Modo `--ui-test`, novo.** É a janela normal com as preferências fixas dos modos de teste: não lê nem grava nada no perfil do utilizador. Existe para os testes de interface poderem mexer nas definições à vontade.
+- **Identificadores de automação** nas quatro escolhas da página, para os testes as encontrarem.
 
 ## Otimização do arranque
 
@@ -92,12 +113,16 @@ A pesquisa do protótipo WPF da Fase 3, que tinha passado para este executável,
 
 | Verificação | Onde correu | Resultado |
 | --- | --- | --- |
-| Autoteste (`--self-test`) | Neste PC | 9 de 9 |
+| Autoteste (`--self-test`) | Neste PC | 14 de 14 |
 | Teste da biblioteca por UI Automation (`app/tests/library-ui.ps1`) | Neste PC | 13 de 13 |
-| Motor: formatação, lints e testes | Neste PC | Limpos |
+| Teste das definições por UI Automation (`app/tests/settings-ui.ps1`) | Neste PC | 15 de 15 |
+| Motor: formatação, lints e testes, incluindo 12 testes novos de definições e idiomas | Neste PC | Limpos |
+| Um arranque em modo normal, com as definições reais deste utilizador | Neste PC | Abriu; 0 ms de processador em 10 s de repouso; ficheiro de definições intacto |
 | Tudo o anterior no Actions | Ver a última execução do ramo | — |
 
 O teste da biblioteca conduz a janela por fora, como um leitor de ecrã: confirma que os 325 cartões existem e têm nome, que um cartão fora do ecrã só é preenchido quando se chega a ele, que a pesquisa deixa só os cartões certos e desenhados, que a seleção sobrevive à pesquisa, que a dependência aparece antes da app que precisa dela, e que remover uma linha limpa a seleção.
+
+O teste das definições abre a página, muda o idioma para português e para árabe, confirma os textos traduzidos e que a navegação passa para o lado direito em árabe, muda o tema e a cor de destaque, e confirma que a seleção feita antes sobrevive a tudo isso. No fim confirma que o ficheiro de definições do utilizador não foi tocado.
 
 ## A ponte de atualização
 
@@ -115,12 +140,12 @@ O que este teste não cobre: a parte da 3.6 que consulta a API do GitHub e desca
 
 | Limite | Objetivo | 4.0 agora |
 | --- | --- | --- |
-| Pronta e ociosa | abaixo de 500 ms | 444 ms |
-| Pico de working set | abaixo de 80 MB | 101 MB |
+| Pronta e ociosa | abaixo de 500 ms | 467 ms |
+| Pico de working set | abaixo de 80 MB | 110 MB |
 | Executável | abaixo de 12 MB | 3,1 MB |
 | Dependências | só Windows e WinGet | .NET Framework 4.8, que vem com o Windows 10 e 11 |
 
-A janela de abertura da 3.6 mostra o primeiro fotograma aos 445 ms. A 4.0 mostra a janela principal completa aos 444 ms. Deixou de haver razão para a portar.
+A janela de abertura da 3.6 mostra o primeiro fotograma aos 445 ms. A 4.0 mostra a janela principal completa aos 467 ms. Deixou de haver razão para a portar.
 
 ## Correção a relatórios anteriores
 
@@ -133,7 +158,7 @@ A interface da 3.6 é comandada por 79 funções PowerShell, em cerca de 2 500 l
 | Passo | Conteúdo | Estado |
 | --- | --- | --- |
 | 1 | Executável único, fronteira com o motor, ponte de atualização, modos de teste, arranque otimizado | Feito |
-| 2 | Definições, tema, cor de destaque, vidro e os 51 idiomas, incluindo os dois da direita para a esquerda | Por fazer |
+| 2 | Definições, tema, cor de destaque, vidro e os 51 idiomas, incluindo os dois da direita para a esquerda | Feito |
 | 3 | Biblioteca completa: filtros por categoria, vistas, perfis, detalhes, guardar e carregar seleções | Por fazer |
 | 4 | Fila de instalação: confirmação, progresso, registos, cancelamento | Por fazer |
 | 5 | Desinstalação: lista de apps, fila, análise e limpeza de vestígios, cópias de segurança | Por fazer |
@@ -146,11 +171,12 @@ Os passos 4 e 5 só podem ser testados neste PC com o WinGet e o desinstalador d
 - **Um só PC.** Os tempos e a memória foram medidos numa máquina topo de gama. A memória da placa gráfica depende do controlador.
 - **As compilações não são reprodutíveis bit a bit.** As duas imagens do Actions produziram executáveis do mesmo tamanho com SHA-256 diferentes.
 - **O executável não é assinado**, tal como o da 3.6.
-- **O texto está só em inglês** e o tema é fixo: escuro, com a cor de destaque do Windows.
-- **Os botões de vista, histórico e definições não existem ainda**: na 3.6 são criados pelo script.
-- **O teste da biblioteca precisa de um ambiente de trabalho interativo** e por isso só corre neste PC, não no Actions.
+- **Os botões de vista e de histórico não existem ainda**, e o botão Desinstalar ainda não faz nada.
+- **Os testes de interface precisam de um ambiente de trabalho interativo** e por isso só correm neste PC, não no Actions.
+- **Não verifiquei:** o alto contraste; a app a seguir uma mudança de tema ou de cor do Windows enquanto está aberta; o descarregamento e a aplicação de uma atualização a partir da página; gravar definições pela interface em modo normal (a gravação só foi testada no motor, numa pasta temporária); e o aspeto dos outros 48 idiomas.
 
 ## Decisões que preciso de ti
 
-1. **A memória**: aceitar cerca de 100 MB com a placa gráfica, como a 3.6 desenha, ou cumprir os 80 MB com desenho por software.
-2. **A ordem dos passos 2 a 6**, se quiseres outra.
+A memória ficou decidida em 2026-11-18: aceitas cerca de 100 MB com a placa gráfica, como a 3.6 desenha.
+
+1. **A ordem dos passos 3 a 6**, se quiseres outra.

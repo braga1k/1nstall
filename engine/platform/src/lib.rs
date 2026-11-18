@@ -8,6 +8,7 @@ pub mod process;
 pub mod recycle;
 pub mod registry;
 pub mod removal;
+pub mod settings;
 
 use std::ffi::c_void;
 use std::ptr::{null, null_mut};
