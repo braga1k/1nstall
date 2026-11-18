@@ -467,3 +467,29 @@ pub fn waiting_for_restart(app: &InstalledApp, boot_time_ticks: i64) -> bool {
     const TICKS_PER_MINUTE: i64 = 600_000_000;
     app.restart_requested_at > 0 && (app.restart_requested_at - boot_time_ticks).abs() < TICKS_PER_MINUTE * 2
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn the_restart_gate_holds_only_for_the_boot_it_was_requested_in() {
+        let boot = 638_000_000_000_000_000i64;
+        let mut app = InstalledApp::default();
+        assert!(!waiting_for_restart(&app, boot));
+        app.restart_requested_at = boot;
+        assert!(waiting_for_restart(&app, boot));
+        assert!(waiting_for_restart(&app, boot + 1_199_999_999));
+        assert!(!waiting_for_restart(&app, boot + 1_200_000_000));
+        app.restart_requested_at = boot - 864_000_000_000;
+        assert!(!waiting_for_restart(&app, boot));
+    }
+
+    #[test]
+    fn parent_directories_stop_at_the_root() {
+        assert_eq!(parent_directory(r"C:\Apps\App\bin"), Some(r"C:\Apps\App"));
+        assert_eq!(parent_directory(r"C:\Apps"), Some(r"C:\"));
+        assert_eq!(parent_directory(r"C:\"), None);
+        assert_eq!(parent_directory("C:"), None);
+    }
+}

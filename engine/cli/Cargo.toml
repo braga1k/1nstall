@@ -1,0 +1,16 @@
+[package]
+name = "oneinstall-cli"
+description = "Read-only command line over the engine, for checks and interface prototypes."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[[bin]]
+name = "oneinstall"
+path = "src/main.rs"
+
+[dependencies]
+oneinstall-core = { path = "../core" }
+oneinstall-platform = { path = "../platform" }
+serde_json = { workspace = true, features = ["preserve_order"] }
