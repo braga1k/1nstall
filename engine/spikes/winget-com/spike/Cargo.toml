@@ -1,0 +1,10 @@
+[package]
+name = "spike"
+version = "0.0.0"
+edition = "2021"
+rust-version = "1.86"
+[dependencies]
+windows = { version = "*", features = ["Foundation", "Foundation_Collections", "System", "Security_Cryptography_Certificates", "Storage_Streams", "Win32_System_Com", "Win32_Foundation"] }
+windows-core = "*"
+windows-collections = "*"
+windows-future = "*"
