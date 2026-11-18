@@ -169,7 +169,8 @@ class OraclePublisher {
             $bytes=[IO.File]::ReadAllBytes($_.FullName)
             $lines=@([Text.Encoding]::Unicode.GetString($bytes) -split "`r`n" | Where-Object { $_.StartsWith('[') })
             $firstKey=''; if ($lines.Count -gt 0) { $firstKey=[string]$lines[0] }
-            [ordered]@{ FirstKey=$firstKey; Keys=$lines.Count; FirstBytes=[BitConverter]::ToString($bytes,0,[Math]::Min(4,$bytes.Length)); Bytes=$bytes.Length }
+            # No byte size: a value-level backup exports the whole shared key, whose other values differ per machine.
+            [ordered]@{ FirstKey=$firstKey; Keys=$lines.Count; FirstBytes=[BitConverter]::ToString($bytes,0,[Math]::Min(4,$bytes.Length)) }
         } | Sort-Object { $_.FirstKey })
         $restore='absent'; $restorePath=Join-Path $folder 'RESTORE.txt'
         if (Test-Path -LiteralPath $restorePath) { $restore=@(Get-Content -LiteralPath $restorePath) }
@@ -387,6 +388,12 @@ if ($Stage -eq 'winget') {
     if (Test-Path -LiteralPath $pwsh) {
         $command='-NoLogo -NoProfile -NonInteractive -Command "Install-Module Microsoft.WinGet.Client -Scope AllUsers -Force -ErrorAction Stop; (Get-Module -ListAvailable Microsoft.WinGet.Client | Select-Object -First 1).Version.ToString()"'
         $result['ModuleInstall']=Invoke-Probe $pwsh $command 300000
+        # The same import and query 3.6 issues, with full error text, to see whether the structured path can work here.
+        $query='-NoLogo -NoProfile -NonInteractive -Command "Import-Module Microsoft.WinGet.Client -MinimumVersion 1.7.0 -ErrorAction Stop; $all=@(Get-WinGetPackage); $bad=@($all | Where-Object { $null -eq $_.Id -or $null -eq $_.Name }); (''packages='' + $all.Count + '' withoutIdOrName='' + $bad.Count)"'
+        try { $probe=[OneInstallPackages]::Run($pwsh,$query,120000); $result['ModuleQuery']=[ordered]@{ ExitCode=('0x{0:X8}' -f $probe.ExitCode); Output=(Get-Head $probe.Output 400); Error=(Get-Head $probe.Error 1500) } }
+        catch { $result['ModuleQuery']=[ordered]@{ Exception=(Get-Head $_.Exception.GetBaseException().Message 600) } }
+        $structured=[OneInstallPackages]::Inventory()
+        $result['InventoryWithModule']=[ordered]@{ Complete=$structured.Complete; Partial=$structured.Partial; Packages=$structured.Packages.Count; Message=(Get-Head $structured.Message 1500) }
         $result['WithModule']=Invoke-Install 'Notepad++.Notepad++' 'Notepad++'
         $complete=[OneInstallPackages]::Inventory()
         $result['FinalStates']=[ordered]@{
