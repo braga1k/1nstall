@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Fix removals reported as Failed with "Access is denied" when an uninstaller elevated through UAC starts a child process. The queue no longer moves to the next app while that uninstaller is still running.
+
 ## 3.6.0 - 2026-10-12
 
 - Add elastic app selection switches to Install and Uninstall, with continuous spring travel, speed-based capsule stretch, press feedback and jump-free reversals.
