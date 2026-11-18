@@ -202,6 +202,19 @@ Para o poder testar, o motor tem uma falha deliberada que só funciona nos modos
 
 Nada foi publicado. Não toquei em `main` nem em nenhum ramo `release/*`.
 
+### Resultado no Actions
+
+No commit `2cf87e2`, os dez trabalhos terminaram: nove com sucesso e o de publicação ignorado, como esperado fora de `release/4.0.0`.
+
+| Trabalho | Resultado |
+| --- | --- |
+| Build de release e empacotamento (`headless`, Windows Server 2022) | Sucesso: testes do motor, build, teste de movimento, autoteste, ZIP portátil e ZIP de fontes com as somas verificadas |
+| Aplicação 4.0, nas duas imagens | Autoteste 31 de 31; a 3.6.0 publicada atualizou-se para a 4.0.0.0 |
+| Motor Rust, nas duas imagens | Oráculo: 1552 casos, 1532 idênticos, 0 por explicar. App fictícia removida, analisada e limpa pela fronteira. Sumatra PDF instalado pela fila no Windows Server 2025 |
+| Funções puras e observações da 3.6, nas duas imagens | Reproduzidas byte a byte |
+
+Os executáveis construídos no Actions têm 3 940 864 e 3 940 352 bytes; o deste PC tem 3 942 912.
+
 ## O que não foi testado
 
 Tudo o que sei que não foi verificado na 4.0, junto num só sítio.
