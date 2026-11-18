@@ -98,7 +98,16 @@ O programa de substituição termina com sucesso, mas nada fica instalado. A fil
 
 ### Instalação real
 
-Uma instalação real pela fila do motor corre só no Actions, em máquinas descartáveis: o Sumatra PDF, o mesmo pacote que a Fase 1 instalou pela 3.6. O resultado de cada execução fica nas anotações do Actions. Neste PC o teste recusa-se a correr.
+Uma instalação real pela fila do motor corre só no Actions, em máquinas descartáveis: o Sumatra PDF, o mesmo pacote que a Fase 1 instalou pela 3.6. Neste PC o teste recusa-se a correr.
+
+Resultado no commit `e485117`:
+
+| Imagem | Resultado |
+| --- | --- |
+| Windows Server 2025 | `Preparing…`, `Installing SumatraPDF.SumatraPDF…`, `Verifying…`, `Success`. Depois de voltar a perguntar ao WinGet, a biblioteca mostra `Installed · 3.6.1`. |
+| Windows Server 2022 | Não correu: a imagem não tem WinGet. |
+
+Na Fase 1, a 3.6 instalou este mesmo pacote na mesma imagem e respondeu `Unknown`, porque a sua verificação não conseguia ler a lista de instalados antes de os acordos da origem serem aceites. A 4.0 aceita-os na verificação, depois de o utilizador os ter aceite para instalar. É a divergência 4 da Fase 2, agora confirmada com uma instalação real.
 
 ## Otimização do arranque
 
