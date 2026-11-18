@@ -1,0 +1,11 @@
+[package]
+name = "oneinstall-core"
+description = "Rules of the 1nstall engine. No I/O: everything machine-dependent goes through the Host trait."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[dependencies]
+regex.workspace = true
+serde_json.workspace = true

@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - 'oracle/**'
+      - 'v4/**'
   workflow_dispatch:
 permissions:
   contents: read
@@ -36,6 +37,35 @@ jobs:
             echo "::error title=oracle pure (${{ matrix.os }})::golden differs on this machine (added/removed lines: $(git diff --numstat -- oracle/golden | cut -f1,2 | tr '\t' '/'))"
             exit 1
           fi
+  engine:
+    name: Rust engine (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-2022, windows-2025]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: engine
+    steps:
+      - uses: actions/checkout@v4
+      - name: Rust 1.86.0
+        shell: bash
+        run: |
+          rustup toolchain install 1.86.0 --profile minimal --component clippy --component rustfmt
+          rustup default 1.86.0
+          cargo --version
+      - name: Format and lint
+        shell: bash
+        run: cargo fmt --check && cargo clippy --locked --all-targets -- -D warnings
+      - name: Rust rules against the recorded 3.6 behaviour
+        shell: bash
+        run: |
+          cargo test --locked -- --nocapture 2>&1 | tee test.log
+          grep -E '^oracle [a-z]+:' test.log | while IFS= read -r line; do
+            echo "::notice title=engine (${{ matrix.os }})::$line"
+          done
   observe:
     name: Machine observations (${{ matrix.os }})
     strategy:

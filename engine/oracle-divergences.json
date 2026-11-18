@@ -1,0 +1,41 @@
+{
+  "about": "Cases where the Rust engine deliberately differs from the recorded 3.6 behaviour. The oracle test fails if a case here stops differing, or differs in another way.",
+  "divergences": [
+    {
+      "fn": "Packages.ValidId",
+      "args": ["Git.Git\n"],
+      "rust": {"out": false},
+      "reason": "strict-end: 3.6 accepted one trailing line break because the .NET '$' anchor matches before it. An identifier with a line break must not reach a command line."
+    },
+    {
+      "fn": "Packages.ValidId",
+      "args": [{"$gen": "repeat", "unit": "A", "count": 199, "suffix": "\n"}],
+      "rust": {"out": false},
+      "reason": "strict-end: same as above, at the 200-character limit."
+    },
+    {
+      "fn": "Packages.Arguments",
+      "args": ["Git.Git\n", "winget"],
+      "rust": {"err": {"type": "ArgumentException", "message": "Invalid package identity."}},
+      "reason": "strict-end: 3.6 built a WinGet command line containing the line break."
+    },
+    {
+      "fn": "Packages.ParseExport",
+      "args": ["{\"Sources\":[{\"SourceDetails\":{\"Name\":\"winget\"},\"Packages\":[{\"PackageIdentifier\":\"Git.Git\\n\",\"Version\":\"1\"}]}]}"],
+      "rust": {"err": {"type": "IOException", "message": "Invalid exported identity."}},
+      "reason": "strict-end: an exported identifier with a line break is rejected like any other invalid identifier."
+    },
+    {
+      "fn": "Packages.ParseSetup",
+      "args": ["{\"Version\":1,\"Apps\":[\"git\\n\"]}"],
+      "rust": {"err": {"type": "IOException", "message": "Invalid or duplicate catalog key."}},
+      "reason": "strict-end: a saved selection cannot carry a key with a line break."
+    },
+    {
+      "fn": "Uninstall.SafeRegistry",
+      "args": ["Software\\Sample Editor\n", {"Name": "Sample Editor"}, []],
+      "rust": {"out": false},
+      "reason": "strict-end: 3.6 accepted a registry path ending in a line break as a cleanup candidate."
+    }
+  ]
+}

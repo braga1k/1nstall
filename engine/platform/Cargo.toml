@@ -1,0 +1,13 @@
+[package]
+name = "oneinstall-platform"
+description = "Windows implementation of the Host trait and of the engine's machine operations."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[dependencies]
+oneinstall-core = { path = "../core" }
+
+[dev-dependencies]
+serde_json = { workspace = true, features = ["preserve_order"] }
