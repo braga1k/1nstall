@@ -43,7 +43,7 @@ jobs:
       matrix:
         os: [windows-2022, windows-2025]
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 40
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
       - name: Existing native removal tests (disposable machine)
@@ -51,6 +51,30 @@ jobs:
         timeout-minutes: 12
         continue-on-error: true
         run: .\oracle\observe-machine.ps1 -DisposableEnvironment -Stage tests -Out oracle-out
+      - name: Remove, scan and clean fixture apps, recording machine state
+        shell: powershell
+        timeout-minutes: 12
+        continue-on-error: true
+        run: .\oracle\observe-machine.ps1 -DisposableEnvironment -Stage removal -Out oracle-out
+      - name: Removal recording must match the committed one
+        shell: bash
+        run: |
+          golden=oracle/golden/v3.6.0/removal.jsonl
+          if [ ! -f oracle-out/removal.jsonl ]; then
+            echo "::error title=oracle removal (${{ matrix.os }})::no recording was produced"; exit 1
+          fi
+          if ! git ls-files --error-unmatch "$golden" >/dev/null 2>&1; then
+            echo "::notice title=oracle removal (${{ matrix.os }})::no committed recording yet; this run only records"; exit 0
+          fi
+          cp oracle-out/removal.jsonl "$golden"
+          if git diff --exit-code --quiet -- "$golden"; then
+            echo "::notice title=oracle removal (${{ matrix.os }})::$(wc -l < "$golden" | tr -d ' ') recorded lines reproduced byte-for-byte; sha256 $(sha256sum "$golden" | cut -c1-64)"
+          else
+            git diff -U0 --word-diff=porcelain --word-diff-regex='[^,{}]+' -- "$golden" | grep -E '^[+-][^+-]' | head -8 | while IFS= read -r line; do
+              echo "::warning title=oracle removal diff (${{ matrix.os }})::${line:0:500}"
+            done
+            echo "::error title=oracle removal (${{ matrix.os }})::recording differs from the committed one"; exit 1
+          fi
       - name: How 3.6 reads this machine's uninstall registrations
         shell: powershell
         timeout-minutes: 8
@@ -58,7 +82,7 @@ jobs:
         run: .\oracle\observe-machine.ps1 -DisposableEnvironment -Stage inventory -Out oracle-out
       - name: Real WinGet install through the 3.6 install path
         shell: powershell
-        timeout-minutes: 15
+        timeout-minutes: 25
         continue-on-error: true
         run: .\oracle\observe-machine.ps1 -DisposableEnvironment -Stage winget -Out oracle-out
       - uses: actions/upload-artifact@v4
