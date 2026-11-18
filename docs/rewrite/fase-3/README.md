@@ -59,7 +59,7 @@ Contra o objetivo aceite na Fase 0:
 
 Como ler estes números:
 
-- **O relógio dos protótipos é mais exigente do que o da 3.6.** Conta desde a criação do processo pelo Windows; o da 3.6 começa dentro do launcher. A linha «vida total do processo» é a única medida da mesma maneira em todos.
+- **O relógio é o mesmo em todos.** Tanto a 3.6 como os protótipos contam desde a criação do processo pelo Windows (`launcher.cs:21-28`). *Corrigido em 2026-11-18: a primeira versão deste relatório dizia, por erro, que o relógio da 3.6 começava mais tarde.*
 - **O tempo do Slint por software é aproximado.** Esse modo não avisa quando acaba de desenhar; a marca é tirada duas voltas do ciclo de eventos depois de a janela aparecer.
 - **A memória do Tauri soma sete processos.** O working set somado conta mais de uma vez as páginas partilhadas; a memória privada (158 MB) não tem esse defeito. O processo principal sozinho usa 29 MB, mas esse número isolado engana.
 - **O WPF teve uma série irregular.** Na primeira série, sete execuções ficaram entre 764 e 1 001 ms, logo a seguir à série do Tauri. As duas séries seguintes deram 600,5 e 602 ms, com variação de 20 ms. Uso essas.

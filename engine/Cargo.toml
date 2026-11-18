@@ -1,6 +1,6 @@
 [workspace]
 resolver = "3"
-members = ["core", "platform", "harness", "cli"]
+members = ["core", "platform", "harness", "cli", "ffi"]
 
 [workspace.package]
 version = "4.0.0-alpha.0"

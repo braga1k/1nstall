@@ -75,6 +75,45 @@ jobs:
           grep -E '^oracle removal:' removal.log | while IFS= read -r line; do
             echo "::notice title=engine (${{ matrix.os }})::$line"
           done
+  app:
+    name: 1nstall 4.0 (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-2022, windows-2025]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Rust 1.86.0
+        shell: bash
+        run: |
+          rustup toolchain install 1.86.0 --profile minimal
+          rustup default 1.86.0
+      - name: Build the single executable
+        shell: powershell
+        run: |
+          $line = .\app\build.ps1 | Select-Object -Last 1
+          Write-Output "::notice title=app (${{ matrix.os }})::built $line"
+      - name: Self-test through the engine boundary (no interactive desktop)
+        shell: powershell
+        run: |
+          $p = Start-Process -FilePath .\dist\v4\1nstall.exe -ArgumentList '--self-test' -Wait -PassThru -WindowStyle Hidden
+          Get-Content .\dist\v4\self-test.log
+          if ($p.ExitCode -ne 0) { throw 'Self-test failed.' }
+          $passed = @(Get-Content .\dist\v4\self-test.log | Where-Object { $_ -like 'PASS *' }).Count
+          Write-Output "::notice title=app (${{ matrix.os }})::self-test: $passed checks passed, exit code 0"
+      - name: The released 3.6.0 executable updates itself to 4.0 (disposable machine)
+        shell: powershell
+        run: |
+          New-Item -ItemType Directory -Path released -Force | Out-Null
+          Invoke-WebRequest -Uri https://github.com/braga1k/1nstall/releases/download/v3.6.0/1nstall.exe -OutFile released\1nstall.exe -UseBasicParsing
+          $hash = (Get-FileHash released\1nstall.exe -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($hash -ne '90428e1ea21db5f5b939aab920db3309a457fc4bd4ac116641fb1754feb8508c') { throw "Unexpected 3.6.0 download: $hash" }
+          .\app\tests\update-bridge.ps1 -Exe .\dist\v4\1nstall.exe -Released36 released\1nstall.exe -DisposableEnvironment | ForEach-Object {
+            Write-Output $_
+            if ($_ -like 'bridge *') { Write-Output "::notice title=app (${{ matrix.os }})::$_" }
+          }
   observe:
     name: Machine observations (${{ matrix.os }})
     strategy:

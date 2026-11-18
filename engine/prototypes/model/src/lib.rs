@@ -244,8 +244,7 @@ extern "system" {
     fn GetSystemTimeAsFileTime(now: *mut FileTime);
 }
 
-/// Milliseconds since Windows created this process. Stricter than the 3.6 clock, which starts
-/// inside the launcher, after process creation and runtime start-up.
+/// Milliseconds since Windows created this process, as the 3.6 `StartupTimer` counts them.
 pub fn clock_ms() -> u64 {
     let (mut creation, mut exit, mut kernel, mut user, mut now) = (FileTime::default(), FileTime::default(), FileTime::default(), FileTime::default(), FileTime::default());
     // SAFETY: every pointer refers to a live, writable FILETIME of the layout Windows expects.

@@ -28,7 +28,7 @@ Um PC de secretária topo de gama com Windows 11. Os detalhes do hardware ficam 
 
 - **Só servem para comparar neste PC.** É uma máquina muito acima da média; num portátil comum os tempos serão bem maiores. A comparação com a 4.0 tem de ser feita na mesma máquina, ou num runner de CI fixo.
 - **Não é um arranque a frio verdadeiro.** A primeira execução (2 405 ms) é a mais próxima: exe acabado de copiar, DLL por extrair, análise do antivírus incluída. Mas não houve reinício, por isso o .NET e o WPF já estavam na cache de disco do Windows.
-- **O relógio é o da própria app.** É criado dentro do launcher (`launcher.cs:26`) e passado ao script (`:133`), por isso exclui a criação do processo e o arranque do CLR. A «vida total do processo» é medida de fora e inclui também o fecho.
+- **O relógio conta desde a criação do processo.** É criado dentro do launcher, mas soma o tempo decorrido desde que o Windows criou o processo (`launcher.cs:21-28`), por isso inclui o arranque do CLR. A «vida total do processo» é medida de fora e inclui também o fecho. *Corrigido em 2026-11-18: a versão anterior desta nota dizia, por erro, que o relógio excluía a criação do processo.*
 - **O modo de teste não é igual a um arranque normal.** Força inglês e tema escuro, não lê `settings.json` e não verifica atualizações (`settings.ps1:9-10`).
 - **A memória é o pico até ao estado pronto**, não o consumo após uso prolongado.
 

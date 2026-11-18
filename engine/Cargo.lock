@@ -115,6 +115,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "oneinstall-ffi"
+version = "4.0.0-alpha.0"
+dependencies = [
+ "oneinstall-core",
+ "oneinstall-platform",
+ "serde_json",
+]
+
+[[package]]
 name = "oneinstall-harness"
 version = "4.0.0-alpha.0"
 dependencies = [

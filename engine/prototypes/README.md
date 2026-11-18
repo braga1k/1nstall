@@ -53,4 +53,4 @@ powershell -NoProfile -ExecutionPolicy Bypass -File measure\measure.ps1 -Exe C:\
 | `idle.ps1` | Memory of the process tree at rest, 8 seconds after start. |
 | `inspect.ps1` | The UI Automation tree, a toggle of one card through it, and optionally a picture of the window. |
 
-The clock starts when Windows creates the process. The 3.6 clock starts later, inside its launcher, so compare the two through the wall-clock column.
+The clock starts when Windows creates the process, as the 3.6 clock does (`src/launcher.cs`, `StartupTimer`).
