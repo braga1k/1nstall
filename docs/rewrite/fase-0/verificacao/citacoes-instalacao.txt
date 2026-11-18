@@ -1,0 +1,118 @@
+V@@@15@@@Get-Content (Join-Path $ResourceRoot 'catalog.json') -Raw -Encoding UTF8
+V@@@25@@@if ($_.Name -match '^\p{Nd}') { 0 } elseif ($_.Name -match '^\p{L}') { 1 } else { 2 }
+V@@@43@@@if (-not $byKey.ContainsKey($key)) { throw "Unknown application: $key" }
+V@@@44@@@if ($visiting.ContainsKey($key)) { throw "Dependency cycle at: $key" }
+V@@@89@@@throw 'Each app needs exactly one installation method.'
+V@@@130@@@-not [Environment]::Is64BitOperatingSystem) { throw 'Requires 64-bit Windows.' }
+V@@@641@@@if ($card.IsChecked) { foreach ($item in @(Get-Plan @($key))) { $selected[$item.Key]=$true } }
+V@@@522@@@@($item.Requires | Where-Object { -not $selected.ContainsKey($_) }).Count)
+V@@@639@@@if ($card -isnot [Windows.Controls.CheckBox] -or $script:syncing -or $script:busy) { return }
+V@@@530@@@foreach ($app in @(Get-Plan $Keys)) { $selected[$app.Key] = $true }
+V@@@529@@@$selected.Clear(); $statuses.Clear()
+V@@@813@@@$agree.Add_Checked({ $go.IsEnabled=$true }); $agree.Add_Unchecked({ $go.IsEnabled=$false })
+V@@@900@@@if (-not $plan.Count -or -not (Confirm-Plan $plan)) { return }
+V@@@477@@@$ui.Install.IsEnabled = ($selected.Count -gt 0 -and -not $busy)
+P@@@78@@@Environment.SpecialFolder.LocalApplicationData), @"Microsoft\WindowsApps\winget.exe");
+P@@@86@@@string candidate = Path.Combine(entry.Trim().Trim('"'), "winget.exe");
+V@@@903@@@Start-Process 'ms-windows-store://pdp/?ProductId=9NBLGGH4NNS1'
+V@@@901@@@if (-not $winget -and @($plan | Where-Object { $_.Ids.Count -gt 0 }).Count) {
+P@@@114@@@" --no-upgrade --accept-source-agreements --accept-package-agreements --disable-interactivity";
+P@@@113@@@return "install --id " + Quote(id) + " --exact --source " + Quote(source) +
+P@@@112@@@if (!ValidId(id) || !ValidSource(source)) throw new ArgumentException("Invalid package identity.");
+P@@@94@@@id != null && id.Length <= 200 && Regex.IsMatch(id, @"^[A-Za-z0-9][A-Za-z0-9.+_-]*$");
+P@@@95@@@return source == "winget" || source == "msstore";
+V@@@875@@@$result=[OneInstallPackages]::Install($Winget,$id,'winget',$app.Name,$LogDir,[Action]{
+P@@@99@@@if (value == null || value.IndexOf('\0') >= 0) throw new ArgumentException("Invalid argument.");
+P@@@104@@@if (c == '"') { result.Append('\\', slashes * 2 + 1); result.Append(c); }
+R@@@52@@@$command -notmatch '--all|--force|--include-pinned|--allow-reboot'
+R@@@53@@@Assert ($null -eq [OneInstallPackages].GetMethod('UpdateAsync')) 'Update service still exists.'
+P@@@118@@@UseShellExecute = false, CreateNoWindow = true, RedirectStandardOutput = true
+P@@@122@@@var output = p.StandardOutput.ReadToEndAsync(); var error = p.StandardError.ReadToEndAsync();
+P@@@123@@@if (timeout > 0 && !p.WaitForExit(timeout)) { p.Kill(); p.WaitForExit(); throw new TimeoutException(
+P@@@126@@@o.Length > 1048576 ? o.Substring(0, 1048576) + "\n[truncated]" : o
+P@@@265@@@var r = Run(exe, Arguments(id, source), 0);
+P@@@209@@@code == 3010 || code == 1641 || h == 0x8A150109 || h == 0x8A15010A || h == 0x8A15010B
+P@@@210@@@h == 0x800704C7 || h == 0x8A150005 || h == 0x8A15010C || h == 0x8A150077) return "Cancelled";
+P@@@210@@@if (code == 1602 || code == 1223 || h == 0x800704C7
+P@@@211@@@if (code == 0 || h == 0x8A150061 || h == 0x8A15010D) return "Unknown";
+P@@@212@@@if (h == 0x8A150076 || h == 0x8A150041 || h == 0x8A150046) return "Manual action required";
+P@@@218@@@if (h == 0x8A150008 || h == 0x8A150107) return "Download/network failure.
+P@@@219@@@if (h == 0x8A150068) return "WinGet pin prevents this operation.
+P@@@220@@@if (h == 0x8A150104 || h == 0x8A150110) return "Dependency failed.
+P@@@272@@@{ outcome = "Success"; message = "Exact package identity verified: " + state; }
+P@@@267@@@string outcome = Outcome(r.ExitCode), message = Explain(r.ExitCode);
+P@@@271@@@var inventory = Inventory(); string state = InstalledState(inventory, new[] { id }, source);
+P@@@277@@@catch (Exception e) { return Record("Install", id, source, name, "Failed", e.Message, -1, log); }
+P@@@275@@@return Record("Install", id, source, name, outcome, message, r.ExitCode, log);
+V@@@877@@@if ($result.Outcome -ne 'Success') { break }
+V@@@880@@@elseif ($states -contains 'Cancelled') { 'Cancelled' } elseif ($states -contains 'Restart required')
+V@@@853@@@Where-Object { -not $outcomes.ContainsKey($_) -or $outcomes[$_] -ne 'Success' })
+V@@@850@@@'Cancelled','Not started: stop after current requested.',0,$null) | Out-Null
+V@@@927@@@if ($script:busy) { $script:control.Stop=$true; $ui.Cancel.IsEnabled=$false;
+V@@@1001@@@'Wait for the current installer to finish, then close this window.'
+V@@@865@@@Opening a website does not prove installation.',0,$null) | Out-Null
+V@@@940@@@try { Start-Process $event.Text }
+M@@@90@@@if ([string]$sender.Tag -match '^https://[^\s]+$') { Start-Process ([string]$sender.Tag) }
+V@@@914@@@$null=$script:job.AddScript($worker.ToString()).AddArgument($plan).AddArgument($winget)
+V@@@951@@@if ($statuses[$key] -eq 'Queued') { $statuses[$key]='Not started' }
+V@@@957@@@@($statuses.Values | Where-Object { $_ -ne 'Success' }).Count -eq 0 -and -not $script:control.Stop
+V@@@885@@@} catch { Emit 'error' '' $_.Exception.Message }
+P@@@133@@@Environment.SpecialFolder.ProgramFiles), @"PowerShell\7\pwsh.exe");
+P@@@140@@@Import-Module Microsoft.WinGet.Client -MinimumVersion 1.7.0 -ErrorAction Stop;
+P@@@141@@@Convert.ToBase64String(Encoding.Unicode.GetBytes(code)), 90000);
+P@@@141@@@"-NoLogo -NoProfile -NonInteractive -EncodedCommand "
+P@@@152@@@if (result.Packages.Any(p => p.Id == null || p.Name == null)) throw new IOException(
+P@@@150@@@$rows=@(Get-WinGetPackage -ErrorAction Stop | ForEach-Object { [pscustomobject]@{Id=[string]$_.Id;
+P@@@162@@@"export --output " + Quote(temp) + " --include-versions --disable-interactivity", 90000);
+P@@@163@@@if (export.ExitCode != 0 || !File.Exists(temp) || new FileInfo(temp).Length > 4194304)
+P@@@186@@@if (!ValidId(package.PackageIdentifier)) throw new IOException("Invalid exported identity.");
+P@@@183@@@if (!ValidSource(name)) continue;
+P@@@194@@@if (ids == null || ids.Length == 0 || (!inventory.Complete && !inventory.Partial)) return "Unknown";
+P@@@198@@@String.Equals(p.Id, id, StringComparison.OrdinalIgnoreCase) && p.Source == source
+P@@@199@@@if (matches.Length > 1) return "Unknown · multiple registrations";
+P@@@203@@@if (absent) return inventory.Complete && versions.Count == 0 ? "Not installed" :
+P@@@96@@@!Regex.IsMatch(version, @"^(unknown|latest|n/a|<.*>)$", RegexOptions.IgnoreCase)
+M@@@25@@@$state=[OneInstallPackages]::InstalledState($script:libraryInventory,[string[]]$app.Ids,'winget')
+M@@@17@@@if ($script:libraryTask -or $SmokeTest) { return }
+M@@@268@@@'Retry withheld: app is installed or its current identity/state is unknown.'
+M@@@183@@@if ($record.Action -eq 'Install' -and $record.Outcome -eq 'Failed' -and $record.Source -eq 'winget') {
+P@@@234@@@Json().Serialize(rows.Skip(Math.Max(0, rows.Count - 500)).ToList()), Encoding.UTF8);
+P@@@231@@@if (HistoryError != null) throw new IOException(HistoryError + " Existing history was preserved.");
+P@@@266@@@File.WriteAllText(log, r.Output + "\r\n" + r.Error, Encoding.UTF8);
+V@@@348@@@Join-Path $env:LOCALAPPDATA '1nstall\Logs'
+V@@@350@@@'session-{0}-{1}.log' -f (Get-Date -Format 'yyyyMMdd-HHmmss'),$PID
+P@@@284@@@(token|password|passwd|secret|authorization|api[_-]?key|credential)\s*[:=]\s*[^\r\n,;]+
+M@@@201@@@$dialog.Filter='Text (*.txt)|*.txt'; $dialog.FileName='1nstall-diagnostics.txt'
+M@@@191@@@.StartsWith([IO.Path]::GetFullPath($logDir)+'\',[StringComparison]::OrdinalIgnoreCase)
+M@@@193@@@Start-Process notepad.exe -ArgumentList ([OneInstallPackages]::Quote([string]$sender.Tag))
+V@@@758@@@Apps=@($catalog | Where-Object { $selected.ContainsKey($_.Key) } | ForEach-Object { $_.Key })}
+M@@@224@@@$setup=[OneInstallPackages]::ReadSetup($Path)
+P@@@297@@@if (new FileInfo(file).Length > 65536) throw new IOException("Setup file exceeds 64 KiB.");
+P@@@302@@@if (Encoding.UTF8.GetByteCount(text) > 65536) throw new IOException("Setup file exceeds 64 KiB.");
+P@@@304@@@!root.ContainsKey("Version") || !(root["Version"] is int) || !root.ContainsKey("Apps")
+P@@@306@@@if (version != 1 && version != 2) throw new IOException("Unsupported setup version.");
+P@@@307@@@root.Keys.Any(k => k != "Version" && k != "Apps" && !(version == 2 && k == "Kind"))
+P@@@308@@@Convert.ToString(root["Kind"]) != "1nstall-selection"
+P@@@310@@@if (items == null || items.Length == 0 || items.Length > 500) throw new IOException(
+P@@@317@@@if (!ValidId(key) || !seen.Add(key)) throw new IOException("Invalid or duplicate catalog key.");
+P@@@323@@@fields.Keys.Any(k => k != "Id" && k != "Source" && k != "Name" && k != "Version")
+P@@@325@@@Regex.IsMatch(entry.Name + entry.Version, @"[\x00-\x1f]") || !seen.Add(entry.Source + ":" + entry.Id)
+M@@@227@@@$plan=@(Get-Plan ([string[]]$setup.Keys)) # validate before any selection mutation
+M@@@244@@@if ($null -ne $keys) { Set-Selection ([string[]]$keys) }
+M@@@232@@@$matches=@($catalog | Where-Object { $_.Ids -contains $entry.Id -and $entry.Source -eq 'winget' })
+V@@@787@@@[Windows.MessageBox]::Show($window,$_.Exception.Message,'Could not import profile') | Out-Null
+P@@@336@@@ParseSetup(json); // apply the same schema validation before writing an export
+M@@@248@@@if (-not $script:libraryInventory.Complete -and -not $script:libraryInventory.Partial)
+M@@@137@@@if ($prefs.View -in @('All apps','Installed')) { $script:libraryView=$prefs.View }
+V@@@768@@@Start-Process explorer.exe -ArgumentList ('"{0}"' -f $logDir)
+M@@@4@@@[OneInstallPackages]::WinGetPath=$winget
+V@@@351@@@$winget = [OneInstallPackages]::FindWinGet()
+V@@@1405@@@. ([scriptblock]::Create($managerUI))
+V@@@907@@@$script:control=[hashtable]::Synchronized(@{Stop=$false})
+P@@@76@@@new JavaScriptSerializer { MaxJsonLength = 4194304, RecursionLimit = 20 }
+M@@@250@@@[OneInstallPackages]::ValidId($_.Id) -and [OneInstallPackages]::ValidSource($_.Source)
+M@@@239@@@'Unavailable in this catalog · use the publisher or WinGet manually'
+P@@@251@@@String.IsNullOrWhiteSpace(r.Timestamp) || String.IsNullOrWhiteSpace(r.Action)
+P@@@249@@@if (new FileInfo(HistoryPath).Length > 4194304) throw new IOException(
+V@@@1094@@@if ($script:uninstallTask) { throw 'A removal operation is already running.' }
+V@@@857@@@'Manual action required','Dependency not verified: '+($blocked -join ', '),0,$null) | Out-Null

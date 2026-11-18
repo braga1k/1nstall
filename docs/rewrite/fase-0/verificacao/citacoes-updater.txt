@@ -1,0 +1,191 @@
+src/update-helper.cs@@@22@@@const string Repository = "https://github.com/braga1k/1nstall/releases/download/";
+src/update-helper.cs@@@25@@@return BitConverter.ToString(hash.ComputeHash(input)).Replace("-","").ToLowerInvariant();
+src/update-helper.cs@@@29@@@request.UserAgent="1nstall-updater"; request.Accept="application/vnd.github+json";
+src/update-helper.cs@@@30@@@request.Timeout=20000; request.ReadWriteTimeout=20000;
+src/update-helper.cs@@@32@@@if(response.ResponseUri.Scheme!="https") throw new IOException("HTTPS required.");
+src/update-helper.cs@@@37@@@if(output.Length+count>limit) throw new IOException("Download too large.");
+src/update-helper.cs@@@46@@@return Regex.IsMatch(tag??"",@"^v?\d+\.\d+\.\d+$") &&
+src/update-helper.cs@@@48@@@next>new Version(installed.Major,installed.Minor,Math.Max(0,installed.Build));
+src/update-helper.cs@@@52@@@if(!url.StartsWith(Repository+Uri.EscapeDataString(tag)+"/",StringComparison.Ordinal))
+src/update-helper.cs@@@60@@@ServicePointManager.SecurityProtocol|=SecurityProtocolType.Tls12;
+src/update-helper.cs@@@62@@@Download("https://api.github.com/repos/braga1k/1nstall/releases/latest",1048576)
+src/update-helper.cs@@@64@@@if((bool)release["draft"] || (bool)release["prerelease"] || !IsNewer(tag,current)) return result;
+src/update-helper.cs@@@67@@@if(Convert.ToString(asset["name"])=="1nstall.exe") executable=asset;
+src/update-helper.cs@@@68@@@if(Convert.ToString(asset["name"])=="SHA256SUMS.txt") checksums=asset;
+src/update-helper.cs@@@70@@@if(executable==null) throw new IOException("Missing release executable.");
+src/update-helper.cs@@@74@@@if(Regex.IsMatch(digest,@"^sha256:[a-fA-F0-9]{64}$")) result.Hash=digest.Substring(7)
+src/update-helper.cs@@@76@@@if(checksums==null) throw new IOException("Missing release checksum.");
+src/update-helper.cs@@@77@@@string sums=Encoding.UTF8.GetString(Download(AssetUrl(checksums,tag),65536));
+src/update-helper.cs@@@78@@@var match=Regex.Match(sums,@"(?m)^([a-fA-F0-9]{64})[ \t]+\*?1nstall\.exe\r?$");
+src/update-helper.cs@@@82@@@string folder=System.IO.Path.Combine(root,result.Version); Directory.CreateDirectory(folder);
+src/update-helper.cs@@@84@@@if(!File.Exists(path) || HashFile(path)!=result.Hash) {
+src/update-helper.cs@@@85@@@temporary=path+"."+Guid.NewGuid().ToString("N")+".tmp";
+src/update-helper.cs@@@86@@@File.WriteAllBytes(temporary,Download(AssetUrl(executable,tag),100*1024*1024));
+src/update-helper.cs@@@87@@@if(HashFile(temporary)!=result.Hash) throw new IOException("Checksum mismatch.");
+src/update-helper.cs@@@88@@@if(File.Exists(path)) File.Replace(temporary,path,null); else File.Move(temporary,path);
+src/update-helper.cs@@@90@@@var identity=AssemblyName.GetAssemblyName(path);
+src/update-helper.cs@@@91@@@throw new IOException("Release executable version mismatch.");
+src/update-helper.cs@@@91@@@if(identity.Name!="1nstall" || new Version(identity.Version.Major,identity.Version.Minor,
+src/update-helper.cs@@@93@@@catch(Exception error) { result.Path=null; result.Error=error.Message; }
+src/update-helper.cs@@@99@@@if(HashFile(source)!=expected || HashFile(target)!=original) throw new IOException(
+src/update-helper.cs@@@100@@@string pending=target+"."+Guid.NewGuid().ToString("N")+".update";
+src/update-helper.cs@@@103@@@if(HashFile(pending)!=expected) throw new IOException("Copied update failed verification.");
+src/update-helper.cs@@@104@@@File.Replace(pending,target,target+".previous",true);
+src/update-helper.cs@@@110@@@HashFile(release.Path)!=release.Hash) throw new IOException("No verified update is ready.");
+src/update-helper.cs@@@111@@@"apply-"+Guid.NewGuid().ToString("N")+".exe");
+src/update-helper.cs@@@113@@@"--apply-update "+Process.GetCurrentProcess().Id+" "+Encode(target)+" "+Encode(release.Path)+" "
+src/update-helper.cs@@@114@@@start.UseShellExecute=false; start.CreateNoWindow=true; start.WindowStyle=ProcessWindowStyle.Hidden;
+src/update-helper.cs@@@120@@@if(args.Length!=7) throw new ArgumentException("Invalid update arguments.");
+src/update-helper.cs@@@123@@@"1nstall","Updates")+System.IO.Path.DirectorySeparatorChar;
+src/update-helper.cs@@@124@@@HashFile(Process.GetCurrentProcess().MainModule.FileName)!=args[5]) throw new IOException(
+src/update-helper.cs@@@124@@@if(!source.StartsWith(root,StringComparison.OrdinalIgnoreCase) || !Regex.IsMatch(args[4],
+src/update-helper.cs@@@125@@@if(!parent.WaitForExit(60000)) return 1; } } catch(ArgumentException) { }
+src/update-helper.cs@@@128@@@catch(IOException) { if(attempt==9) throw; Thread.Sleep(1000); }
+src/update-helper.cs@@@131@@@try { if(File.Exists(errorLog)) File.Delete(errorLog); } catch(IOException) { }
+src/update-helper.cs@@@132@@@if(args[6]=="1") Process.Start(new ProcessStartInfo(target) { UseShellExecute=true });
+src/update-helper.cs@@@135@@@"1nstall","update-error.log"),error.ToString()); } catch { }
+src/launcher.cs@@@16@@@[assembly: AssemblyVersion("3.6.0.0")]
+src/launcher.cs@@@43@@@Environment.SpecialFolder.LocalApplicationData),"1nstall","Runtime");
+src/launcher.cs@@@44@@@string directory=Path.Combine(root,hash);
+src/launcher.cs@@@47@@@if(File.Exists(path) && Hash(File.ReadAllBytes(path))==hash) return path;
+src/launcher.cs@@@54@@@catch(IOException) { if(!File.Exists(path) || Hash(File.ReadAllBytes(path))!=hash) throw; }
+src/launcher.cs@@@64@@@Assembly.LoadFrom(CacheAssembly("1nstall.Helpers","1nstall.Helpers.dll",false))
+src/launcher.cs@@@69@@@if(args.Length>0 && args[0]=="--apply-update") {
+src/launcher.cs@@@72@@@return (int)assembly.GetType("OneInstallUpdate").GetMethod("Apply").Invoke(null,new object[]{args});
+src/launcher.cs@@@76@@@bool test=args.Length==1 && args[0].StartsWith("--",StringComparison.Ordinal);
+src/launcher.cs@@@80@@@System.Runtime.ProfileOptimization.StartProfile("startup.profile");
+src/launcher.cs@@@82@@@(args.Length==0 || args.Length==1 && args[0]=="--startup-test")?new StartupView():null
+src/launcher.cs@@@88@@@args[0]=="--smoke-test" || args[0]=="--self-test" || args[0]=="--manager-test"
+src/launcher.cs@@@89@@@string folder=Path.Combine(Path.GetTempPath(),"1nstall-"+Guid.NewGuid().ToString("N"));
+src/launcher.cs@@@94@@@if(args.Length>0 && !test) throw new ArgumentException("Unknown argument.");
+src/launcher.cs@@@98@@@string source=ReadResource("1nstall.Payload");
+src/launcher.cs@@@99@@@int split=source.IndexOf("# UI starts here",StringComparison.Ordinal);
+src/launcher.cs@@@100@@@if(split<0) throw new InvalidDataException("Missing application entry point.");
+src/launcher.cs@@@103@@@var state=InitialSessionState.CreateDefault2();
+src/launcher.cs@@@105@@@session.ApartmentState=ApartmentState.STA;
+src/launcher.cs@@@106@@@session.ThreadOptions=PSThreadOptions.UseCurrentThread;
+src/launcher.cs@@@111@@@ps.AddScript(source.Substring(0,split),false).AddParameter("ResourceRoot",folder);
+src/launcher.cs@@@126@@@GetMethod("Populate").Invoke(null,new object[]{window,ReadResource("1nstall.Catalog")});
+src/launcher.cs@@@129@@@if(opening!=null && opening.Cancelled) return 0;
+src/launcher.cs@@@132@@@runspace.SessionStateProxy.SetVariable("AppExecutable",Assembly.GetExecutingAssembly().Location);
+src/launcher.cs@@@135@@@ps.Runspace=runspace; ps.AddScript(source.Substring(split),false); Invoke(ps,output);
+src/launcher.cs@@@138@@@if(!(window.Tag is long)) throw new Exception("Window did not reach the ready checkpoint.");
+src/launcher.cs@@@144@@@Path.Combine(AppDomain.CurrentDomain.BaseDirectory,args[0].Substring(2)+".log"),output.ToString());
+src/launcher.cs@@@149@@@test?AppDomain.CurrentDomain.BaseDirectory:Path.GetTempPath(),"1nstall-startup-error.log");
+src/launcher.cs@@@151@@@if(!test) MessageBox.Show("Could not start 1nstall.\n\n"+error.Message+"\n\nLog: "+log,"1nstall"
+src/launcher.cs@@@157@@@try { if(Directory.Exists(folder)) Directory.Delete(folder,true); } catch { }
+src/startup.cs@@@34@@@thread=new Thread(Show) { IsBackground=true,Name="1nstall opening" };
+src/startup.cs@@@52@@@WindowStyle=WindowStyle.None,ResizeMode=ResizeMode.NoResize,ShowInTaskbar=false
+src/startup.cs@@@75@@@GetManifestResourceStream("1nstall.Symbol")
+src/startup.cs@@@92@@@window.Closed+=delegate { if(!finished) cancelled=true;
+src/startup.cs@@@124@@@} catch { /* The real application and its error reporting can still open. */ }
+src/app.manifest@@@3@@@<assemblyIdentity version="3.6.0.0" processorArchitecture="amd64" name="1nstall.Desktop"
+src/app.manifest@@@5@@@<requestedExecutionLevel level="asInvoker" uiAccess="false"/>
+src/app.manifest@@@6@@@<supportedOS Id="{8e0f7a12-bfb3-4fe8-b9a5-48fd50a15a9a}"/>
+src/appearance.cs@@@30@@@Environment.SpecialFolder.LocalApplicationData),"1nstall","settings.json");
+src/appearance.cs@@@31@@@if(new FileInfo(path).Length<=8192) {
+src/appearance.cs@@@34@@@settings.TryGetValue("Theme",out value) && value is string) theme=(string)value;
+src/appearance.cs@@@39@@@theme=="Light" || theme!="Dark" && key!=null && object.Equals(key.GetValue("AppsUseLightTheme"),1);
+src/settings.ps1@@@7@@@$script:settings=@{Theme='System'; WindowsAccent=$true; Language='System'; AutoUpdate=$true}
+src/settings.ps1@@@8@@@$script:settingsPath=Join-Path $env:LOCALAPPDATA '1nstall\settings.json'
+src/settings.ps1@@@9@@@$script:settingsTest=([bool]$SmokeTest -or [bool]$StartupTest -or [bool]$SelfTest)
+src/settings.ps1@@@10@@@$script:settings.Language='en'; $script:settings.Theme='Dark'; $script:settings.AutoUpdate=$false
+src/settings.ps1@@@13@@@if ((Get-Item -LiteralPath $script:settingsPath).Length -le 8192) {
+src/settings.ps1@@@14@@@$saved=Get-Content -LiteralPath $script:settingsPath -Raw -Encoding UTF8 | ConvertFrom-Json
+src/settings.ps1@@@17@@@if ($property.Value -in @('System','Light','Dark')) { $script:settings.Theme=$property.Value }
+src/settings.ps1@@@18@@@$script:locales.PSObject.Properties.Name -contains $property.Value) { $script:settings.Language=
+src/settings.ps1@@@19@@@'WindowsAccent' { if ($property.Value -is [bool]) { $script:settings.WindowsAccent=$property.Value } }
+src/settings.ps1@@@20@@@'AutoUpdate' { if ($property.Value -is [bool]) { $script:settings.AutoUpdate=$property.Value } }
+src/settings.ps1@@@27@@@if ($script:settingsTest) { return }
+src/settings.ps1@@@28@@@$temporary=$script:settingsPath+'.'+[guid]::NewGuid().ToString('N')+'.tmp'
+src/settings.ps1@@@31@@@($script:settings | ConvertTo-Json),[Text.UTF8Encoding]::new($false))
+src/settings.ps1@@@32@@@[IO.File]::Replace($temporary,$script:settingsPath,[NullString]::Value)
+src/settings.ps1@@@36@@@'Could not save settings. Check folder permissions.'
+src/settings.ps1@@@43@@@if ($code.StartsWith('pt')) { return 'pt-PT' }
+src/settings.ps1@@@127@@@'HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize' -Name AppsUseLightTheme
+src/settings.ps1@@@202@@@'The previous update could not be applied. Move 1nstall to a writable folder and try again.'
+src/settings.ps1@@@203@@@$script:updateRoot=Join-Path $env:LOCALAPPDATA '1nstall\Updates'
+src/settings.ps1@@@205@@@if ($script:settingsTest -or $script:updateTask) { return }
+src/settings.ps1@@@206@@@if (-not (Test-Path variable:AppExecutable)) {
+src/settings.ps1@@@213@@@$script:updateTask=[OneInstallUpdate]::CheckAsync('3.6.0',$script:updateRoot,$true)
+src/settings.ps1@@@272@@@$script:restartAfterUpdate=$true; $window.Close()
+src/settings.ps1@@@299@@@$script:updateTimer.Interval=[TimeSpan]::FromSeconds(1)
+src/settings.ps1@@@306@@@'Update ready. It will be applied when you close 1nstall.'
+src/settings.ps1@@@312@@@if ($script:settings.AutoUpdate -and -not $script:settingsTest) { Start-AppUpdateCheck }
+src/settings.ps1@@@315@@@if ($script:pendingRelease -and ($script:settings.AutoUpdate -or $script:restartAfterUpdate)
+src/settings.ps1@@@316@@@[OneInstallUpdate]::Schedule($script:pendingRelease,$AppExecutable,$script:restartAfterUpdate)
+src/settings.ps1@@@317@@@[IO.File]::WriteAllText((Join-Path $env:LOCALAPPDATA '1nstall\update-error.log'),$_.Exception.Message)
+src/manager-ui.ps1@@@8@@@$script:preferencesPath=Join-Path ([OneInstallPackages]::DataRoot) 'preferences.json'
+src/manager-ui.ps1@@@13@@@@{View=$script:libraryView} | ConvertTo-Json | Set-Content -LiteralPath $script:preferencesPath
+src/manager-ui.ps1@@@135@@@if ((Get-Item -LiteralPath $script:preferencesPath).Length -le 4096) {
+src/manager-ui.ps1@@@137@@@if ($prefs.View -in @('All apps','Installed')) { $script:libraryView=$prefs.View }
+src/manager-ui.ps1@@@191@@@[IO.Path]::GetFullPath($record.LogPath).StartsWith([IO.Path]::GetFullPath($logDir)+'\'
+src/manager-ui.ps1@@@201@@@$dialog.Filter='Text (*.txt)|*.txt'; $dialog.FileName='1nstall-diagnostics.txt'
+src/manager-ui.ps1@@@256@@@$dialog.Filter='1nstall setup (*.json)|*.json'; $dialog.FileName='installed-setup.json'
+src/package-helper.cs@@@77@@@Environment.SpecialFolder.LocalApplicationData), "1nstall");
+src/package-helper.cs@@@92@@@public static string HistoryPath { get { return Path.Combine(DataRoot, "operations.json"); } }
+src/package-helper.cs@@@231@@@if (HistoryError != null) throw new IOException(HistoryError + " Existing history was preserved.");
+src/package-helper.cs@@@234@@@Json().Serialize(rows.Skip(Math.Max(0, rows.Count - 500)).ToList()), Encoding.UTF8);
+src/package-helper.cs@@@235@@@if (File.Exists(HistoryPath)) File.Replace(temp, HistoryPath, null); else File.Move(temp, HistoryPath);
+src/package-helper.cs@@@249@@@if (new FileInfo(HistoryPath).Length > 4194304) throw new IOException(
+src/package-helper.cs@@@251@@@throw new IOException("Invalid operation history records.");
+src/package-helper.cs@@@264@@@log = Path.Combine(logs, Guid.NewGuid().ToString("N") + ".log");
+src/package-helper.cs@@@266@@@File.WriteAllText(log, r.Output + "\r\n" + r.Error, Encoding.UTF8);
+src/package-helper.cs@@@293@@@"1nstall diagnostics (review before sharing)\r\nWindows "
+src/package-helper.cs@@@297@@@if (new FileInfo(file).Length > 65536) throw new IOException("Setup file exceeds 64 KiB.");
+src/package-helper.cs@@@306@@@if (version != 1 && version != 2) throw new IOException("Unsupported setup version.");
+src/package-helper.cs@@@308@@@Convert.ToString(root["Kind"]) != "1nstall-selection")) throw new IOException("Invalid setup kind.");
+src/package-helper.cs@@@310@@@if (items == null || items.Length == 0 || items.Length > 500) throw new IOException(
+src/package-helper.cs@@@334@@@string json = Json().Serialize(new { Version = 2, Kind = "1nstall-selection", Apps = entries });
+src/uninstall-helper.cs@@@97@@@Environment.SpecialFolder.LocalApplicationData), @"1nstall\uninstall-history.json"); } }
+src/uninstall-helper.cs@@@198@@@if (new FileInfo(HistoryFile).Length > 1048576) return new List<InstalledApp>();
+src/uninstall-helper.cs@@@206@@@Json().Serialize(history.Skip(Math.Max(0, history.Count - 100)).ToList()));
+src/uninstall-helper.cs@@@674@@@@"1nstall\Backups", DateTime.Now.ToString("yyyyMMdd-HHmmss") + "-" + Guid.NewGuid().ToString("N")
+src/uninstall-helper.cs@@@676@@@System.IO.Path.Combine(result.BackupFolder, "items.json"), Json().Serialize(items));
+src/uninstall-helper.cs@@@701@@@string backup = System.IO.Path.Combine(result.BackupFolder, Guid.NewGuid().ToString("N") + ".reg");
+src/uninstall-helper.cs@@@704@@@new FileInfo(backup).Length < 10) throw new IOException("Registry backup failed; key was kept.");
+src/uninstall-helper.cs@@@705@@@File.AppendAllText(System.IO.Path.Combine(result.BackupFolder, "RESTORE.txt"), key + " ("
+src/uninstall-helper.cs@@@719@@@System.IO.Path.Combine(result.BackupFolder, "results.json"), Json().Serialize(result.Results));
+vexan_installers.ps1@@@3@@@[switch]$SelfTest, [switch]$SmokeTest, [switch]$ManagerTest, [string]$PreviewPath, [switch]$StartupTest
+vexan_installers.ps1@@@4@@@if ($ManagerTest) { $SmokeTest=$true }
+vexan_installers.ps1@@@130@@@-not [Environment]::Is64BitOperatingSystem) { throw 'Requires 64-bit Windows.' }
+vexan_installers.ps1@@@131@@@if ([Threading.Thread]::CurrentThread.ApartmentState -ne 'STA') { throw
+vexan_installers.ps1@@@348@@@{ Join-Path $ResourceRoot 'test-logs' } else { Join-Path $env:LOCALAPPDATA '1nstall\Logs' }
+vexan_installers.ps1@@@350@@@$logPath = Join-Path $logDir ('session-{0}-{1}.log' -f (Get-Date -Format 'yyyyMMdd-HHmmss'),$PID)
+vexan_installers.ps1@@@354@@@$line = '[{0}] {1}' -f (Get-Date -Format 'yyyy-MM-dd HH:mm:ss'),$Message
+vexan_installers.ps1@@@758@@@@{Version=1; Apps=@($catalog | Where-Object { $selected.ContainsKey($_.Key) }
+vexan_installers.ps1@@@771@@@$dialog.Filter = '1nstall profile (*.json)|*.json'; $dialog.FileName = 'my-setup.json'
+vexan_installers.ps1@@@1390@@@$folder=Join-Path $env:LOCALAPPDATA '1nstall\Backups'; New-Item -ItemType Directory -Path $folder -Force
+vexan_installers.ps1@@@1395@@@$eventArgs.Cancel=$true; [OneInstallUninstall]::StopRequested=$true
+vexan_installers.ps1@@@1889@@@if (-not (Test-Path variable:NativeWindow)) { [Windows.MessageBox]::Show($_.Exception.ToString()
+script_allower.cmd@@@2@@@powershell.exe" -NoLogo -NoProfile -STA -ExecutionPolicy Bypass -File "%~dp0vexan_installers.ps1"
+build-windows.ps1@@@24@@@[IO.File]::WriteAllText($payload, $source, [Text.UTF8Encoding]::new($true))
+build-windows.ps1@@@27@@@/target:library /platform:x64 /optimize+ /warnaserror+ /reference:System.Web.Extensions.dll
+build-windows.ps1@@@40@@@"/resource:$payload,1nstall.Payload" "/resource:$dist\symbol.xaml,1nstall.Symbol"
+build-windows.ps1@@@40@@@"/win32manifest:$root\src\app.manifest" "/win32icon:$root\src\1nstall.ico"
+build-windows.ps1@@@40@@@"/resource:$helpers,1nstall.Helpers" "/resource:$dist\1nstall.UI.dll,1nstall.UI"
+build-windows.ps1@@@44@@@throw 'An HTTPS timestamp server is required for signing.'
+build-windows.ps1@@@70@@@Version=([Version](Get-Item -LiteralPath $exe).VersionInfo.ProductVersion).ToString(3)
+build-windows.ps1@@@77@@@Set-Content -LiteralPath (Join-Path $dist 'BUILD-INFO.json') -Encoding UTF8
+build-windows.ps1@@@78@@@(Get-FileHash -LiteralPath (Join-Path $dist $_) -Algorithm SHA256).Hash.ToLowerInvariant()+'  '+$_
+build-windows.ps1@@@79@@@(Join-Path $dist 'SHA256SUMS.txt'),[string[]]$sums,[Text.UTF8Encoding]::new($false))
+scripts/package-release.ps1@@@8@@@if ($version -notmatch '^\d+\.\d+\.\d+$') { throw 'Invalid release version in build metadata.' }
+scripts/package-release.ps1@@@12@@@throw 'Packaging requires a clean source build from this commit.'
+scripts/package-release.ps1@@@21@@@-ne $info.ExeSHA256) { throw 'Executable/build metadata mismatch.' }
+scripts/package-release.ps1@@@42@@@(Join-Path $release ('1nstall-'+$version+'-Windows-x64.zip'))
+scripts/package-release.ps1@@@44@@@foreach ($name in @('1nstall.exe','BUILD-INFO.json','THIRD-PARTY-NOTICES.txt','self-test.log'
+scripts/package-release.ps1@@@47@@@(Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()+'  '+$_.Name
+scripts/package-release.ps1@@@48@@@(Join-Path $release 'SHA256SUMS.txt'),[string[]]$sums,[Text.UTF8Encoding]::new($false))
+.github/workflows/windows.yml@@@42@@@Start-Process -FilePath .\dist\1nstall.exe -ArgumentList '--self-test' -Wait -PassThru
+.github/workflows/windows.yml@@@54@@@if: github.event_name == 'push' && github.ref == 'refs/heads/release/3.6.0'
+.github/workflows/windows.yml@@@100@@@--target "$RELEASE_COMMIT" --draft --prerelease=false --latest=false \
+.github/workflows/windows.yml@@@112@@@expected = {p.name: 'sha256:' + hashlib.sha256(p.read_bytes()).hexdigest()
+.github/workflows/windows.yml@@@117@@@assert actual == expected, 'Uploaded release assets differ from verified build'
+.github/workflows/windows.yml@@@120@@@gh release edit v3.6.0 --draft=false --prerelease=false --latest
+tests/manager-ui.ps1@@@406@@@-not [OneInstallUpdate]::IsNewer('v3.3.0-beta','3.2.0')
+tests/manager-ui.ps1@@@414@@@[OneInstallUpdate]::HashFile($old+'.previous') -eq $oldHash
+tests/startup.ps1@@@8@@@Start-Process -FilePath $exe -ArgumentList '--startup-test' -WindowStyle Hidden -PassThru
+tests/startup-opening.ps1@@@34@@@throw new Exception("Opening must not create a separate taskbar entry.");
+tests/startup-opening.ps1@@@57@@@throw new Exception("Closing the opening did not cancel startup.");
+tests/reliability.ps1@@@124@@@'Corrupt history overwritten silently.'
+tests/uninstall.ps1@@@85@@@if ($exports.Count -ne 3) { throw 'Registry exports are missing.' }
