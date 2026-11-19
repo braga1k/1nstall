@@ -322,18 +322,24 @@ if ($Real) {
         $helper=Start-Job -ArgumentList $process.Id -ScriptBlock {
             param($own)
             Add-Type -AssemblyName UIAutomationClient, UIAutomationTypes
+            Add-Type -Namespace Helper -Name Native -MemberDefinition '[DllImport("user32")] public static extern bool PostMessage(IntPtr window, uint message, IntPtr wParam, IntPtr lParam);'
             $automation=[Windows.Automation.AutomationElement]
-            $wanted='Yes','&Yes','Uninstall','&Uninstall','Next >','&Next >','Close','&Close','Finish','&Finish','OK'
+            $wanted='Yes','Uninstall','Next >','Close','Finish','OK'
             $deadline=(Get-Date).AddMinutes(25)
             while ((Get-Date) -lt $deadline) {
                 foreach ($window in $automation::RootElement.FindAll([Windows.Automation.TreeScope]::Children,[Windows.Automation.Condition]::TrueCondition)) {
                     try {
                         if ($window.Current.ProcessId -eq $own -or $window.Current.ClassName -in 'Shell_TrayWnd','Progman','WorkerW') { continue }
-                        foreach ($button in $window.FindAll([Windows.Automation.TreeScope]::Descendants,(New-Object Windows.Automation.PropertyCondition ($automation::ControlTypeProperty),([Windows.Automation.ControlType]::Button)))) {
-                            if ($wanted -contains $button.Current.Name -and $button.Current.IsEnabled) {
-                                "pressed '$($button.Current.Name)' in '$($window.Current.Name)'"
-                                $button.GetCurrentPattern([Windows.Automation.InvokePattern]::Pattern).Invoke(); Start-Sleep -Milliseconds 700; break
-                            }
+                        foreach ($element in $window.FindAll([Windows.Automation.TreeScope]::Descendants,[Windows.Automation.Condition]::TrueCondition)) {
+                            $current=$element.Current
+                            # A classic button is a pane of class Button here; others are of the Button type.
+                            if ($current.ClassName -notlike '*Button*' -and $current.ControlType -ne [Windows.Automation.ControlType]::Button) { continue }
+                            $name=([string]$current.Name).Replace('&','').Trim()
+                            if ($wanted -notcontains $name -or -not $current.IsEnabled) { continue }
+                            "pressed '$name' in '$($window.Current.Name)'"
+                            if ($current.NativeWindowHandle -ne 0) { [Helper.Native]::PostMessage([IntPtr]$current.NativeWindowHandle,0x00F5,[IntPtr]::Zero,[IntPtr]::Zero) | Out-Null }
+                            else { $element.GetCurrentPattern([Windows.Automation.InvokePattern]::Pattern).Invoke() }
+                            Start-Sleep -Milliseconds 900; break
                         }
                     } catch { }
                 }
