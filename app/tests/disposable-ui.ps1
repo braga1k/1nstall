@@ -285,24 +285,25 @@ if ($Real) {
     $before=@(Operations).Count
     $root=Start-App ''
     try {
-        "NOTE WinGet on this machine: $((& winget --version | Out-String).Trim())"
+        $version=(& winget --version | Out-String).Trim()
         foreach ($app in $apps) { Toggle (Named $root $app.Card) }
         Check "the real apps are selected ($(@(Checked $root) -join ', '))" (@(Checked $root).Count -eq $apps.Count)
         Invoke (ById $root 'Install')
         Toggle (Everywhere-Named 'I accept the app licenses and WinGet source terms.')
         Invoke (Everywhere-Named 'Start installation')
         $finished=Wait-Until { Texts $root | Where-Object { $_ -like 'Queue finished*' } | Select-Object -First 1 } 1500 1000
-        "NOTE real installs: $finished"
         Check 'the queue of real installs runs to its end' ([bool]$finished)
         $records=@(Operations | Select-Object -Skip $before)
+        $summary=@()
         foreach ($app in $apps) {
             $record=$records | Where-Object { $_.Id -eq $app.Id } | Select-Object -Last 1
             $listed=Listed $app.Id
-            "NOTE real install $($app.Card): $($record.Outcome) (exit $($record.ExitCode)); WinGet lists it: $listed; $([string]$record.Message)"
+            $summary+="$($app.Card): $($record.Outcome), exit $($record.ExitCode), listed by WinGet $listed, $(([string]$record.Message) -replace '^Exact package identity verified: ','')"
             Check "$($app.Card): the recorded outcome agrees with what WinGet lists" ($record -and (($record.Outcome -eq 'Success') -eq $listed))
         }
         Wait-Until { (Named $root 'Refresh').Current.IsEnabled } 240 500 | Out-Null
         Start-Sleep -Milliseconds 800
+        "NOTE real installs with WinGet $version ($finished): $($summary -join '; ')"
         Check 'the cards of the installed apps say so' (@(Cards $root | Where-Object { $_.Current.ItemStatus -like ('Installed '+$dot+'*') -and ($apps.Card -contains $_.Current.Name) }).Count -eq @($apps | Where-Object { Listed $_.Id }).Count)
         # Open detailed log, on a desktop where no one has a Notepad open.
         Invoke (ById $root 'HistoryMode')
@@ -343,22 +344,24 @@ if ($Real) {
         $installed=@($apps | Where-Object { Listed $_.Id })
         $selected=Select-Installed $root @($installed | ForEach-Object { $_.Installed })
         Check "the installed real apps are found in the list and selected ($selected of $($installed.Count))" ($selected -eq $installed.Count -and $selected -gt 0)
-        $registrations=@{}
+        $registrations=@{}; $commands=@()
         foreach ($view in 'HKLM:\SOFTWARE','HKLM:\SOFTWARE\WOW6432Node','HKCU:\SOFTWARE') {
             foreach ($key in @(Get-ChildItem -LiteralPath ($view+'\Microsoft\Windows\CurrentVersion\Uninstall') -ErrorAction SilentlyContinue)) {
                 $name=[string]$key.GetValue('DisplayName')
-                foreach ($app in $installed) { if ($name -like ($app.Installed+'*')) { $registrations[$app.Card]=$key.Name; "NOTE $($app.Card) is registered at $($key.Name): $([string]$key.GetValue('UninstallString'))" } }
+                foreach ($app in $installed) { if ($name -like ($app.Installed+'*')) { $registrations[$app.Card]=$key.Name; $commands+="$($app.Card) [$($key.Name -replace '^HKEY_LOCAL_MACHINE','HKLM' -replace '^HKEY_CURRENT_USER','HKCU' -replace 'Microsoft\\Windows\\CurrentVersion\\Uninstall','...')]: $([string]$key.GetValue('UninstallString'))" } }
             }
         }
+        "NOTE registered uninstallers: $($commands -join '; ')"
         $began=Get-Date
         Start-Removal $root
-        $state=Wait-Removal $root 900
+        $state=Wait-Removal $root 480
         if (-not $state) {
             # Say what the queue is waiting for: the programs started since it began, and the
             # windows on screen. The engine waits for everything an uninstaller starts.
             $started=@(Get-CimInstance Win32_Process | Where-Object { $_.CreationDate -gt $began -and $_.ProcessId -ne $PID } | ForEach-Object { $_.Name } | Sort-Object -Unique)
             $titles=@($automation::RootElement.FindAll($children,[Windows.Automation.Condition]::TrueCondition) | ForEach-Object { try { if ($_.Current.Name -and $_.Current.ProcessId -ne $process.Id) { $_.Current.Name } } catch { } } | Select-Object -First 10)
-            "NOTE after 15 minutes the removal queue had not ended. Status: $(Status $root); stages: $((Stage-Texts $root) -join ', '); programs started since: $($started -join ', '); windows on screen: $($titles -join ' | ')"
+            $soFar=@(Receive-Job $helper -Keep -ErrorAction SilentlyContinue)
+            "NOTE after 8 minutes the removal queue had not ended. Status: $(Status $root); stages: $((Stage-Texts $root) -join ', '); helper is $($helper.State) and pressed: $(($soFar | Select-Object -First 8) -join '; '); programs started since: $($started -join ', '); windows on screen: $($titles -join ' | ')"
             # A browser that an uninstaller opened is one such program. Close browsers and see.
             Get-Process -Name msedge,iexplore,chrome,firefox -ErrorAction SilentlyContinue | Where-Object { $_.StartTime -gt $began } | Stop-Process -Force -ErrorAction SilentlyContinue
             $state=Wait-Removal $root 240
@@ -367,11 +370,7 @@ if ($Real) {
         $stages=Stage-Texts $root
         "NOTE real removals ended in '$state' with stages: $($stages -join ', ')"
         Check 'the queue of real removals ends' ([bool]$state)
-        foreach ($app in $installed) {
-            $path=$registrations[$app.Card]
-            $present=if ($path) { Test-Path -LiteralPath ('Registry::'+$path) } else { $null }
-            "NOTE real removal $($app.Card): registration still present: $present"
-        }
+        "NOTE registrations still present after the removals: $(@($installed | ForEach-Object { $path=$registrations[$_.Card]; $_.Card+' '+$(if ($path) { Test-Path -LiteralPath ('Registry::'+$path) } else { 'not found before' }) }) -join '; ')"
         $gone=@($installed | Where-Object { $registrations[$_.Card] -and -not (Test-Path -LiteralPath ('Registry::'+$registrations[$_.Card])) }).Count
         $successes=@($stages | Where-Object { $_ -eq 'Success' }).Count
         Check "every app marked Success is really gone from Windows, and no other ($successes marked, $gone gone)" ($successes -eq $gone)

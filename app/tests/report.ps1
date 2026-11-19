@@ -17,7 +17,7 @@ $passed=@($lines | Where-Object { $_ -like 'PASS *' }).Count
 $failures=@($lines | Where-Object { $_ -like 'FAIL *' })
 $notes=@($lines | Where-Object { $_ -like 'NOTE *' })
 Write-Output "::notice title=$Title::$passed passed, $($failures.Count) failed$(if ($problem) { '; stopped early' })"
-$notes | Select-Object -First 8 | ForEach-Object { Write-Output "::notice title=$Title::$(Short $_.Substring(5))" }
+$notes | Select-Object -First 9 | ForEach-Object { Write-Output "::notice title=$Title::$(Short $_.Substring(5))" }
 $failures | Select-Object -First 8 | ForEach-Object { Write-Output "::error title=$Title::$(Short $_.Substring(5))" }
 if ($problem) { Write-Output "::error title=$Title::stopped: $(Short $problem)" }
 if ($failures.Count -or $problem -or $code -ne 0 -or $passed -eq 0) {
