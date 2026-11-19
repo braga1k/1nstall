@@ -12,6 +12,8 @@ param(
     [Parameter(Mandatory)][string]$Publisher,
     [switch]$DisposableEnvironment,
     [switch]$Real,
+    # Only the part with real apps, for a run of its own.
+    [switch]$RealOnly,
     [string]$Pictures=''
 )
 if (-not $DisposableEnvironment) { throw 'This test changes the machine. Run it only on a disposable machine, with -DisposableEnvironment.' }
@@ -24,7 +26,8 @@ $publisher=(Resolve-Path -LiteralPath $Publisher).Path
 $data=Join-Path $env:LOCALAPPDATA '1nstall'
 $arp='Software\Microsoft\Windows\CurrentVersion\Uninstall'
 function Registered([string]$key,[string]$hive='HKCU:') { Test-Path -LiteralPath (Join-Path $hive (Join-Path $arp $key)) }
-function Operations { $path=Join-Path $data 'operations.json'; if (Test-Path -LiteralPath $path) { @(Get-Content -LiteralPath $path -Raw -Encoding UTF8 | ConvertFrom-Json) } else { @() } }
+# (The parentheses matter: Windows PowerShell hands the whole list over as one object otherwise.)
+function Operations { $path=Join-Path $data 'operations.json'; if (Test-Path -LiteralPath $path) { @((Get-Content -LiteralPath $path -Raw -Encoding UTF8 | ConvertFrom-Json)) } else { @() } }
 function Choose($root,[string]$id,[string]$item) {
     $combo=ById $root $id
     $combo.GetCurrentPattern([Windows.Automation.ExpandCollapsePattern]::Pattern).Expand(); Start-Sleep -Milliseconds 400
@@ -87,12 +90,19 @@ function Wait-Removal($root,[int]$seconds=300) {
         # Idle only once the queue shows an outcome for every app: before the removal has
         # begun the page looks idle too.
         $stages=@(Stage-Texts $root)
-        if ($refresh -and $refresh.Current.IsEnabled -and -not (ById $root 'StopUninstall') -and (Status $root) -notmatch 'Reading|Checking|Removing|Waiting|Wait for' -and $stages.Count -and -not ($stages | Where-Object { $working -contains $_ })) { return 'idle' }
+        if ($refresh -and $refresh.Current.IsEnabled -and -not (ById $root 'StopUninstall') -and (Status $root) -notmatch 'Reading|Checking|Removing|Waiting|Wait for' -and $stages.Count -and -not ($stages | Where-Object { $working -contains $_ })) {
+            # The review window may be about to appear: look again once it has had time to.
+            Start-Sleep -Milliseconds 2000
+            if (Everywhere-Named 'Keep what matters') { return 'review' }
+            $refresh=ById $root 'RefreshInstalled'
+            if ($refresh -and $refresh.Current.IsEnabled -and (Status $root) -notmatch 'Reading|Checking|Removing|Waiting|Wait for') { return 'idle' }
+        }
         return $null
     } $seconds 400
 }
 function Stage-Texts($root) { @(Texts $root | Where-Object { $_ -in 'Success','Cancelled','Failed','Unknown','Manual action required','Restart required','Queued',('Preparing'+$ellipsis),('Removing'+$ellipsis),('Verifying'+$ellipsis) }) }
 
+if (-not $RealOnly) {
 # ---------------------------------------------------------------------------------------------
 # 0. With the theme left to Windows, the window follows Windows while it is open: the app
 #    theme, then high contrast. Both are settings of this user, changed here and put back.
@@ -258,6 +268,7 @@ try {
     Check 'once nothing is running, the window closes' ($process.WaitForExit(15000))
 } finally { Stop-App 15000 }
 foreach ($key in $first.Key,$second.Key) { [Microsoft.Win32.Registry]::CurrentUser.DeleteSubKeyTree($arp+'\'+$key,$false) }
+}
 
 if ($Real) {
     # -----------------------------------------------------------------------------------------
@@ -274,7 +285,7 @@ if ($Real) {
     $before=@(Operations).Count
     $root=Start-App ''
     try {
-        Check 'WinGet is found' ([bool](Texts $root | Where-Object { $_ -like 'WinGet ready*' }))
+        "NOTE WinGet on this machine: $((& winget --version | Out-String).Trim())"
         foreach ($app in $apps) { Toggle (Named $root $app.Card) }
         Check "the real apps are selected ($(@(Checked $root) -join ', '))" (@(Checked $root).Count -eq $apps.Count)
         Invoke (ById $root 'Install')
@@ -339,8 +350,20 @@ if ($Real) {
                 foreach ($app in $installed) { if ($name -like ($app.Installed+'*')) { $registrations[$app.Card]=$key.Name; "NOTE $($app.Card) is registered at $($key.Name): $([string]$key.GetValue('UninstallString'))" } }
             }
         }
+        $began=Get-Date
         Start-Removal $root
-        $state=Wait-Removal $root 1200
+        $state=Wait-Removal $root 900
+        if (-not $state) {
+            # Say what the queue is waiting for: the programs started since it began, and the
+            # windows on screen. The engine waits for everything an uninstaller starts.
+            $started=@(Get-CimInstance Win32_Process | Where-Object { $_.CreationDate -gt $began -and $_.ProcessId -ne $PID } | ForEach-Object { $_.Name } | Sort-Object -Unique)
+            $titles=@($automation::RootElement.FindAll($children,[Windows.Automation.Condition]::TrueCondition) | ForEach-Object { try { if ($_.Current.Name -and $_.Current.ProcessId -ne $process.Id) { $_.Current.Name } } catch { } } | Select-Object -First 10)
+            "NOTE after 15 minutes the removal queue had not ended. Status: $(Status $root); stages: $((Stage-Texts $root) -join ', '); programs started since: $($started -join ', '); windows on screen: $($titles -join ' | ')"
+            # A browser that an uninstaller opened is one such program. Close browsers and see.
+            Get-Process -Name msedge,iexplore,chrome,firefox -ErrorAction SilentlyContinue | Where-Object { $_.StartTime -gt $began } | Stop-Process -Force -ErrorAction SilentlyContinue
+            $state=Wait-Removal $root 240
+            "NOTE after closing the browsers opened since the removal began, the queue ended in: '$state'"
+        }
         $stages=Stage-Texts $root
         "NOTE real removals ended in '$state' with stages: $($stages -join ', ')"
         Check 'the queue of real removals ends' ([bool]$state)

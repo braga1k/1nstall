@@ -231,13 +231,17 @@ jobs:
           try { $line = .\app\build.ps1 -Out "$PWD\dist\older" | Select-Object -Last 1 } finally { [IO.File]::WriteAllText("$PWD\app\Program.cs", $source) }
           Write-Output "older build: $line"
           .\app\tests\report.ps1 -Title "update ui $env:TITLE" -Test { .\app\tests\update-ui.ps1 -Exe .\dist\older\1nstall.exe -ExpectedHash 90428e1ea21db5f5b939aab920db3309a457fc4bd4ac116641fb1754feb8508c -DisposableEnvironment }
-      - name: Normal mode on a disposable machine - settings, fixture removal, cleanup, stopping, real apps
+      - name: Normal mode on a disposable machine - Windows theme, settings, fixture removal, cleanup, stopping
+        shell: powershell
+        continue-on-error: true
+        timeout-minutes: 30
+        run: .\app\tests\report.ps1 -Title "disposable ui $env:TITLE" -Test { .\app\tests\disposable-ui.ps1 -Exe .\dist\v4\1nstall.exe -Publisher .\engine\target\debug\oracle-publisher.exe -DisposableEnvironment -Pictures pictures }
+      - name: Normal mode on a disposable machine - real apps installed by WinGet and removed by their uninstallers
+        if: env.HAS_WINGET == 'True'
         shell: powershell
         continue-on-error: true
         timeout-minutes: 60
-        run: |
-          if ($env:HAS_WINGET -eq 'True') { .\app\tests\report.ps1 -Title "disposable ui $env:TITLE" -Test { .\app\tests\disposable-ui.ps1 -Exe .\dist\v4\1nstall.exe -Publisher .\engine\target\debug\oracle-publisher.exe -DisposableEnvironment -Real -Pictures pictures } }
-          else { .\app\tests\report.ps1 -Title "disposable ui $env:TITLE" -Test { .\app\tests\disposable-ui.ps1 -Exe .\dist\v4\1nstall.exe -Publisher .\engine\target\debug\oracle-publisher.exe -DisposableEnvironment -Pictures pictures } }
+        run: .\app\tests\report.ps1 -Title "real apps ui $env:TITLE" -Test { .\app\tests\disposable-ui.ps1 -Exe .\dist\v4\1nstall.exe -Publisher .\engine\target\debug\oracle-publisher.exe -DisposableEnvironment -Real -RealOnly -Pictures pictures }
       - uses: actions/upload-artifact@v4
         if: always()
         with:

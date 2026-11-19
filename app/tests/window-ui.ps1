@@ -157,7 +157,15 @@ try {
             try { $element.SetFocus(); Start-Sleep -Milliseconds 400; return $true }
             catch { "NOTE $what could not take the focus: $($_.Exception.InnerException.Message); focusable $($element.Current.IsKeyboardFocusable), enabled $($element.Current.IsEnabled), off screen $($element.Current.IsOffscreen), window in front $([UiNative]::GetForegroundWindow() -eq $process.MainWindowHandle)"; return $false }
         }
-        [UiNative]::SetForegroundWindow($process.MainWindowHandle) | Out-Null; Start-Sleep -Milliseconds 500
+        # Another program's window in front (a system prompt left by an earlier test, for one)
+        # would take the keys: on this throw-away desktop it is asked to close.
+        foreach ($attempt in 1..4) {
+            [UiNative]::SetForegroundWindow($process.MainWindowHandle) | Out-Null; Start-Sleep -Milliseconds 500
+            if ([UiNative]::ForegroundProcess() -eq $process.Id) { break }
+            $front=[UiNative]::GetForegroundWindow()
+            "NOTE in front of the application: '$([UiNative]::GetText($front))' of $((Get-Process -Id ([UiNative]::ForegroundProcess()) -ErrorAction SilentlyContinue).ProcessName); asking it to close"
+            [UiNative]::PostMessage($front,0x0010,[IntPtr]::Zero,[IntPtr]::Zero) | Out-Null; Start-Sleep -Milliseconds 1200
+        }
         Check 'the window takes the keyboard' ([UiNative]::GetForegroundWindow() -eq $process.MainWindowHandle)
         Press '^f'
         Check "Ctrl+F goes to the search box ($((Focused).AutomationId))" ((Focused).AutomationId -eq 'Search')
@@ -177,7 +185,6 @@ try {
         Press '{TAB}'
         $after=(Focused)
         Check "Tab moves on from the card ($before -> $($after.Name))" ($after -and ($after.Name -ne $before -or $after.AutomationId))
-        Press ' '
         Invoke (ById $root 'ClearSearch')
         Invoke (ById $root 'UninstallMode')
         [UiNative]::SetForegroundWindow($process.MainWindowHandle) | Out-Null; Start-Sleep -Milliseconds 300

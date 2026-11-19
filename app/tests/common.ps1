@@ -15,6 +15,15 @@ public static class UiNative {
     // The text of a classic control of another program, and setting it (WM_GETTEXT, WM_SETTEXT).
     public static string GetText(IntPtr window) { var text=new System.Text.StringBuilder(2048); SendMessage(window,0x000D,(IntPtr)text.Capacity,text); return text.ToString(); }
     public static void SetText(IntPtr window, string text) { SendMessage(window,0x000C,IntPtr.Zero,text); }
+    [DllImport("user32")] static extern IntPtr SendMessage(IntPtr window, uint message, IntPtr wParam, IntPtr lParam);
+    // Replaces the text of an edit box the way typing does: select all, replace the selection,
+    // and mark the box as changed by the user (EM_SETSEL, EM_REPLACESEL, EM_SETMODIFY). The
+    // Save dialog of some Windows versions ignores a name that was only set with WM_SETTEXT.
+    public static void TypeText(IntPtr window, string text) {
+        SendMessage(window,0x00B1,IntPtr.Zero,(IntPtr)(-1));
+        SendMessage(window,0x00C2,(IntPtr)1,text);
+        SendMessage(window,0x00B9,(IntPtr)1,IntPtr.Zero);
+    }
     [DllImport("user32")] public static extern bool SetForegroundWindow(IntPtr window);
     [DllImport("user32")] public static extern IntPtr GetForegroundWindow();
     [DllImport("user32")] static extern uint GetWindowThreadProcessId(IntPtr window, out uint process);
@@ -146,7 +155,7 @@ function File-Name($dialog) {
 function Set-File-Name($dialog,[string]$path) {
     $box=File-Name-Box $dialog; Need $box 'Set-File-Name'
     $handle=[IntPtr]$box.Current.NativeWindowHandle
-    if ($handle -ne [IntPtr]::Zero) { [UiNative]::SetText($handle,$path) } else { $box.GetCurrentPattern([Windows.Automation.ValuePattern]::Pattern).SetValue($path) }
+    if ($handle -ne [IntPtr]::Zero) { [UiNative]::TypeText($handle,$path) } else { $box.GetCurrentPattern([Windows.Automation.ValuePattern]::Pattern).SetValue($path) }
     Start-Sleep -Milliseconds 400
 }
 # What a system dialog is made of, in one line, for the report of a failed test.
