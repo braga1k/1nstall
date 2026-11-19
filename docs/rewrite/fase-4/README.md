@@ -316,6 +316,13 @@ Os resultados do Windows Server 2022 para os testes de janela são os da corrida
 
 Arranque numa máquina do Actions, sem placa gráfica, em três corridas: 2,8 a 3,4 s no primeiro arranque; depois mediana entre 261 e 362 ms; pico de working set de 98 MB.
 
+Depois das decisões de 2026-11-19, no commit `ca2d743`, tudo o anterior passou de novo nas duas imagens, com o teste do histórico em 27 verificações (inclui o botão de repetir) e o do modo normal em 36 (os interruptores das Definições gravam das duas maneiras). Duas notas dessa corrida:
+
+- No Windows Server 2022 o GitHub não respondeu à verificação de atualizações, por limite de pedidos por endereço, e a atualização pelas Definições não pôde ser exercida aí. No Server 2025 passou, 9 de 9.
+- No Windows Server 2025 o módulo Microsoft.WinGet.Client instalou-se, mas o PowerShell 7 não devolveu o inventário, e a aplicação usou o `winget export`, como está desenhada. O inventário completo verdadeiro fica, por isso, sem prova numa máquina real; a mensagem de erro do PowerShell 7 passou a ser pedida em texto simples, para se ler.
+
+No mesmo dia, uma segunda sessão real do autor com a build final: sete remoções pela janela e uma limpeza de 25 vestígios. Conferi cada item contra o estado do PC: os sete registos desapareceram, os 25 itens pertenciam todos às apps removidas, e nada de outros programas foi oferecido.
+
 As corridas leem-se nas anotações de cada trabalho. As imagens da janela em cada estado ficam no artefacto `window-pictures-*`.
 
 ## O que não foi testado

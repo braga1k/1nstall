@@ -1,6 +1,6 @@
 # Changelog
 
-## 4.0.0 - not released yet
+## 4.0.0 - 2026-11-19
 
 - Rebuild the app as a native C# window over a Rust engine. The PowerShell host is gone; the interface, motion, languages and catalog are those of 3.6. The rules were ported from the 3.6 code and compared with it by a recorded oracle.
 - Open in about a quarter of the time and use less than half the memory, as measured on the development PC.

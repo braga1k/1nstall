@@ -207,7 +207,9 @@ impl Packages {
             return Err(SHELL7_MISSING.to_string());
         }
         let encoded: Vec<u8> = STRUCTURED_QUERY.encode_utf16().flat_map(u16::to_le_bytes).collect();
-        let result = run(&self.shell7, &format!("-NoLogo -NoProfile -NonInteractive -EncodedCommand {}", crate::inventory::base64(&encoded)), 90_000)?;
+        // "-OutputFormat Text" is not in 3.6: without it PowerShell 7 writes its errors as
+        // CLIXML when it is not on a console, and the reason shown to the user was unreadable.
+        let result = run(&self.shell7, &format!("-NoLogo -NoProfile -NonInteractive -OutputFormat Text -EncodedCommand {}", crate::inventory::base64(&encoded)), 90_000)?;
         if result.exit_code != 0 {
             return Err(format!("WinGet inventory unavailable. Check the Microsoft.WinGet.Client module and connectivity. {}", result.error.trim()));
         }
