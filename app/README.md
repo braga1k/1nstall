@@ -25,6 +25,13 @@ This is work in progress. `Shell.cs` lists what is ported and what is not; the 3
 | `tests/history-ui.ps1` | Drives the History & diagnostics page with a made-up history, and makes the engine fail on purpose to check that the application reports it and goes on. Needs an interactive desktop. |
 | `tests/uninstall-ui.ps1` | Drives the Uninstall page, reading only: lists, filters, selects and opens the review, then always goes back. Needs an interactive desktop. |
 | `tests/settings-ui.ps1` | Drives the Settings page: languages, right-to-left layout, theme and accent. Needs an interactive desktop. |
+| `tests/dialogs-ui.ps1` | Drives the Windows file dialogs: saving and loading a selection, a snapshot of what is installed, the diagnostics. Needs an interactive desktop. |
+| `tests/window-ui.ps1` | The window itself: smallest size, a name on every control, all 51 languages, both themes and, with `-Keyboard`, real key presses. Needs an interactive desktop. |
+| `tests/disposable-ui.ps1` | The normal mode, on disposable machines only: Windows theme and high contrast, saved settings, removal and cleanup of a fixture app, stopping midway and, with `-Real`, real apps installed and removed. |
+| `tests/update-ui.ps1` | Finds, downloads and applies an update from Settings, with a build numbered below the published release. Disposable machines only. |
+| `tests/common.ps1`, `tests/report.ps1` | What the tests above share, and the reporter that turns a test into annotations of a CI run. |
+
+The comments in these files name the PowerShell functions of 3.6 each part was ported from. Those sources (`vexan_installers.ps1`, `src/settings.ps1`, `src/manager-ui.ps1`) are no longer in the repository; they are at the tag `v3.6.0`.
 
 ## Build
 

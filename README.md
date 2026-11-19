@@ -64,7 +64,7 @@ After a verified removal, review supported leftover folders and registry entries
 
 - **Windows 10 or 11, 64-bit**, with the **.NET Framework 4.8 / WPF** that Windows includes. Windows PowerShell is only used to list Microsoft Store apps on the Uninstall page.
 - **WinGet**, supplied through Windows App Installer, and internet access for automatic app downloads.
-- Installed-package awareness comes from WinGet export: apps it lists are confirmed, and omitted apps remain Unknown. Automatic installation uses WinGet.
+- Installed-package awareness comes from WinGet. With PowerShell 7 and the Microsoft.WinGet.Client module, if you have them, 1nstall can tell an app that is not installed from one it cannot identify; without them, apps WinGet lists are confirmed and the others remain Unknown. 1nstall never installs either for you.
 - Some installers and machine-level removals request administrator access. Updating 1nstall requires a writable executable folder.
 
 The executable includes the interface, catalog, helpers and licence notices. The release is **unsigned**; SHA-256 checksums accompany the downloads. Native Desktop Acrylic requires a supported Windows 11 build; other systems and disabled transparency use a fallback. The minimum window size is 1040 × 540 DIP.

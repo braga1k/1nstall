@@ -353,7 +353,6 @@ Tudo o que sei que continua por verificar na 4.0, depois do passo 7.
 
 ### Na release
 
-- **A 3.6 verdadeira a atualizar-se para a 4.0 publicada, do princípio ao fim.** Depois de publicar confirmei o que o atualizador da 3.6 lê: a última release é a `v4.0.0`, não é rascunho nem pré-lançamento, e o `1nstall.exe` tem o SHA-256 que o GitHub anuncia e a identidade que a 3.6 exige. Não corri uma 3.6 a fazê-lo.
 - **Um certificado de assinatura verdadeiro.** A opção de assinar foi testada com um certificado feito no momento. A release continua sem assinatura, e o workflow não tem passo para assinar na nuvem.
 - **O primeiro arranque depois de reiniciar o PC.** Não foi medido, por decisão tua de não reiniciar este PC.
 - **As medições com placa gráfica** vêm de um só PC. As máquinas do Actions não têm placa gráfica.
@@ -508,12 +507,12 @@ Tomadas por ti; as de 2026-11-19 seguiram as minhas recomendações.
 | A regra das pastas partilhadas (passo 7) | 2026-11-19 | Mantém-se, como diferença intencional em relação à 3.6 |
 | O inventário completo do WinGet (passo 6) | 2026-11-19 | Reposto o caminho opcional da 3.6, com o PowerShell 7 e o módulo quando existem |
 | A ação de alternar da automação (passos 3 e 7) | 2026-11-19 | Aprovada nos cartões e estendida aos dois interruptores das Definições |
+| As fontes da 3.6 que a 4.0 já não usa | 2026-11-19 | Removidas depois de publicar, num commit próprio: a aplicação PowerShell, o lançador e os testes de interface que a conduziam. Ficam `src/package-helper.cs`, `src/uninstall-helper.cs` e os dois testes de remoção que o oráculo corre, e `src/ui-helper.cs` com `src/ui.csproj`, de que o protótipo da Fase 3 depende. Tudo o resto está na etiqueta `v3.6.0` |
 | Os nomes de programas de um PC real no histórico do ramo | 2026-11-19 | O ramo `v4/app` foi reescrito a partir de `eeade08`, com o mesmo conteúdo ficheiro a ficheiro: o primeiro commit do passo 7 e os seus testes usam nomes inventados. Os commits anteriores à reescrita deixaram de pertencer ao ramo |
 
 Continuam contigo:
 
-1. **As fontes da 3.6 que a 4.0 já não usa** (`vexan_installers.ps1`, `src/launcher.cs`, `src/startup.cs`, `src/ui-helper.cs`, `src/ui.csproj`, `src/settings.ps1`, `src/manager-ui.ps1` e os testes que as conduzem). Recomendo mantê-las até a 4.0 estar publicada e removê-las depois, num commit próprio. `src/package-helper.cs` e `src/uninstall-helper.cs` têm de ficar enquanto o oráculo existir.
-2. **Limpar do GitHub os commits anteriores à reescrita do ramo**, que ainda se abrem pelo endereço direto: apagar as corridas antigas do Actions e pedir a limpeza ao suporte do GitHub.
+1. **Limpar do GitHub os commits anteriores à reescrita do ramo**, que ainda se abrem pelo endereço direto: apagar as corridas antigas do Actions e pedir a limpeza ao suporte do GitHub.
 
 ## A publicação
 
@@ -531,3 +530,4 @@ Conferido depois, com os ficheiros descarregados da release:
 | O executável publicado | 3 953 152 bytes; assembly `1nstall` 4.0.0.0; autoteste 31 de 31 neste PC; sem assinatura |
 | O ZIP portátil | Contém o mesmo executável |
 | O que o atualizador da 3.6 lê na API do GitHub | Última release `v4.0.0`, publicada, com o `1nstall.exe` e o seu SHA-256 |
+| Uma 3.6 verdadeira, no PC do autor, com atualizações automáticas | Descarregou a 4.0 três minutos depois da publicação, com o SHA-256 da release, aplicou-a sem erro e a 4.0 arrancou |

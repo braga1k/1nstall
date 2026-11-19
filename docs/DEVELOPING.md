@@ -7,14 +7,14 @@
 | `app/` | The 4.0 application: the C# window over the engine, its build script and its UI tests |
 | `engine/` | The Rust engine: rules (`core`), Windows access (`platform`), the boundary the window calls (`ffi`), test harness and a read-only CLI |
 | `interface.xaml` | The window and its resources, compiled into the executable |
-| `src/` | Motion, appearance, window and update helpers compiled into 4.0, the icon and the manifest. The other files here, and `vexan_installers.ps1`, are the 3.6 application, kept as the reference the oracle compares against |
+| `src/` | Motion, appearance, window and update helpers compiled into 4.0, the icon and the manifest. `package-helper.cs` and `uninstall-helper.cs` are the rules of 3.6, kept because the oracle runs them to compare; `ui-helper.cs` and `ui.csproj` are kept for the phase 3 prototype in `engine/prototypes/wpf`. The rest of the 3.6 application is at the tag `v3.6.0` |
 | `oracle/` | The recorded 3.6 behaviour and the scripts that record it |
 | `docs/rewrite/` | How 4.0 was specified, compared with 3.6 and built, phase by phase (in Portuguese) |
 | `catalog.json`, `profiles.json`, `locales.json` | Runtime data |
 | `assets/` | Original brand vectors; `src/1nstall.ico` is the runtime icon |
 | `docs/catalog/` | Catalog taxonomy, review and provenance used by the catalog checks |
 | `docs/images/` | Current English screenshots used by the README |
-| `tests/` | Offline checks, disposable fixtures and native UI checks |
+| `tests/` | Catalog and language checks, the motion test, and the two 3.6 removal tests the oracle runs. The tests of the 4.0 window are in `app/tests/` |
 | `scripts/`, `.github/workflows/` | Icon generation, packaging and release automation |
 | `licenses/` | Required upstream licence and attribution notices |
 | `dist/`, `test-logs/` | Ignored build outputs and test evidence |
@@ -56,13 +56,9 @@ powershell.exe -NoProfile -File app/tests/history-ui.ps1 -Exe dist/1nstall.exe
 powershell.exe -NoProfile -File app/tests/queue-ui.ps1 -Exe dist/1nstall.exe -StandIn path\to\oracle-fixture.exe
 ```
 
-These tests install and remove nothing; the test modes keep their data beside the executable, so run them from a short path. The other scripts in `tests/` drive the 3.6 application and were not adapted. Destructive fixture checks run only where `ORACLE_DISPOSABLE=1` declares a disposable machine, as the `oracle` workflow does; the variable declares isolation but does not create it. The [validation guide](VALIDATION.md) distinguishes fixture results from live installer and hardware coverage.
+These tests install and remove nothing; the test modes keep their data beside the executable, so run them from a short path. The scripts that drove the 3.6 application were removed with it; `app/tests/` has what replaced them. Destructive fixture checks run only where `ORACLE_DISPOSABLE=1` declares a disposable machine, as the `oracle` workflow does; the variable declares isolation but does not create it. The [validation guide](VALIDATION.md) distinguishes fixture results from live installer and hardware coverage.
 
-Public screenshots always use English. The four README images were captured with 3.6, whose script below was not adapted to 4.0:
-
-```powershell
-powershell.exe -NoProfile -STA -File tests/screenshots.ps1 -PreviewDirectory dist/screenshots
-```
+Public screenshots always use English. The four README images were captured with 3.6, whose window 4.0 compiles unchanged. `app/tests/window-ui.ps1 -Pictures <folder>` saves pictures of the 4.0 window in each state.
 
 ## Release
 

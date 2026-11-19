@@ -8,6 +8,6 @@ New translations are an automated first pass with terminology and placeholder co
 
 Brand names, original catalog descriptions, licences, installer output and raw logs retain their source language. Segoe UI is the common font, with Windows font fallback for other writing systems.
 
-Run `python tests/locales.py` to check keys, placeholders and coverage. The WPF manager suite switches through every locale and checks profile controls at the minimum window width. Translation changes must preserve the distinction between installing, removing apps and separately consenting to leftover cleanup.
+Run `python tests/locales.py` to check keys, placeholders and coverage. `app/tests/window-ui.ps1` switches through every locale, compares the Settings page with `locales.json`, and checks the controls at the minimum window size. Translation changes must preserve the distinction between installing, removing apps and separately consenting to leftover cleanup.
 
 All screenshots published on GitHub must show the English interface, independently of personal Windows or app language preferences.

@@ -25,8 +25,7 @@ This is a native adaptation: WPF clocks replace Web Animations API, and UIA repl
 ```powershell
 .\build-windows.ps1
 powershell -NoProfile -STA -File tests/elastic-motion.ps1
-powershell -NoProfile -STA -File tests/smoke.ps1
-.\dist\1nstall.exe --manager-test
+.\dist\1nstall.exe --self-test
 ```
 
-The focused test covers all presets, bounds, successive interruptions, UIA state, live reversal, press cancellation, reduced motion, completion callbacks and template recycling. Existing smoke/manager checks cover selection, layout, bindings and app workflows with fictional data. `tests/screenshots.ps1` captures themes; `tests/scrolling.ps1` checks scrolling and navigation.
+The focused test covers all presets, bounds, successive interruptions, UIA state, live reversal, press cancellation, reduced motion, completion callbacks and template recycling. Selection, layout and the app workflows are covered by the window tests in `app/tests/`; `window-ui.ps1 -Pictures` captures the themes.
