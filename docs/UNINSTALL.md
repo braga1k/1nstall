@@ -21,7 +21,7 @@ After removal, a background scan checks:
 - Exact product-name keys within HKCU/HKLM `Software`, in 32-bit and 64-bit views.
 - Individual missing-executable traces in AppCompat, UserAssist, MuiCache, Jump List and app-usage branches. Known-folder GUIDs and UserAssist ROT13 paths are resolved. Only the matching value is removed from these shared Windows keys.
 
-The review distinguishes **Linked path** (recorded installation location or executable trace) from **Name match** (exact product-name candidate). A matching name is a reason to review, not proof that its contents are disposable. App data can contain settings, saves and personal work. Real file counts and logical byte sizes are measured during scanning; the disk total includes only inspected candidates.
+The review distinguishes **Linked path** (recorded installation location or executable trace) from **Name match** (exact product-name candidate). A matching name is a reason to review, not proof that its contents are disposable. In 4.0 the name of the install folder is a product name only when it shares the product's own name, and folder names that many programs share (Plugins, VST3, Components, Shared, Tools and the like) are never product names: 3.6 offered the "Plugins" folders of other programs as leftovers of an app installed into `Common Files\OFX\Plugins`. App data can contain settings, saves and personal work. Real file counts and logical byte sizes are measured during scanning; the disk total includes only inspected candidates.
 
 ## Review and confirmation
 

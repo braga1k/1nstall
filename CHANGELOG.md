@@ -7,6 +7,8 @@
 - Report an internal engine error in a message and in the session log instead of closing.
 - Refuse a package identifier or registry path that ends in a line break.
 - Stop taking the folder of an uninstaller or icon as an install folder to recycle.
+- Fix leftovers of other programs offered as name matches of an app installed into a shared folder (for example `Common Files\OFX\Plugins`): the install folder's name counts as a product name only when it shares the product's name, and shared folder words (Plugins, VST3, Components, Shared, Tools...) never do.
+- Record the reason when a folder cannot be recycled; it could be empty.
 - Fix removals reported as Failed with "Access is denied" when an uninstaller elevated through UAC starts a child process. The queue no longer moves to the next app while that uninstaller is still running.
 - Accept the WinGet source agreements when verifying an install the user already agreed to.
 - Write the removal history through a temporary file.

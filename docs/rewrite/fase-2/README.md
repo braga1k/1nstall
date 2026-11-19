@@ -88,6 +88,7 @@ Cada uma é uma decisão minha tomada para não parar, e fica **por aprovar**. A
 | 4 | A verificação depois de instalar passa `--accept-source-agreements` ao `winget export` | Código (`packages.rs`); **sem cobertura do oráculo** | Sem isso, num PC novo todas as instalações ficam `Unknown`. Só acontece depois de o utilizador aceitar os termos para instalar. |
 | 5 | O histórico de remoções é escrito por ficheiro temporário | Código | Uma escrita interrompida deixava o ficheiro truncado. Não muda o formato. |
 | 6 | A janela de abertura não é portada | Decisão tua na Fase 0 | Só existia para mascarar o carregamento. |
+| 7 | O nome da pasta de instalação só conta como nome do produto quando partilha o nome do produto, e nomes de pastas partilhadas (Plugins, VST3, Components, Shared, Tools…) nunca contam | `engine/oracle-divergences.json`, 5 casos; testes em `engine/core/tests/properties.rs` | Acrescentada na Fase 4, depois de uma limpeza real: a 3.6 ofereceu pastas e chaves «Plugins» de outros programas como vestígios de uma app instalada em `Common Files\OFX\Plugins`. |
 
 Diferenças de classe, aceites pelos testes sem lista caso a caso:
 
