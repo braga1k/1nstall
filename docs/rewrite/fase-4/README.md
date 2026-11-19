@@ -274,7 +274,7 @@ Em modo normal, em máquinas descartáveis (`app/tests/disposable-ui.ps1`):
 - **Remoção pela janela:** uma app fictícia é selecionada, revista e removida; a revisão de vestígios abre, oferece só as duas pastas dela, nada vem escolhido, o consentimento sozinho não chega, «Select linked paths» escolhe só a pasta de instalação registada, «Select all» escolhe tudo; a limpeza termina com o resumo, as pastas saem do sítio, a cópia de segurança regista os itens e o histórico mostra a remoção e cada limpeza.
 - **Parar a meio e fechar a janela:** com duas apps na fila e um desinstalador que lança um processo filho, «Stop» é aceite, a janela não fecha enquanto o desinstalador trabalha, a primeira app é removida, a segunda fica por remover, e a janela fecha depois.
 
-Uma atualização pelas Definições (`app/tests/update-ui.ps1`): uma build do mesmo código numerada 3.5.0 encontra a 3.6.0 publicada, descarrega-a, verifica-a, oferece «Restart and update», substitui-se por ela e guarda a cópia anterior.
+Uma atualização pelas Definições (`app/tests/update-ui.ps1`): uma build do mesmo código numerada 3.5.0 encontra a última release publicada, descarrega-a, verifica-a, oferece «Restart and update», substitui-se por ela e guarda a cópia anterior. Até à publicação essa release era a 3.6.0; desde então é a 4.0.0, e o teste compara com a soma de verificação que a própria release anuncia.
 
 O teclado, com teclas reais (`window-ui.ps1 -Keyboard`): Ctrl+F vai para a pesquisa, escrever filtra, espaço seleciona um cartão, F1 abre os detalhes, Esc fecha-os, Tab avança, Ctrl+F na página de desinstalar vai para a pesquisa dela, e Alt+F4 fecha a aplicação.
 

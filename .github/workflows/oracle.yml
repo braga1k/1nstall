@@ -230,7 +230,7 @@ jobs:
           [IO.File]::WriteAllText("$PWD\app\Program.cs", $older)
           try { $line = .\app\build.ps1 -Out "$PWD\dist\older" | Select-Object -Last 1 } finally { [IO.File]::WriteAllText("$PWD\app\Program.cs", $source) }
           Write-Output "older build: $line"
-          .\app\tests\report.ps1 -Title "update ui $env:TITLE" -Test { .\app\tests\update-ui.ps1 -Exe .\dist\older\1nstall.exe -ExpectedHash 90428e1ea21db5f5b939aab920db3309a457fc4bd4ac116641fb1754feb8508c -DisposableEnvironment }
+          .\app\tests\report.ps1 -Title "update ui $env:TITLE" -Test { .\app\tests\update-ui.ps1 -Exe .\dist\older\1nstall.exe -DisposableEnvironment }
       - name: Normal mode on a disposable machine - Windows theme, settings, fixture removal, cleanup, stopping
         shell: powershell
         continue-on-error: true

@@ -1,11 +1,12 @@
 ﻿# Checks, downloads and applies an update from the Settings page of a built 1nstall.exe, in
 # its NORMAL mode, against the real releases on GitHub. Needs an interactive desktop.
 #
-# Nothing newer than 4.0 is published, so the executable given here must be a build of the
-# same code with a lower version number (the CI job builds one as 3.5.0): it then finds the
-# published 3.6.0, downloads it, verifies it and replaces itself with it. The test writes to
+# The executable given here must be a build of the same code with a version number below the
+# latest published release (the CI job builds one as 3.5.0): it then finds that release,
+# downloads it, verifies it and replaces itself with it. What it must download is read from
+# the checksum file of that release, unless -ExpectedHash names it. The test writes to
 # %LOCALAPPDATA%\1nstall and replaces the executable, so it runs only on a disposable machine.
-param([Parameter(Mandatory)][string]$Exe, [Parameter(Mandatory)][string]$ExpectedHash, [switch]$DisposableEnvironment)
+param([Parameter(Mandatory)][string]$Exe, [string]$ExpectedHash='', [switch]$DisposableEnvironment)
 if (-not $DisposableEnvironment) { throw 'This test replaces the executable and writes to the profile. Run it only on a disposable machine, with -DisposableEnvironment.' }
 $ErrorActionPreference='Stop'
 . (Join-Path $PSScriptRoot 'common.ps1')
@@ -13,8 +14,16 @@ function Hash([string]$path) { (Get-FileHash -LiteralPath $path -Algorithm SHA25
 $exe=(Resolve-Path -LiteralPath $Exe).Path
 $data=Join-Path $env:LOCALAPPDATA '1nstall'
 $original=Hash $exe
+if (-not $ExpectedHash) {
+    [Net.ServicePointManager]::SecurityProtocol=[Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
+    $listed=Join-Path $env:TEMP ('1nstall-latest-sums-'+$PID+'.txt')
+    Invoke-WebRequest -Uri 'https://github.com/braga1k/1nstall/releases/latest/download/SHA256SUMS.txt' -OutFile $listed -UseBasicParsing
+    $ExpectedHash=@(Get-Content -LiteralPath $listed | Where-Object { $_ -match '^([a-f0-9]{64})\s+\*?1nstall\.exe\s*$' } | ForEach-Object { $Matches[1] })[0]
+    Remove-Item -LiteralPath $listed
+    if (-not $ExpectedHash) { throw 'The latest release lists no checksum for 1nstall.exe.' }
+}
 $identity=[Reflection.AssemblyName]::GetAssemblyName($exe)
-Check "the build under test is older than the published release ($($identity.Version))" ($identity.Version.Major -eq 3 -and $identity.Version.Minor -lt 6)
+Check "the build under test is numbered below the published releases ($($identity.Version))" ($identity.Version.Major -eq 3 -and $identity.Version.Minor -lt 6)
 $root=Start-App ''
 try {
     Invoke (Named $root 'Settings')
@@ -37,8 +46,9 @@ try {
         return
     }
     Check 'the newer release is found, downloaded and verified' ($answer -eq $answers[0])
-    $downloaded=Join-Path $data 'Updates\3.6.0\1nstall.exe'
-    Check "the download is the published executable ($(if (Test-Path -LiteralPath $downloaded) { Hash $downloaded }))" ((Test-Path -LiteralPath $downloaded) -and (Hash $downloaded) -eq $ExpectedHash)
+    $folder=@(Get-ChildItem -LiteralPath (Join-Path $data 'Updates') -Directory -ErrorAction SilentlyContinue | Sort-Object LastWriteTime | Select-Object -Last 1)
+    $downloaded=if ($folder.Count) { Join-Path $folder[0].FullName '1nstall.exe' } else { '' }
+    Check "the download is the executable of the latest release ($(if ($folder.Count) { $folder[0].Name }): $(if ($downloaded -and (Test-Path -LiteralPath $downloaded)) { Hash $downloaded }))" ($downloaded -and (Test-Path -LiteralPath $downloaded) -and (Hash $downloaded) -eq $ExpectedHash)
     $apply=@(Buttons $root 'Restart and update')
     Check 'Restart and update is offered' ($apply.Count -eq 1 -and $apply[0].Current.IsEnabled)
     if ($apply.Count -eq 1 -and $apply[0].Current.IsEnabled) {
@@ -48,7 +58,7 @@ try {
         Check 'the executable was replaced by the downloaded release' ([bool]$replaced)
         Check 'the replaced executable is kept beside it' ((Test-Path -LiteralPath ($exe+'.previous')) -and (Hash ($exe+'.previous')) -eq $original)
         Check 'no update error was recorded' (-not (Test-Path -LiteralPath (Join-Path $data 'update-error.log')))
-        # The update restarts the application: now the published 3.6.0. It is closed again.
+        # The update restarts the application: now the published release. It is closed again.
         $restarted=Wait-Until { @(Get-CimInstance Win32_Process | Where-Object { $_.ExecutablePath -eq $exe }) } 30 1000
         Check 'the updated application was started again' ([bool]$restarted)
         Start-Sleep -Seconds 5
