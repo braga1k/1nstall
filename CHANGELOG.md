@@ -9,6 +9,9 @@
 - Stop taking the folder of an uninstaller or icon as an install folder to recycle.
 - Fix leftovers of other programs offered as name matches of an app installed into a shared folder (for example `Common Files\OFX\Plugins`): the install folder's name counts as a product name only when it shares the product's name, and shared folder words (Plugins, VST3, Components, Shared, Tools...) never do.
 - Record the reason when a folder cannot be recycled; it could be empty.
+- Say in the status line when an install queue ended early because of an internal error.
+- Fix the optional code signing in `build-windows.ps1`: the timestamp server address must start with `http://`, the only form Windows PowerShell 5.1 accepts.
+- Test the window on GitHub Actions through UI Automation, including real installs and removals on throw-away machines, and build again from the source archive there.
 - Fix removals reported as Failed with "Access is denied" when an uninstaller elevated through UAC starts a child process. The queue no longer moves to the next app while that uninstaller is still running.
 - Accept the WinGet source agreements when verifying an install the user already agreed to.
 - Write the removal history through a temporary file.

@@ -1,12 +1,12 @@
 # Fase 4 — Interface, migração e release
 
-Estado em 2026-11-18, depois dos seis passos e de uma ronda de otimização do arranque. O código está no ramo `v4/app`, nas pastas `app/` e `engine/`. As fontes da 3.6 continuam na raiz, como referência do oráculo; `build-windows.ps1` passou a construir a 4.0.
+Estado em 2026-11-19, depois dos seis passos, de uma ronda de otimização do arranque e de uma ronda de testes antes do lançamento (passo 7). O código está no ramo `v4/app`, nas pastas `app/` e `engine/`. As fontes da 3.6 continuam na raiz, como referência do oráculo; `build-windows.ps1` passou a construir a 4.0.
 
 ## Resumo
 
 Escolheste a interface WPF sobre o motor Rust. Existe um `1nstall.exe` 4.0 num único ficheiro, sem PowerShell, e está provado que a 3.6 se atualiza para ele sem release intermédia. Com todas as páginas da 3.6 incluídas, fica pronto em 473 ms, abaixo do limite de 500 ms, com o aspeto e as animações intactos. O limite de memória de 80 MB não é atingido: fica em 113 MB.
 
-Os seis passos estão feitos e a release está preparada, mas não publicada: publicar é um push teu. Antes disso há uma decisão a tomar, descrita no passo 6: nesta versão o inventário do WinGet é sempre parcial, e por isso o botão de repetir uma instalação falhada nunca aparece.
+Os seis passos estão feitos e a release está preparada, mas não publicada: publicar é um push teu. Antes disso há decisões a tomar, juntas no fim deste relatório. A ronda de testes do passo 7 encontrou um erro grave herdado da 3.6 na procura de vestígios, que está corrigido, e mais dois erros herdados, um corrigido e um por decidir.
 
 ## O executável da 4.0
 
@@ -215,46 +215,147 @@ No commit `2cf87e2`, os dez trabalhos terminaram: nove com sucesso e o de public
 
 Os executáveis construídos no Actions têm 3 940 864 e 3 940 352 bytes; o deste PC tem 3 942 912.
 
+## Passo 7: os testes antes do lançamento
+
+Pediste que testasse tudo o que a secção «O que não foi testado» listava. Esta secção diz o que passou a estar testado, onde, e o que isso encontrou. O que continua por testar está na secção seguinte.
+
+### Um erro grave, herdado da 3.6, encontrado numa limpeza real
+
+Numa sessão real com a 4.0, uma app estava instalada em `C:\Program Files\Common Files\OFX\Plugins\`, a pasta que todos os plug-ins OpenFX partilham. A regra de procura de vestígios, portada da 3.6 sem alterações (`Names`, em `src/uninstall-helper.cs:405`), aceitava o nome da pasta de instalação de uma app verificada como nome do produto, fosse qual fosse. «Plugins» passou a ser um nome dessa app, e a revisão de vestígios ofereceu, como `Name match` dela, as pastas e chaves de registo chamadas «Plugins» de outros quatro programas. A limpeza confirmada levou três pastas para a Reciclagem e três chaves de registo, com cópia.
+
+Nada se perdeu: as pastas foram repostas da Reciclagem e as chaves a partir das cópias `.reg` que a limpeza guarda. A 3.6 publicada tem o mesmo erro.
+
+A correção, em `engine/core/src/uninstall.rs`:
+
+- o nome da pasta de instalação só conta como nome do produto quando partilha o nome do produto (um contém o outro);
+- palavras que dão nome a pastas partilhadas (`plugins`, `vst3`, `components`, `shared`, `common`, `tools`, `library` e semelhantes) nunca são nome de produto.
+
+É uma diferença intencional em relação à 3.6, a sétima da lista da Fase 2. Muda cinco casos gravados do oráculo, registados em `engine/oracle-divergences.json`. O efeito do outro lado: quando a pasta de instalação tem um nome sem relação com o do produto, essa pasta e os vestígios de executáveis dentro dela deixam de ser oferecidos. Os testes novos em `engine/core/tests/properties.rs` reproduzem o caso real com nomes inventados e fixam os casos que a mesma sessão resolveu bem.
+
+### Outros achados
+
+| Achado | Origem | O que fiz |
+| --- | --- | --- |
+| Uma limpeza que falhou ficou no histórico como `Failed` com o motivo vazio: algumas falhas da Reciclagem do Windows não trazem texto | 4.0 | Corrigido: o motivo passa a ter sempre texto e o código do Windows |
+| A opção de assinatura de `build-windows.ps1` exigia um servidor de carimbo de tempo `https://`, que o `Set-AuthenticodeSignature` do Windows PowerShell 5.1 recusa. Nunca pôde assinar | 3.6 | Corrigido: pede `http://`. Uma build assinada com um certificado de teste passa no Actions |
+| Uma fila de instalação terminada por erro interno do motor dizia «Queue finished · 0 failed» | 4.0, passo 6 | Corrigido: a linha de estado diz que terminou por erro interno |
+| Os modos de teste falhavam numa pasta de caminho comprido | 4.0 | Corrigido: nesse caso a cache do motor vai para a pasta temporária. Autoteste 31 de 31 a partir de um caminho de 219 caracteres |
+| Ao mudar diretamente entre dois idiomas cuja tradução só difere em maiúsculas (eslovaco «Téma», húngaro «téma»), o texto fica com a grafia do primeiro até reiniciar. Acontece em três idiomas | 3.6: compara os textos sem distinguir maiúsculas | Não alterei. O teste assinala-o numa nota |
+| Os dois interruptores das Definições (cor de destaque e atualizações automáticas) escutam o clique. Mudados pela ação de alternar da automação, que algumas ferramentas de acessibilidade usam, mudam no ecrã mas não são gravados. Com o rato ou com a tecla de espaço gravam | 3.6 | Não alterei. É a mesma classe da diferença dos cartões, que está por aprovar: convém decidir as duas da mesma maneira |
+| Nos diagnósticos, um caminho só é removido se começar por uma letra de unidade ou por `\\` | 3.6 | Não alterei. A janela já pede para rever o texto antes de o partilhar |
+| No tamanho mínimo da janela, a sugestão da caixa de pesquisa fica cortada («Search apps · Ctrl+») | 3.6: é o mesmo XAML | Não alterei |
+| Numa máquina onde os termos da origem do WinGet nunca foram aceites, `winget export` não responde, e a app fica sem inventário até à primeira instalação | Comportamento conhecido desde a Fase 1 | Nada; visto de novo no Actions |
+
+### O que passou a estar testado neste PC
+
+Tudo em modo de teste, sem tocar no perfil do utilizador e sem instalar nem remover nada.
+
+| Teste | O que cobre | Resultado |
+| --- | --- | --- |
+| `app/tests/dialogs-ui.ps1` | As janelas de ficheiro do Windows: guardar a seleção, cancelar, carregar com pré-visualização, recusar um ficheiro danificado com o motivo, um pacote fora do catálogo, guardar os diagnósticos tal como foram revistos, e o instantâneo das apps instaladas, que volta a carregar | 26 de 26 |
+| `app/tests/queue-ui.ps1`, três partes novas | Parar a fila a meio (o instalador em curso acaba, a app seguinte fica «Cancelled · not started»); fechar a janela com a fila a correr (a janela fica até o instalador acabar); erro interno dentro da fila | 36 de 36 |
+| `app/tests/window-ui.ps1` | Tamanho mínimo (para em 1040 × 540 com os controlos dentro da janela, nas páginas de instalar e desinstalar); maximizar, restaurar e minimizar; um nome em cada controlo, nas quatro páginas; os 51 idiomas contra `locales.json`, com os dois da direita para a esquerda espelhados; os dois temas desenhados | 18 de 18 |
+| `engine/harness/tests/hostile_files.rs` | Trinta mil cópias danificadas dos ficheiros que o motor lê (definições, vista, histórico de operações, histórico de remoções, seleções guardadas): nenhuma faz o motor falhar, um histórico ilegível nunca é reescrito, uma seleção danificada só oferece apps do catálogo | 5 de 5 |
+| `engine/harness/tests/install_sequence.rs` | As linhas de comando que uma instalação envia ao WinGet, comparadas com a 3.6 a correr ao vivo com o mesmo WinGet de substituição: cinco instalações, mesmos comandos e mesmos resultados; a exportação que verifica difere só na opção `--accept-source-agreements` | Passa |
+| `engine/harness/tests/real_profile.rs` | Os ficheiros reais de um utilizador da 3.6, lidos pelas classes da 3.6 e pelo motor Rust: 35 operações e 14 apps removidas, com a mesma impressão digital | Idênticos |
+
+O teste dos ficheiros danificados gera os danos a partir de uma semente fixa: cortes, bits trocados, pedaços de JSON fora do sítio, repetições, ruído, aninhamento profundo e UTF-16. Não é fuzzing guiado por cobertura.
+
+### O que uma sessão real do autor acrescentou
+
+No mesmo dia, a 4.0 foi usada em modo normal num PC com Windows 11: uma instalação real pelo WinGet, verificada, e catorze remoções reais pela janela, com pedidos do UAC, apps registadas na máquina e um MSI. Treze terminaram com sucesso à primeira; uma devolveu um código de erro e foi dada como removida na verificação seguinte. A revisão de vestígios e a limpeza correram até ao fim, com cópias de segurança. Foi esta sessão que mostrou o erro das pastas partilhadas. Li os registos; não conduzi a sessão.
+
+### O que passou a estar testado no Actions
+
+Os testes de interface correm no Actions: as máquinas têm ambiente de trabalho. Há um trabalho novo, `Window tests`, nas duas imagens, e um trabalho `release-checks`.
+
+Em modo normal, em máquinas descartáveis (`app/tests/disposable-ui.ps1`):
+
+- **O tema do Windows com a app aberta:** a janela passa de escura a clara e de volta quando o tema das apps muda no Windows.
+- **Alto contraste ligado com a app aberta:** a janela continua desenhada e todas as páginas abrem; ao desligar, volta ao tema que o Windows repõe.
+- **Definições:** tema e idioma gravados; o interruptor das atualizações gravado a cada toque da tecla de espaço; nenhum ficheiro temporário deixado; o arranque seguinte abre no idioma e no tema gravados; a vista da biblioteca é lembrada.
+- **«Check now»:** responde «1nstall is up to date.».
+- **Remoção pela janela:** uma app fictícia é selecionada, revista e removida; a revisão de vestígios abre, oferece só as duas pastas dela, nada vem escolhido, o consentimento sozinho não chega, «Select linked paths» escolhe só a pasta de instalação registada, «Select all» escolhe tudo; a limpeza termina com o resumo, as pastas saem do sítio, a cópia de segurança regista os itens e o histórico mostra a remoção e cada limpeza.
+- **Parar a meio e fechar a janela:** com duas apps na fila e um desinstalador que lança um processo filho, «Stop» é aceite, a janela não fecha enquanto o desinstalador trabalha, a primeira app é removida, a segunda fica por remover, e a janela fecha depois.
+
+Uma atualização pelas Definições (`app/tests/update-ui.ps1`): uma build do mesmo código numerada 3.5.0 encontra a 3.6.0 publicada, descarrega-a, verifica-a, oferece «Restart and update», substitui-se por ela e guarda a cópia anterior.
+
+O teclado, com teclas reais (`window-ui.ps1 -Keyboard`): Ctrl+F vai para a pesquisa, escrever filtra, espaço seleciona um cartão, F1 abre os detalhes, Esc fecha-os, Tab avança, Ctrl+F na página de desinstalar vai para a pesquisa dela, e Alt+F4 fecha a aplicação.
+
+No motor (`uninstall_boundary.rs`): uma app fictícia registada na máquina, na vista de 32 bits, com um desinstalador que é lançado elevado, devolve de imediato e deixa o trabalho a um processo filho, é removida, analisada e limpa; e uma fila de duas apps em que se pede para parar durante a primeira termina com a primeira removida e a segunda intacta.
+
+Na release (`scripts/release-checks.ps1`): o ZIP de fontes, sozinho e sem Git, constrói a aplicação a partir dos mesmos ficheiros da release e o executável passa o autoteste; a build assina com um certificado de teste, a assinatura fica válida e com carimbo de tempo, e o executável assinado passa o autoteste e continua aceite pela condição de identidade do atualizador da 3.6.
+
+Apps reais, pela janela, no Windows Server 2025 (`disposable-ui.ps1 -Real`), com o WinGet 1.11.510:
+
+- **Instalação:** 7-Zip, Notepad++, PuTTY e WinSCP selecionados na biblioteca e instalados pela fila. A fila terminou com «0 failed», cada app ficou «Success» com a versão verificada, e o WinGet lista as quatro. O 7-Zip já vinha na imagem: o WinGet respondeu «já instalado» e a verificação confirmou-o.
+- **«Open detailed log»:** abre o Bloco de notas no registo dessa instalação.
+- **Remoção:** as quatro apps selecionadas na página de desinstalar e removidas em fila pelos seus próprios desinstaladores: um executável registado na máquina (7-Zip), um NSIS que se relança a si próprio (Notepad++), um MSI (PuTTY) e um Inno Setup do utilizador atual (WinSCP). Um ajudante do teste respondeu aos diálogos dos desinstaladores, como faria a pessoa. As quatro terminaram em «Success» e os quatro registos desapareceram do Windows.
+- **Vestígios:** a revisão ofereceu quatro itens, todos de apps acabadas de remover: a pasta de dados do Notepad++, as chaves `Software\7-Zip` e `Software\Notepad++`, e um vestígio do WinSCP na lista de saltos. O teste recuou sem limpar.
+- **Uma app da Microsoft Store** (Feedback Hub, que vinha na imagem) removida pela janela: «Success», e o pacote deixou de existir para o utilizador.
+
+Nas primeiras corridas esta parte não terminava. A causa era do teste: a aplicação tinha lançado o desinstalador e esperava pelo diálogo dele, como está desenhada, e o ajudante não encontrava o botão.
+
+### Resultado no Actions
+
+No commit `c65b3bd`, depois de seis corridas. As cinco primeiras serviram para acertar os testes novos com o ambiente do Actions; cada falha foi investigada e nenhuma era da aplicação, salvo a opção de assinatura, corrigida.
+
+| Trabalho | Windows Server 2022 | Windows Server 2025 |
+| --- | --- | --- |
+| Motor Rust: 77 testes, oráculo, cenários de remoção | 77 a passar; oráculo 1552 casos, 0 por explicar, 11 divergências declaradas | igual; e o Sumatra PDF instalado pela fila |
+| Aplicação: build, autoteste, a 3.6.0 atualiza-se para a 4.0 | 31 de 31; passa | 31 de 31; passa |
+| Biblioteca | 24 de 24 (sem WinGet) | 27 de 27 |
+| Definições | 15 de 15 | 15 de 15 |
+| Página de desinstalação, só leitura | 17 de 17 | 17 de 17 |
+| Histórico e diagnósticos | 19 de 19 (sem WinGet) | 23 de 23 |
+| Fila com o WinGet de substituição | 36 de 36 | 36 de 36 |
+| Janelas de ficheiro e «Open detailed log» | 23 de 23 | 25 de 25 |
+| Janela, idiomas, temas e teclado | 28 de 28 | 28 de 28 |
+| Atualização pelas Definições | 9 de 9 | 9 de 9 |
+| Modo normal: tema e alto contraste do Windows, definições, remoção e limpeza, parar a meio | 34 de 34 | 34 de 34 |
+| Apps reais: instalar, remover, app da Store | sem WinGet nesta imagem | 15 de 15 |
+| Verificação da release (`release-checks`) | 11 de 11 | não corre nesta imagem |
+
+Os resultados do Windows Server 2022 para os testes de janela são os da corrida anterior (`b934236`), com o mesmo código da aplicação; na última corrida esse trabalho ainda decorria quando li os resultados.
+
+Arranque numa máquina do Actions, sem placa gráfica, em três corridas: 2,8 a 3,4 s no primeiro arranque; depois mediana entre 261 e 362 ms; pico de working set de 98 MB.
+
+As corridas leem-se nas anotações de cada trabalho. As imagens da janela em cada estado ficam no artefacto `window-pictures-*`.
+
 ## O que não foi testado
 
-Tudo o que sei que não foi verificado na 4.0, junto num só sítio.
+Tudo o que sei que continua por verificar na 4.0, depois do passo 7.
 
 ### Pela janela
 
-- **Nenhuma remoção real.** No teu PC os testes recuam sempre e o motor recusa remover; o Actions não tem ambiente de trabalho. Remover, analisar vestígios e limpar só foram exercidos pela fronteira do motor.
-- **A janela de revisão dos vestígios e o resumo da limpeza** nunca foram abertos num teste.
-- **Parar a meio** uma fila de instalação ou uma remoção, e **fechar a janela** enquanto uma fila corre.
-- **Uma instalação real.** Na janela a fila só correu com o WinGet de substituição. As páginas das apps guiadas são registadas, não abertas.
-- **As janelas de ficheiro do Windows:** guardar e carregar seleções, guardar um instantâneo, guardar os diagnósticos.
-- **«Open detailed log».** O teste confirma quando o botão aparece; não carrega nele, porque abriria o Bloco de notas.
-- **Repetir uma instalação falhada.** O botão não pode aparecer nesta versão (ver o passo 6), por isso o caminho que vai dele até à seleção nunca correu.
-- **Atualizações:** verificar, descarregar e «Restart and update» a partir das definições.
-- **Gravar definições em modo normal.** A gravação só foi testada no motor, numa pasta temporária.
-- **O aviso de erro interno numa fila de instalação.** Foi testado com um botão de teste e numa operação de desinstalação; o mesmo caminho na fila de instalação não.
-- **Aspeto e acessibilidade:** alto contraste; mudança de tema ou de cor do Windows com a app aberta; 48 dos 51 idiomas; animações (só os limites matemáticos e os estados finais são testados); leitores de ecrã reais; atalhos de teclado (Ctrl+F, F1); DPI e vários monitores; janela no tamanho mínimo.
-- **Os testes de interface da 3.6 não têm equivalente na 4.0:** `scrolling`, `appearance`, `backdrop`, `startup-opening`, `cleanup-ui`, `uninstall-queue` e `screenshots` conduzem a aplicação PowerShell e não foram adaptados.
+- **Repetir uma instalação falhada.** O botão não pode aparecer nesta versão (ver o passo 6). A regra que o decide está testada no motor; o caminho que vai do botão até à seleção nunca correu.
+- **Leitores de ecrã reais.** O teste confirma que cada controlo tem nome e que cada cartão tem descrição, que é o que um leitor lê. Nenhum leitor de ecrã foi usado.
+- **As animações à vista.** São testados os limites matemáticos e os estados finais; ninguém as avaliou a olho nesta ronda.
+- **DPI diferente de 100 %, vários monitores e ecrã tátil.** Este PC e as máquinas do Actions estão a 100 % com um só ecrã.
+- **A mudança da cor de destaque do Windows com a app aberta.** O tema e o alto contraste foram testados; a cor de destaque não.
+- **O teclado para lá dos atalhos listados no passo 7:** a ordem completa do Tab e o uso da app só com teclado, do princípio ao fim.
+- **Os botões que abrem outros programas:** «Open logs», «Open backups», os endereços do GitHub e do donativo, e as páginas das apps guiadas em modo normal.
+- **Os testes de interface da 3.6 sem equivalente:** os atributos nativos do fundo acrílico (`backdrop`), os casos-limite do scroll (`scrolling`) e a janela de abertura, que não foi portada.
+- **A remoção de apps reais neste PC, por um teste.** Os testes daqui recuam sempre; as remoções reais pela janela correram no Actions e na sessão real do passo 7.
 
 ### No motor e no sistema
 
-- **Remoções de apps verdadeiras.** Só apps fictícias com um desinstalador de substituição. Os cenários reais da 3.5 no Windows Sandbox (7-Zip, Notepad++) não foram repetidos.
-- **Registos da máquina (`HKLM`), vista de 32 bits, MSI e apps da Store** na remoção. Os cenários são todos do utilizador atual.
-- **Um desinstalador que eleva pelo UAC e lança um processo filho**, contra o motor Rust. O cenário manual existe em `oracle/manual/` e só correu com a 3.6.
-- **Parar uma remoção a meio.** Não há teste que o cubra, nem no motor.
-- **Instalações reais além de uma.** Só o Sumatra PDF, no Windows Server 2025. Falhas reais do WinGet, dependências reais e pedidos de reinício não foram provocados.
+- **O pedido do UAC, de forma automática.** As máquinas do Actions já correm elevadas e não o mostram. Foi visto a funcionar na sessão real descrita no passo 7.
+- **Um pedido de reinício real, uma falha real do WinGet e dependências reais.** As instalações reais feitas terminaram todas com sucesso; as falhas só foram provocadas com o WinGet de substituição.
 - **O inventário completo.** Não existe nesta versão; o estado «Not installed» nunca ocorre.
-- **Windows 10**, outros PCs, outras versões do WinGet. A imagem do Windows Server 2022 não tem WinGet.
-- **Os teus dados reais da 3.6.** Um arranque normal leu as tuas definições. O teu histórico e as tuas seleções guardadas não foram lidos pela 4.0.
-- **A divergência 4 da Fase 2** (aceitar os termos da origem ao verificar) não tem cobertura do oráculo, e a fila de instalação não foi comparada com uma gravação da 3.6.
-- **Fuzzing.**
+- **Windows 10.** Não há onde o testar. O que há: um PC com Windows 11 e as imagens Windows Server 2022 e 2025 do Actions. A do Server 2022 não tem WinGet.
+- **Seleções guardadas por um utilizador real da 3.6.** O histórico e as definições reais foram lidos; não procurei ficheiros de seleções no disco.
+- **Fuzzing guiado por cobertura.** Há testes de propriedades e ficheiros danificados gerados por semente fixa.
+- **Outros desinstaladores reais.** Foram removidas quatro apps (um executável da máquina, um NSIS, um MSI, um Inno Setup) e uma app da Store. O motor espera, sem limite de tempo, por tudo o que um desinstalador lança, como a 3.6; um desinstalador que deixe um programa aberto mantém a fila à espera até esse programa fechar. Não o vi acontecer nestas quatro.
 
 ### Na release
 
 - **A publicação.** O trabalho `publish-stable` só corre com um push para `release/4.0.0`, que é teu. Nunca correu para a 4.0.
-- **O caminho da 3.6 que consulta o GitHub e descarrega a release.** Só pode ser exercido com a 4.0 publicada. O passo seguinte, aplicar a atualização, está provado.
-- **A assinatura de código** que `build-windows.ps1` aceita como opção, e **a build a partir do ZIP de fontes**, sem Git.
-- **Os testes de interface no Actions.** Precisam de um ambiente de trabalho e só correram no teu PC.
-- **Os modos de teste num caminho comprido.** Guardam a cache ao lado do executável e falham quando o caminho passa o limite do Windows. Encontrei-o hoje nesta pasta de trabalho; o modo normal usa a pasta do utilizador e não é afetado.
-- **As medições** vêm de um só PC, e as do passo 6 foram feitas com outra configuração de ecrã. O primeiro arranque depois de reiniciar o PC nunca foi medido.
+- **A 3.6 a ir buscar a 4.0 ao GitHub.** Só é possível com a 4.0 publicada. Está provado o que vem depois (aplicar) e, com uma build numerada 3.5.0, o mesmo código de consulta, descarga e verificação contra a 3.6.0 publicada.
+- **Um certificado de assinatura verdadeiro.** A opção de assinar foi testada com um certificado feito no momento. A release continua sem assinatura, e o workflow não tem passo para assinar na nuvem.
+- **O primeiro arranque depois de reiniciar o PC.** Não foi medido, por decisão tua de não reiniciar este PC.
+- **As medições com placa gráfica** vêm de um só PC. As máquinas do Actions não têm placa gráfica.
+- **As compilações não são reprodutíveis bit a bit:** a build do ZIP de fontes e a da release têm o mesmo tamanho e SHA-256 diferentes.
 
 ## Otimização do arranque
 
@@ -319,18 +420,23 @@ A pesquisa do protótipo WPF da Fase 3, que tinha passado para este executável,
 
 | Verificação | Onde correu | Resultado |
 | --- | --- | --- |
-| Autoteste (`--self-test`) | Neste PC | 31 de 31 |
+| Autoteste (`--self-test`) | Neste PC e no Actions | 31 de 31 |
+| Janelas de ficheiro por UI Automation (`app/tests/dialogs-ui.ps1`) | Neste PC e no Actions | 26 de 26; 23 e 25 no Actions, conforme há ou não inventário |
+| Janela: tamanho, nomes, idiomas, temas (`app/tests/window-ui.ps1`) | Neste PC | 18 de 18; 28 de 28 no Actions, com o teclado |
+| Modo normal em máquina descartável (`app/tests/disposable-ui.ps1`) | Actions, duas imagens | 34 de 34 |
+| Atualização pelas Definições (`app/tests/update-ui.ps1`) | Actions, duas imagens | 9 de 9 |
+| Build pelo ZIP de fontes, assinatura de teste e arranque (`scripts/release-checks.ps1`) | Actions | 11 de 11 |
 | Teste do histórico e dos diagnósticos por UI Automation (`app/tests/history-ui.ps1`) | Neste PC | 23 de 23; 19 de 19 sem ler o WinGet |
 | Falha interna do motor: comunicada e não fatal, na fronteira, numa operação e na janela | Neste PC | Passa |
 | Teste de movimento sobre o executável da 4.0 (`tests/elastic-motion.ps1`), sem janela e com janela | Neste PC | Passa |
 | Build de release (`build-windows.ps1`) e autoteste do executável resultante | Neste PC | Constrói; 31 de 31 |
-| Teste da desinstalação por UI Automation, só de leitura (`app/tests/uninstall-ui.ps1`) | Neste PC | 17 de 17 |
+| Teste da desinstalação por UI Automation, só de leitura (`app/tests/uninstall-ui.ps1`) | Neste PC e no Actions | 17 de 17 |
 | Desinstalação pela fronteira do motor: os modos de teste só leem | Neste PC | Passa |
-| Teste da fila por UI Automation, com o WinGet de substituição (`app/tests/queue-ui.ps1`) | Neste PC | 19 de 19 |
+| Teste da fila por UI Automation, com o WinGet de substituição (`app/tests/queue-ui.ps1`) | Neste PC e no Actions | 36 de 36 |
 | Fila pela fronteira do motor, com o WinGet de substituição: execução, recusa, paragem | Neste PC | Passa |
-| Teste da biblioteca por UI Automation (`app/tests/library-ui.ps1`) | Neste PC | 27 de 27 |
-| Teste das definições por UI Automation (`app/tests/settings-ui.ps1`) | Neste PC | 15 de 15 |
-| Motor: formatação, lints e testes, incluindo 19 testes novos de definições, idiomas e biblioteca | Neste PC | Limpos |
+| Teste da biblioteca por UI Automation (`app/tests/library-ui.ps1`) | Neste PC e no Actions | 27 de 27; 24 sem WinGet |
+| Teste das definições por UI Automation (`app/tests/settings-ui.ps1`) | Neste PC e no Actions | 15 de 15 |
+| Motor: formatação, lints e 77 testes | Neste PC e no Actions | Limpos; 77 a passar |
 | Um arranque em modo normal, com as definições reais deste utilizador | Neste PC | Abriu; 0 ms de processador em 10 s de repouso; ficheiro de definições intacto |
 | Tudo o anterior no Actions | Ver a última execução do ramo | — |
 
@@ -387,18 +493,16 @@ A lista completa do que não foi testado está na secção «O que não foi test
 - **Um só PC.** Os tempos e a memória foram medidos numa máquina topo de gama. A memória da placa gráfica depende do controlador.
 - **As compilações não são reprodutíveis bit a bit.** As duas imagens do Actions produziram executáveis do mesmo tamanho com SHA-256 diferentes.
 - **O executável não é assinado**, tal como o da 3.6.
-- **Nenhuma remoção foi conduzida pela janela.** No teu PC o teste recua sempre; no Actions não há ambiente de trabalho. A remoção, a análise e a limpeza estão testadas pela fronteira do motor, não pelos botões.
-- **A janela de revisão dos vestígios não foi aberta em nenhum teste**, porque só aparece depois de uma remoção real.
-- **Parar a meio de uma fila não foi conduzido pela interface.** O programa de substituição termina de imediato, por isso não há tempo para carregar no botão; a paragem está testada no motor.
-- **Guardar e carregar seleções não foi conduzido pela interface.** As janelas de escolha de ficheiro do Windows não se deixam conduzir de forma fiável; a leitura e a escrita dos ficheiros estão testadas no motor.
-- **Os testes de interface precisam de um ambiente de trabalho interativo** e por isso só correm neste PC, não no Actions.
-- **Não verifiquei:** o alto contraste; a app a seguir uma mudança de tema ou de cor do Windows enquanto está aberta; o descarregamento e a aplicação de uma atualização a partir da página; gravar definições pela interface em modo normal (a gravação só foi testada no motor, numa pasta temporária); e o aspeto dos outros 48 idiomas.
+- **Os números de arranque numa máquina sem placa gráfica** (Actions, Windows Server 2022, 4 processadores): cerca de 3 s no primeiro arranque, depois mediana de 317 a 362 ms, com 98 MB de pico.
+- **Os testes de interface conduzem a janela por UI Automation.** Dizem o que a janela expõe e faz, não o que uma pessoa vê: o aspeto só foi verificado por imagens em poucos estados.
 
 ## Decisões que preciso de ti
 
 A memória ficou decidida em 2026-11-18: aceitas cerca de 100 MB com a placa gráfica, como a 3.6 desenha.
 
-1. **O inventário completo do WinGet**, descrito no passo 6: integrá-lo antes de publicar, ou publicar a 4.0 sem ele, como as notas da versão já dizem.
-2. **A diferença de acessibilidade nos cartões**, descrita no passo 3: aprovar ou reverter.
-3. **As fontes da 3.6 que a 4.0 já não usa** (`vexan_installers.ps1`, `src/launcher.cs`, `src/startup.cs`, `src/ui-helper.cs`, `src/ui.csproj`, `src/settings.ps1`, `src/manager-ui.ps1` e os testes que as conduzem): manter ou remover. `src/package-helper.cs` e `src/uninstall-helper.cs` têm de ficar enquanto o oráculo existir.
-4. **Publicar.** Juntar `v4/app` a `main` e fazer o push de `release/4.0.0` são passos teus.
+1. **A regra das pastas partilhadas**, descrita no passo 7: é uma diferença intencional em relação à 3.6, num commit próprio. Recomendo manter.
+2. **O inventário completo do WinGet**, descrito no passo 6: integrá-lo antes de publicar, ou publicar a 4.0 sem ele, como as notas da versão já dizem.
+3. **A ação de alternar da automação:** os cartões já reagem a ela (diferença do passo 3, por aprovar); os dois interruptores das Definições não (achado do passo 7). Aprovar as duas, ou reverter a dos cartões.
+4. **A mensagem do commit `1c4844f`** nomeia programas de um PC real. Os ficheiros já usam nomes inventados; tirar os nomes da mensagem exige reescrever o ramo `v4/app` com um push forçado.
+5. **As fontes da 3.6 que a 4.0 já não usa** (`vexan_installers.ps1`, `src/launcher.cs`, `src/startup.cs`, `src/ui-helper.cs`, `src/ui.csproj`, `src/settings.ps1`, `src/manager-ui.ps1` e os testes que as conduzem): manter ou remover. `src/package-helper.cs` e `src/uninstall-helper.cs` têm de ficar enquanto o oráculo existir.
+6. **Publicar.** Juntar `v4/app` a `main` e fazer o push de `release/4.0.0` são passos teus.

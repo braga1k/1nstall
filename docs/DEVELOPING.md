@@ -74,4 +74,4 @@ Windows CI runs the catalog and locale checks and the engine tests, builds, runs
 
 Release assets include the executable, portable/source ZIPs, BUILD-INFO.json, notices, checksums and test logs. Download the published assets and verify hashes and the executable tests before reporting publication complete.
 
-The executable is unsigned. Optional signing uses an authorized certificate and HTTPS timestamp service passed to `build-windows.ps1`. No certificate or general project licence is supplied by this workflow.
+The executable is unsigned. Optional signing uses an authorized certificate and a timestamp service passed to `build-windows.ps1`; its address must start with `http://`, the only form Windows PowerShell 5.1 accepts. No certificate or general project licence is supplied by this workflow.
