@@ -6,7 +6,7 @@ Estado em 2026-11-19, depois dos seis passos, de uma ronda de otimização do ar
 
 Escolheste a interface WPF sobre o motor Rust. Existe um `1nstall.exe` 4.0 num único ficheiro, sem PowerShell, e está provado que a 3.6 se atualiza para ele sem release intermédia. Com todas as páginas da 3.6 incluídas, fica pronto em 473 ms, abaixo do limite de 500 ms, com o aspeto e as animações intactos. O limite de memória de 80 MB não é atingido: fica em 113 MB.
 
-Os seis passos estão feitos e a release está preparada, mas não publicada: publicar é um push teu. As decisões que estavam em aberto foram tomadas em 2026-11-19 e estão no fim deste relatório. A ronda de testes do passo 7 encontrou um erro grave herdado da 3.6 na procura de vestígios, que está corrigido, e mais dois erros herdados, um corrigido e um por decidir.
+Os seis passos estão feitos e a **4.0.0 foi publicada em 2026-11-19**, a partir do commit `e23d1af`, por ordem tua. As decisões que estavam em aberto foram tomadas no mesmo dia e estão no fim deste relatório. A ronda de testes do passo 7 encontrou um erro grave herdado da 3.6 na procura de vestígios, que está corrigido, e mais dois erros herdados, também corrigidos.
 
 ## O executável da 4.0
 
@@ -319,7 +319,7 @@ Arranque numa máquina do Actions, sem placa gráfica, em três corridas: 2,8 a 
 Depois das decisões de 2026-11-19, no commit `ca2d743`, tudo o anterior passou de novo nas duas imagens, com o teste do histórico em 27 verificações (inclui o botão de repetir) e o do modo normal em 36 (os interruptores das Definições gravam das duas maneiras). Duas notas dessa corrida:
 
 - No Windows Server 2022 o GitHub não respondeu à verificação de atualizações, por limite de pedidos por endereço, e a atualização pelas Definições não pôde ser exercida aí. No Server 2025 passou, 9 de 9.
-- No Windows Server 2025 o módulo Microsoft.WinGet.Client instalou-se, mas o PowerShell 7 não devolveu o inventário, e a aplicação usou o `winget export`, como está desenhada. O inventário completo verdadeiro fica, por isso, sem prova numa máquina real; a mensagem de erro do PowerShell 7 passou a ser pedida em texto simples, para se ler.
+- No Windows Server 2025 o módulo Microsoft.WinGet.Client instalou-se, mas o `Get-WinGetPackage` respondeu «Failed to create instance: -2147023174» (o serviço do WinGet não arranca naquela máquina), e a aplicação usou o `winget export`, como está desenhada. O inventário completo verdadeiro fica, por isso, sem prova numa máquina real. A mensagem do PowerShell 7 chegava ilegível, em CLIXML; passou a ser pedida em texto simples, e foi assim que se leu a causa na corrida seguinte (`e23d1af`).
 
 No mesmo dia, uma segunda sessão real do autor com a build final: sete remoções pela janela e uma limpeza de 25 vestígios. Conferi cada item contra o estado do PC: os sete registos desapareceram, os 25 itens pertenciam todos às apps removidas, e nada de outros programas foi oferecido.
 
@@ -353,8 +353,7 @@ Tudo o que sei que continua por verificar na 4.0, depois do passo 7.
 
 ### Na release
 
-- **A publicação.** O trabalho `publish-stable` só corre com um push para `release/4.0.0`, que é teu. Nunca correu para a 4.0.
-- **A 3.6 a ir buscar a 4.0 ao GitHub.** Só é possível com a 4.0 publicada. Está provado o que vem depois (aplicar) e, com uma build numerada 3.5.0, o mesmo código de consulta, descarga e verificação contra a 3.6.0 publicada.
+- **A 3.6 verdadeira a atualizar-se para a 4.0 publicada, do princípio ao fim.** Depois de publicar confirmei o que o atualizador da 3.6 lê: a última release é a `v4.0.0`, não é rascunho nem pré-lançamento, e o `1nstall.exe` tem o SHA-256 que o GitHub anuncia e a identidade que a 3.6 exige. Não corri uma 3.6 a fazê-lo.
 - **Um certificado de assinatura verdadeiro.** A opção de assinar foi testada com um certificado feito no momento. A release continua sem assinatura, e o workflow não tem passo para assinar na nuvem.
 - **O primeiro arranque depois de reiniciar o PC.** Não foi medido, por decisão tua de não reiniciar este PC.
 - **As medições com placa gráfica** vêm de um só PC. As máquinas do Actions não têm placa gráfica.
@@ -514,4 +513,21 @@ Tomadas por ti; as de 2026-11-19 seguiram as minhas recomendações.
 Continuam contigo:
 
 1. **As fontes da 3.6 que a 4.0 já não usa** (`vexan_installers.ps1`, `src/launcher.cs`, `src/startup.cs`, `src/ui-helper.cs`, `src/ui.csproj`, `src/settings.ps1`, `src/manager-ui.ps1` e os testes que as conduzem). Recomendo mantê-las até a 4.0 estar publicada e removê-las depois, num commit próprio. `src/package-helper.cs` e `src/uninstall-helper.cs` têm de ficar enquanto o oráculo existir.
-2. **Publicar.** Juntar `v4/app` a `main` e fazer o push de `release/4.0.0` são passos teus.
+2. **Limpar do GitHub os commits anteriores à reescrita do ramo**, que ainda se abrem pelo endereço direto: apagar as corridas antigas do Actions e pedir a limpeza ao suporte do GitHub.
+
+## A publicação
+
+Em 2026-11-19, com a tua ordem expressa, depois de a corrida do Actions sobre `e23d1af` passar toda nas duas imagens:
+
+1. `main` avançou de `80e584f` para `e23d1af`, sem forçar.
+2. O ramo `release/4.0.0` foi criado no mesmo commit, e o trabalho `publish-stable` construiu, empacotou, criou a release em rascunho, verificou os ficheiros e publicou a `v4.0.0` às 15:18 UTC.
+
+Conferido depois, com os ficheiros descarregados da release:
+
+| Verificação | Resultado |
+| --- | --- |
+| Os dez ficheiros listados em `SHA256SUMS.txt` | Todos com o SHA-256 anunciado |
+| `BUILD-INFO.json` | Versão 4.0.0, commit `e23d1af`, fontes limpas; o SHA-256 do executável coincide |
+| O executável publicado | 3 953 152 bytes; assembly `1nstall` 4.0.0.0; autoteste 31 de 31 neste PC; sem assinatura |
+| O ZIP portátil | Contém o mesmo executável |
+| O que o atualizador da 3.6 lê na API do GitHub | Última release `v4.0.0`, publicada, com o `1nstall.exe` e o seu SHA-256 |
