@@ -294,7 +294,7 @@ Nas primeiras corridas esta parte não terminava. A causa era do teste: a aplica
 
 ### Resultado no Actions
 
-No commit `c65b3bd`, depois de seis corridas. As cinco primeiras serviram para acertar os testes novos com o ambiente do Actions; cada falha foi investigada e nenhuma era da aplicação, salvo a opção de assinatura, corrigida.
+No commit `201d8fe` (antes da reescrita do ramo, `c65b3bd`), depois de seis corridas. As cinco primeiras serviram para acertar os testes novos com o ambiente do Actions; cada falha foi investigada e nenhuma era da aplicação, salvo a opção de assinatura, corrigida.
 
 | Trabalho | Windows Server 2022 | Windows Server 2025 |
 | --- | --- | --- |
@@ -312,7 +312,7 @@ No commit `c65b3bd`, depois de seis corridas. As cinco primeiras serviram para a
 | Apps reais: instalar, remover, app da Store | sem WinGet nesta imagem | 15 de 15 |
 | Verificação da release (`release-checks`) | 11 de 11 | não corre nesta imagem |
 
-Os resultados do Windows Server 2022 para os testes de janela são os da corrida anterior (`b934236`), com o mesmo código da aplicação; na última corrida esse trabalho ainda decorria quando li os resultados.
+Os resultados do Windows Server 2022 para os testes de janela são os da corrida anterior (`8c81715`, antes `b934236`), com o mesmo código da aplicação; na última corrida esse trabalho ainda decorria quando li os resultados.
 
 Arranque numa máquina do Actions, sem placa gráfica, em três corridas: 2,8 a 3,4 s no primeiro arranque; depois mediana entre 261 e 362 ms; pico de working set de 98 MB.
 
@@ -502,9 +502,9 @@ Tomadas por ti; as de 2026-11-19 seguiram as minhas recomendações.
 | A regra das pastas partilhadas (passo 7) | 2026-11-19 | Mantém-se, como diferença intencional em relação à 3.6 |
 | O inventário completo do WinGet (passo 6) | 2026-11-19 | Reposto o caminho opcional da 3.6, com o PowerShell 7 e o módulo quando existem |
 | A ação de alternar da automação (passos 3 e 7) | 2026-11-19 | Aprovada nos cartões e estendida aos dois interruptores das Definições |
+| Os nomes de programas de um PC real no histórico do ramo | 2026-11-19 | O ramo `v4/app` foi reescrito a partir de `eeade08`, com o mesmo conteúdo ficheiro a ficheiro: o primeiro commit do passo 7 e os seus testes usam nomes inventados. Os commits anteriores à reescrita deixaram de pertencer ao ramo |
 
 Continuam contigo:
 
-1. **A mensagem do commit `1c4844f`** nomeia programas de um PC real. Os ficheiros já usam nomes inventados; tirar os nomes da mensagem exige reescrever o ramo `v4/app` com um push forçado. Recomendo fazê-lo antes de juntar o ramo a `main`, que é o último momento em que não custa nada; só o faço com a tua ordem expressa.
-2. **As fontes da 3.6 que a 4.0 já não usa** (`vexan_installers.ps1`, `src/launcher.cs`, `src/startup.cs`, `src/ui-helper.cs`, `src/ui.csproj`, `src/settings.ps1`, `src/manager-ui.ps1` e os testes que as conduzem). Recomendo mantê-las até a 4.0 estar publicada e removê-las depois, num commit próprio. `src/package-helper.cs` e `src/uninstall-helper.cs` têm de ficar enquanto o oráculo existir.
-3. **Publicar.** Juntar `v4/app` a `main` e fazer o push de `release/4.0.0` são passos teus.
+1. **As fontes da 3.6 que a 4.0 já não usa** (`vexan_installers.ps1`, `src/launcher.cs`, `src/startup.cs`, `src/ui-helper.cs`, `src/ui.csproj`, `src/settings.ps1`, `src/manager-ui.ps1` e os testes que as conduzem). Recomendo mantê-las até a 4.0 estar publicada e removê-las depois, num commit próprio. `src/package-helper.cs` e `src/uninstall-helper.cs` têm de ficar enquanto o oráculo existir.
+2. **Publicar.** Juntar `v4/app` a `main` e fazer o push de `release/4.0.0` são passos teus.
