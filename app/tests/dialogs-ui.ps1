@@ -46,7 +46,13 @@ try {
         Answer-FileDialog $dialog $saved
     }
     $written=Wait-Until { Test-Path -LiteralPath $saved } 10
-    if (-not $written) { "NOTE nothing was saved; dialogs still open: $(@(System-Dialogs | ForEach-Object { Describe-Dialog $_ }) -join ' || ')"; foreach ($open in (System-Dialogs)) { Close-Dialog $open } }
+    if (-not $written) {
+        # Say where the file went instead, if anywhere, and what the application logged.
+        $elsewhere=@(foreach ($place in $folder,$work,[Environment]::GetFolderPath('MyDocuments'),[Environment]::GetFolderPath('Desktop'),(Get-Location).Path) { Get-ChildItem -LiteralPath $place -Filter '*.json' -ErrorAction SilentlyContinue | Where-Object { $_.Name -like 'my-setup*' -or $_.Name -like 'selection*' } | ForEach-Object { $_.FullName } })
+        $tail=@(Get-ChildItem -LiteralPath $logs -Filter ('session-*-'+$process.Id+'.log') -ErrorAction SilentlyContinue | ForEach-Object { Get-Content -LiteralPath $_.FullName | Select-Object -Last 3 }) -join ' / '
+        "NOTE nothing was saved at $saved. Name box read back: '$script:lastFileName'; dialog closed by: $script:lastFileAnswer; files found elsewhere: $($elsewhere -join ', '); session log: $tail; dialogs still open: $(@(System-Dialogs | ForEach-Object { Describe-Dialog $_ }) -join ' || ')"
+        foreach ($open in (System-Dialogs)) { Close-Dialog $open }
+    }
     $profile=if ($written) { Get-Content -LiteralPath $saved -Raw | ConvertFrom-Json } else { $null }
     Check "the selection is saved as a version 1 profile ($(@($profile.Apps) -join ', '))" ($profile -and $profile.Version -eq 1 -and (@($profile.Apps) -join '|') -eq 'extra_7zip|apo|peace')
     Check 'the dialog is closed and the window is usable' (-not (System-Dialogs).Count -and (ById $root 'Install').Current.IsEnabled)
@@ -172,6 +178,7 @@ try {
         Invoke (ById $root 'InstallMode')
     }
 
+    if ((System-Dialogs).Count) { "NOTE left open at the end: $(@(System-Dialogs | ForEach-Object { Describe-Dialog $_ }) -join ' || ')" }
     Check 'the application is still running, with no dialog left open' (-not $process.HasExited -and -not (System-Dialogs).Count)
     $session=Get-ChildItem -LiteralPath $logs -Filter ('session-*-'+$process.Id+'.log') | Select-Object -First 1
     $log=if ($session) { Get-Content -LiteralPath $session.FullName -Raw } else { '' }

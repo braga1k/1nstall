@@ -80,10 +80,14 @@ function Start-Removal($root) {
 # Waits until the removal and the check that follows it are over: either the leftover review
 # is open ('review'), or the page is idle again ('idle').
 function Wait-Removal($root,[int]$seconds=300) {
+    $working='Queued',('Preparing'+$ellipsis),('Removing'+$ellipsis),('Verifying'+$ellipsis)
     Wait-Until {
         if (Everywhere-Named 'Keep what matters') { return 'review' }
         $refresh=ById $root 'RefreshInstalled'
-        if ($refresh -and $refresh.Current.IsEnabled -and -not (ById $root 'StopUninstall') -and (Status $root) -notmatch 'Reading|Checking|Removing|Waiting') { return 'idle' }
+        # Idle only once the queue shows an outcome for every app: before the removal has
+        # begun the page looks idle too.
+        $stages=@(Stage-Texts $root)
+        if ($refresh -and $refresh.Current.IsEnabled -and -not (ById $root 'StopUninstall') -and (Status $root) -notmatch 'Reading|Checking|Removing|Waiting|Wait for' -and $stages.Count -and -not ($stages | Where-Object { $working -contains $_ })) { return 'idle' }
         return $null
     } $seconds 400
 }
@@ -113,7 +117,10 @@ try {
     Check 'every page opens in high contrast' (-not $process.HasExited -and [bool](Named $root 'Details for 1Password'))
     [UiNative]::SetHighContrast($false) | Out-Null; Start-Sleep -Seconds 6
     $back=Level 'windows-after-contrast'
-    Check "switching high contrast off brings the appearance back (brightness $back)" (-not $process.HasExited -and [Math]::Abs($back-$dark) -lt 25)
+    # Leaving high contrast, Windows puts back the theme it had before, with its own app theme.
+    $now=(Get-ItemProperty -Path $personalize -Name AppsUseLightTheme -ErrorAction SilentlyContinue).AppsUseLightTheme
+    $expected=if ($now -eq 1) { $light } else { $dark }
+    Check "switching high contrast off brings back the appearance of the theme Windows now has (app theme light: $now; brightness $back, expected about $expected)" (-not $process.HasExited -and [Math]::Abs($back-$expected) -lt 25)
 } finally {
     [UiNative]::SetHighContrast($false) | Out-Null
     if ($null -eq $original) { Remove-ItemProperty -Path $personalize -Name AppsUseLightTheme -ErrorAction SilentlyContinue } else { Set-AppTheme $original }
@@ -186,7 +193,7 @@ try {
     Check 'the app is gone from Windows, and marked as removed' (-not (Registered $fixture.Key) -and (Stage-Texts $root) -contains 'Success')
     Check 'the uninstaller left the folders behind, as real ones do' ((Test-Path -LiteralPath $fixture.Install) -and (Test-Path -LiteralPath $fixture.Data))
     Picture $Pictures 'leftover-review' | Out-Null
-    $review=Windows-Of | Where-Object { $_.Current.Name -like 'Review leftovers*' } | Select-Object -First 1
+    $review=Window-With 'Keep what matters'
     $offered=@(Cards $review | Where-Object { $_.Current.AutomationId -ne 'RemovalConsent' })
     $ours=@($offered | Where-Object { $_.Current.Name -like ($fixture.Name+'*') -or $_.Current.Name -like ($fixture.Product+'*') })
     "NOTE leftover review offered: $(@($offered | ForEach-Object { $_.Current.Name }) -join ' | ')"
@@ -347,7 +354,7 @@ if ($Real) {
         Check "every app marked Success is really gone from Windows, and no other ($successes marked, $gone gone)" ($successes -eq $gone)
         Check 'at least one real app was removed by its own uninstaller' ($gone -ge 1)
         if ($state -eq 'review') {
-            $review=Windows-Of | Where-Object { $_.Current.Name -like 'Review leftovers*' } | Select-Object -First 1
+            $review=Window-With 'Keep what matters'
             $offered=@(Cards $review | Where-Object { $_.Current.AutomationId -ne 'RemovalConsent' } | ForEach-Object { $_.Current.Name })
             "NOTE leftovers offered after the real removals ($($offered.Count)): $(($offered | Select-Object -First 12) -join ' | ')"
             $foreign=@($offered | Where-Object { $name=$_; -not ($installed | Where-Object { $name -like ($_.Installed+'*') }) })

@@ -146,7 +146,9 @@ try {
         # 6. The keyboard, with real key presses.
         Add-Type -AssemblyName System.Windows.Forms
         function Press([string]$keys,[int]$wait=700) {
-            if ([UiNative]::GetForegroundWindow() -ne $process.MainWindowHandle -and -not (Windows-Of | Where-Object { [IntPtr]$_.Current.NativeWindowHandle -eq [UiNative]::GetForegroundWindow() })) { [UiNative]::SetForegroundWindow($process.MainWindowHandle) | Out-Null; Start-Sleep -Milliseconds 300 }
+            # Keys go to the window in front. A dialog of the application is left in front;
+            # only when another program is in front is the main window brought back.
+            if ([UiNative]::ForegroundProcess() -ne $process.Id) { [UiNative]::SetForegroundWindow($process.MainWindowHandle) | Out-Null; Start-Sleep -Milliseconds 300 }
             [System.Windows.Forms.SendKeys]::SendWait($keys); Start-Sleep -Milliseconds $wait
         }
         function Focused { try { $automation::FocusedElement.Current } catch { $null } }

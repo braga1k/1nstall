@@ -17,6 +17,9 @@ public static class UiNative {
     public static void SetText(IntPtr window, string text) { SendMessage(window,0x000C,IntPtr.Zero,text); }
     [DllImport("user32")] public static extern bool SetForegroundWindow(IntPtr window);
     [DllImport("user32")] public static extern IntPtr GetForegroundWindow();
+    [DllImport("user32")] static extern uint GetWindowThreadProcessId(IntPtr window, out uint process);
+    // The process that owns the window in front.
+    public static int ForegroundProcess() { uint process; GetWindowThreadProcessId(GetForegroundWindow(), out process); return (int)process; }
     [DllImport("user32")] public static extern bool SetWindowPos(IntPtr window, IntPtr after, int x, int y, int width, int height, uint flags);
     [DllImport("user32")] public static extern uint GetDpiForWindow(IntPtr window);
     [StructLayout(LayoutKind.Sequential)] struct HighContrast { public uint Size; public uint Flags; public IntPtr DefaultScheme; }
@@ -90,6 +93,16 @@ function Everywhere($field,$value) {
     }
     return $null
 }
+# The window of the application that shows an element with this name: a dialog, which UI
+# Automation lists inside the window that owns it, or else the main window.
+function Window-With([string]$name) {
+    foreach ($top in (Windows-Of)) {
+        $inner=@(All $top ([Windows.Automation.ControlType]::Window) | Where-Object { Named $_ $name })
+        if ($inner.Count) { return $inner[$inner.Count-1] }
+        if (Named $top $name) { return $top }
+    }
+    return $null
+}
 function Everywhere-Named([string]$name) { Everywhere ($automation::NameProperty) $name }
 function Everywhere-Id([string]$id) { Everywhere ($automation::AutomationIdProperty) $id }
 
@@ -157,9 +170,11 @@ function Close-Dialog($dialog) { $dialog.GetCurrentPattern([Windows.Automation.W
 function Answer-FileDialog($dialog,[string]$path) {
     foreach ($attempt in 1..3) {
         Set-File-Name $dialog $path
-        if ((File-Name $dialog) -eq $path) { break }
+        $script:lastFileName=File-Name $dialog
+        if ($script:lastFileName -eq $path) { break }
         Start-Sleep -Milliseconds 700
     }
+    $script:lastFileAnswer='the command'
     $handle=[IntPtr]$dialog.Current.NativeWindowHandle
     [UiNative]::PostMessage($handle,0x0111,[IntPtr]1,[IntPtr]::Zero) | Out-Null
     # The dialog closes once it has accepted the name.
@@ -167,7 +182,7 @@ function Answer-FileDialog($dialog,[string]$path) {
     if (-not $closed) {
         $button=@($dialog.FindAll($descendants,(Property ($automation::AutomationIdProperty) '1')) | Where-Object { $_.Current.ClassName -eq 'Button' })
         $pattern=$null
-        if ($button.Count -and $button[0].TryGetCurrentPattern([Windows.Automation.InvokePattern]::Pattern,[ref]$pattern)) { $pattern.Invoke() }
+        if ($button.Count -and $button[0].TryGetCurrentPattern([Windows.Automation.InvokePattern]::Pattern,[ref]$pattern)) { $pattern.Invoke(); $script:lastFileAnswer='its button' } else { $script:lastFileAnswer='nothing: it stayed open' }
         Wait-Until { -not (System-Dialogs | Where-Object { [IntPtr]$_.Current.NativeWindowHandle -eq $handle }) } 8 300 | Out-Null
     }
     Start-Sleep -Milliseconds 600

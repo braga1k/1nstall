@@ -55,7 +55,15 @@ try {
     Toggle (Everywhere 'I accept the app licenses and WinGet source terms.')
     Check 'accepting the licences enables the start' ($start.Current.IsEnabled)
     Invoke $start
-    Check 'with no stand-in, the test mode refuses to install' ([bool](Named $root 'Could not start. See the logs for details.'))
+    # On a machine without WinGet the application says so first, and opens the Store page of
+    # App Installer; with WinGet, the test mode refuses to install.
+    $missing=$automation::RootElement.FindFirst([Windows.Automation.TreeScope]::Descendants,(New-Object Windows.Automation.AndCondition (New-Object Windows.Automation.PropertyCondition ($automation::ProcessIdProperty),$process.Id),(New-Object Windows.Automation.PropertyCondition ($automation::NameProperty),'WinGet missing')))
+    if ($missing) {
+        Check 'with no WinGet on this machine, the application says so and starts nothing' (-not (Test-Path -LiteralPath $history))
+        $missing.GetCurrentPattern([Windows.Automation.WindowPattern]::Pattern).Close(); Start-Sleep -Milliseconds 800
+    } else {
+        Check 'with no stand-in, the test mode refuses to install' ([bool](Named $root 'Could not start. See the logs for details.'))
+    }
     Check 'and the selection can be changed again' ((Named $root '7-Zip').Current.IsEnabled)
 } finally { Stop-App }
 Check 'nothing was recorded' (-not (Test-Path -LiteralPath $history))

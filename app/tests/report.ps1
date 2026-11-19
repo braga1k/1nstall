@@ -10,7 +10,7 @@ $problem=$null
 $global:LASTEXITCODE=0
 # Lines are kept as they come, so that a test that stops early still reports what it did.
 $lines=New-Object 'System.Collections.Generic.List[string]'
-try { & $Test 2>&1 | ForEach-Object { $lines.Add("$_") } } catch { $problem="$_ (line $($_.InvocationInfo.ScriptLineNumber) of $(Split-Path -Leaf ([string]$_.InvocationInfo.ScriptName)))" }
+try { & $Test 2>&1 | ForEach-Object { $lines.Add("$_") } } catch { $problem="$_ [$((([string]$_.ScriptStackTrace) -split "`n" | Select-Object -First 3 | ForEach-Object { ($_ -replace '^at ','' -replace '[A-Za-z]:\\[^:]*\\','').Trim() }) -join ' < ')]" }
 $code=$LASTEXITCODE
 $lines | ForEach-Object { Write-Output $_ }
 $passed=@($lines | Where-Object { $_ -like 'PASS *' }).Count
