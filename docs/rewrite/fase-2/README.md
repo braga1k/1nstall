@@ -78,7 +78,7 @@ O teste está em `engine/spikes/winget-com/`.
 
 ## Divergências intencionais
 
-Cada uma é uma decisão minha tomada para não parar, e fica **por aprovar**. As duas primeiras estão fixadas em ficheiros que os testes verificam: se o comportamento mudar de outra forma, o teste falha.
+Cada uma é uma decisão minha tomada para não parar. A sétima foi aprovada em 2026-11-19; as outras ficam **por aprovar**. As duas primeiras estão fixadas em ficheiros que os testes verificam: se o comportamento mudar de outra forma, o teste falha.
 
 | # | Divergência | Onde está registada | Porquê |
 | --- | --- | --- | --- |

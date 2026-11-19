@@ -1,6 +1,6 @@
 # WinGet integration
 
-> **4.0:** the engine reads `winget export` only. The `Get-WinGetPackage` route described below is how 3.6 obtained a complete inventory; 4.0 does not use it, so apps WinGet does not list stay Unknown.
+> **4.0:** the Rust engine reads the inventory the same two ways as 3.6: `Get-WinGetPackage` through PowerShell 7 when the user has it and the module, and `winget export` otherwise.
 
 Automatic catalog installation uses WinGet. The application does not offer an Update Center, package pin controls or unattended third-party upgrades. Settings updates 1nstall itself.
 

@@ -1,6 +1,8 @@
 //! A stand-in for `winget.exe` and other programs in tests. It never installs anything.
 //!
 //! It prints its arguments as a JSON array and exits with a code chosen by marker arguments.
+//! Started the way the engine starts PowerShell 7, it prints the file `<its own path>.out`
+//! instead, when there is one: a test writes there the inventory it wants the engine to read.
 
 use std::io::Write;
 use std::process::exit;
@@ -39,6 +41,12 @@ fn main() {
         let _ = std::io::stdout().write_all("o".repeat(200_000).as_bytes());
         let _ = std::io::stderr().write_all("e".repeat(200_000).as_bytes());
         exit(0);
+    }
+    if arguments.first().is_some_and(|first| first == "-NoLogo") {
+        if let Some(answer) = std::env::current_exe().ok().and_then(|path| std::fs::read(format!("{}.out", path.display())).ok()) {
+            let _ = std::io::stdout().write_all(&answer);
+            exit(0);
+        }
     }
     // A test that stops a queue midway needs a stand-in that takes a while.
     if let Some(delay) = std::env::var("ORACLE_FIXTURE_DELAY_MS").ok().and_then(|text| text.parse::<u64>().ok()) {

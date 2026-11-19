@@ -20,7 +20,7 @@ The four English images in `images/` were captured with 3.6; the 4.0 window is t
 
 ## Remaining coverage
 
-4.0 was not run on Windows 10, nor on any PC other than the development one and the CI images. The complete WinGet inventory is not built in, so the retry of a failed install cannot be reached. The CI machines run elevated, so the UAC prompt itself was only seen in manual use. A real restart request, a real WinGet failure and real package dependencies were not exercised.
+4.0 was not run on Windows 10, nor on any PC other than the development one and the CI images. The retry of a failed install is followed from its button to the selection with a complete inventory made by the test; the development PC has no PowerShell 7, so the real complete inventory was only asked for on CI. The CI machines run elevated, so the UAC prompt itself was only seen in manual use. A real restart request, a real WinGet failure and real package dependencies were not exercised.
 
 No screen reader was used: the tests check that every control has a name and every card a description. DPI scaling other than 100 %, several monitors, touch, a live change of the Windows accent colour, the full Tab order, the animations as seen by a person, and the buttons that open other programs (logs, backups, websites) were not checked. Native-speaker proofreading remains open. Bounded leftover discovery cannot prove that every leftover was found.
 

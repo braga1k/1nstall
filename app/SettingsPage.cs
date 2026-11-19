@@ -100,7 +100,11 @@ static class SettingsPage {
         var accent=new CheckBox { Style=(Style)window.Resources["InstalledCheck"], IsChecked=Preferences.WindowsAccent };
         I18n.Set(accent,"Content","Use Windows accent colour");
         AutomationProperties.SetAutomationId(accent,"AccentChoice");
-        accent.Click+=delegate { Preferences.WindowsAccent=accent.IsChecked==true; Save(); Theme.ForgetAccent(); Theme.Update(); };
+        // 3.6 listens for a click on these two switches. The toggle action of UI Automation,
+        // which some assistive tools use, raises no click: the switch changed on screen and
+        // nothing was saved. Listening for the change itself covers pointer, keyboard and tools.
+        RoutedEventHandler accentChanged=delegate { Preferences.WindowsAccent=accent.IsChecked==true; Save(); Theme.ForgetAccent(); Theme.Update(); };
+        accent.Checked+=accentChanged; accent.Unchecked+=accentChanged;
         AddRow(content,"Accent colour","Turn off for black and white, keeping gradients and depth.",accent);
 
         var options=new List<string[]> { new[]{"System","Use system setting"} };
@@ -120,7 +124,8 @@ static class SettingsPage {
         var automatic=new CheckBox { Style=(Style)window.Resources["InstalledCheck"], IsChecked=Preferences.AutoUpdate };
         I18n.Set(automatic,"Content","Automatic updates");
         AutomationProperties.SetAutomationId(automatic,"AutoUpdateChoice");
-        automatic.Click+=delegate { Preferences.AutoUpdate=automatic.IsChecked==true; Save(); if(automatic.IsChecked==true) StartUpdateCheck(); };
+        RoutedEventHandler automaticChanged=delegate { Preferences.AutoUpdate=automatic.IsChecked==true; Save(); if(automatic.IsChecked==true) StartUpdateCheck(); };
+        automatic.Checked+=automaticChanged; automatic.Unchecked+=automaticChanged;
         updates.Children.Add(automatic);
         status=Shell.NewLabel(updateStatus,true,12); status.Margin=new Thickness(0,10,0,10); updates.Children.Add(status);
         var bar=new WrapPanel();

@@ -7,7 +7,10 @@
 # what is installed, which only reads, to check that a retry is withheld while WinGet cannot
 # prove that the app is missing.
 # It also makes the engine fail on purpose, to check that the application reports it and goes on.
-param([Parameter(Mandatory)][string]$Exe, [switch]$SkipInventory)
+# With -StandIn (engine\target\debug\oracle-fixture.exe) it also gives the engine a complete
+# inventory of the test's making, in place of PowerShell 7 and the WinGet module, and follows the
+# retry of a failed install from its button to the selection.
+param([Parameter(Mandatory)][string]$Exe, [switch]$SkipInventory, [string]$StandIn='')
 $ErrorActionPreference='Stop'
 Add-Type -AssemblyName UIAutomationClient, UIAutomationTypes
 $automation=[Windows.Automation.AutomationElement]
@@ -116,8 +119,11 @@ try {
             $card=$cards | Where-Object { $_.Current.Name -eq $app.Name } | Select-Object -First 1
             if ($card -and $card.Current.ItemStatus -notlike 'Installed*') { $absent=$app; $state=$card.Current.ItemStatus; break }
         }
-        Check "an app WinGet does not list ($($absent.Name)) has an unknown state, not a missing one ($state)" ([bool]$absent -and $state -like 'Unknown*')
-        if ($absent) {
+        # With PowerShell 7 and the WinGet module on this machine the inventory is complete, and
+        # the app is known to be missing; the last part of this test covers that case.
+        $partial=$state -like 'Unknown*'
+        Check "an app WinGet does not list ($($absent.Name)) is unknown with the partial inventory, missing with the complete one ($state)" ([bool]$absent -and ($partial -or $state -eq 'Not installed'))
+        if ($absent -and $partial) {
             Save-History @((Operation '2026-11-18 09:10:00' 'Install' $absent.Ids[0] $absent.Name 'Failed' 'The installer failed.' ''))
             Invoke (ById $root 'HistoryMode')
             $list=ById $root 'HistoryList'
@@ -142,6 +148,48 @@ try {
 } finally {
     if (-not $process.HasExited) { $process.CloseMainWindow() | Out-Null; if (-not $process.WaitForExit(5000)) { $process.Kill() } }
     foreach ($fixture in @($history,(Join-Path $logs 'history-ui-fixture.log'),(Join-Path $folder 'history-ui-outside.log'))) { if (Test-Path -LiteralPath $fixture) { Remove-Item -LiteralPath $fixture } }
+}
+if ($StandIn) {
+    # The complete inventory says what is NOT installed. Here it lists 7-Zip only.
+    $shell7=Join-Path $folder 'test-data\pwsh.exe'
+    New-Item -ItemType Directory -Path (Split-Path $shell7) -Force | Out-Null
+    Copy-Item -LiteralPath (Resolve-Path -LiteralPath $StandIn).Path -Destination $shell7 -Force
+    [IO.File]::WriteAllText($shell7+'.out','[{"Id":"7zip.7zip","Name":"7-Zip","Source":"winget","InstalledVersion":"24.09"}]')
+    Save-History @(
+        (Operation '2026-11-18 10:00:00' 'Install' '7zip.7zip' '7-Zip' 'Failed' 'The installer failed.' ''),
+        (Operation '2026-11-18 10:05:00' 'Install' 'Notepad++.Notepad++' 'Notepad++' 'Failed' 'The installer failed.' '')
+    )
+    $env:ONEINSTALL_TEST_SHELL7=$shell7
+    try { $process=Start-Process -FilePath $exe -ArgumentList '--ui-test' -PassThru } finally { Remove-Item Env:ONEINSTALL_TEST_SHELL7 -ErrorAction SilentlyContinue }
+    try {
+        $deadline=(Get-Date).AddSeconds(20)
+        do { Start-Sleep -Milliseconds 100; $process.Refresh() } while ($process.MainWindowHandle -eq [IntPtr]::Zero -and (Get-Date) -lt $deadline -and -not $process.HasExited)
+        Start-Sleep -Milliseconds 1500
+        $root=$automation::FromHandle($process.MainWindowHandle)
+        $refresh=Named $root 'Refresh'
+        Invoke $refresh
+        $deadline=(Get-Date).AddSeconds(60)
+        do { Start-Sleep -Milliseconds 400 } while (-not $refresh.Current.IsEnabled -and (Get-Date) -lt $deadline)
+        Start-Sleep -Milliseconds 500
+        $cards=@(All $root ([Windows.Automation.ControlType]::CheckBox))
+        $present=($cards | Where-Object { $_.Current.Name -eq '7-Zip' } | Select-Object -First 1).Current.ItemStatus
+        $missing=($cards | Where-Object { $_.Current.Name -eq 'Notepad++' } | Select-Object -First 1).Current.ItemStatus
+        Check "with a complete inventory a listed app is installed and an unlisted one is not ($present; $missing)" ($present -eq 'Installed · 24.09' -and $missing -eq 'Not installed')
+        Invoke (ById $root 'HistoryMode')
+        $list=ById $root 'HistoryList'
+        $retry=@(Buttons $list 'Refresh & review installation again')
+        Check "only the failed install of the app that is missing offers a retry ($($retry.Count))" ($retry.Count -eq 1)
+        if ($retry.Count -eq 1) {
+            Invoke $retry[0] 1500
+            $deadline=(Get-Date).AddSeconds(60)
+            do { Start-Sleep -Milliseconds 400; $rechecked=Named $root 'State rechecked. Review the installation again.' } while (-not $rechecked -and (Get-Date) -lt $deadline)
+            Check 'the retry reads the state again and returns to the library' ([bool]$rechecked -and [bool](Named $root 'Details for 1Password') -and -not (ById $root 'HistoryList'))
+            Check 'and selects that app for a new review, without installing anything' ([bool](Named $root '1 app selected') -and [bool](Named $root 'Remove Notepad++ from selection') -and @(Get-Content -LiteralPath $history -Raw | ConvertFrom-Json).Count -le 2)
+        }
+    } finally {
+        if (-not $process.HasExited) { $process.CloseMainWindow() | Out-Null; if (-not $process.WaitForExit(5000)) { $process.Kill() } }
+        foreach ($fixture in @($history,$shell7,($shell7+'.out'))) { if (Test-Path -LiteralPath $fixture) { Remove-Item -LiteralPath $fixture } }
+    }
 }
 "history ui: $failed failed"
 if ($failed) { exit 1 }

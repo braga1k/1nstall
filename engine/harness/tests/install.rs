@@ -4,7 +4,7 @@
 
 use std::path::PathBuf;
 
-use oneinstall_core::packages::quote;
+use oneinstall_core::packages::{installed_state, quote};
 use oneinstall_core::uninstall::quote_argument;
 use oneinstall_platform::packages::{find_winget, read_setup, run, save_setup, Packages, SetupDraft};
 use oneinstall_platform::WindowsHost;
@@ -163,4 +163,55 @@ fn diagnostics_are_redacted() {
         assert!(!text.contains(leaked), "diagnostics leaked {leaked}");
     }
     assert!(text.starts_with("1nstall diagnostics (review before sharing)"));
+}
+
+/// A copy of the stand-in that answers as PowerShell 7 with the given inventory.
+fn shell7_answering(scratch: &Scratch, answer: &str) -> String {
+    let shell7 = scratch.path("pwsh.exe");
+    std::fs::copy(FIXTURE, &shell7).expect("stand-in PowerShell 7");
+    std::fs::write(format!("{shell7}.out"), answer).unwrap();
+    shell7
+}
+
+#[test]
+fn with_powershell_7_and_the_winget_module_the_inventory_is_complete() {
+    let scratch = Scratch::new("complete");
+    let listed = "\u{feff}[{\"Id\":\"7zip.7zip\",\"Name\":\"7-Zip\",\"Source\":\"winget\",\"InstalledVersion\":\"24.09\"},{\"Id\":\"ARP\\\\Machine\\\\X64\\\\Thing\",\"Name\":\"Thing\",\"Source\":\"\",\"InstalledVersion\":\"1.0\"}]\r\n";
+    let packages = Packages::with(&scratch.path("data"), FIXTURE).with_shell7(&shell7_answering(&scratch, listed));
+    let inventory = packages.inventory(false);
+    assert!(inventory.complete && !inventory.partial, "{inventory:?}");
+    assert_eq!(inventory.packages.len(), 2);
+    assert!(inventory.message.as_deref().unwrap_or("").starts_with("Inventory refreshed."), "{:?}", inventory.message);
+    // Complete means absence is known: what is not listed is not installed.
+    assert_eq!(installed_state(&inventory, Some(&["7zip.7zip".to_string()]), "winget"), "Installed \u{b7} 24.09");
+    assert_eq!(installed_state(&inventory, Some(&["Notepad++.Notepad++".to_string()]), "winget"), "Not installed");
+    // And an install that exits with success is verified against it: not listed, not a success.
+    let record = packages.install("Vendor.App", "winget", "Fixture", &scratch.path("logs"), None);
+    assert_eq!(record.outcome, "Unknown");
+    assert!(record.message.contains("Not installed"), "{}", record.message);
+}
+
+#[test]
+fn without_the_complete_inventory_the_export_is_used_and_says_why() {
+    let scratch = Scratch::new("partial");
+    // No PowerShell 7 at that path: the reason 3.6 gives, then the export. The stand-in WinGet
+    // writes no export file, so there is no inventory at all, and the message says both.
+    let missing = Packages::with(&scratch.path("data"), FIXTURE).with_shell7(&scratch.path("no-such-pwsh.exe")).inventory(false);
+    assert!(!missing.complete && !missing.partial);
+    let message = missing.message.unwrap_or_default();
+    assert!(message.starts_with("Installed status requires PowerShell 7 and Microsoft's Microsoft.WinGet.Client module."), "{message}");
+    assert!(message.ends_with("WinGet export unavailable; check sources, source agreements and connectivity."), "{message}");
+    // A PowerShell 7 that answers something else is not trusted.
+    for (answer, reason) in [
+        ("[{\"Id\":null,\"Name\":\"Nameless\"}]", "Unexpected structured inventory shape."),
+        ("{\"Id\":\"a\"}", "Unexpected structured inventory shape."),
+        ("[\"text\"]", "Unexpected structured inventory shape."),
+    ] {
+        let odd = Packages::with(&scratch.path("data"), FIXTURE).with_shell7(&shell7_answering(&scratch, answer)).inventory(false);
+        assert!(!odd.complete, "{answer}");
+        assert!(odd.message.unwrap_or_default().starts_with(reason), "{answer}");
+    }
+    // An empty list is a complete inventory of a machine with nothing installed.
+    let empty = Packages::with(&scratch.path("data"), FIXTURE).with_shell7(&shell7_answering(&scratch, "[]")).inventory(false);
+    assert!(empty.complete && empty.packages.is_empty());
 }

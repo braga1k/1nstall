@@ -6,7 +6,7 @@ Estado em 2026-11-19, depois dos seis passos, de uma ronda de otimização do ar
 
 Escolheste a interface WPF sobre o motor Rust. Existe um `1nstall.exe` 4.0 num único ficheiro, sem PowerShell, e está provado que a 3.6 se atualiza para ele sem release intermédia. Com todas as páginas da 3.6 incluídas, fica pronto em 473 ms, abaixo do limite de 500 ms, com o aspeto e as animações intactos. O limite de memória de 80 MB não é atingido: fica em 113 MB.
 
-Os seis passos estão feitos e a release está preparada, mas não publicada: publicar é um push teu. Antes disso há decisões a tomar, juntas no fim deste relatório. A ronda de testes do passo 7 encontrou um erro grave herdado da 3.6 na procura de vestígios, que está corrigido, e mais dois erros herdados, um corrigido e um por decidir.
+Os seis passos estão feitos e a release está preparada, mas não publicada: publicar é um push teu. As decisões que estavam em aberto foram tomadas em 2026-11-19 e estão no fim deste relatório. A ronda de testes do passo 7 encontrou um erro grave herdado da 3.6 na procura de vestígios, que está corrigido, e mais dois erros herdados, um corrigido e um por decidir.
 
 ## O executável da 4.0
 
@@ -79,9 +79,9 @@ A captura da biblioteca ficou igual à da 3.6 em `docs/images/install-dark.png`,
 
 No passo 1 a seleção não era a da 3.6: ao escolher uma app com dependências, eu mostrava-as na lista mas não as selecionava nem as contava. Na 3.6 ficam selecionadas e contam. Está agora como na 3.6, e o teste verifica-o.
 
-### Uma diferença intencional, por aprovar
+### Uma diferença intencional, aprovada
 
-Na 3.6 um cartão só reage a cliques. Um leitor de ecrã que ative o cartão pela ação própria de acessibilidade muda o interruptor, mas a app não regista a seleção. Na 4.0 o cartão reage à mudança em si, seja por rato, teclado ou tecnologia de apoio. Para quem usa rato ou teclado nada muda.
+Na 3.6 um cartão só reage a cliques. Um leitor de ecrã que ative o cartão pela ação própria de acessibilidade muda o interruptor, mas a app não regista a seleção. Na 4.0 o cartão reage à mudança em si, seja por rato, teclado ou tecnologia de apoio. Para quem usa rato ou teclado nada muda. Aprovada em 2026-11-19, e estendida aos dois interruptores das Definições (passo 7).
 
 ### Um ajuste de arranque
 
@@ -166,17 +166,13 @@ Portei `Show-ManagerPage`, `Render-History` e `Show-Diagnostics` de `src/manager
 | Licenças e créditos | Motor Rust | O ficheiro de avisos, embutido. Passou a listar os 22 componentes Rust ligados ao motor, e a build falha se um deles não estiver lá com a sua versão. |
 | Página, botões e janelas | C# | `app/History.cs`. |
 
-### Um achado: o botão de repetir nunca aparece
+### Um achado: o botão de repetir nunca aparecia
 
 A 3.6 oferece «Refresh & review installation again» a uma instalação falhada quando o inventário diz que a app **não está instalada**. Esse estado só existe com um inventário completo, que a 3.6 obtém pelo PowerShell 7 e pelo módulo Microsoft.WinGet.Client, quando o utilizador os tem.
 
-A 4.0 lê apenas o `winget export`, que diz o que está instalado e não prova o que falta. Consequências, todas confirmadas no código e no teste da interface:
+No fim do passo 6 a 4.0 lia apenas o `winget export`, que diz o que está instalado e não prova o que falta: o botão de repetir nunca aparecia, e uma app que o WinGet não lista ficava `Unknown`, nunca `Not installed`. Quem usava a 3.6 sem o PowerShell 7 e o módulo já via isto; quem os tinha perdia informação.
 
-- O botão de repetir **nunca aparece**. O código existe e está testado no motor com um inventário completo construído no teste, mas na aplicação não há como lá chegar.
-- Uma app que o WinGet não lista aparece como `Unknown`, nunca como `Not installed`.
-- Quem usava a 3.6 sem o PowerShell 7 e o módulo já via exatamente isto. Quem os tinha perde informação.
-
-Isto é a falta já registada desde a Fase 2 («a API COM do WinGet não está integrada»), agora com as consequências visíveis. O teste isolado da Fase 2 mostrou que a leitura por COM funciona num processo Rust se o ficheiro `.winmd` da Microsoft estiver ao lado do programa.
+**Resolvido em 2026-11-19, por decisão tua:** o motor repõe o caminho opcional da 3.6 (`Structured` e `Inventory` de `src/package-helper.cs`). Com o PowerShell 7 em `Program Files` e o módulo instalado, o inventário é completo; sem eles, cai no `winget export`, com as mesmas mensagens. A 4.0 nunca instala nenhum dos dois. O teste do histórico dá ao motor um inventário completo feito pelo teste e segue o botão de repetir até à seleção. A leitura direta pela API COM, sem PowerShell, continua por fazer.
 
 ### Erros internos do motor
 
@@ -241,7 +237,7 @@ A correção, em `engine/core/src/uninstall.rs`:
 | Uma fila de instalação terminada por erro interno do motor dizia «Queue finished · 0 failed» | 4.0, passo 6 | Corrigido: a linha de estado diz que terminou por erro interno |
 | Os modos de teste falhavam numa pasta de caminho comprido | 4.0 | Corrigido: nesse caso a cache do motor vai para a pasta temporária. Autoteste 31 de 31 a partir de um caminho de 219 caracteres |
 | Ao mudar diretamente entre dois idiomas cuja tradução só difere em maiúsculas (eslovaco «Téma», húngaro «téma»), o texto fica com a grafia do primeiro até reiniciar. Acontece em três idiomas | 3.6: compara os textos sem distinguir maiúsculas | Não alterei. O teste assinala-o numa nota |
-| Os dois interruptores das Definições (cor de destaque e atualizações automáticas) escutam o clique. Mudados pela ação de alternar da automação, que algumas ferramentas de acessibilidade usam, mudam no ecrã mas não são gravados. Com o rato ou com a tecla de espaço gravam | 3.6 | Não alterei. É a mesma classe da diferença dos cartões, que está por aprovar: convém decidir as duas da mesma maneira |
+| Os dois interruptores das Definições (cor de destaque e atualizações automáticas) escutavam o clique. Mudados pela ação de alternar da automação, que algumas ferramentas de acessibilidade usam, mudavam no ecrã mas não eram gravados | 3.6 | Corrigido em 2026-11-19, por decisão tua: reagem à mudança em si, como os cartões. O teste do modo normal confirma que gravam das duas maneiras |
 | Nos diagnósticos, um caminho só é removido se começar por uma letra de unidade ou por `\\` | 3.6 | Não alterei. A janela já pede para rever o texto antes de o partilhar |
 | No tamanho mínimo da janela, a sugestão da caixa de pesquisa fica cortada («Search apps · Ctrl+») | 3.6: é o mesmo XAML | Não alterei |
 | Numa máquina onde os termos da origem do WinGet nunca foram aceites, `winget export` não responde, e a app fica sem inventário até à primeira instalação | Comportamento conhecido desde a Fase 1 | Nada; visto de novo no Actions |
@@ -328,7 +324,7 @@ Tudo o que sei que continua por verificar na 4.0, depois do passo 7.
 
 ### Pela janela
 
-- **Repetir uma instalação falhada.** O botão não pode aparecer nesta versão (ver o passo 6). A regra que o decide está testada no motor; o caminho que vai do botão até à seleção nunca correu.
+- **Repetir uma instalação falhada com o inventário verdadeiro.** O caminho do botão até à seleção está testado com um inventário completo feito pelo teste. Com o PowerShell 7 e o módulo verdadeiros, o inventário completo é pedido no Actions; ver o resultado da corrida.
 - **Leitores de ecrã reais.** O teste confirma que cada controlo tem nome e que cada cartão tem descrição, que é o que um leitor lê. Nenhum leitor de ecrã foi usado.
 - **As animações à vista.** São testados os limites matemáticos e os estados finais; ninguém as avaliou a olho nesta ronda.
 - **DPI diferente de 100 %, vários monitores e ecrã tátil.** Este PC e as máquinas do Actions estão a 100 % com um só ecrã.
@@ -342,7 +338,7 @@ Tudo o que sei que continua por verificar na 4.0, depois do passo 7.
 
 - **O pedido do UAC, de forma automática.** As máquinas do Actions já correm elevadas e não o mostram. Foi visto a funcionar na sessão real descrita no passo 7.
 - **Um pedido de reinício real, uma falha real do WinGet e dependências reais.** As instalações reais feitas terminaram todas com sucesso; as falhas só foram provocadas com o WinGet de substituição.
-- **O inventário completo.** Não existe nesta versão; o estado «Not installed» nunca ocorre.
+- **O inventário completo num PC com o PowerShell 7 e o módulo já instalados pelo utilizador.** Este PC não tem o PowerShell 7.
 - **Windows 10.** Não há onde o testar. O que há: um PC com Windows 11 e as imagens Windows Server 2022 e 2025 do Actions. A do Server 2022 não tem WinGet.
 - **Seleções guardadas por um utilizador real da 3.6.** O histórico e as definições reais foram lidos; não procurei ficheiros de seleções no disco.
 - **Fuzzing guiado por cobertura.** Há testes de propriedades e ficheiros danificados gerados por semente fixa.
@@ -496,13 +492,19 @@ A lista completa do que não foi testado está na secção «O que não foi test
 - **Os números de arranque numa máquina sem placa gráfica** (Actions, Windows Server 2022, 4 processadores): cerca de 3 s no primeiro arranque, depois mediana de 317 a 362 ms, com 98 MB de pico.
 - **Os testes de interface conduzem a janela por UI Automation.** Dizem o que a janela expõe e faz, não o que uma pessoa vê: o aspeto só foi verificado por imagens em poucos estados.
 
-## Decisões que preciso de ti
+## Decisões
 
-A memória ficou decidida em 2026-11-18: aceitas cerca de 100 MB com a placa gráfica, como a 3.6 desenha.
+Tomadas por ti; as de 2026-11-19 seguiram as minhas recomendações.
 
-1. **A regra das pastas partilhadas**, descrita no passo 7: é uma diferença intencional em relação à 3.6, num commit próprio. Recomendo manter.
-2. **O inventário completo do WinGet**, descrito no passo 6: integrá-lo antes de publicar, ou publicar a 4.0 sem ele, como as notas da versão já dizem.
-3. **A ação de alternar da automação:** os cartões já reagem a ela (diferença do passo 3, por aprovar); os dois interruptores das Definições não (achado do passo 7). Aprovar as duas, ou reverter a dos cartões.
-4. **A mensagem do commit `1c4844f`** nomeia programas de um PC real. Os ficheiros já usam nomes inventados; tirar os nomes da mensagem exige reescrever o ramo `v4/app` com um push forçado.
-5. **As fontes da 3.6 que a 4.0 já não usa** (`vexan_installers.ps1`, `src/launcher.cs`, `src/startup.cs`, `src/ui-helper.cs`, `src/ui.csproj`, `src/settings.ps1`, `src/manager-ui.ps1` e os testes que as conduzem): manter ou remover. `src/package-helper.cs` e `src/uninstall-helper.cs` têm de ficar enquanto o oráculo existir.
-6. **Publicar.** Juntar `v4/app` a `main` e fazer o push de `release/4.0.0` são passos teus.
+| Decisão | Data | O que ficou |
+| --- | --- | --- |
+| Memória | 2026-11-18 | Aceitas cerca de 100 MB com a placa gráfica, como a 3.6 desenha |
+| A regra das pastas partilhadas (passo 7) | 2026-11-19 | Mantém-se, como diferença intencional em relação à 3.6 |
+| O inventário completo do WinGet (passo 6) | 2026-11-19 | Reposto o caminho opcional da 3.6, com o PowerShell 7 e o módulo quando existem |
+| A ação de alternar da automação (passos 3 e 7) | 2026-11-19 | Aprovada nos cartões e estendida aos dois interruptores das Definições |
+
+Continuam contigo:
+
+1. **A mensagem do commit `1c4844f`** nomeia programas de um PC real. Os ficheiros já usam nomes inventados; tirar os nomes da mensagem exige reescrever o ramo `v4/app` com um push forçado. Recomendo fazê-lo antes de juntar o ramo a `main`, que é o último momento em que não custa nada; só o faço com a tua ordem expressa.
+2. **As fontes da 3.6 que a 4.0 já não usa** (`vexan_installers.ps1`, `src/launcher.cs`, `src/startup.cs`, `src/ui-helper.cs`, `src/ui.csproj`, `src/settings.ps1`, `src/manager-ui.ps1` e os testes que as conduzem). Recomendo mantê-las até a 4.0 estar publicada e removê-las depois, num commit próprio. `src/package-helper.cs` e `src/uninstall-helper.cs` têm de ficar enquanto o oráculo existir.
+3. **Publicar.** Juntar `v4/app` a `main` e fazer o push de `release/4.0.0` são passos teus.

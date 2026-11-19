@@ -203,8 +203,8 @@ jobs:
         shell: powershell
         continue-on-error: true
         run: |
-          if ($env:HAS_WINGET -eq 'True') { .\app\tests\report.ps1 -Title "history ui $env:TITLE" -Test { .\app\tests\history-ui.ps1 -Exe .\dist\v4\1nstall.exe } }
-          else { .\app\tests\report.ps1 -Title "history ui $env:TITLE" -Test { .\app\tests\history-ui.ps1 -Exe .\dist\v4\1nstall.exe -SkipInventory } }
+          if ($env:HAS_WINGET -eq 'True') { .\app\tests\report.ps1 -Title "history ui $env:TITLE" -Test { .\app\tests\history-ui.ps1 -Exe .\dist\v4\1nstall.exe -StandIn .\engine\target\debug\oracle-fixture.exe } }
+          else { .\app\tests\report.ps1 -Title "history ui $env:TITLE" -Test { .\app\tests\history-ui.ps1 -Exe .\dist\v4\1nstall.exe -SkipInventory -StandIn .\engine\target\debug\oracle-fixture.exe } }
       - name: Install queue with a stand-in for WinGet
         shell: powershell
         continue-on-error: true

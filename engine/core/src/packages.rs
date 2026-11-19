@@ -147,6 +147,32 @@ pub fn parse_export(json: &str) -> Result<PackageInventory, EngineError> {
     Ok(result)
 }
 
+/// Reads the list that `Get-WinGetPackage` gives (identifier, name, source and installed
+/// version of every package) into a complete inventory: a package that is not listed is not
+/// installed. Every entry must have an identifier and a name.
+pub fn parse_structured(json: &str) -> Result<PackageInventory, EngineError> {
+    const SHAPE: &str = "Unexpected structured inventory shape.";
+    let mut result = PackageInventory { complete: true, ..PackageInventory::default() };
+    if json.trim().is_empty() {
+        return Ok(result);
+    }
+    let rows = match serde_json::from_str::<Value>(json).map_err(EngineError::json_syntax)? {
+        Value::Null => return Ok(result),
+        Value::Array(rows) => rows,
+        _ => return Err(EngineError::io(SHAPE)),
+    };
+    for row in &rows {
+        let Value::Object(row) = row else { return Err(EngineError::io(SHAPE)) };
+        let field = |name: &str| text_member(member(row, name));
+        let (id, name) = (field("Id")?, field("Name")?);
+        if id.is_none() || name.is_none() {
+            return Err(EngineError::io(SHAPE));
+        }
+        result.packages.push(PackageRecord { id, name, source: field("Source")?, installed_version: field("InstalledVersion")? });
+    }
+    Ok(result)
+}
+
 /// Installed state of a catalog app from an inventory. Matching is by exact identifier
 /// (ignoring case) and exact source; display names never count.
 pub fn installed_state(inventory: &PackageInventory, ids: Option<&[String]>, source: &str) -> String {

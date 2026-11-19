@@ -147,8 +147,8 @@ try {
     Choose $root 'LanguageChoice' 'Português (Portugal)'
     $saved=Wait-Until { if (Test-Path -LiteralPath $settings) { $read=Get-Content -LiteralPath $settings -Raw | ConvertFrom-Json; if ($read.Language -eq 'pt-PT') { $read } } } 10
     Check "the normal mode saves the theme and the language ($(if ($saved) { $saved.Theme+', '+$saved.Language }))" ($saved -and $saved.Theme -eq 'Light' -and $saved.Language -eq 'pt-PT')
-    # The two switches of this page listen for a click, as in 3.6. A person's click or Space key
-    # is one; the toggle action of UI Automation, which some assistive tools use, is not.
+    # The switch is changed with the Space key, as a person would, and then through the toggle
+    # action of UI Automation, which some assistive tools use. 3.6 only saved the first.
     function Saved-Updates { [bool](Get-Content -LiteralPath $settings -Raw | ConvertFrom-Json).AutoUpdate }
     $switch=ById $root 'AutoUpdateChoice'
     $start=Saved-Updates
@@ -163,8 +163,9 @@ try {
     Check "the automatic updates switch is saved each time the Space key changes it ($start, $first, $second)" ($first -ne $start -and $second -eq $start)
     Toggle $switch
     $byAutomation=Saved-Updates
-    "NOTE the same switch changed through the toggle action of UI Automation: shown $($switch.GetCurrentPattern([Windows.Automation.TogglePattern]::Pattern).Current.ToggleState), saved $byAutomation (was $second)"
-    if ($byAutomation -eq $second) { Toggle $switch }
+    Check "the same switch changed through the toggle action of UI Automation is saved too ($second, then $byAutomation)" ($byAutomation -ne $second)
+    Toggle $switch
+    Check 'and back again' ((Saved-Updates) -eq $second)
     $leftover=@(Get-ChildItem -LiteralPath $data -Filter 'settings.json.*.tmp' -ErrorAction SilentlyContinue).Count
     Check 'saving leaves no temporary file behind' ($leftover -eq 0)
 } finally { Stop-App }
@@ -283,9 +284,25 @@ if ($Real) {
     )
     function Listed([string]$id) { & winget list --id $id --exact --accept-source-agreements --disable-interactivity *> $null; $LASTEXITCODE -eq 0 }
     $before=@(Operations).Count
+    # The complete inventory, for real: PowerShell 7 is on this image, and the module is asked
+    # of the PowerShell Gallery, as a user would install it.
+    $pwsh=Join-Path $env:ProgramFiles 'PowerShell\7\pwsh.exe'
+    $module='PowerShell 7 is not on this machine'
+    if (Test-Path -LiteralPath $pwsh) {
+        $module=(& $pwsh -NoLogo -NoProfile -NonInteractive -Command "try { Install-Module Microsoft.WinGet.Client -Force -Scope CurrentUser -Repository PSGallery -ErrorAction Stop; 'Microsoft.WinGet.Client '+(Get-Module -ListAvailable Microsoft.WinGet.Client | Select-Object -First 1).Version } catch { 'not installed: '+`$_ }" 2>&1 | Out-String).Trim()
+    }
     $root=Start-App ''
     try {
         $version=(& winget --version | Out-String).Trim()
+        Wait-Until { (Named $root 'Refresh').Current.IsEnabled } 240 500 | Out-Null
+        Start-Sleep -Milliseconds 800
+        $said=@(Get-ChildItem -LiteralPath (Join-Path $data 'Logs') -Filter ('session-*-'+$process.Id+'.log') | ForEach-Object { Get-Content -LiteralPath $_.FullName } | Where-Object { $_ -match 'inventory|Inventory|Installed status' } | Select-Object -Last 1)
+        $complete=([string]$said) -match 'Inventory refreshed\.'
+        "NOTE complete inventory on this machine: $module; the application said: $(([string]$said) -replace '^\[[^\]]*\] ','')"
+        if ($complete) {
+            $states=@($apps | ForEach-Object { $card=Named $root $_.Card; $_.Card+' = '+$card.Current.ItemStatus })
+            Check "with the complete inventory an app that is not installed says so, instead of Unknown ($($states -join '; '))" (@($states | Where-Object { $_ -like '* = Not installed' }).Count -ge 1 -and @($states | Where-Object { $_ -like '* = Unknown*' }).Count -eq 0)
+        }
         foreach ($app in $apps) { Toggle (Named $root $app.Card) }
         Check "the real apps are selected ($(@(Checked $root) -join ', '))" (@(Checked $root).Count -eq $apps.Count)
         Invoke (ById $root 'Install')

@@ -185,9 +185,16 @@ pub(crate) fn in_test_environment() -> bool {
 pub(crate) fn packages() -> oneinstall_platform::packages::Packages {
     let machine = oneinstall_platform::packages::Packages::new(&WindowsHost::new());
     match TEST_ENVIRONMENT.lock().ok().and_then(|environment| environment.as_ref().map(|test| test.data_root.clone())) {
-        Some(data_root) => oneinstall_platform::packages::Packages::with(&data_root, &machine.winget),
+        // Reading what is installed is the same in the test modes as in the real one.
+        Some(data_root) => oneinstall_platform::packages::Packages::with(&data_root, &machine.winget).with_shell7(&test_shell7().unwrap_or(machine.shell7)),
         None => machine,
     }
+}
+
+/// In the test environment only, a test may name a stand-in for PowerShell 7, to give the
+/// engine a complete inventory of its own making.
+fn test_shell7() -> Option<String> {
+    std::env::var("ONEINSTALL_TEST_SHELL7").ok().filter(|path| !path.is_empty())
 }
 
 /// The stand-in installer of the test environment, when it names one.
@@ -201,7 +208,7 @@ pub(crate) fn install_packages() -> Result<oneinstall_platform::packages::Packag
     let test = TEST_ENVIRONMENT.lock().ok().and_then(|environment| environment.as_ref().map(|test| (test.data_root.clone(), test.install_program.clone())));
     match test {
         Some((_, program)) if program.is_empty() => Err("Installing is switched off in the test modes.".to_string()),
-        Some((data_root, program)) => Ok(oneinstall_platform::packages::Packages::with(&data_root, &program)),
+        Some((data_root, program)) => Ok(oneinstall_platform::packages::Packages::with(&data_root, &program).with_shell7(&test_shell7().unwrap_or_default())),
         None => Ok(oneinstall_platform::packages::Packages::new(&WindowsHost::new())),
     }
 }

@@ -16,7 +16,7 @@
 - Accept the WinGet source agreements when verifying an install the user already agreed to.
 - Write the removal history through a temporary file.
 - Remove the opening splash.
-- Read the installed packages from `winget export` only. The complete inventory that 3.6 obtained through PowerShell 7 and Microsoft.WinGet.Client is not available, so apps WinGet does not list stay Unknown and a failed install is never offered for retry.
+- Select a card and save the Settings switches when they are changed through the toggle action of UI Automation, not only by a click.
 - List the Rust components under Licenses & credits; build with `build-windows.ps1`, which now needs a Rust toolchain.
 
 ## 3.6.0 - 2026-10-12

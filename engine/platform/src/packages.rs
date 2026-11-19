@@ -3,7 +3,7 @@
 use std::sync::Mutex;
 use std::time::Duration;
 
-use oneinstall_core::packages::{arguments, explain, installed_state, outcome, parse_export, parse_setup, quote, redact};
+use oneinstall_core::packages::{arguments, explain, installed_state, outcome, parse_export, parse_setup, parse_structured, quote, redact};
 use oneinstall_core::{EngineError, Host, PackageInventory, SetupSelection, SpecialFolder};
 use serde_json::{json, Map, Value};
 
@@ -163,8 +163,21 @@ fn write_with_bom(path: &str, text: &str) -> std::io::Result<()> {
 pub struct Packages {
     pub data_root: String,
     pub winget: String,
+    /// PowerShell 7, which reads the complete inventory when the Microsoft.WinGet.Client
+    /// module is installed. Empty when the complete inventory is not to be asked for.
+    pub shell7: String,
     history_gate: Mutex<()>,
 }
+
+/// Where PowerShell 7 is installed for every user, as 3.6 looks for it.
+pub fn shell7_path(host: &dyn Host) -> String {
+    format!("{}\\PowerShell\\7\\pwsh.exe", host.special_folder(SpecialFolder::ProgramFiles))
+}
+
+const SHELL7_MISSING: &str = "Installed status requires PowerShell 7 and Microsoft's Microsoft.WinGet.Client module. Install them yourself; 1nstall never installs prerequisites automatically. Automatic catalog installation remains available with WinGet.";
+const INVENTORY_REFRESHED: &str =
+    "Inventory refreshed. WinGet reports aggregate installed versions; installation scopes are not exposed by this interface. Guided and uncorrelated apps remain Unknown.";
+const STRUCTURED_QUERY: &str = "$ErrorActionPreference='Stop'; [Console]::OutputEncoding=[Text.UTF8Encoding]::new(); Import-Module Microsoft.WinGet.Client -MinimumVersion 1.7.0 -ErrorAction Stop; $rows=@(Get-WinGetPackage -ErrorAction Stop | ForEach-Object { [pscustomobject]@{Id=[string]$_.Id;Name=[string]$_.Name;Source=[string]$_.Source;InstalledVersion=[string]$_.InstalledVersion} }); ConvertTo-Json -InputObject $rows -Depth 4 -Compress";
 
 impl Packages {
     /// Uses `%LOCALAPPDATA%\1nstall` and the WinGet found on this machine.
@@ -172,12 +185,35 @@ impl Packages {
         let local = host.special_folder(SpecialFolder::LocalApplicationData);
         let preferred = format!("{local}\\Microsoft\\WindowsApps\\winget.exe");
         let winget = find_winget(host, &preferred, &std::env::var("PATH").unwrap_or_default());
-        Self { data_root: format!("{local}\\1nstall"), winget, history_gate: Mutex::new(()) }
+        Self { data_root: format!("{local}\\1nstall"), winget, shell7: shell7_path(host), history_gate: Mutex::new(()) }
     }
 
-    /// Uses the given data folder and WinGet executable.
+    /// Uses the given data folder and WinGet executable, and only `winget export` for the
+    /// inventory, unless [`Packages::with_shell7`] names a PowerShell 7 as well.
     pub fn with(data_root: &str, winget: &str) -> Self {
-        Self { data_root: data_root.to_string(), winget: winget.to_string(), history_gate: Mutex::new(()) }
+        Self { data_root: data_root.to_string(), winget: winget.to_string(), shell7: String::new(), history_gate: Mutex::new(()) }
+    }
+
+    /// Reads the complete inventory with this PowerShell 7.
+    pub fn with_shell7(mut self, shell7: &str) -> Self {
+        self.shell7 = shell7.to_string();
+        self
+    }
+
+    /// The complete inventory, through PowerShell 7 and the Microsoft.WinGet.Client module
+    /// (`Structured` and the first half of `Inventory` in 3.6). An error says why not.
+    fn structured(&self) -> Result<PackageInventory, String> {
+        if self.shell7.is_empty() || !std::path::Path::new(&self.shell7).is_file() {
+            return Err(SHELL7_MISSING.to_string());
+        }
+        let encoded: Vec<u8> = STRUCTURED_QUERY.encode_utf16().flat_map(u16::to_le_bytes).collect();
+        let result = run(&self.shell7, &format!("-NoLogo -NoProfile -NonInteractive -EncodedCommand {}", crate::inventory::base64(&encoded)), 90_000)?;
+        if result.exit_code != 0 {
+            return Err(format!("WinGet inventory unavailable. Check the Microsoft.WinGet.Client module and connectivity. {}", result.error.trim()));
+        }
+        let mut complete = parse_structured(result.output.trim().trim_start_matches('\u{feff}')).map_err(|error| error.message)?;
+        complete.message = Some(INVENTORY_REFRESHED.to_string());
+        Ok(complete)
     }
 
     pub fn history_path(&self) -> String {
@@ -248,13 +284,17 @@ impl Packages {
 
     /// What WinGet reports as installed.
     ///
-    /// The complete inventory through the WinGet COM API is not built into the engine yet,
-    /// so this is the partial inventory from `winget export`: listed packages are installed,
-    /// absent ones are unknown. `accept_source_agreements` adds that flag to the export; pass
-    /// it only after the user has accepted the source terms.
+    /// With PowerShell 7 and the Microsoft.WinGet.Client module, which the user installs or
+    /// not, this is the complete inventory: a package that is not listed is not installed.
+    /// Without them it is the partial inventory from `winget export`: listed packages are
+    /// installed, absent ones are unknown. `accept_source_agreements` adds that flag to the
+    /// export; pass it only after the user has accepted the source terms.
     pub fn inventory(&self, accept_source_agreements: bool) -> PackageInventory {
-        let structured = "The complete inventory through the WinGet COM API is not available in this build.";
-        let mut result = PackageInventory { message: Some(structured.to_string()), ..PackageInventory::default() };
+        let structured = match self.structured() {
+            Ok(complete) => return complete,
+            Err(reason) => reason,
+        };
+        let mut result = PackageInventory { message: Some(structured.clone()), ..PackageInventory::default() };
         let temporary = format!("{}\\1nstall-inventory-{}.json", std::env::temp_dir().to_string_lossy().trim_end_matches('\\'), random_hex(32));
         let export = (|| -> Result<PackageInventory, String> {
             let unavailable = "WinGet export unavailable; check sources, source agreements and connectivity.";
