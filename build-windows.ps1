@@ -33,7 +33,9 @@ $target = if ($env:CARGO_TARGET_DIR) { $env:CARGO_TARGET_DIR } else { Join-Path 
 $engine = Join-Path $target 'release\oneinstall_engine.dll'
 
 if ($CertificateThumbprint) {
-    if ($TimestampServer -notmatch '^https://[^\s]+$') { throw 'An HTTPS timestamp server is required for signing.' }
+    # Windows PowerShell 5.1, which runs this script, only takes a timestamp server address that
+    # starts with http://. The answer of the server is itself signed, and checked below.
+    if ($TimestampServer -notmatch '^http://[^\s]+$') { throw 'A timestamp server address starting with http:// is required for signing.' }
     $certificate=Get-Item -LiteralPath ('Cert:\CurrentUser\My\'+$CertificateThumbprint) -ErrorAction Stop
     if (-not $certificate.HasPrivateKey -or @($certificate.EnhancedKeyUsageList | Where-Object ObjectId -eq '1.3.6.1.5.5.7.3.3').Count -eq 0) { throw 'Select an authorized code-signing certificate with a private key.' }
     $signed=Set-AuthenticodeSignature -LiteralPath $exe -Certificate $certificate -TimestampServer $TimestampServer -HashAlgorithm SHA256

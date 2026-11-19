@@ -64,10 +64,12 @@ function Property($field,$value) { New-Object Windows.Automation.PropertyConditi
 function All($root,$type) { $root.FindAll($descendants,(Property ($automation::ControlTypeProperty) $type)) }
 function Named($root,[string]$name) { $root.FindFirst($descendants,(Property ($automation::NameProperty) $name)) }
 function ById($root,[string]$id) { $root.FindFirst($descendants,(Property ($automation::AutomationIdProperty) $id)) }
-function Invoke($element,[int]$wait=800) { $element.GetCurrentPattern([Windows.Automation.InvokePattern]::Pattern).Invoke(); Start-Sleep -Milliseconds $wait }
-function Toggle($element,[int]$wait=600) { $element.GetCurrentPattern([Windows.Automation.TogglePattern]::Pattern).Toggle(); Start-Sleep -Milliseconds $wait }
+# An element that was not found is named by the line that asked for it.
+function Need($element,[string]$action) { if (-not $element) { throw "$action`: the element was not found (line $((Get-PSCallStack)[2].ScriptLineNumber) of $(Split-Path -Leaf (Get-PSCallStack)[2].ScriptName))" } }
+function Invoke($element,[int]$wait=800) { Need $element 'Invoke'; $element.GetCurrentPattern([Windows.Automation.InvokePattern]::Pattern).Invoke(); Start-Sleep -Milliseconds $wait }
+function Toggle($element,[int]$wait=600) { Need $element 'Toggle'; $element.GetCurrentPattern([Windows.Automation.TogglePattern]::Pattern).Toggle(); Start-Sleep -Milliseconds $wait }
 function Value($element) { $element.GetCurrentPattern([Windows.Automation.ValuePattern]::Pattern).Current.Value }
-function Set-Value($element,[string]$text,[int]$wait=700) { $element.GetCurrentPattern([Windows.Automation.ValuePattern]::Pattern).SetValue($text); Start-Sleep -Milliseconds $wait }
+function Set-Value($element,[string]$text,[int]$wait=700) { Need $element 'Set-Value'; $element.GetCurrentPattern([Windows.Automation.ValuePattern]::Pattern).SetValue($text); Start-Sleep -Milliseconds $wait }
 function Texts($root) { @(All $root ([Windows.Automation.ControlType]::Text) | ForEach-Object { $_.Current.Name }) }
 function Buttons($root,[string]$name) { @(All $root ([Windows.Automation.ControlType]::Button) | Where-Object { $_.Current.Name -eq $name }) }
 function Cards($root) { @(All $root ([Windows.Automation.ControlType]::CheckBox)) }
@@ -121,16 +123,52 @@ function File-Name-Box($dialog) {
     }
     return $null
 }
-function File-Name($dialog) { [UiNative]::GetText([IntPtr](File-Name-Box $dialog).Current.NativeWindowHandle) }
+function File-Name($dialog) {
+    $box=File-Name-Box $dialog; if (-not $box) { return '' }
+    $handle=[IntPtr]$box.Current.NativeWindowHandle
+    if ($handle -ne [IntPtr]::Zero) { return [UiNative]::GetText($handle) }
+    $pattern=$null; if ($box.TryGetCurrentPattern([Windows.Automation.ValuePattern]::Pattern,[ref]$pattern)) { return $pattern.Current.Value }
+    return $box.Current.Name
+}
+function Set-File-Name($dialog,[string]$path) {
+    $box=File-Name-Box $dialog; Need $box 'Set-File-Name'
+    $handle=[IntPtr]$box.Current.NativeWindowHandle
+    if ($handle -ne [IntPtr]::Zero) { [UiNative]::SetText($handle,$path) } else { $box.GetCurrentPattern([Windows.Automation.ValuePattern]::Pattern).SetValue($path) }
+    Start-Sleep -Milliseconds 400
+}
+# What a system dialog is made of, in one line, for the report of a failed test.
+function Describe-Dialog($dialog) {
+    if (-not $dialog) { return 'no dialog' }
+    $parts=@($dialog.FindAll($descendants,[Windows.Automation.Condition]::TrueCondition) | Where-Object { $_.Current.ClassName -in 'Edit','Button','ComboBox','ComboBoxEx32','Static' } | Select-Object -First 14 | ForEach-Object { "$($_.Current.ClassName)#$($_.Current.AutomationId)[$($_.Current.NativeWindowHandle -ne 0)]='$($_.Current.Name)'" })
+    "'$($dialog.Current.Name)' $($parts -join ' ')"
+}
 # The file dialog that is open, once it is ready to take a name.
-function File-Dialog([int]$seconds=20) { Wait-Until { System-Dialogs | Where-Object { File-Name-Box $_ } | Select-Object -First 1 } $seconds }
+function File-Dialog([int]$seconds=20) {
+    $dialog=Wait-Until { System-Dialogs | Where-Object { File-Name-Box $_ } | Select-Object -First 1 } $seconds
+    # A slow machine shows the dialog before it has filled it in. Wait for it to settle.
+    if ($dialog) { Start-Sleep -Milliseconds 1500 }
+    $dialog
+}
 # A message box: a system dialog with text and no file name.
 function Message-Box([int]$seconds=10) { Wait-Until { System-Dialogs | Where-Object { -not (File-Name-Box $_) } | Select-Object -First 1 } $seconds }
 function Message-Text($box) { (@($box.FindAll($descendants,(Property ($automation::ClassNameProperty) 'Static'))) | ForEach-Object { $_.Current.Name }) -join ' ' }
 function Close-Dialog($dialog) { $dialog.GetCurrentPattern([Windows.Automation.WindowPattern]::Pattern).Close(); Start-Sleep -Milliseconds 800 }
 # Types the full path and presses the default button (Save or Open): command 1 of the dialog.
 function Answer-FileDialog($dialog,[string]$path) {
-    [UiNative]::SetText([IntPtr](File-Name-Box $dialog).Current.NativeWindowHandle,$path); Start-Sleep -Milliseconds 400
-    [UiNative]::PostMessage([IntPtr]$dialog.Current.NativeWindowHandle,0x0111,[IntPtr]1,[IntPtr]::Zero) | Out-Null
-    Start-Sleep -Milliseconds 1200
+    foreach ($attempt in 1..3) {
+        Set-File-Name $dialog $path
+        if ((File-Name $dialog) -eq $path) { break }
+        Start-Sleep -Milliseconds 700
+    }
+    $handle=[IntPtr]$dialog.Current.NativeWindowHandle
+    [UiNative]::PostMessage($handle,0x0111,[IntPtr]1,[IntPtr]::Zero) | Out-Null
+    # The dialog closes once it has accepted the name.
+    $closed=Wait-Until { -not (System-Dialogs | Where-Object { [IntPtr]$_.Current.NativeWindowHandle -eq $handle }) } 8 300
+    if (-not $closed) {
+        $button=@($dialog.FindAll($descendants,(Property ($automation::AutomationIdProperty) '1')) | Where-Object { $_.Current.ClassName -eq 'Button' })
+        $pattern=$null
+        if ($button.Count -and $button[0].TryGetCurrentPattern([Windows.Automation.InvokePattern]::Pattern,[ref]$pattern)) { $pattern.Invoke() }
+        Wait-Until { -not (System-Dialogs | Where-Object { [IntPtr]$_.Current.NativeWindowHandle -eq $handle }) } 8 300 | Out-Null
+    }
+    Start-Sleep -Milliseconds 600
 }

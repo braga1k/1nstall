@@ -168,10 +168,11 @@ jobs:
         shell: powershell
         continue-on-error: true
         run: |
-          Set-DisplayResolution -Width 1920 -Height 1080 -Force
+          $problem = ''
+          try { Set-DisplayResolution -Width 1920 -Height 1080 -Force -ErrorAction Stop } catch { $problem = "; changing it failed: $_" }
           Add-Type -AssemblyName System.Windows.Forms
           $screen = [System.Windows.Forms.Screen]::PrimaryScreen.Bounds
-          Write-Output "::notice title=window $env:TITLE::screen $($screen.Width) x $($screen.Height)"
+          Write-Output "::notice title=window $env:TITLE::screen $($screen.Width) x $($screen.Height)$($problem -replace '\s+',' ')"
       - name: Build the application and the stand-in programs
         shell: powershell
         run: |

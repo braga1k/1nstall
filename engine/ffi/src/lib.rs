@@ -190,6 +190,11 @@ pub(crate) fn packages() -> oneinstall_platform::packages::Packages {
     }
 }
 
+/// The stand-in installer of the test environment, when it names one.
+pub(crate) fn install_stand_in() -> Option<String> {
+    TEST_ENVIRONMENT.lock().ok().and_then(|environment| environment.as_ref().map(|test| test.install_program.clone())).filter(|program| !program.is_empty())
+}
+
 /// The package service for installing. Refused in the test environment unless it names a
 /// stand-in installer.
 pub(crate) fn install_packages() -> Result<oneinstall_platform::packages::Packages, String> {

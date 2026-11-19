@@ -39,10 +39,14 @@ try {
     $dialog=File-Dialog
     Check 'Save opens the Windows file dialog' ([bool]$dialog)
     if ($dialog) {
-        Check 'it proposes a name' ((File-Name $dialog) -eq 'my-setup.json')
+        # Windows shows the proposed name without its extension when extensions are hidden.
+        $proposed=File-Name $dialog
+        Check "it proposes a name ($proposed)" ($proposed -eq 'my-setup.json' -or $proposed -eq 'my-setup')
+        if ($proposed -notlike 'my-setup*') { "NOTE the Save dialog as UI Automation sees it: $(Describe-Dialog $dialog)" }
         Answer-FileDialog $dialog $saved
     }
     $written=Wait-Until { Test-Path -LiteralPath $saved } 10
+    if (-not $written) { "NOTE nothing was saved; dialogs still open: $(@(System-Dialogs | ForEach-Object { Describe-Dialog $_ }) -join ' || ')"; foreach ($open in (System-Dialogs)) { Close-Dialog $open } }
     $profile=if ($written) { Get-Content -LiteralPath $saved -Raw | ConvertFrom-Json } else { $null }
     Check "the selection is saved as a version 1 profile ($(@($profile.Apps) -join ', '))" ($profile -and $profile.Version -eq 1 -and (@($profile.Apps) -join '|') -eq 'extra_7zip|apo|peace')
     Check 'the dialog is closed and the window is usable' (-not (System-Dialogs).Count -and (ById $root 'Install').Current.IsEnabled)
@@ -50,7 +54,7 @@ try {
     # 2. Cancelling a file dialog saves nothing.
     Invoke (ById $root 'SaveSetup')
     $dialog=File-Dialog
-    if ($dialog) { [UiNative]::SetText([IntPtr](File-Name-Box $dialog).Current.NativeWindowHandle,(Join-Path $work 'cancelled.json')); Close-Dialog $dialog }
+    if ($dialog) { Set-File-Name $dialog (Join-Path $work 'cancelled.json'); Close-Dialog $dialog }
     Check 'a cancelled dialog saves nothing' ([bool]$dialog -and -not (Test-Path -LiteralPath (Join-Path $work 'cancelled.json')) -and -not (System-Dialogs).Count)
 
     # 3. Load it back: preview first, then the selection.
@@ -101,7 +105,7 @@ try {
     $diagnostics=Join-Path $work 'diagnostics.txt'
     Invoke (Everywhere-Named ('Save reviewed diagnostics'+$ellipsis))
     $dialog=File-Dialog
-    if ($dialog) { Check 'the diagnostics dialog proposes a name' ((File-Name $dialog) -eq '1nstall-diagnostics.txt'); Answer-FileDialog $dialog $diagnostics }
+    if ($dialog) { Check "the diagnostics dialog proposes a name ($(File-Name $dialog))" ((File-Name $dialog) -in '1nstall-diagnostics.txt','1nstall-diagnostics'); Answer-FileDialog $dialog $diagnostics }
     $written=Wait-Until { Test-Path -LiteralPath $diagnostics } 10
     $bytes=if ($written) { [IO.File]::ReadAllBytes($diagnostics) } else { @() }
     $text=if ($written) { [IO.File]::ReadAllText($diagnostics) } else { '' }
@@ -127,7 +131,7 @@ try {
             Invoke $use
             $snapshot=Join-Path $work 'snapshot.json'
             $dialog=File-Dialog
-            if ($dialog) { Check 'the snapshot dialog proposes a name' ((File-Name $dialog) -eq 'installed-setup.json'); Answer-FileDialog $dialog $snapshot }
+            if ($dialog) { Check "the snapshot dialog proposes a name ($(File-Name $dialog))" ((File-Name $dialog) -in 'installed-setup.json','installed-setup'); Answer-FileDialog $dialog $snapshot }
             $written=Wait-Until { Test-Path -LiteralPath $snapshot } 10
             $setup=if ($written) { Get-Content -LiteralPath $snapshot -Raw -Encoding UTF8 | ConvertFrom-Json } else { $null }
             Check "the snapshot is a version 2 selection with every listed package ($(@($setup.Apps).Count))" ($setup -and $setup.Version -eq 2 -and $setup.Kind -eq '1nstall-selection' -and @($setup.Apps).Count -eq $listed -and @($setup.Apps | Where-Object { -not $_.Id -or -not $_.Source }).Count -eq 0)
@@ -139,9 +143,12 @@ try {
             Check "the snapshot loads back into a preview of the same packages ($previewed)" ([bool]$use -and $previewed -eq $listed)
             if ($use) { Invoke (Everywhere-Named 'Close') }
         } else {
-            # A machine where WinGet lists nothing it can identify has nothing to save.
+            # A machine where WinGet lists nothing it can identify has nothing to save, and one
+            # where WinGet's export does not answer (its source terms were never accepted, for
+            # one) still has no inventory.
             $box=Message-Box 3
-            Check "nothing installed that WinGet identifies: the snapshot says so ($(if ($box) { $box.Current.Name }))" ([bool]$box -and $box.Current.Name -eq 'Nothing to save')
+            "NOTE no snapshot on this machine: $(if ($box) { $box.Current.Name+': '+(Message-Text $box) }); the Refresh button says: $($refresh.Current.HelpText)"
+            Check "with nothing to list, the snapshot says why ($(if ($box) { $box.Current.Name }))" ([bool]$box -and $box.Current.Name -in 'Nothing to save','Inventory required')
             if ($box) { Close-Dialog $box }
         }
     }

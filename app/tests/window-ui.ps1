@@ -150,6 +150,11 @@ try {
             [System.Windows.Forms.SendKeys]::SendWait($keys); Start-Sleep -Milliseconds $wait
         }
         function Focused { try { $automation::FocusedElement.Current } catch { $null } }
+        # Gives an element the keyboard focus, and says why when Windows refuses.
+        function Focus($element,[string]$what) {
+            try { $element.SetFocus(); Start-Sleep -Milliseconds 400; return $true }
+            catch { "NOTE $what could not take the focus: $($_.Exception.InnerException.Message); focusable $($element.Current.IsKeyboardFocusable), enabled $($element.Current.IsEnabled), off screen $($element.Current.IsOffscreen), window in front $([UiNative]::GetForegroundWindow() -eq $process.MainWindowHandle)"; return $false }
+        }
         [UiNative]::SetForegroundWindow($process.MainWindowHandle) | Out-Null; Start-Sleep -Milliseconds 500
         Check 'the window takes the keyboard' ([UiNative]::GetForegroundWindow() -eq $process.MainWindowHandle)
         Press '^f'
@@ -157,14 +162,15 @@ try {
         Press '7-zip' 900
         $found=Cards $root
         Check "typing searches ($($found.Count) card)" ($found.Count -eq 1 -and $found[0].Current.Name -eq '7-Zip')
-        $found[0].SetFocus(); Start-Sleep -Milliseconds 400
+        $focused=Focus $found[0] 'the card'
+        Check 'a card takes the keyboard focus' $focused
         Press ' '
         Check 'Space on a card selects it' ([bool](Named $root '1 app selected') -and [bool](Named $root 'Remove 7-Zip from selection'))
         Press '{F1}' 1200
         Check 'F1 on a card opens its details' ([bool](Everywhere-Named 'Close details'))
         Press '{ESC}' 900
         Check 'Esc closes the details' (-not (Everywhere-Named 'Close details'))
-        (Named $root '7-Zip').SetFocus(); Start-Sleep -Milliseconds 300
+        Focus (Named $root '7-Zip') 'the card, again' | Out-Null
         $before=(Focused).Name
         Press '{TAB}'
         $after=(Focused)

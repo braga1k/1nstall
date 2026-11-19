@@ -15,6 +15,13 @@ function Self-Test([string]$exe) {
     $passed=if (Test-Path -LiteralPath $log) { @(Get-Content -LiteralPath $log | Where-Object { $_ -like 'PASS *' }).Count } else { 0 }
     [pscustomobject]@{ Code=$run.ExitCode; Passed=$passed }
 }
+# Runs build-windows.ps1 of the extracted archive in a process of its own. (The work folder has
+# no spaces in its path, so nothing here needs quoting.) What it writes as
+# an error is text here, not a failure of this script; its exit code says how it went.
+function Build([string[]]$options=@()) {
+    $quoted=(@('-NoProfile','-ExecutionPolicy','Bypass','-File',(Join-Path $source 'build-windows.ps1'))+$options) -join ' '
+    @(cmd /c "powershell.exe $quoted 2>&1" | ForEach-Object { "$_" })
+}
 $assets=(Resolve-Path -LiteralPath $Assets).Path
 $archive=@(Get-ChildItem -LiteralPath $assets -Filter '1nstall-*-source.zip')
 if ($archive.Count -ne 1) { throw 'Expected one source archive among the assets.' }
@@ -27,7 +34,7 @@ Add-Type -AssemblyName System.IO.Compression.FileSystem
 [IO.Compression.ZipFile]::ExtractToDirectory($archive[0].FullName,$source)
 Check 'the source archive carries no Git history' (-not (Test-Path -LiteralPath (Join-Path $source '.git')))
 $record=Get-Content -LiteralPath (Join-Path $source 'RELEASE-SOURCE.json') -Raw | ConvertFrom-Json
-$output=@(& powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $source 'build-windows.ps1') 2>&1 | ForEach-Object { "$_" })
+$output=Build
 $built=Join-Path $source 'dist\1nstall.exe'
 Check "the source archive builds the executable (exit $LASTEXITCODE; $($output | Select-Object -Last 2 | Select-Object -First 1))" ($LASTEXITCODE -eq 0 -and (Test-Path -LiteralPath $built))
 if (Test-Path -LiteralPath $built) {
@@ -47,10 +54,10 @@ if (Test-Path -LiteralPath $built) {
     Import-Certificate -FilePath $exported -CertStoreLocation Cert:\LocalMachine\Root | Out-Null
     Import-Certificate -FilePath $exported -CertStoreLocation Cert:\LocalMachine\TrustedPublisher | Out-Null
     $signedWith=$null
-    foreach ($server in 'https://timestamp.digicert.com','https://timestamp.sectigo.com','https://timestamp.globalsign.com/tsa/r6advanced1') {
-        $output=@(& powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $source 'build-windows.ps1') -CertificateThumbprint $certificate.Thumbprint -TimestampServer $server 2>&1 | ForEach-Object { "$_" })
+    foreach ($server in 'http://timestamp.digicert.com','http://timestamp.sectigo.com','http://timestamp.globalsign.com/tsa/r6advanced1') {
+        $output=Build @('-CertificateThumbprint',$certificate.Thumbprint,'-TimestampServer',$server)
         if ($LASTEXITCODE -eq 0) { $signedWith=$server; break }
-        "NOTE signing with $server did not work: $(($output | Where-Object { $_ -match 'Signing|timestamp|certificate' } | Select-Object -Last 1))"
+        "NOTE signing with $server did not work: $(($output | Where-Object { $_ -match 'sign|timestamp|certificate' } | Select-Object -First 1))"
     }
     Check "the build signs the executable when given a certificate and a timestamp server ($signedWith)" ([bool]$signedWith)
     if ($signedWith) {

@@ -8,7 +8,9 @@ $ErrorActionPreference='Continue'
 function Short([string]$text,[int]$length=900) { $flat=($text -replace '\s+',' ').Trim(); if ($flat.Length -gt $length) { $flat.Substring(0,$length) } else { $flat } }
 $problem=$null
 $global:LASTEXITCODE=0
-try { $lines=@(& $Test 2>&1 | ForEach-Object { "$_" }) } catch { $lines=@(); $problem="$_" }
+# Lines are kept as they come, so that a test that stops early still reports what it did.
+$lines=New-Object 'System.Collections.Generic.List[string]'
+try { & $Test 2>&1 | ForEach-Object { $lines.Add("$_") } } catch { $problem="$_ (line $($_.InvocationInfo.ScriptLineNumber) of $(Split-Path -Leaf ([string]$_.InvocationInfo.ScriptName)))" }
 $code=$LASTEXITCODE
 $lines | ForEach-Object { Write-Output $_ }
 $passed=@($lines | Where-Object { $_ -like 'PASS *' }).Count

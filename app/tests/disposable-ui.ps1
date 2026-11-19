@@ -93,7 +93,7 @@ function Stage-Texts($root) { @(Texts $root | Where-Object { $_ -in 'Success','C
 # 0. With the theme left to Windows, the window follows Windows while it is open: the app
 #    theme, then high contrast. Both are settings of this user, changed here and put back.
 $personalize='HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize'
-function Set-AppTheme([int]$light) { New-Item -Path $personalize -Force | Out-Null; Set-ItemProperty -Path $personalize -Name AppsUseLightTheme -Value $light -Type DWord }
+function Set-AppTheme([int]$light) { if (-not (Test-Path -LiteralPath $personalize)) { New-Item -Path $personalize -Force | Out-Null }; Set-ItemProperty -Path $personalize -Name AppsUseLightTheme -Value $light -Type DWord }
 function Level([string]$name) { [int][UiNative]::Brightness((Picture $shots $name)) }
 $shots=if ($Pictures) { $Pictures } else { Join-Path (Split-Path $exe) 'test-pictures' }
 $original=(Get-ItemProperty -Path $personalize -Name AppsUseLightTheme -ErrorAction SilentlyContinue).AppsUseLightTheme

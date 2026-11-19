@@ -128,9 +128,10 @@ pub fn profiles_menu() -> String {
     }))
 }
 
-/// Where WinGet is on this machine, or empty when it is missing.
+/// Where WinGet is on this machine, or empty when it is missing. A test mode that installs
+/// with a stand-in has that stand-in for its WinGet.
 pub fn winget_path() -> String {
-    packages().winget
+    crate::install_stand_in().unwrap_or_else(|| packages().winget)
 }
 
 const VIEWS: [&str; 2] = ["All apps", "Installed"];
