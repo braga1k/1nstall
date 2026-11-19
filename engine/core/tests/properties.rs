@@ -142,8 +142,69 @@ fn product_name() -> impl Strategy<Value = String> {
     "[A-Z][a-z]{3,8}( [A-Z][a-z]{3,8})?"
 }
 
+// What happened on a real PC with 3.6's rule (the names here are made up): a plug-in is
+// installed into the folder every OpenFX plug-in shares, "Common Files\OFX\Plugins". 3.6 took "Plugins" for a name of
+// the product, and offered the "Plugins" folders and registry keys of other programs as its
+// leftovers.
+#[test]
+fn an_app_installed_into_a_shared_folder_does_not_claim_that_folder_name() {
+    let mut app = owner("Grainfilm Pro OFX v7.1.3.0", Some(r"C:\Program Files\Common Files\OFX\Plugins\"));
+    app.publisher = Some("Grainfilm Team".to_string());
+    assert_eq!(names(&HOST, &app), ["Grainfilm Pro OFX"]);
+    for folder in [
+        r"C:\Program Files (x86)\Licence Manager\Plugins",
+        r"C:\ProgramData\Other Vendor\Product List\plugins",
+        r"C:\Users\me\AppData\Roaming\Suite Vendor\Sync\plugins",
+        r"C:\Users\me\AppData\Roaming\downloader\plugins",
+    ] {
+        assert!(!safe_directory(&HOST, folder, &app, &[]), "{folder} is not a leftover of {:?}", app.name);
+    }
+    assert!(!safe_registry(&HOST, Some(r"Software\Music Vendor\Shared\Plugins"), &app, &[]));
+    // Its own data, under its own name, is still found.
+    assert!(safe_directory(&HOST, r"C:\Users\me\AppData\Roaming\Grainfilm Pro OFX", &app, &[]));
+}
+
+#[test]
+fn a_shared_folder_word_is_never_a_product_name() {
+    // Even when the product's own name ends in the word.
+    let app = owner("Waves Plugins", Some(r"C:\Program Files\Waves\Plugins"));
+    assert_eq!(names(&HOST, &app), ["Waves Plugins"]);
+    for word in ["Plugins", "VST3", "Components", "Shared", "Common", "Tools", "Library", "Presets"] {
+        let app = owner(word, Some(&format!(r"C:\Program Files\Vendor\{word}")));
+        assert!(names(&HOST, &app).is_empty(), "{word} names no product");
+    }
+}
+
+#[test]
+fn a_folder_named_after_the_product_is_still_one_of_its_names() {
+    // Cases of the kind the same real session got right, and must keep getting right.
+    for (name, location, expected) in [
+        ("Editor (User)", r"C:\Users\me\AppData\Local\Programs\editor\", vec!["Editor (User)", "editor"]),
+        ("Acme Chameleon", r"C:\Program Files\Acme\Chameleon\", vec!["Acme Chameleon", "Chameleon"]),
+        ("haze version 2.0", r"C:\Users\me\AppData\Local\Programs\haze\", vec!["haze version", "haze"]),
+        ("Python 3.12.1 (64-bit)", r"C:\Program Files\Python312", vec!["Python", "Python312"]),
+        ("VLC media player", r"C:\Program Files\VideoLAN\VLC", vec!["VLC media player", "VLC"]),
+    ] {
+        assert_eq!(names(&HOST, &owner(name, Some(location))), expected, "{name} at {location}");
+    }
+    // A folder name with nothing of the product's name is not taken for the product.
+    assert_eq!(names(&HOST, &owner("Example Suite", Some(r"C:\Program Files\Exmpl"))), ["Example Suite"]);
+}
+
 proptest! {
     #![proptest_config(ProptestConfig { cases: 2000, failure_persistence: None, ..ProptestConfig::default() })]
+
+    // A second name always shares the product's own name, and is never a shared folder word:
+    // an install folder alone gives no right to other folders of the same name.
+    #[test]
+    fn an_install_folder_names_the_product_only_when_it_shares_its_name(name in product_name(), leaf in "[A-Za-z0-9]{3,10}( [A-Za-z0-9]{2,8})?") {
+        let app = owner(&name, Some(&format!(r"C:\Program Files\Vendor\{leaf}")));
+        let simple = |text: &str| text.chars().filter(|c| c.is_alphanumeric()).collect::<String>().to_lowercase();
+        for extra in names(&HOST, &app).iter().skip(1) {
+            let (product, folder) = (simple(&name), simple(extra));
+            prop_assert!(product.contains(&folder) || folder.contains(&product), "{extra:?} was taken for a name of {name:?}");
+        }
+    }
 
     // I-16: an identifier is only ever the plain character set, at most 200 long.
     #[test]

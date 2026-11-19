@@ -37,6 +37,14 @@ pub fn product(host: &dyn Host, name: Option<&str>) -> bool {
     let token = token(host, name);
     utf16_len(&token) >= 3
         && !pattern!(r"^(application|applications|app|apps|bin|current|x64|x86|software|microsoft|windows|programs|commonfiles|packages|data|cache|temp|1nstall|launcher|update|uninstall|installer|install|setup|client|public|user|users)$").is_match(&token)
+        && !shared_folder_word(&token)
+}
+
+/// Folder names that many programs share: where plug-ins, components and libraries of several
+/// vendors live side by side. 3.6 did not know them, so an app installed into such a folder
+/// claimed every folder and registry key of that name.
+fn shared_folder_word(token: &str) -> bool {
+    pattern!(r"^(plugins|plugin|vstplugins|vst|vst2|vst3|aax|ofx|clap|lv2|components|component|common|shared|addons|addins|extensions|modules|drivers|tools|resources|lib|libs|library|libraries|presets|templates|scripts|games|system|program|programfiles|programdata|appdata|local|locallow|roaming|documents)$").is_match(token)
 }
 
 /// Absolute form of a recorded location, or `None` if it is not a usable path.
@@ -47,7 +55,7 @@ pub fn full(host: &dyn Host, path: &str) -> Option<String> {
 
 /// Names under which an app's leftovers may be recognised: its display name without
 /// version and architecture, and the leaf of its install location when that leaf can be
-/// tied to the product rather than to its vendor.
+/// tied to the product rather than to its vendor, and shares its name with the product.
 pub fn names(host: &dyn Host, app: &InstalledApp) -> Vec<String> {
     let display = app.name.as_deref().unwrap_or("");
     let display = pattern!(r"(?i)\s*\((?:(?:x64|x86|64[ -]?bit|32[ -]?bit|arm64)[\s,/-]*)+\)\s*\n?\z").replace_all(display, "");
@@ -64,7 +72,12 @@ pub fn names(host: &dyn Host, app: &InstalledApp) -> Vec<String> {
                 let name_token = token(host, Some(&name));
                 let leaf_token = token(host, Some(&leaf));
                 // Never infer ownership of a vendor root from a partial product name.
-                let tied = app.identity_verified || app.ownership_verified || (utf16_len(&leaf_token) >= 6 && name_token.contains(&leaf_token));
+                // Nor of a folder whose name has nothing of the product's name. 3.6 accepted any
+                // folder name of a verified app, so an app installed into a shared folder such as
+                // "Common Files\OFX\Plugins" claimed every folder and registry key called
+                // "Plugins", whoever they belonged to.
+                let related = name_token.contains(&leaf_token) || (utf16_len(&name_token) >= 3 && leaf_token.contains(&name_token));
+                let tied = related && (app.identity_verified || app.ownership_verified || (utf16_len(&leaf_token) >= 6 && name_token.contains(&leaf_token)));
                 if name_token == leaf_token || (tied && !token(host, app.publisher.as_deref()).contains(&leaf_token)) {
                     names.push(leaf);
                 }

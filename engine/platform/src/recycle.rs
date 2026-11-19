@@ -44,7 +44,8 @@ pub fn recycle_folder(path: &str) -> Result<(), String> {
                 Ok(())
             }
         }
-        Ok(Err(error)) => Err(error.message()),
+        // Some Shell failures (a file in use, for one) carry no text of their own.
+        Ok(Err(error)) => Err(if error.message().trim().is_empty() { format!("{FAILURE} (Windows error 0x{:08X})", error.code().0) } else { error.message() }),
         Err(_) => Err(FAILURE.to_string()),
     }
 }

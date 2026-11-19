@@ -36,6 +36,36 @@
       "args": ["Software\\Sample Editor\n", {"Name": "Sample Editor"}, []],
       "rust": {"out": false},
       "reason": "strict-end: 3.6 accepted a registry path ending in a line break as a cleanup candidate."
+    },
+    {
+      "fn": "Uninstall.Names",
+      "args": [{"Name": "Example Suite", "Publisher": "Other Corp", "Location": "C:\\Program Files\\Exmpl", "IdentityVerified": true}],
+      "rust": {"out": ["Example Suite"]},
+      "reason": "shared-folder-name: 3.6 took the name of the install folder of a verified app for a name of the product, whatever it was. An app installed into a folder that programs share then claimed the folders and registry keys of that name of every other program. The folder name now counts only when it shares the product name."
+    },
+    {
+      "fn": "Uninstall.Names",
+      "args": [{"Name": "Example Suite", "Publisher": "Other Corp", "Location": "C:\\Program Files\\Exmpl", "OwnershipVerified": true}],
+      "rust": {"out": ["Example Suite"]},
+      "reason": "shared-folder-name: same as above, for an app whose ownership of the folder was verified."
+    },
+    {
+      "fn": "Uninstall.Names",
+      "args": [{"Name": "Tool", "Location": "C:\\Tools\\Tool\\..\\Other", "OwnershipVerified": true}],
+      "rust": {"out": ["Tool"]},
+      "reason": "shared-folder-name: same as above; the folder is called Other, which has nothing of the name Tool."
+    },
+    {
+      "fn": "Uninstall.SafeRegistry",
+      "args": ["Software\\Vendor\\Exmpl", {"Name": "Example Suite", "Publisher": "Other Corp", "Location": "C:\\Program Files\\Exmpl", "IdentityVerified": true}, []],
+      "rust": {"out": false},
+      "reason": "shared-folder-name: a registry key named like the install folder, and unlike the product, is no longer offered as a leftover."
+    },
+    {
+      "fn": "Uninstall.SafeRegistryValue",
+      "args": ["Software\\Microsoft\\Windows\\CurrentVersion\\Search\\JumplistData", "C:\\Apps\\Sample Editor\\editor.exe", {"Name": "Totally Different", "Location": "C:\\Apps\\Sample Editor", "OwnershipVerified": true}, []],
+      "rust": {"out": false},
+      "reason": "shared-folder-name: a Windows trace of a program inside the install folder is offered only when that folder is named after the product; an app installed into a shared folder would otherwise claim the traces of every program in it."
     }
   ]
 }
