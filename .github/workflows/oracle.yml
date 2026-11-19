@@ -66,6 +66,7 @@ jobs:
           grep -E '^oracle [a-z]+:' test.log | while IFS= read -r line; do
             echo "::notice title=engine (${{ matrix.os }})::$line"
           done
+          echo "::notice title=engine (${{ matrix.os }})::$(grep -cE '^hostile files: .* without failing' test.log) readers of damaged files passed; $(grep -E '^test result:' test.log | awk '{ passed += $4; failed += $6 } END { print passed " tests passed, " failed " failed" }')"
       - name: Rust removal scenarios against the recorded 3.6 behaviour
         shell: bash
         env:
@@ -83,7 +84,7 @@ jobs:
           set +e
           cargo test --locked -p oneinstall-harness --test uninstall_boundary -- --nocapture 2>&1 | tee uninstall.log
           result=${PIPESTATUS[0]}
-          grep -E '^oracle uninstall:' uninstall.log | while IFS= read -r line; do
+          grep -E '^oracle uninstall:.*(stages|removed, scanned|stop asked)' uninstall.log | while IFS= read -r line; do
             echo "::notice title=engine (${{ matrix.os }})::${line:0:600}"
           done
           if [ "$result" -ne 0 ]; then
@@ -146,6 +147,109 @@ jobs:
             Write-Output $_
             if ($_ -like 'bridge *') { Write-Output "::notice title=app (${{ matrix.os }})::$_" }
           }
+  window:
+    name: Window tests (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-2022, windows-2025]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 100
+    env:
+      TITLE: (${{ matrix.os }})
+    steps:
+      - uses: actions/checkout@v4
+      - name: Rust 1.86.0
+        shell: bash
+        run: |
+          rustup toolchain install 1.86.0 --profile minimal
+          rustup default 1.86.0
+      - name: A screen large enough for the window
+        shell: powershell
+        continue-on-error: true
+        run: |
+          Set-DisplayResolution -Width 1920 -Height 1080 -Force
+          Add-Type -AssemblyName System.Windows.Forms
+          $screen = [System.Windows.Forms.Screen]::PrimaryScreen.Bounds
+          Write-Output "::notice title=window $env:TITLE::screen $($screen.Width) x $($screen.Height)"
+      - name: Build the application and the stand-in programs
+        shell: powershell
+        run: |
+          $line = .\app\build.ps1 | Select-Object -Last 1
+          Write-Output "built $line"
+          Push-Location engine
+          cmd /c "cargo build --locked -p oneinstall-harness --bins 2>&1"
+          if ($LASTEXITCODE -ne 0) { throw 'Stand-in programs did not build.' }
+          Pop-Location
+          $winget = [bool](Get-Command winget -ErrorAction SilentlyContinue)
+          Add-Content -Path $env:GITHUB_ENV -Value "HAS_WINGET=$winget"
+          Write-Output "::notice title=window $env:TITLE::built $line; WinGet on this image: $winget"
+      - name: Library
+        shell: powershell
+        continue-on-error: true
+        run: |
+          if ($env:HAS_WINGET -eq 'True') { .\app\tests\report.ps1 -Title "library ui $env:TITLE" -Test { .\app\tests\library-ui.ps1 -Exe .\dist\v4\1nstall.exe } }
+          else { .\app\tests\report.ps1 -Title "library ui $env:TITLE" -Test { .\app\tests\library-ui.ps1 -Exe .\dist\v4\1nstall.exe -SkipInventory } }
+      - name: Settings
+        shell: powershell
+        continue-on-error: true
+        run: .\app\tests\report.ps1 -Title "settings ui $env:TITLE" -Test { .\app\tests\settings-ui.ps1 -Exe .\dist\v4\1nstall.exe }
+      - name: Uninstall page (reads only)
+        shell: powershell
+        continue-on-error: true
+        run: .\app\tests\report.ps1 -Title "uninstall ui $env:TITLE" -Test { .\app\tests\uninstall-ui.ps1 -Exe .\dist\v4\1nstall.exe }
+      - name: History and diagnostics
+        shell: powershell
+        continue-on-error: true
+        run: |
+          if ($env:HAS_WINGET -eq 'True') { .\app\tests\report.ps1 -Title "history ui $env:TITLE" -Test { .\app\tests\history-ui.ps1 -Exe .\dist\v4\1nstall.exe } }
+          else { .\app\tests\report.ps1 -Title "history ui $env:TITLE" -Test { .\app\tests\history-ui.ps1 -Exe .\dist\v4\1nstall.exe -SkipInventory } }
+      - name: Install queue with a stand-in for WinGet
+        shell: powershell
+        continue-on-error: true
+        run: .\app\tests\report.ps1 -Title "queue ui $env:TITLE" -Test { .\app\tests\queue-ui.ps1 -Exe .\dist\v4\1nstall.exe -StandIn .\engine\target\debug\oracle-fixture.exe }
+      - name: File dialogs and the detailed log
+        shell: powershell
+        continue-on-error: true
+        run: |
+          if ($env:HAS_WINGET -eq 'True') { .\app\tests\report.ps1 -Title "dialogs ui $env:TITLE" -Test { .\app\tests\dialogs-ui.ps1 -Exe .\dist\v4\1nstall.exe -OpenLog } }
+          else { .\app\tests\report.ps1 -Title "dialogs ui $env:TITLE" -Test { .\app\tests\dialogs-ui.ps1 -Exe .\dist\v4\1nstall.exe -OpenLog -SkipInventory } }
+      - name: Window size, names, languages, themes and keyboard
+        shell: powershell
+        continue-on-error: true
+        run: .\app\tests\report.ps1 -Title "window ui $env:TITLE" -Test { .\app\tests\window-ui.ps1 -Exe .\dist\v4\1nstall.exe -Keyboard -Pictures pictures }
+      - name: Update from Settings, with a build numbered 3.5.0 (disposable machine)
+        shell: powershell
+        continue-on-error: true
+        timeout-minutes: 15
+        run: |
+          $source = [IO.File]::ReadAllText("$PWD\app\Program.cs")
+          $older = $source.Replace('AssemblyVersion("4.0.0.0")','AssemblyVersion("3.5.0.0")').Replace('AssemblyFileVersion("4.0.0.0")','AssemblyFileVersion("3.5.0.0")').Replace('public const string Version="4.0.0";','public const string Version="3.5.0";')
+          if ($older -eq $source -or ($older.Split("`n") | Where-Object { $_ -match '3\.5\.0' }).Count -ne 3) { throw 'The version lines of Program.cs were not found.' }
+          [IO.File]::WriteAllText("$PWD\app\Program.cs", $older)
+          try { $line = .\app\build.ps1 -Out "$PWD\dist\older" | Select-Object -Last 1 } finally { [IO.File]::WriteAllText("$PWD\app\Program.cs", $source) }
+          Write-Output "older build: $line"
+          .\app\tests\report.ps1 -Title "update ui $env:TITLE" -Test { .\app\tests\update-ui.ps1 -Exe .\dist\older\1nstall.exe -ExpectedHash 90428e1ea21db5f5b939aab920db3309a457fc4bd4ac116641fb1754feb8508c -DisposableEnvironment }
+      - name: Normal mode on a disposable machine - settings, fixture removal, cleanup, stopping, real apps
+        shell: powershell
+        continue-on-error: true
+        timeout-minutes: 60
+        run: |
+          if ($env:HAS_WINGET -eq 'True') { .\app\tests\report.ps1 -Title "disposable ui $env:TITLE" -Test { .\app\tests\disposable-ui.ps1 -Exe .\dist\v4\1nstall.exe -Publisher .\engine\target\debug\oracle-publisher.exe -DisposableEnvironment -Real -Pictures pictures } }
+          else { .\app\tests\report.ps1 -Title "disposable ui $env:TITLE" -Test { .\app\tests\disposable-ui.ps1 -Exe .\dist\v4\1nstall.exe -Publisher .\engine\target\debug\oracle-publisher.exe -DisposableEnvironment -Pictures pictures } }
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: window-pictures-${{ matrix.os }}
+          path: |
+            pictures/
+            dist/v4/test-logs/
+          if-no-files-found: warn
+      - name: Every window test must have passed
+        shell: powershell
+        run: |
+          $failed = @(Get-ChildItem -Path test-failures -Filter *.txt -ErrorAction SilentlyContinue | ForEach-Object { $_.BaseName })
+          if ($failed.Count) { throw "Failed: $($failed -join ', ')" }
   observe:
     name: Machine observations (${{ matrix.os }})
     strategy:

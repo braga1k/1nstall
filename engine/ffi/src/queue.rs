@@ -10,7 +10,7 @@ use std::sync::Mutex;
 use oneinstall_core::queue::{plan, run_queue, CatalogApp, InstallReport, Installer, QueueEvent};
 use oneinstall_platform::packages::Packages;
 
-use crate::{catalog, give, guard, guarded, held, install_packages, records, take, FIELD};
+use crate::{catalog, give, guard, guarded, held, in_test_environment, install_packages, records, take, FIELD};
 
 static EVENTS: Mutex<VecDeque<Vec<String>>> = Mutex::new(VecDeque::new());
 static RUNNING: AtomicBool = AtomicBool::new(false);
@@ -51,6 +51,10 @@ pub fn start(keys: &[String], logs: &str) -> Result<(), String> {
     let spawned = std::thread::Builder::new().name("install queue".to_string()).spawn(move || {
         let planned: Vec<&CatalogApp> = planned.iter().collect();
         let finished = guarded(|| {
+            // Only in the test modes: fail on purpose inside the queue thread when a test asks.
+            if in_test_environment() && std::env::var_os("ONEINSTALL_TEST_QUEUE_FAILURE").is_some() {
+                panic!("Deliberate failure for the tests");
+            }
             run_queue(&planned, &|| STOP.load(Ordering::SeqCst), &mut installer, &mut |event| match event {
                 QueueEvent::Status { key, text } => emit("status", &key, &text),
                 QueueEvent::Progress { key } => emit("progress", &key, ""),

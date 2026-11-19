@@ -57,6 +57,24 @@ jobs:
           name: 1nstall-windows
           path: |
             dist/release/*
+  release-checks:
+    needs: headless
+    runs-on: windows-2022
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: 1nstall-windows
+          path: release-assets
+      - name: Rust 1.86.0
+        shell: bash
+        run: |
+          rustup toolchain install 1.86.0 --profile minimal
+          rustup default 1.86.0
+      - name: Source archive build, test signing and start-up time (disposable machine)
+        shell: powershell
+        run: .\app\tests\report.ps1 -Title 'release checks' -Test { .\scripts\release-checks.ps1 -Assets release-assets -DisposableEnvironment }
   publish-stable:
     if: github.event_name == 'push' && github.ref == 'refs/heads/release/4.0.0'
     needs: headless

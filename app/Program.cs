@@ -45,7 +45,12 @@ static class Program {
 
     // Test modes keep everything beside the executable; a normal start uses the user's profile.
     public static string RuntimeRoot(bool test) {
-        return test?Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"runtime-cache"):Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"1nstall","Runtime");
+        if(!test) return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"1nstall","Runtime");
+        // The cache adds about 120 characters to the folder. In a very deep folder that passes
+        // the 260 characters Windows allows a library path, so the test modes then use the
+        // temporary folder instead.
+        string beside=Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"runtime-cache");
+        return beside.Length<=130?beside:Path.Combine(Path.GetTempPath(),"1nstall-test-runtime");
     }
 
     static void Check(StringBuilder log,ref bool passed,string name,bool condition) {

@@ -15,7 +15,7 @@ using OneInstall;
 
 static partial class Library {
     static DispatcherTimer queueTimer;
-    static bool queueRunning, stopRequested;
+    static bool queueRunning, stopRequested, queueFailed;
     static int total, completed;
     static string logDirectory;
     // The interface test mode records the pages it would open instead of opening a browser.
@@ -98,7 +98,7 @@ static partial class Library {
             Process.Start("ms-windows-store://pdp/?ProductId=9NBLGGH4NNS1");
             return;
         }
-        total=rows.Length; completed=0; stopRequested=false;
+        total=rows.Length; completed=0; stopRequested=false; queueFailed=false;
         statuses.Clear();
         foreach(string record in rows) statuses[record.Split('\u001F')[0]]="Queued";
         SetQueueProgress(0); Shell.SetText("Status","Installation in progress…");
@@ -130,13 +130,13 @@ static partial class Library {
                     break;
                 case "progress": completed++; SetQueueProgress(100.0*completed/total); Shell.SetText("Status",completed+" of "+total+" processed"); break;
                 // The engine failed internally: the queue ended, and what was running counts as interrupted.
-                case "error": Shell.AddLog("1nstall could not finish the queue: "+fields[2]); break;
+                case "error": queueFailed=true; Shell.AddLog("1nstall could not finish the queue: "+fields[2]); break;
                 case "done": done=true; break;
             }
         }
         if(!done) return;
         queueTimer.Stop(); queueRunning=false;
-        int failed=0, manual=0; bool allSucceeded=statuses.Count>0 && !stopRequested;
+        int failed=0, manual=0; bool allSucceeded=statuses.Count>0 && !stopRequested && !queueFailed;
         foreach(string key in new List<string>(statuses.Keys)) {
             string status=statuses[key];
             if(status=="Queued") status="Not started";
@@ -148,6 +148,7 @@ static partial class Library {
         }
         Shell.SetText("Status","Queue finished · "+failed+" failed · "+manual+" manual installs pending.");
         if(stopRequested) Shell.SetText("Status","Queue stopped after the current app. Review the results.");
+        if(queueFailed) Shell.SetText("Status","The queue ended early because of an internal error. See the logs for details.");
         SetBusy(false);
         Motion.Result(Find<FrameworkElement>("SelectedCount"),allSucceeded);
         RefreshInventory();
