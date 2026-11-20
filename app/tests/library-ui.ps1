@@ -26,9 +26,10 @@ function Everywhere([string]$name) {
 $exe=(Resolve-Path -LiteralPath $Exe).Path
 $process=Start-Process -FilePath $exe -ArgumentList '--ui-test' -PassThru
 try {
-    $deadline=(Get-Date).AddSeconds(20)
+    # The first start on a fresh machine unpacks the engine and can be slow.
+    $started=Get-Date; $deadline=$started.AddSeconds(60)
     do { Start-Sleep -Milliseconds 100; $process.Refresh() } while ($process.MainWindowHandle -eq [IntPtr]::Zero -and (Get-Date) -lt $deadline -and -not $process.HasExited)
-    if ($process.MainWindowHandle -eq [IntPtr]::Zero) { throw 'The application showed no window.' }
+    if ($process.MainWindowHandle -eq [IntPtr]::Zero) { throw $(if ($process.HasExited) { "The application ended with code $($process.ExitCode) before showing a window." } else { "The application showed no window in $([int]((Get-Date)-$started).TotalSeconds) s." }) }
     Start-Sleep -Milliseconds 1500
     $root=$automation::FromHandle($process.MainWindowHandle)
 

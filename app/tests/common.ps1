@@ -121,9 +121,9 @@ function Start-App([string]$arguments='--ui-test',[hashtable]$environment=@{}) {
     try {
         if ($arguments) { $script:process=Start-Process -FilePath $exe -ArgumentList $arguments -PassThru } else { $script:process=Start-Process -FilePath $exe -PassThru }
     } finally { foreach ($name in $environment.Keys) { Remove-Item "Env:$name" -ErrorAction SilentlyContinue } }
-    $deadline=(Get-Date).AddSeconds(30)
+    $started=Get-Date; $deadline=$started.AddSeconds(60)
     do { Start-Sleep -Milliseconds 100; $process.Refresh() } while ($process.MainWindowHandle -eq [IntPtr]::Zero -and (Get-Date) -lt $deadline -and -not $process.HasExited)
-    if ($process.MainWindowHandle -eq [IntPtr]::Zero) { throw 'The application showed no window.' }
+    if ($process.MainWindowHandle -eq [IntPtr]::Zero) { throw $(if ($process.HasExited) { "The application ended with code $($process.ExitCode) before showing a window." } else { "The application showed no window in $([int]((Get-Date)-$started).TotalSeconds) s." }) }
     Start-Sleep -Milliseconds 1500
     $automation::FromHandle($process.MainWindowHandle)
 }
