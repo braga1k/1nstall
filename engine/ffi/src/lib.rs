@@ -415,7 +415,7 @@ mod tests {
 
     #[test]
     fn the_embedded_data_parses() {
-        assert_eq!(catalog().len(), 325);
+        assert_eq!(catalog().len(), 329);
         assert!(serde_json::from_str::<Value>(without_mark(PROFILES)).unwrap().is_array());
         assert!(serde_json::from_str::<Value>(without_mark(LOCALES)).unwrap()["en"]["Strings"].is_object());
     }
@@ -433,7 +433,7 @@ mod tests {
     fn every_card_has_nine_fields_and_no_separator_inside_its_text() {
         let cards = cards();
         let rows: Vec<Vec<&str>> = cards.split(RECORD).map(|record| record.split(FIELD).collect()).collect();
-        assert_eq!(rows.len(), 325);
+        assert_eq!(rows.len(), 329);
         assert!(rows.iter().all(|fields| fields.len() == 9 && !fields[0].is_empty() && !fields[1].is_empty()));
         // The catalog itself must not contain the separators, or records would split wrongly.
         assert!(![FIELD, RECORD, ITEM].iter().any(|separator| without_mark(CATALOG).contains(*separator)));

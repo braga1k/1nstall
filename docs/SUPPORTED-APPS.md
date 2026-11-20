@@ -1,6 +1,6 @@
 # Supported applications
 
-325 apps: 277 automatic and 48 guided. Existing profile keys and installation methods are unchanged.
+329 apps: 280 automatic and 49 guided. Existing profile keys and installation methods are unchanged.
 
 Four expandable groups organize 24 task categories. Multi-purpose apps appear in meaningful secondary categories using the same selection and installer. [Review and boundaries](catalog/CATEGORY-REVIEW.md) · [Coverage comparison](catalog/CATEGORY-COVERAGE.csv).
 
@@ -12,6 +12,7 @@ Four expandable groups organize 24 task categories. Multi-purpose apps appear in
 | .NET Desktop Runtime 9 | PC & Tools / Runtimes | — | Automatic | `Microsoft.DotNet.DesktopRuntime.9` |
 | 1Password | Files & Storage / Security & Privacy | — | Automatic | `AgileBits.1Password` |
 | 7-Zip | Files & Storage / Files & Downloads | — | Automatic | `7zip.7zip` |
+| AB Download Manager | Files & Storage / Files & Downloads | — | Automatic | `amir1376.ABDownloadManager` |
 | Adobe Acrobat Reader | Everyday / Office & PDFs | — | Automatic | `Adobe.Acrobat.Reader.64-bit` |
 | Adobe Creative Cloud | Create / Design & Photography | Video Editing, Audio Production | Guided | [Official page](https://creativecloud.adobe.com/apps/download/creative-cloud) |
 | Advanced IP Scanner | PC & Tools / Network Tools | — | Automatic | `Famatech.AdvancedIPScanner` |
@@ -26,6 +27,8 @@ Four expandable groups organize 24 task categories. Multi-purpose apps appear in
 | AnyDesk | PC & Tools / Remote Access | — | Automatic | `AnyDesk.AnyDesk` |
 | Apple Music | Everyday / Media Players | — | Guided | [Official page](https://apps.microsoft.com/detail/9pfhdd62mxs1) |
 | Arduino IDE | PC & Tools / Development | — | Guided | [Official page](https://www.arduino.cc/en/software) |
+| ArtCraft Launcher | Create / Design & Photography | Video Editing | Guided | [Official page](https://getartcraft.com/) |
+| ArtCraft Studio | Everyday / AI Tools | Design & Photography | Automatic | `ArtCraft.ArtCraft` |
 | Audacity | Create / Audio Production | — | Automatic | `Audacity.Audacity` |
 | Autodesk Fusion | Create / 3D & CAD | — | Guided | [Official page](https://www.autodesk.com/products/fusion-360/overview) |
 | AutoHotkey | PC & Tools / Windows Utilities | — | Automatic | `AutoHotkey.AutoHotkey` |
@@ -274,6 +277,7 @@ Four expandable groups organize 24 task categories. Multi-purpose apps appear in
 | SyncBackFree | Files & Storage / Cloud & Backup | — | Guided | [Official page](https://www.2brightsparks.com/freeware/freeware-hub.html) |
 | Syncthing | Files & Storage / Cloud & Backup | — | Automatic | `Syncthing.Syncthing` |
 | System Informer | PC & Tools / Windows Utilities | — | Automatic | `WinsiderSS.SystemInformer` |
+| T3 Code | PC & Tools / Development | — | Automatic | `T3Tools.T3Code` |
 | Tailscale | PC & Tools / Network Tools | — | Automatic | `Tailscale.Tailscale` |
 | TCPView | PC & Tools / Network Tools | — | Automatic | `Microsoft.Sysinternals.TCPView` |
 | Teams | Everyday / Chat & Email | — | Automatic | `Microsoft.Teams` |
@@ -734,3 +738,12 @@ Snapshot checked: 2026-09-15. Missing entries: 0. Snapshot SHA-256: `ca8c6eb4156
 | Application | Category | Installation | License |
 | --- | --- | --- | --- |
 | [Affinity](https://www.affinity.studio/get-affinity) | Design & Photography | Guided · official website | Proprietary |
+
+## Added in 4.0.1
+
+| Application | Category | Installation | License |
+| --- | --- | --- | --- |
+| [AB Download Manager](https://abdownloadmanager.com/) | Files & Downloads | Automatic · `amir1376.ABDownloadManager` · [manifest](https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/a/amir1376/ABDownloadManager/1.11.4/amir1376.ABDownloadManager.installer.yaml) | Apache-2.0 |
+| [ArtCraft Launcher](https://getartcraft.com/) | Design & Photography | Guided · official website | Open source |
+| [ArtCraft Studio](https://getartcraft.com/studio) | AI Tools | Automatic · `ArtCraft.ArtCraft` · [manifest](https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/a/ArtCraft/ArtCraft/0.41.1/ArtCraft.ArtCraft.installer.yaml) | MIT OR Apache-2.0 |
+| [T3 Code](https://t3.codes/) | Development | Automatic · `T3Tools.T3Code` · [manifest](https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/t/T3Tools/T3Code/0.1.11/T3Tools.T3Code.installer.yaml) | MIT |

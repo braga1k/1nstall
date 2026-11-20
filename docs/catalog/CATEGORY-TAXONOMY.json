@@ -73,8 +73,8 @@
       "Group": "Everyday",
       "Scope": "General AI assistants and local model/workflow tools.",
       "Excludes": "Code editors stay in Development; creative AI also appears in Design.",
-      "PrimaryApps": 3,
-      "VisibleApps": 3
+      "PrimaryApps": 4,
+      "VisibleApps": 4
     },
     {
       "Name": "Media Players",
@@ -106,7 +106,7 @@
       "Scope": "Edit, cut, grade, composite, convert and encode video.",
       "Excludes": "Playback clients and screen-capture tools.",
       "PrimaryApps": 7,
-      "VisibleApps": 11
+      "VisibleApps": 12
     },
     {
       "Name": "Audio Production",
@@ -129,8 +129,8 @@
       "Group": "Create",
       "Scope": "Draw, design layouts/vectors/interfaces and process photographs.",
       "Excludes": "Photo browsing and 3D modeling.",
-      "PrimaryApps": 10,
-      "VisibleApps": 11
+      "PrimaryApps": 11,
+      "VisibleApps": 13
     },
     {
       "Name": "3D & CAD",
@@ -145,8 +145,8 @@
       "Group": "Files & Storage",
       "Scope": "File management, archives, transfers, downloads and comparison.",
       "Excludes": "Cloud-sync/backup services and disk hardware diagnostics.",
-      "PrimaryApps": 23,
-      "VisibleApps": 23
+      "PrimaryApps": 24,
+      "VisibleApps": 24
     },
     {
       "Name": "Cloud & Backup",
@@ -193,8 +193,8 @@
       "Group": "PC & Tools",
       "Scope": "Code editors, IDEs, languages/SDKs, version control, API/database tools and game engines.",
       "Excludes": "Dependencies needed only to run other apps.",
-      "PrimaryApps": 55,
-      "VisibleApps": 55
+      "PrimaryApps": 56,
+      "VisibleApps": 56
     },
     {
       "Name": "Windows Utilities",

@@ -16,28 +16,28 @@ A categoria principal responde à tarefa principal. A categoria secundária só 
 | Everyday | Chat & Email | Mensagens, email e reuniões | 23 / 23 |
 | Everyday | Office & PDFs | Documentos, folhas de cálculo, PDFs e leitura | 17 / 17 |
 | Everyday | Notes & Tasks | Notas, tarefas e organização pessoal | 11 / 11 |
-| Everyday | AI Tools | Assistentes e modelos locais | 3 / 3 |
+| Everyday | AI Tools | Assistentes e modelos locais | 4 / 4 |
 | Everyday | Media Players | Ouvir música e ver vídeos | 15 / 16 |
 | Everyday | Photo Viewers | Ver e organizar imagens | 6 / 6 |
 | Everyday | Gaming | Jogos, launchers, emulação e streaming de jogos | 22 / 23 |
-| Create | Video Editing | Editar, cortar, converter e compor vídeo | 7 / 11 |
+| Create | Video Editing | Editar, cortar, converter e compor vídeo | 7 / 12 |
 | Create | Audio Production | Gravar, editar, compor e misturar áudio | 4 / 6 |
 | Create | Capture & Streaming | Capturas, gravação de ecrã e transmissões | 4 / 4 |
-| Create | Design & Photography | Design, desenho e tratamento de fotografias | 10 / 11 |
+| Create | Design & Photography | Design, desenho e tratamento de fotografias | 11 / 13 |
 | Create | 3D & CAD | Modelação, CAD e preparação de impressão 3D | 6 / 6 |
-| Files & Storage | Files & Downloads | Ficheiros, arquivos, transferências e downloads | 23 / 23 |
+| Files & Storage | Files & Downloads | Ficheiros, arquivos, transferências e downloads | 24 / 24 |
 | Files & Storage | Cloud & Backup | Sincronização, cloud e cópias de segurança | 9 / 9 |
 | Files & Storage | Media Servers | Servir bibliotecas pessoais a outros dispositivos | 2 / 2 |
 | Files & Storage | Security & Privacy | Passwords, encriptação, proteção e VPN de privacidade | 14 / 16 |
 | PC & Tools | Remote Access | Controlar computadores e partilhar periféricos | 7 / 9 |
 | PC & Tools | Network Tools | Diagnóstico, SSH e infraestrutura de rede | 11 / 11 |
-| PC & Tools | Development | Código, IDEs, SDKs, APIs, bases de dados e motores de jogos | 55 / 55 |
+| PC & Tools | Development | Código, IDEs, SDKs, APIs, bases de dados e motores de jogos | 56 / 56 |
 | PC & Tools | Windows Utilities | Personalização, automação e manutenção do Windows | 29 / 29 |
 | PC & Tools | Hardware & Drivers | Drivers, periféricos, sensores, RGB e diagnóstico | 21 / 21 |
 | PC & Tools | Audio Controls | Volume, equalização e encaminhamento de som | 3 / 3 |
 | PC & Tools | Runtimes | Componentes necessários para executar outras apps | 7 / 7 |
 
-As contagens principais somam 325. As visíveis incluem associações secundárias. [Definições e exclusões completas](CATEGORY-TAXONOMY.json) e [revisão individual das 325 apps](CATEGORY-AUDIT.csv).
+As contagens principais somam 329: as 325 da revisão e quatro acrescentadas em 2026-11-20 (AB Download Manager, ArtCraft Launcher, ArtCraft Studio e T3 Code), classificadas pela mesma taxonomia. As visíveis incluem associações secundárias. [Definições e exclusões completas](CATEGORY-TAXONOMY.json) e [revisão individual das 325 apps](CATEGORY-AUDIT.csv).
 
 ## Casos que exigiram uma decisão
 

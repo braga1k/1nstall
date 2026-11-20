@@ -163,6 +163,32 @@
     "AlsoIn": []
   },
   {
+    "Key": "extra_ab_download_manager",
+    "Name": "AB Download Manager",
+    "Category": "Files & Downloads",
+    "Description": "Manage, queue and organize file downloads.",
+    "Ids": [
+      "amir1376.ABDownloadManager"
+    ],
+    "Url": "",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": true,
+    "LicenseLabel": "Open source",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://abdownloadmanager.com/",
+    "Repository": "amir1376/ab-download-manager",
+    "CatalogSource": "Owner request",
+    "VerifiedOn": "2026-11-20",
+    "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/a/amir1376/ABDownloadManager/1.11.4/amir1376.ABDownloadManager.installer.yaml",
+    "License": "Apache-2.0",
+    "VerifiedVersion": "1.11.4",
+    "Verification": "WinGet manifest; installation untested",
+    "CategoryGroup": "Files & Storage",
+    "AlsoIn": []
+  },
+  {
     "Key": "winutil_adobe",
     "Name": "Adobe Acrobat Reader",
     "Category": "Office & PDFs",
@@ -510,6 +536,58 @@
     "Verification": "Official page reachable",
     "CategoryGroup": "PC & Tools",
     "AlsoIn": []
+  },
+  {
+    "Key": "extra_artcraft_launcher",
+    "Name": "ArtCraft Launcher",
+    "Category": "Design & Photography",
+    "Description": "Install and update the open-source ArtCraft creative apps. Download through the official website.",
+    "Ids": [],
+    "Url": "https://getartcraft.com/",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": true,
+    "LicenseLabel": "Open source",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://getartcraft.com/",
+    "Repository": "storytold/craft-launcher",
+    "CatalogSource": "Owner request",
+    "VerifiedOn": "2026-11-20",
+    "Verification": "Official website; no WinGet package found",
+    "License": "See publisher terms",
+    "CategoryGroup": "Create",
+    "AlsoIn": [
+      "Video Editing"
+    ]
+  },
+  {
+    "Key": "extra_artcraft_studio",
+    "Name": "ArtCraft Studio",
+    "Category": "AI Tools",
+    "Description": "Create AI images and video with 2D and 3D composition tools.",
+    "Ids": [
+      "ArtCraft.ArtCraft"
+    ],
+    "Url": "",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": true,
+    "LicenseLabel": "Open source",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://getartcraft.com/studio",
+    "Repository": "storytold/artcraft",
+    "CatalogSource": "Owner request",
+    "VerifiedOn": "2026-11-20",
+    "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/a/ArtCraft/ArtCraft/0.41.1/ArtCraft.ArtCraft.installer.yaml",
+    "License": "MIT OR Apache-2.0",
+    "VerifiedVersion": "0.41.1",
+    "Verification": "WinGet manifest; installation untested",
+    "CategoryGroup": "Everyday",
+    "AlsoIn": [
+      "Design & Photography"
+    ]
   },
   {
     "Key": "extra_audacity",
@@ -6850,6 +6928,32 @@
     "License": "MIT License",
     "VerifiedVersion": "4.0.26241.138",
     "Verification": "WinGet manifest",
+    "CategoryGroup": "PC & Tools",
+    "AlsoIn": []
+  },
+  {
+    "Key": "extra_t3code",
+    "Name": "T3 Code",
+    "Category": "Development",
+    "Description": "Run and follow coding agents from one desktop interface.",
+    "Ids": [
+      "T3Tools.T3Code"
+    ],
+    "Url": "",
+    "Requires": [],
+    "Icon": "",
+    "OpenSource": true,
+    "LicenseLabel": "Open source",
+    "GitHubStars": null,
+    "StarsCheckedOn": null,
+    "Website": "https://t3.codes/",
+    "Repository": "pingdotgg/t3code",
+    "CatalogSource": "Owner request",
+    "VerifiedOn": "2026-11-20",
+    "ManifestUrl": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/t/T3Tools/T3Code/0.1.11/T3Tools.T3Code.installer.yaml",
+    "License": "MIT",
+    "VerifiedVersion": "0.1.11",
+    "Verification": "WinGet manifest; installation untested",
     "CategoryGroup": "PC & Tools",
     "AlsoIn": []
   },

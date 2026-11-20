@@ -4,7 +4,7 @@
 
 Choose the apps you need, build a setup that fits your work, and keep every installation and removal in view. A Windows app manager with a curated library, reusable profiles and a little delight in the details.
 
-**325 apps · 24 categories · 20 profiles · 51 language choices**
+**329 apps · 24 categories · 20 profiles · 51 language choices**
 
 [**Download for Windows**](https://github.com/braga1k/1nstall/releases/latest/download/1nstall.exe) · [Portable ZIP](https://github.com/braga1k/1nstall/releases/download/v4.0.0/1nstall-4.0.0-Windows-x64.zip) · [What's new in 4.0](https://github.com/braga1k/1nstall/releases/tag/v4.0.0) · [Checksums](https://github.com/braga1k/1nstall/releases/download/v4.0.0/SHA256SUMS.txt)
 
@@ -32,7 +32,7 @@ The same gradients, reflective edges and pointer light run through Install, Unin
 3. **Review & install.** Check the plan, then start the queue. Follow publisher installers that need your input.
 4. **Keep your selection.** Use **Save selection…** to reuse it later or on another PC.
 
-**277 catalog apps use WinGet.** The other **48 open the publisher's official download page** for guided installation. Confirmed installed apps are dimmed and marked in the library. Apps that cannot be identified confidently remain Unknown.
+**280 catalog apps use WinGet.** The other **49 open the publisher's official download page** for guided installation. Confirmed installed apps are dimmed and marked in the library. Apps that cannot be identified confidently remain Unknown.
 
 Profiles and snapshots restore selections. They do not transfer personal files, credentials, app settings or guarantee the same installed versions.
 

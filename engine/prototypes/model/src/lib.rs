@@ -271,7 +271,7 @@ mod tests {
     #[test]
     fn the_library_loads_every_app_and_plans_dependencies_first() {
         let library = Library::load("pt-PT");
-        assert_eq!(library.cards.len(), 325);
+        assert_eq!(library.cards.len(), 329);
         assert_eq!(library.tr("Install"), "Instalar");
         assert_eq!(library.filter("7-zip").len(), 1);
         let rows = library.plan(&["peace".to_string()]).unwrap();
