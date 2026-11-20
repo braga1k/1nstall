@@ -15,8 +15,8 @@ using System.Windows;
 [assembly: AssemblyProduct("1nstall")]
 // The 3.6 updater accepts a release only if this assembly is named "1nstall" and its
 // version equals the release tag (update-helper.cs, "Release executable version mismatch").
-[assembly: AssemblyVersion("4.0.0.0")]
-[assembly: AssemblyFileVersion("4.0.0.0")]
+[assembly: AssemblyVersion("4.0.1.0")]
+[assembly: AssemblyFileVersion("4.0.1.0")]
 
 // Milliseconds since Windows created the process, as the 3.6 launcher counts them.
 sealed class StartupTimer {
@@ -34,7 +34,7 @@ static class Program {
     // the user's profile is read or written, so interface tests can drive it freely. Installing
     // is refused there, unless ONEINSTALL_TEST_WINGET names a stand-in program to run instead.
     static readonly string[] Tests={"--self-test","--startup-test","--ui-test"};
-    public const string Version="4.0.0";
+    public const string Version="4.0.1";
     static StartupTimer timer;
     static readonly StringBuilder marks=new StringBuilder();
 

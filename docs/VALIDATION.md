@@ -1,12 +1,12 @@
-# Validation — 1nstall 4.0.0
+# Validation — 1nstall 4.0.1
 
 How 4.0 was specified from the 3.6 code, compared with it and built is recorded phase by phase in [rewrite/](rewrite/README.md) (in Portuguese), with the evidence for each claim. Commands are in [DEVELOPING.md](DEVELOPING.md). Local checks use fictional apps and data beside the test build; no personal application is installed or removed.
 
 ## Current checks
 
-- Catalog: 325 apps, 24 categories, 20 profiles, 200 shortlist mappings and 911 benchmark rows. The preserved taxonomy and provenance are in `catalog/`.
+- Catalog: 329 apps, 24 categories, 20 profiles, 200 shortlist mappings and 911 benchmark rows. The preserved taxonomy and provenance are in `catalog/`.
 - Languages: 51 choices with 239 matching strings and valid placeholders.
-- Engine rules: 77 Rust tests, and the oracle, which replays the behaviour recorded from the 3.6 helpers. Of 1552 recorded cases, 1527 are identical and the other 25 are listed, intentional differences; none is unexplained. The tests also read thirty thousand damaged copies of the files the engine keeps, and compare the WinGet command lines of an install with 3.6 run live.
+- Engine rules: 79 Rust tests, and the oracle, which replays the behaviour recorded from the 3.6 helpers. Of 1552 recorded cases, 1527 are identical and the other 25 are listed, intentional differences; none is unexplained. The tests also read thirty thousand damaged copies of the files the engine keeps, and compare the WinGet command lines of an install with 3.6 run live.
 - Removal, on GitHub's disposable Windows Server 2022 and 2025 machines: eight recorded fixture scenarios; fixture apps removed, scanned and cleaned through the boundary the window uses, one for the current user and one machine-wide in the 32-bit registry view with an uninstaller that hands the work to a child process; and a queue of two stopped midway.
 - Real install: Sumatra PDF installed through the engine's queue on Windows Server 2025. The 2022 image has no WinGet.
 - Update from 3.6: the released 3.6.0 executable applies a 4.0 build with its own updater, on both images.
@@ -16,7 +16,7 @@ How 4.0 was specified from the 3.6 code, compared with it and built is recorded 
 - Release: the source archive alone builds the application, and the build signs with a test certificate (11 checks).
 - Motion: all three presets, track bounds, repeated reversals, native UIA state, press/cancel, live reduced-motion changes and completion callbacks. The mathematical checks also run headlessly in CI.
 
-The four English images in `images/` were captured with 3.6; the 4.0 window is the same compiled interface. Logs are generated under ignored `test-logs/` and `dist/`, and CI logs accompany the release.
+`images/install-dark.png` was captured with 4.0.1. The other three English images were captured with 3.6: the two light ones show the same interface, and `uninstall-queue-dark.png` still shows the dark colours of 3.6 and 4.0.0. The neutral dark theme of 4.0.1 was judged on pictures of the window with six accent colours (`app/tests/accent-pictures.ps1`), taken on one Windows 11 PC. Logs are generated under ignored `test-logs/` and `dist/`, and CI logs accompany the release.
 
 ## Remaining coverage
 

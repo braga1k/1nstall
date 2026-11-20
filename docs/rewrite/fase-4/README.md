@@ -531,3 +531,12 @@ Conferido depois, com os ficheiros descarregados da release:
 | O ZIP portátil | Contém o mesmo executável |
 | O que o atualizador da 3.6 lê na API do GitHub | Última release `v4.0.0`, publicada, com o `1nstall.exe` e o seu SHA-256 |
 | Uma 3.6 verdadeira, no PC do autor, com atualizações automáticas | Descarregou a 4.0 três minutos depois da publicação, com o SHA-256 da release, aplicou-a sem erro e a 4.0 arrancou |
+
+## A 4.0.1
+
+Pedida por ti em 2026-11-20. Duas alterações, nenhuma nas regras do motor:
+
+1. **Tema escuro neutro, uma diferença intencional em relação à 3.6.** A 3.6 (e a 4.0.0, que a copiou) tingia os painéis escuros com o inverso da cor de destaque, sobre superfícies azul-acinzentadas e luzes lavanda; com algumas cores do Windows a mistura ficava mal. Na 4.0.1 as superfícies escuras são cinzento-carvão, iguais com qualquer cor, e a cor do Windows fica só no que está selecionado ou atua, como já acontecia no tema claro. Uma primeira versão, que tingia tudo com a própria cor de destaque, foi rejeitada por ti ao ver as imagens. O tema claro e a opção monocromática não mudaram. O código está em `app/Theme.cs` (`SetAccentPalette`, `Neutral`, `Gray`) e `src/appearance.cs` (`Background`, `Apply`).
+2. **Quatro apps no catálogo, 329 no total:** AB Download Manager, ArtCraft Studio e T3 Code, pelo WinGet, e ArtCraft Launcher, pela página oficial, porque não tem pacote no WinGet. Os identificadores e as versões foram lidos dos manifestos do WinGet; a instalação não foi testada.
+
+Como foi visto: `app/tests/accent-pictures.ps1` fotografa a janela com seis cores de destaque nos dois temas, dizendo a cor à aplicação por `ONEINSTALL_TEST_ACCENT` (só em modo de teste), sem ler nem mudar a cor do Windows. Não foi exercitada uma mudança da cor do Windows com a janela aberta. A imagem `docs/images/uninstall-queue-dark.png` do README continua a ser a da 3.6, com as cores antigas.

@@ -225,7 +225,7 @@ jobs:
         timeout-minutes: 15
         run: |
           $source = [IO.File]::ReadAllText("$PWD\app\Program.cs")
-          $older = $source.Replace('AssemblyVersion("4.0.0.0")','AssemblyVersion("3.5.0.0")').Replace('AssemblyFileVersion("4.0.0.0")','AssemblyFileVersion("3.5.0.0")').Replace('public const string Version="4.0.0";','public const string Version="3.5.0";')
+          $older = $source.Replace('AssemblyVersion("4.0.1.0")','AssemblyVersion("3.5.0.0")').Replace('AssemblyFileVersion("4.0.1.0")','AssemblyFileVersion("3.5.0.0")').Replace('public const string Version="4.0.1";','public const string Version="3.5.0";')
           if ($older -eq $source -or ($older.Split("`n") | Where-Object { $_ -match '3\.5\.0' }).Count -ne 3) { throw 'The version lines of Program.cs were not found.' }
           [IO.File]::WriteAllText("$PWD\app\Program.cs", $older)
           try { $line = .\app\build.ps1 -Out "$PWD\dist\older" | Select-Object -Last 1 } finally { [IO.File]::WriteAllText("$PWD\app\Program.cs", $source) }

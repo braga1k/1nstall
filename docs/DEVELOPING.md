@@ -66,7 +66,7 @@ Update the assembly version and `Program.Version` in `app/Program.cs`, the engin
 
 Commit before the final build. `scripts/package-release.ps1` requires a clean build from HEAD and fresh output directories. It verifies source-input hashes, creates portable/source ZIPs and computes asset checksums. The source ZIP preserves exact working bytes, including Windows line endings. Timestamped metadata means bit-for-bit reproducibility is not claimed.
 
-Windows CI runs the catalog and locale checks and the engine tests, builds, runs headless elastic-motion checks and the packaged self-test, then packages the assets. Pushing the configured `release/4.0.0` branch creates a draft, verifies every uploaded asset name and SHA-256 digest, then publishes the stable release as latest. Existing published releases are never overwritten.
+Windows CI runs the catalog and locale checks and the engine tests, builds, runs headless elastic-motion checks and the packaged self-test, then packages the assets. Pushing the configured `release/4.0.1` branch creates a draft, verifies every uploaded asset name and SHA-256 digest, then publishes the stable release as latest. Existing published releases are never overwritten.
 
 Release assets include the executable, portable/source ZIPs, BUILD-INFO.json, notices, checksums and test logs. Download the published assets and verify hashes and the executable tests before reporting publication complete.
 

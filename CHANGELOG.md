@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.0.1 - 2026-11-20
+
+- Make the dark theme neutral: charcoal surfaces that look the same with every Windows accent colour. The accent now colours only what is selected or acts (buttons, switches, selected cards, the active page), as it already did in the light theme. 3.6 and 4.0.0 tinted the dark panels with the inverse of the accent over blue-grey and lavender, which clashed with some accent colours. The light theme and the monochrome option are unchanged.
+- Add AB Download Manager, ArtCraft Studio and T3 Code (installed with WinGet) and ArtCraft Launcher (official download page) to the catalog: 329 apps.
+
 ## 4.0.0 - 2026-11-19
 
 - Rebuild the app as a native C# window over a Rust engine. The PowerShell host is gone; the interface, motion, languages and catalog are those of 3.6. The rules were ported from the 3.6 code and compared with it by a recorded oracle.

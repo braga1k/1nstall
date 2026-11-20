@@ -8,7 +8,7 @@
 # download, to replace an installed 3.6 with the 4.0 executable, then starts the result.
 param(
     [Parameter(Mandatory)][string]$Exe,
-    [string]$Version='4.0.0',
+    [string]$Version='4.0.1',
     [string]$Released36='',
     [switch]$DisposableEnvironment
 )
