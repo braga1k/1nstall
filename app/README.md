@@ -26,6 +26,7 @@ This is work in progress. `Shell.cs` lists what is ported and what is not; the 3
 | `tests/uninstall-ui.ps1` | Drives the Uninstall page, reading only: lists, filters, selects and opens the review, then always goes back. Needs an interactive desktop. |
 | `tests/settings-ui.ps1` | Drives the Settings page: languages, right-to-left layout, theme and accent. Needs an interactive desktop. |
 | `tests/dialogs-ui.ps1` | Drives the Windows file dialogs: saving and loading a selection, a snapshot of what is installed, the diagnostics. Needs an interactive desktop. |
+| `tests/accent-pictures.ps1` | Saves pictures of the window with six accent colours, in both themes, to judge the appearance by eye. Needs an interactive desktop. |
 | `tests/window-ui.ps1` | The window itself: smallest size, a name on every control, all 51 languages, both themes and, with `-Keyboard`, real key presses. Needs an interactive desktop. |
 | `tests/disposable-ui.ps1` | The normal mode, on disposable machines only: Windows theme and high contrast, saved settings, removal and cleanup of a fixture app, stopping midway and, with `-Real`, real apps installed and removed. |
 | `tests/update-ui.ps1` | Finds, downloads and applies an update from Settings, with a build numbered below the published release. Disposable machines only. |

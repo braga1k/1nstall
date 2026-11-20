@@ -62,6 +62,11 @@ static class Theme {
             if(fields[1].Length==1) advancedEffects=fields[1]=="1";
             systemLight=fields[2]=="1";
         } catch(FormatException) { }
+        // Pictures of the window with a named accent, without touching the colour of Windows.
+        if(Preferences.Test) {
+            string named=Environment.GetEnvironmentVariable("ONEINSTALL_TEST_ACCENT");
+            if(named!=null && named.Length==6) { try { systemAccent=Hex("#"+named); } catch(FormatException) { } }
+        }
     }
 
     // Get-AppLightMode
@@ -106,7 +111,10 @@ static class Theme {
 
     // Set-AccentPalette
     static void SetAccentPalette(Color color) {
-        Color white=Colors.White, surface=Hex("#21283B"), text=color;
+        // The dark theme is neutral, as the light theme is: the accent colours what is selected
+        // or acts, and only tints the surfaces a little. 3.6 tinted the dark panels with the
+        // inverse of the accent, over blue-grey surfaces and lavender lights.
+        Color white=Colors.White, surface=Hex("#252629"), text=color;
         for(int i=0;i<20 && (Luminance(text)+0.05)/(Luminance(surface)+0.05)<4.5;i++) text=Mix(text,white,0.12);
         Color foreground=Luminance(color)>0.179?Colors.Black:white;
         window.Resources["AccentBrush"]=new SolidColorBrush(color);
@@ -125,7 +133,6 @@ static class Theme {
         wash.GradientStops.Add(new GradientStop(Color.FromArgb(14,color.R,color.G,color.B),0));
         wash.GradientStops.Add(new GradientStop(Color.FromArgb(68,color.R,color.G,color.B),1));
         window.Resources["ConfirmationFill"]=wash;
-        Color backgroundTint=Color.FromRgb((byte)(255-color.R),(byte)(255-color.G),(byte)(255-color.B));
         foreach(var template in glassTemplates) {
             string key=template.Key; bool edge=key=="GlassEdge" || key=="CardEdge";
             var brush=template.Value.CloneCurrentValue();
@@ -133,13 +140,15 @@ static class Theme {
             if(gradient!=null) {
                 foreach(var stop in gradient.GradientStops) {
                     byte alpha=stop.Color.A;
-                    Color tint=Mix(edge?color:backgroundTint,stop.Color,edge?0.72:0.86);
+                    Color tint=Mix(color,Monochrome(stop.Color),edge?EdgeTint:SurfaceTint);
                     if(key=="GlassPanelFill" || key=="ContentFill" || key=="GlassControlFill") {
                         for(int i=0;i<20 && Luminance(tint)>0.065;i++) tint=Mix(tint,Colors.Black,0.08);
                     }
                     tint.A=alpha; stop.Color=tint;
                 }
             }
+            var solid=brush as SolidColorBrush;
+            if(solid!=null) solid.Color=Neutral(solid.Color,SurfaceTint);
             glassBrushes[key]=brush;
             if(lastGlass!=false) window.Resources[key]=brush;
         }
@@ -149,7 +158,7 @@ static class Theme {
     // Set-GlassAppearance
     static void SetGlassAppearance(bool enabled) {
         var opaque=new Dictionary<string,string> { {"GlassPanelFill","#1C2235"}, {"GlassControlFill","#252D43"}, {"GlassEdge","#7F8BA5"}, {"GlassMenuFill","#1C2235"}, {"ContentFill","#21283B"}, {"CardEdge","#57617B"} };
-        foreach(string key in new List<string>(glassBrushes.Keys)) window.Resources[key]=enabled?glassBrushes[key]:BrushOf(opaque[key]);
+        foreach(string key in new List<string>(glassBrushes.Keys)) window.Resources[key]=enabled?glassBrushes[key]:new SolidColorBrush(Neutral(Hex(opaque[key]),key=="GlassEdge" || key=="CardEdge"?EdgeTint:SurfaceTint));
         Find<UIElement>("AmbientLight").Visibility=enabled?Visibility.Visible:Visibility.Collapsed;
         window.Resources["GlassHighlightsOpacity"]=enabled?1.0:0.0;
         window.Resources["TextShadowOpacity"]=enabled?0.32:0.0;
@@ -185,11 +194,11 @@ static class Theme {
     static void SetContrastResources() {
         bool contrast=SystemParameters.HighContrast;
         window.Resources["TextPrimaryBrush"]=contrast?SystemColors.WindowTextBrush:BrushOf("#F3F5F7");
-        window.Resources["TextSecondaryBrush"]=contrast?SystemColors.WindowTextBrush:BrushOf("#C2CADE");
-        window.Resources["InputFill"]=contrast?SystemColors.WindowBrush:BrushOf("#1B1E25");
-        window.Resources["DialogFill"]=contrast?SystemColors.WindowBrush:BrushOf("#101526");
+        window.Resources["TextSecondaryBrush"]=contrast?SystemColors.WindowTextBrush:BrushOf("#C8C9CC");
+        window.Resources["InputFill"]=contrast?SystemColors.WindowBrush:BrushOf("#1D1E21");
+        window.Resources["DialogFill"]=contrast?SystemColors.WindowBrush:BrushOf("#141518");
         window.Resources["FocusBrush"]=contrast?SystemColors.WindowTextBrush:Brushes.White;
-        window.Resources["CheckBorderBrush"]=contrast?SystemColors.WindowTextBrush:BrushOf("#A5AFC4");
+        window.Resources["CheckBorderBrush"]=contrast?SystemColors.WindowTextBrush:BrushOf("#ADAFB3");
         if(contrast) {
             foreach(string key in new[]{"WindowFill","OpaqueWindowFill","DialogFill","InputFill","GlassPanelFill","GlassControlFill","GlassMenuFill","ContentFill"}) window.Resources[key]=SystemColors.WindowBrush;
             foreach(string key in new[]{"GlassEdge","CardEdge"}) window.Resources[key]=SystemColors.WindowTextBrush;
@@ -205,6 +214,22 @@ static class Theme {
     static Color Monochrome(Color color) {
         byte gray=Convert.ToByte(Math.Round(0.2126*color.R+0.7152*color.G+0.0722*color.B));
         return Color.FromArgb(color.A,gray,gray,gray);
+    }
+
+    // How much of the accent the dark surfaces and their edges take: about what the light ones do.
+    const double SurfaceTint=0.98, EdgeTint=0.94;
+
+    // A colour of the 3.6 dark theme without its own hue, with a little of the accent.
+    static Color Neutral(Color color,double amount) {
+        Color tint=Mix(WindowsAccent(),Monochrome(color),amount); tint.A=color.A;
+        return tint;
+    }
+
+    // The decoration of the 3.6 dark theme without its lavender.
+    static object Gray(object value) {
+        if(value is Color) return Monochrome((Color)value);
+        var solid=value as SolidColorBrush;
+        return solid==null?value:new SolidColorBrush(Monochrome(solid.Color));
     }
 
     // New-MaterialGradient: stops are offset and colour, in pairs.
@@ -319,7 +344,7 @@ static class Theme {
     // The start of the appearance, in the order 3.6 runs it.
     public static void Initialize(Window target) {
         window=target;
-        foreach(string key in new[]{"BevelBrush","HoverEdgeBrush","CardHoverEdgeBrush","ReflectionEdgeBrush","SeparatorBrush","GroupFill","GroupEdge","GroupHoverFill","TextShadowColor","GlassShadowColor","ButtonLightColor","CardLightColor","ReflectionColor","ReflectionSoftColor"}) decorationTemplates[key]=window.Resources[key];
+        foreach(string key in new[]{"BevelBrush","HoverEdgeBrush","CardHoverEdgeBrush","ReflectionEdgeBrush","SeparatorBrush","GroupFill","GroupEdge","GroupHoverFill","TextShadowColor","GlassShadowColor","ButtonLightColor","CardLightColor","ReflectionColor","ReflectionSoftColor"}) decorationTemplates[key]=Gray(window.Resources[key]);
         foreach(string key in new[]{"GlassPanelFill","GlassControlFill","GlassEdge","GlassMenuFill","ContentFill","CardEdge"}) glassTemplates[key]=(Brush)window.Resources[key];
         Update();
         // Poll on the dispatcher, as 3.6 does: once a second.

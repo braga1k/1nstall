@@ -60,8 +60,8 @@ public static class OneInstallAppearance {
             for(int i=0;i<colors.Length;i++) brush.GradientStops.Add(new GradientStop(accent?Mix(Hex(colors[i]),color,.025):Gray(Hex(colors[i])),offsets[i]));
             return brush;
         }
-        var tint=Color.FromRgb((byte)(255-color.R),(byte)(255-color.G),(byte)(255-color.B));
-        var background=Mix(tint,Hex("#080B14"),.96);
+        // A neutral near-black with a trace of the accent, as the light canvas has.
+        var background=Mix(Hex("#0B0B0D"),color,.015);
         if(!accent) background=Gray(background);
         background.A=(byte)(native && accent?224:255);
         return new SolidColorBrush(background);
@@ -85,8 +85,8 @@ public static class OneInstallAppearance {
             Color tint;
             if(light) { tint=Hex(number==2?"#A6BAC6":"#B1A5CA"); if(accent) tint=Mix(tint,color,.16); }
             else {
-                var inverse=Color.FromRgb((byte)(255-color.R),(byte)(255-color.G),(byte)(255-color.B));
-                tint=Mix(number==2?color:inverse,Hex(number==2?"#607BAA":"#AB8FE0"),.45);
+                // Grey lights with a little of the accent, as in the light theme: no second hue.
+                tint=Hex(number==2?"#7A7A7A":"#9B9B9B"); if(accent) tint=Mix(tint,color,.06);
                 for(int i=0;i<20 && Luminance(tint)>.10;i++) tint=Mix(tint,Colors.Black,.08);
             }
             if(!accent) tint=Gray(tint);
